@@ -1,4 +1,4 @@
 [workspace]
 members = [
-    "operators/operator-placeholder",
+    "operators/operator",
 ]

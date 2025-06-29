@@ -50,7 +50,7 @@
               3
             ],
             "details": "Create a `Cargo.toml` file in the project root. Define a `[workspace]` section and add the placeholder operator as a member: `members = [\"operators/operator-placeholder\"]`. This allows running `cargo` commands from the root for all member crates.",
-            "status": "in-progress",
+            "status": "done",
             "testStrategy": "From the project root, run `cargo check --workspace`. The command should successfully check the `operator-placeholder` crate without errors."
           },
           {
@@ -61,7 +61,7 @@
               2
             ],
             "details": "Create a new file named `ci.yml` inside the `.github/workflows/` directory. Define the workflow's `name` (e.g., 'Rust CI'). Set up the `on` trigger for `push` to `branches: [ main ]` and for `pull_request` targeting `branches: [ main ]`.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Push a commit with this file. Go to the 'Actions' tab in the GitHub repository to see if the workflow is recognized, even if it has no jobs yet."
           },
           {
@@ -72,7 +72,7 @@
               5
             ],
             "details": "In `ci.yml`, add a `jobs` section with a job named `build-and-test`. Specify `runs-on: ubuntu-latest`. Add steps to checkout the code (`actions/checkout@v4`) and install the Rust toolchain (`actions-rust-lang/setup-rust-toolchain@v1`).",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Trigger the CI workflow. Verify that the `build-and-test` job runs and successfully completes the checkout and Rust setup steps."
           },
           {
@@ -84,7 +84,7 @@
               6
             ],
             "details": "In the `build-and-test` job within `ci.yml`, add a new step after the toolchain setup. The step should be named 'Check formatting' and run the command `cargo fmt --all -- --check`.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Trigger the CI workflow. The 'Check formatting' step should pass. Introduce a formatting error locally, push to a new branch, and open a PR to ensure the check fails as expected."
           },
           {
@@ -95,7 +95,7 @@
               7
             ],
             "details": "In the `build-and-test` job, add a new step named 'Run Clippy'. It should execute `cargo clippy --workspace -- -D warnings`. The `--workspace` flag ensures it runs on all crates in the workspace.",
-            "status": "pending",
+            "status": "in-progress",
             "testStrategy": "Trigger the CI workflow and verify the 'Run Clippy' step passes. Introduce code that triggers a Clippy warning (e.g., `let x = vec![1,2,3]; x.clone()`) and verify the CI step fails."
           },
           {
@@ -875,7 +875,7 @@
     ],
     "metadata": {
       "created": "2025-06-29T13:02:26.593Z",
-      "updated": "2025-06-29T13:39:40.323Z",
+      "updated": "2025-06-29T13:49:25.036Z",
       "description": "Tasks for main context"
     }
   }

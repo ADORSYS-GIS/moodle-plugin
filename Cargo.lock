@@ -3,5 +3,9 @@
 version = 4
 
 [[package]]
+<<<<<<< HEAD
 name = "operator-placeholder"
+=======
+name = "operator"
+>>>>>>> 989e8e0 (chore: revamp operator)
 version = "0.1.0"
