@@ -9,7 +9,7 @@
         "testStrategy": "Verify that the CI pipeline triggers on pull requests and fails if formatting, linting, or build errors are present. Ensure the repository structure is clear and documented in a root README.md.",
         "priority": "high",
         "dependencies": [],
-        "status": "pending",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -95,7 +95,7 @@
               7
             ],
             "details": "In the `build-and-test` job, add a new step named 'Run Clippy'. It should execute `cargo clippy --workspace -- -D warnings`. The `--workspace` flag ensures it runs on all crates in the workspace.",
-            "status": "in-progress",
+            "status": "done",
             "testStrategy": "Trigger the CI workflow and verify the 'Run Clippy' step passes. Introduce code that triggers a Clippy warning (e.g., `let x = vec![1,2,3]; x.clone()`) and verify the CI step fails."
           },
           {
@@ -106,7 +106,7 @@
               8
             ],
             "details": "In the `build-and-test` job, add a final step named 'Build project'. This step will run the command `cargo build --workspace --verbose` to compile all crates defined in the root workspace.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Trigger the CI workflow. The 'Build project' step should complete successfully. Introduce a compilation error and verify the step fails."
           },
           {
@@ -117,7 +117,7 @@
               2
             ],
             "details": "In the `docs/` directory, create a simple `index.md` file with a title like '# Project Documentation'. In the `charts/` directory, use the Helm CLI to create a placeholder chart by running `helm create placeholder-chart`.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Verify that `docs/index.md` exists and contains the title. Verify that the `charts/placeholder-chart` directory is created and contains a valid `Chart.yaml` file."
           }
         ]
@@ -875,7 +875,7 @@
     ],
     "metadata": {
       "created": "2025-06-29T13:02:26.593Z",
-      "updated": "2025-06-29T13:49:25.036Z",
+      "updated": "2025-06-29T13:58:05.425Z",
       "description": "Tasks for main context"
     }
   }
