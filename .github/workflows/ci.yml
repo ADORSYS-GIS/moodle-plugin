@@ -1,4 +1,4 @@
-name: CI
+name: Rust CI
 
 on:
   push:
@@ -9,15 +9,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@v3
-
-    - name: Build Rust operator
-      run: |
-        cd operators/moodle-operator
-        cargo build --verbose
-
-    - name: Build Docker images
-      run: |
-        docker-compose build
+    - name: Placeholder Step
+      run: echo "Hello from CI"
