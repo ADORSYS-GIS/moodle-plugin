@@ -1,0 +1,511 @@
+{
+  "master": {
+    "tasks": [
+      {
+        "id": 1,
+        "title": "Initialize Mono-Repository Structure",
+        "description": "Create the foundational mono-repository structure with proper directory layout, workspace configuration, and initial documentation",
+        "details": "Set up mono-repo with directories: /plugins (PHP, Rust native, WASM), /infrastructure (Terraform, Helm), /operator (Rust K8s operator), /tools (MCP, roo), /docs. Initialize Cargo workspace for Rust components, composer.json for PHP plugins, and root-level package.json for WASM builds. Create README.md with architecture overview and getting started guide.",
+        "testStrategy": "Verify directory structure exists, validate workspace configurations compile/parse correctly, ensure documentation renders properly",
+        "priority": "high",
+        "dependencies": [],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Create Directory Structure and Basic Files",
+            "description": "Set up the complete mono-repository directory structure with all required folders and initialize basic configuration files",
+            "dependencies": [],
+            "details": "Create root directory structure: /plugins (with subdirs: php, rust-native, wasm), /infrastructure (with subdirs: terraform, helm), /operator, /tools (with subdirs: mcp, roo), /docs. Initialize .gitignore, .gitattributes, and basic project structure files. Create placeholder README files in each major directory.",
+            "status": "pending",
+            "testStrategy": "Verify directory structure exists and all placeholder files are created correctly"
+          },
+          {
+            "id": 2,
+            "title": "Initialize Rust Workspace Configuration",
+            "description": "Set up Cargo workspace configuration for all Rust components including the operator and native plugins",
+            "dependencies": [
+              1
+            ],
+            "details": "Create root Cargo.toml with workspace configuration including members: operator, plugins/rust-native/*, tools/roo. Configure workspace dependencies for common crates like tokio, serde, clap. Set up workspace-level metadata and edition settings. Initialize individual Cargo.toml files for each Rust component with proper package metadata.",
+            "status": "pending",
+            "testStrategy": "Run 'cargo check' to verify workspace configuration is valid and all members are properly configured"
+          },
+          {
+            "id": 3,
+            "title": "Configure PHP and JavaScript Package Management",
+            "description": "Set up composer.json for PHP plugins and package.json for WASM builds and tooling",
+            "dependencies": [
+              1
+            ],
+            "details": "Create composer.json in /plugins/php with autoloading configuration, development dependencies (PHPUnit, PHP-CS-Fixer), and package metadata. Create root-level package.json with WASM build tools (wasm-pack, webpack), development scripts, and workspace configuration for JavaScript tooling. Set up .npmrc and composer configuration files.",
+            "status": "pending",
+            "testStrategy": "Run 'composer install' and 'npm install' to verify package configurations are valid"
+          },
+          {
+            "id": 4,
+            "title": "Create Infrastructure Configuration Templates",
+            "description": "Initialize Terraform and Helm chart templates with basic structure and configuration",
+            "dependencies": [
+              1
+            ],
+            "details": "Create Terraform module structure in /infrastructure/terraform with main.tf, variables.tf, outputs.tf, and versions.tf. Set up provider configurations for major cloud platforms. Create Helm chart template in /infrastructure/helm with Chart.yaml, values.yaml, and basic template structure for deployment, service, and configmap. Include terraform.tfvars.example and values-dev.yaml examples.",
+            "status": "pending",
+            "testStrategy": "Run 'terraform validate' and 'helm lint' to verify configuration syntax"
+          },
+          {
+            "id": 5,
+            "title": "Create Comprehensive Documentation",
+            "description": "Write detailed README.md with architecture overview, getting started guide, and development workflow documentation",
+            "dependencies": [
+              2,
+              3,
+              4
+            ],
+            "details": "Create root README.md with project overview, architecture diagram (ASCII or mermaid), component descriptions, prerequisites, and quick start guide. Include development setup instructions for each language/tool, build commands, testing procedures, and contribution guidelines. Create CONTRIBUTING.md with coding standards, PR process, and development workflow. Add LICENSE file and CODE_OF_CONDUCT.md.",
+            "status": "pending",
+            "testStrategy": "Review documentation for completeness and test all setup instructions on a clean environment"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "Setup Development Container Environment",
+        "description": "Configure VS Code dev-container with all required tools and dependencies for the development workflow",
+        "details": "Create .devcontainer/devcontainer.json with Rust 1.79, PHP 8.3, Node.js, kubectl, helm, terraform, docker-in-docker. Include VS Code extensions for Rust, PHP, Kubernetes. Pre-configure MCP servers and roo CLI. Add docker-compose.dev.yml for local services (Postgres, Redis, MCP servers).",
+        "testStrategy": "Test dev-container builds successfully, all tools are accessible and functional, MCP servers start correctly",
+        "priority": "high",
+        "dependencies": [
+          1
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Create Base DevContainer Configuration",
+            "description": "Set up the foundational .devcontainer/devcontainer.json file with base image, runtime tools, and container settings",
+            "dependencies": [],
+            "details": "Create .devcontainer/devcontainer.json with Ubuntu-based image, install Rust 1.79, PHP 8.3, Node.js LTS, and configure container settings like port forwarding, volume mounts, and user permissions. Set up the base container environment without extensions or additional tooling.",
+            "status": "pending",
+            "testStrategy": "Verify container builds successfully and all runtime versions are correct by running version commands for each tool"
+          },
+          {
+            "id": 2,
+            "title": "Install DevOps and Container Tools",
+            "description": "Add kubectl, helm, terraform, and docker-in-docker capabilities to the development container",
+            "dependencies": [
+              1
+            ],
+            "details": "Extend the devcontainer.json to install kubectl, helm, terraform CLI tools. Configure docker-in-docker feature to enable Docker commands within the container. Set up proper permissions and socket mounting for Docker access.",
+            "status": "pending",
+            "testStrategy": "Test each tool installation by running help commands and verify Docker daemon accessibility from within the container"
+          },
+          {
+            "id": 3,
+            "title": "Configure VS Code Extensions and Settings",
+            "description": "Add required VS Code extensions for Rust, PHP, and Kubernetes development with optimized settings",
+            "dependencies": [
+              1
+            ],
+            "details": "Configure extensions array in devcontainer.json including rust-analyzer, PHP Intelephense, Kubernetes extension, Docker extension, and other productivity extensions. Add customizations for VS Code settings to optimize the development experience for multi-language development.",
+            "status": "pending",
+            "testStrategy": "Verify all extensions are installed and functional by opening sample files in each language and checking IntelliSense functionality"
+          },
+          {
+            "id": 4,
+            "title": "Setup MCP Servers and Roo CLI Integration",
+            "description": "Pre-configure MCP (Model Context Protocol) servers and integrate roo CLI tool within the development environment",
+            "dependencies": [
+              2
+            ],
+            "details": "Install and configure MCP servers as part of the container setup. Install roo CLI tool and configure it for the project structure. Create initialization scripts that start MCP servers automatically when the container starts.",
+            "status": "pending",
+            "testStrategy": "Verify MCP servers start correctly and roo CLI is accessible and functional within the container environment"
+          },
+          {
+            "id": 5,
+            "title": "Create Local Services Docker Compose Configuration",
+            "description": "Set up docker-compose.dev.yml for local development services including Postgres, Redis, and MCP servers",
+            "dependencies": [
+              4
+            ],
+            "details": "Create docker-compose.dev.yml with services for PostgreSQL database, Redis cache, and MCP server containers. Configure proper networking, volumes, and environment variables. Integrate with the devcontainer to automatically start these services or provide easy commands to manage them.",
+            "status": "pending",
+            "testStrategy": "Test that all services start correctly with docker-compose up, verify connectivity between services, and ensure data persistence through container restarts"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Implement CI/CD Pipeline Foundation",
+        "description": "Set up GitHub Actions workflows for linting, testing, and building across all components",
+        "details": "Create .github/workflows with jobs for: Rust linting/testing (cargo clippy, cargo test), PHP linting (phpcs, phpstan), Terraform validation, Helm chart linting. Use matrix strategy for multi-arch builds. Configure caching for dependencies. Add smoke tests that verify basic compilation.",
+        "testStrategy": "All workflows pass on sample code, caching works correctly, multi-arch builds succeed",
+        "priority": "high",
+        "dependencies": [
+          1
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Create GitHub Actions Workflow Structure and Base Configuration",
+            "description": "Set up the foundational GitHub Actions workflow directory structure and create base workflow files with common configurations like triggers, environment variables, and caching strategies.",
+            "dependencies": [],
+            "details": "Create .github/workflows directory. Set up main CI workflow file with triggers (push, pull_request on main/develop branches). Configure workflow-level environment variables, secrets handling, and establish dependency caching strategy using actions/cache for Rust cargo, PHP composer, and Node.js packages. Define matrix strategy structure for multi-architecture builds (linux/amd64, linux/arm64).",
+            "status": "pending",
+            "testStrategy": "Verify workflow files are syntactically valid using GitHub's workflow validation. Test trigger conditions with sample commits."
+          },
+          {
+            "id": 2,
+            "title": "Implement Rust Component Linting and Testing Jobs",
+            "description": "Create dedicated GitHub Actions jobs for Rust components including cargo clippy for linting, cargo test for unit testing, and cargo build for compilation verification.",
+            "dependencies": [
+              1
+            ],
+            "details": "Add Rust toolchain setup using actions-rs/toolchain. Configure cargo clippy job with appropriate lint levels and failure conditions. Set up cargo test job with coverage reporting. Implement cargo build verification across matrix architectures. Configure Rust-specific caching for target/ and ~/.cargo directories. Add job for security audit using cargo audit.",
+            "status": "pending",
+            "testStrategy": "Create sample Rust code with intentional lint issues and failing tests to verify job detection. Test caching effectiveness across workflow runs."
+          },
+          {
+            "id": 3,
+            "title": "Implement PHP Component Linting and Analysis Jobs",
+            "description": "Set up GitHub Actions jobs for PHP code quality checks using phpcs for coding standards and phpstan for static analysis.",
+            "dependencies": [
+              1
+            ],
+            "details": "Configure PHP environment setup using shivammathur/setup-php action. Implement phpcs job with PSR-12 coding standards and custom ruleset configuration. Set up phpstan job with appropriate analysis levels and configuration files. Add composer dependency caching. Include PHP syntax checking and potential security scanning with tools like psalm or phpmd.",
+            "status": "pending",
+            "testStrategy": "Create PHP code samples with coding standard violations and type errors to verify detection. Test different PHP versions if required."
+          },
+          {
+            "id": 4,
+            "title": "Implement Infrastructure Validation Jobs",
+            "description": "Create GitHub Actions jobs for validating Terraform configurations and Helm charts, ensuring infrastructure-as-code quality and syntax correctness.",
+            "dependencies": [
+              1
+            ],
+            "details": "Set up Terraform validation job using hashicorp/setup-terraform action. Configure terraform fmt, terraform validate, and terraform plan (dry-run) checks. Implement Helm chart linting using helm/chart-testing-action. Add terraform security scanning using tools like tfsec or checkov. Configure appropriate caching for Terraform providers and Helm dependencies.",
+            "status": "pending",
+            "testStrategy": "Create intentionally malformed Terraform and Helm configurations to verify validation catches errors. Test with various Terraform and Helm versions."
+          },
+          {
+            "id": 5,
+            "title": "Implement Smoke Tests and Multi-Architecture Build Verification",
+            "description": "Create comprehensive smoke tests that verify basic compilation and functionality across all components, and implement multi-architecture build verification with proper artifact handling.",
+            "dependencies": [
+              2,
+              3,
+              4
+            ],
+            "details": "Develop smoke test suite that performs basic compilation checks for all components. Implement cross-compilation verification for Rust components across target architectures. Create integration smoke tests that verify component interactions. Set up artifact collection and storage for successful builds. Add build time optimization and parallel job execution. Configure notification system for build failures and success metrics collection.",
+            "status": "pending",
+            "testStrategy": "Run smoke tests against known working and broken configurations. Verify multi-arch builds produce expected artifacts. Test artifact download and deployment simulation."
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "title": "Create Base Terraform Module",
+        "description": "Develop the foundational Terraform module for provisioning cloud infrastructure",
+        "details": "Create modules/moodle-infrastructure with: VPC/networking, EKS/GKE/AKS cluster (1.31+), RDS Postgres, ElastiCache Redis, S3/blob storage, IAM roles. Support AWS, GCP, Azure providers. Include variables.tf for customization, outputs.tf for cluster connection info. Add examples/ directory with dev/staging/prod configurations.",
+        "testStrategy": "Use Terratest to validate plan generation, test apply/destroy cycles in isolated environments, verify outputs are correct",
+        "priority": "high",
+        "dependencies": [
+          1
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 5,
+        "title": "Fork and Customize Bitnami Helm Chart",
+        "description": "Create customized Helm chart overlay based on Bitnami Moodle chart with opinionated defaults",
+        "details": "Fork Bitnami Moodle 14.2.x chart into charts/moodle-platform. Add overlays for: GPU node affinity, Prometheus ServiceMonitor, custom init containers, PVC templates for moodledata (RWX), ingress with TLS. Use Kustomize for environment-specific patches. Include values-dev.yaml, values-prod.yaml.",
+        "testStrategy": "Helm lint passes, chart installs successfully on test cluster, all custom resources are created correctly",
+        "priority": "high",
+        "dependencies": [
+          4
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 6,
+        "title": "Define Kubernetes Custom Resource Definitions",
+        "description": "Create CRDs for MoodleSite, Backup, and UpgradePlan resources",
+        "details": "Define CRDs in operator/crds/: MoodleSite (spec: version, replicas, storage, plugins), Backup (spec: schedule, retention, storage), UpgradePlan (spec: fromVersion, toVersion, strategy). Use OpenAPI schema validation. Include status fields for reconciliation state, conditions, observedGeneration.",
+        "testStrategy": "CRDs install successfully, kubectl validation works, sample resources pass schema validation",
+        "priority": "medium",
+        "dependencies": [
+          1
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 7,
+        "title": "Implement Basic Kubernetes Operator",
+        "description": "Create minimal Rust-based Kubernetes operator using kube-rs that reconciles MoodleSite resources",
+        "details": "Build operator using kube-rs framework in operator/src/. Implement controller for MoodleSite CRD that: watches for changes, installs/updates Helm releases using helm-library, updates status conditions, emits Kubernetes events. Include proper error handling, exponential backoff, and leader election for HA.",
+        "testStrategy": "Operator deploys successfully, reconciles MoodleSite resources, Helm releases are created/updated correctly, status is reported accurately",
+        "priority": "high",
+        "dependencies": [
+          5,
+          6
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 8,
+        "title": "Create PHP Plugin Template and Framework",
+        "description": "Develop standardized PHP plugin template with testing framework and CI integration",
+        "details": "Create plugins/php-template/ with: standard Moodle plugin structure, PHPUnit test setup, phpcs/phpstan configuration, composer.json with dev dependencies. Include example plugin demonstrating best practices. Add Makefile for common tasks (test, lint, package). Integrate with mono-repo CI pipeline.",
+        "testStrategy": "Template generates valid Moodle plugin, tests run successfully, linting passes, plugin installs in test Moodle instance",
+        "priority": "medium",
+        "dependencies": [
+          3
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 9,
+        "title": "Setup Rust Native Plugin Infrastructure",
+        "description": "Create build system and template for Rust native plugins using ext-php-rs",
+        "details": "Setup plugins/rust-native/ with: ext-php-rs 0.11+ integration, build.rs for cross-compilation, PHP stub generation, .so loading mechanism. Create example plugin (e.g., fast gradebook calculations). Add cargo-php for easier development. Configure CI for multi-arch builds (x86_64, aarch64).",
+        "testStrategy": "Rust plugin compiles to .so, loads correctly in PHP 8.3, FFI calls work as expected, performance benchmarks show improvement",
+        "priority": "medium",
+        "dependencies": [
+          3
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 10,
+        "title": "Implement Prometheus Monitoring Integration",
+        "description": "Add comprehensive monitoring and observability for the operator and Moodle deployment",
+        "details": "Integrate prometheus-client in Rust operator for custom metrics (reconciliation time, error rates, resource counts). Create Grafana dashboards in monitoring/ directory. Add ServiceMonitor resources for automatic Prometheus discovery. Include alerting rules for common issues (pod crashes, backup failures).",
+        "testStrategy": "Metrics are exported correctly, Grafana dashboards display data, alerts fire appropriately in test scenarios",
+        "priority": "medium",
+        "dependencies": [
+          7
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 11,
+        "title": "Implement Backup and Restore Functionality",
+        "description": "Add automated backup and restore capabilities through the Kubernetes operator",
+        "details": "Extend operator to handle Backup CRD: create CronJobs for scheduled backups, implement backup logic (database dump, moodledata sync to object storage), restore functionality from backup snapshots. Use Velero integration where available. Add backup retention policies and cleanup jobs.",
+        "testStrategy": "Backups are created on schedule, restore process works correctly, retention policies clean up old backups, backup integrity is verified",
+        "priority": "medium",
+        "dependencies": [
+          7,
+          6
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 12,
+        "title": "Setup WASM Build Pipeline",
+        "description": "Create build system for Rust to WASM compilation with frontend integration",
+        "details": "Setup plugins/wasm/ with: wasm-bindgen integration, wasm-pack for builds, Vite bundler configuration, AMD module output for Moodle compatibility. Create build pipeline that generates optimized WASM (-O2), JS bindings, and TypeScript definitions. Add hot-reload for development.",
+        "testStrategy": "WASM modules compile successfully, integrate with Vite build, load correctly in browser, performance is acceptable",
+        "priority": "medium",
+        "dependencies": [
+          3
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 13,
+        "title": "Create Sample WASM Widget",
+        "description": "Develop a sample interactive WASM widget to validate the frontend toolchain",
+        "details": "Build example widget (e.g., interactive quiz timer or grade calculator) using leptos or yew framework. Implement: Rust logic compilation to WASM, JavaScript interop, Moodle theme integration, fallback for non-WASM browsers. Include widget loader that injects into Moodle pages.",
+        "testStrategy": "Widget loads and functions correctly in Moodle, fallback works without WASM, performance is better than pure JS equivalent",
+        "priority": "medium",
+        "dependencies": [
+          12
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 14,
+        "title": "Setup MCP Server Infrastructure",
+        "description": "Configure Model-Context-Protocol servers for AI tooling integration",
+        "details": "Setup tools/mcp/ with Docker containers for: Phi-3 mini server, Stagehand browser automation, Filesystem server. Create docker-compose.mcp.yml for local development. Configure HTTP transport with 30s timeout. Add health checks and restart policies.",
+        "testStrategy": "MCP servers start successfully, respond to health checks, can handle basic requests, resource usage is within limits",
+        "priority": "medium",
+        "dependencies": [
+          2
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 15,
+        "title": "Implement Roo CLI Tool",
+        "description": "Create the roo CLI tool for routing events to MCP servers and AI automation",
+        "details": "Build tools/roo/ CLI in Rust with: YAML configuration parsing, HTTP client for MCP communication, event routing logic, shell command execution, GitHub API integration for PR comments. Include roo.yaml template with common rules (test failures, changelog generation, code review).",
+        "testStrategy": "Roo CLI executes commands correctly, routes to appropriate MCP servers, integrates with GitHub webhooks, configuration validation works",
+        "priority": "medium",
+        "dependencies": [
+          14
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 16,
+        "title": "Integrate AI-Powered CI Hooks",
+        "description": "Add AI automation to CI pipeline for code review, changelog generation, and test failure analysis",
+        "details": "Extend GitHub Actions to trigger roo on: test failures (get AI suggestions), PR creation (automated review), release preparation (changelog generation). Configure webhook endpoints, secure token handling, rate limiting. Add fallback mechanisms when AI services are unavailable.",
+        "testStrategy": "AI hooks trigger correctly on CI events, suggestions are relevant and helpful, fallbacks work when services are down",
+        "priority": "low",
+        "dependencies": [
+          15,
+          3
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 17,
+        "title": "Implement Rolling Upgrade Automation",
+        "description": "Add automated rolling upgrade capabilities to the Kubernetes operator",
+        "details": "Extend operator to handle UpgradePlan CRD: blue-green deployments, canary releases, automatic rollback on failure, health checks during upgrades. Implement upgrade strategies (immediate, scheduled, manual approval). Add rollback annotation support for emergency situations.",
+        "testStrategy": "Upgrades complete successfully without downtime, rollbacks work correctly, health checks prevent bad deployments, upgrade status is accurately reported",
+        "priority": "medium",
+        "dependencies": [
+          7,
+          6
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 18,
+        "title": "Add Terraform Drift Detection",
+        "description": "Implement drift detection between Terraform state and actual cluster resources",
+        "details": "Create tools/drift-detector/ that: compares Terraform state with Kubernetes resources, detects configuration drift, reports discrepancies via Prometheus metrics, optionally auto-corrects minor drifts. Run as CronJob in cluster or external CI job.",
+        "testStrategy": "Drift detection identifies real configuration differences, false positives are minimized, auto-correction works safely for approved changes",
+        "priority": "low",
+        "dependencies": [
+          4,
+          7
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 19,
+        "title": "Implement Multi-Tenant Namespace Isolation",
+        "description": "Add support for multi-tenant deployments with proper namespace isolation",
+        "details": "Extend operator to support: per-tenant namespaces, RBAC isolation, separate PVCs for moodledata, network policies for tenant separation. Update Terraform module to generate multiple MoodleSite CRs. Add tenant management CLI commands to roo.",
+        "testStrategy": "Tenants are properly isolated, resources don't leak between namespaces, RBAC prevents cross-tenant access, scaling works correctly",
+        "priority": "low",
+        "dependencies": [
+          7,
+          15
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 20,
+        "title": "Create Comprehensive Documentation",
+        "description": "Develop complete documentation for installation, configuration, and usage",
+        "details": "Create docs/ with: architecture overview, installation guide, configuration reference, plugin development guide, troubleshooting, API reference. Use mdBook or similar for static site generation. Include diagrams, code examples, and video tutorials where helpful.",
+        "testStrategy": "Documentation is accurate and up-to-date, examples work correctly, users can successfully follow guides",
+        "priority": "medium",
+        "dependencies": [
+          1
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 21,
+        "title": "Setup Performance Benchmarking Suite",
+        "description": "Create automated performance testing and benchmarking for Rust components",
+        "details": "Build benchmarks/ with: Rust native plugin performance tests, WASM widget benchmarks, operator reconciliation timing, end-to-end deployment performance. Use criterion.rs for Rust benchmarks, integrate with CI for regression detection.",
+        "testStrategy": "Benchmarks run consistently, performance regressions are detected, results are comparable across runs",
+        "priority": "low",
+        "dependencies": [
+          9,
+          13
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 22,
+        "title": "Implement Security Scanning and Compliance",
+        "description": "Add security scanning and compliance checks to the CI/CD pipeline",
+        "details": "Integrate security tools: cargo audit for Rust dependencies, composer audit for PHP, Trivy for container scanning, Checkov for Terraform. Add SAST scanning with CodeQL. Create security policy documentation and vulnerability response procedures.",
+        "testStrategy": "Security scans complete without critical issues, vulnerabilities are properly reported, compliance checks pass",
+        "priority": "medium",
+        "dependencies": [
+          3
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 23,
+        "title": "Create Integration Test Suite",
+        "description": "Develop comprehensive end-to-end integration tests for the entire platform",
+        "details": "Build tests/ with: full deployment tests (Terraform + Helm + Operator), plugin integration tests, upgrade/rollback scenarios, backup/restore validation, multi-tenant scenarios. Use testcontainers for isolated testing, kind for Kubernetes testing.",
+        "testStrategy": "Integration tests cover all major workflows, tests are reliable and fast, CI can run tests automatically",
+        "priority": "medium",
+        "dependencies": [
+          7,
+          11,
+          17
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 24,
+        "title": "Setup Release Automation",
+        "description": "Implement automated release process with semantic versioning and changelog generation",
+        "details": "Create release workflow that: uses conventional commits for version bumping, generates changelogs automatically, builds and publishes container images, creates GitHub releases, updates Helm chart versions. Use release-please or similar tooling.",
+        "testStrategy": "Releases are created automatically, versions are correct, artifacts are published successfully, changelogs are accurate",
+        "priority": "low",
+        "dependencies": [
+          16,
+          3
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 25,
+        "title": "Optimize Resource Usage and Scaling",
+        "description": "Implement resource optimization and horizontal scaling capabilities",
+        "details": "Add: HorizontalPodAutoscaler for Moodle pods, VerticalPodAutoscaler recommendations, resource requests/limits optimization, node affinity rules for efficient scheduling. Implement cluster autoscaling integration. Add cost optimization recommendations.",
+        "testStrategy": "Scaling works correctly under load, resource usage is optimized, cost recommendations are accurate, performance is maintained during scaling events",
+        "priority": "low",
+        "dependencies": [
+          7,
+          10
+        ],
+        "status": "pending",
+        "subtasks": []
+      }
+    ],
+    "metadata": {
+      "created": "2025-06-29T09:43:45.692Z",
+      "updated": "2025-06-29T09:43:45.693Z",
+      "description": "Tasks for main context"
+    }
+  }
+}

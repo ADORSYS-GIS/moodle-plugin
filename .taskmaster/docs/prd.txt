@@ -1,0 +1,176 @@
+<context>
+# Overview  
+## What it is
+A single mono-repository that houses everything required to run a modern, high-performance Moodle deployment—plugins (PHP, Rust/native, and Rust→WASM), IaC for cloud and Kubernetes, and a custom Rust-based Kubernetes operator—managed and augmented by lightweight AI tooling via the Model-Context-Protocol (MCP).
+
+### Problem it solves
+- Fragmentation – today, Moodle plugins, infrastructure code, and deployment scripts live in separate silos that drift out of sync.
+- Performance & safety – critical Moodle logic written in PHP alone can be slow and memory-unsafe C extensions are hard to maintain.
+- Day-2 operations – upgrades, backups, and scaling require manual Helm changes or fragile bash scripts.
+
+### Who it’s for
+- DevOps-oriented Moodle admins running multi-tenant or high-traffic sites.
+- Moodle plugin developers who want shared CI, versioning, and AI-assisted workflows.
+- Ed-tech SaaS companies needing repeatable, cloud-agnostic deployments.
+
+Why it’s valuable
+- "Single-commit" releases: code, charts, and Terraform move together.
+- Rust extensions deliver 3-10× speed-ups with memory safety.
+- The operator gives push-button upgrades and automated backups.
+- AI agents (via MCP) shorten feedback loops—code review, changelog drafting, release-note generation.
+
+# Core Features  
+| # | Feature                           | What it does                                                                           | Why it matters                                                    | How it works (high-level)                                                                  |
+| - | --------------------------------- | -------------------------------------------------------------------------------------- | ----------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| 1 | Rust–PHP native plugins       | Speeds up CPU-heavy Moodle tasks (e.g., gradebook calculations).                       | Removes PHP bottlenecks without C extension headaches.            | `ext-php-rs` generates safe FFI; compiled `.so` loaded by PHP 8.3.                         |
+| 2 | Rust → WASM front-end add-ons | Interactive UI widgets (timers, charts) that share logic with backend.                 | Fewer bugs, richer UX, code reuse.                                | `leptos` or `yew`, bundled with Vite; shipped as AMD modules Moodle can load.              |
+| 3 | Terraform module              | One-command provisioning of Moodle + DB + object storage on any cloud.                 | Consistent staging/prod environments, drift detection.            | Root module + env overlays; Terratest ensures plan stability.                              |
+| 4 | Helm chart overlay            | Opinionated chart on top of Bitnami’s base with sane defaults (GPU, cron, Prometheus). | Simplifies K8s install; integrates with ArgoCD/GitOps.            | Values YAML + Kustomize patch layer.                                                       |
+| 5 | Rust Kubernetes operator      | Automates upgrades, backups, blue-green rollouts, and restores.                        | Eliminates manual chart tweaks; enforces best-practice day-2 ops. | `kube-rs` watches CRDs, triggers Helm actions, reports via Prometheus.                     |
+| 6 | MCP-powered AI tooling        | LLM agents generate docs, review PRs, run shell/Stagehand tasks.                       | "Force multiplier" for a small team; faster onboarding.           | `roo` rules route events to local/remote MCP servers (Phi-3, Stagehand, Filesystem, etc.). |
+
+# User Experience
+Personas
+- Dev-Ops Engineer "Ange" – owns uptime, wants repeatable infra.
+- Plugin Developer "Christian" – writes PHP/Rust code, values fast CI feedback and AI pair-programming.
+- Teacher/Admin "Favour" – non-technical, just wants new quiz widget working (indirect beneficiary).
+
+Key User Flows
+- New environment spin-up: terraform apply → resources created → Helm release auto-rolled by operator → Moodle up.
+- Deploying a new plugin: Push code → GitHub Action builds, tests, and publishes Docker image → operator detects new tag → zero-downtime rollout.
+- Emergency rollback: kubectl annotate moodle.myorg/tenant-1 rollback=tag → operator swaps deployment.
+- AI-assisted code review: PR fails tests → roo rule triggers Phi-3/Gemma suggestion → reviewer gets diff proposal.
+
+UI/UX Considerations
+- Admin dashboard (Grafana) surfaces operator status, backup history.
+- Moodle UI loads WASM widgets progressively; fallbacks for no-WASM browsers.
+- Dev onboarding via VS Code dev-container with pre-configured MCP/roo CLI.
+</context>
+<PRD>
+# Technical Architecture
+### System Components
+
+```
+┌──────────────┐
+│  Users       │
+└──────┬───────┘
+       │
+┌──────▼───────┐
+│ Moodle PHP   │◄── Rust native plugins (.so)
+└──────┬───────┘
+       │ WASM widgets
+┌──────▼───────┐
+│ Browser      │
+└──────────────┘
+```
+
+* Kubernetes cluster (any distro 1.31+)
+* Rust operator (controller)
+* Postgres + Redis (Bitnami sub-charts)
+* Object storage (S3-compatible)
+* MCP servers (Docker pods)
+
+### Data Models
+
+* CRDs – `MoodleSite`, `Backup`, `UpgradePlan`.
+* Terraform state – remote backend (S3/OSS).
+* Plugin registry – OCI image tags with semantic version labels.
+
+### APIs & Integrations
+
+| API                    | Direction                          | Purpose                                 |
+| ---------------------- | ---------------------------------- | --------------------------------------- |
+| Kubernetes API         | operator ↔ cluster                 | Manage resources, emit events           |
+| Helm API               | operator → tillerless Helm-library | Chart reconciliations                   |
+| Moodle Web-service API | WASM widgets ↔ backend             | Fetch quiz status, grades               |
+| MCP HTTP               | roo ↔ servers                      | LLM chat, shell exec, Stagehand browser |
+| Grafana OTLP           | operator → Grafana Agent           | Metrics & traces                        |
+
+### Infrastructure Requirements
+
+* Cluster size: start 3 × 4 vCPU/8 GB worker nodes (dev).
+* Build runners: GitHub-hosted or self-hosted with Docker-in-Docker for multi-arch.
+* Persistent storage: RWX PVCs (e.g., EFS, NFS) for Moodledata.
+
+# Development Roadmap  
+### Phase 0 – Project Scaffold
+
+* Mono-repo layout, dev-container, CI smoke test, linting.
+
+### Phase 1 – Core Moodle Runtime
+
+* Fork Bitnami chart overlay, base Terraform module, minimal CRD (`MoodleSite`) with operator that just installs Helm.
+
+### Phase 2 – Plugin Foundations
+
+* PHP plugin template + unit-test framework.
+* Rust native plugin skeleton with ext-php-rs build chain.
+
+### Phase 3 – Observability & Backups
+
+* Grafana dashboards, Prometheus ServiceMonitor.
+* Operator backup/restore CRD + job.
+
+### Phase 4 – Rust → WASM Widgets
+
+* Build pipeline (wasm-bindgen, vite).
+* Inject widget loader into Moodle theme.
+
+### Phase 5 – AI/roo Tooling
+
+* Ship `roo.yaml`, local Phi-3 + Stagehand + Filesystem servers in `docker-compose.dev.yml`.
+* Roo CI hooks (test fail, changelog summariser).
+
+### Phase 6 – Upgrade Automation
+
+* Operator handles rolling upgrades, canary, rollback annotation.
+* Drift detection between Terraform & cluster.
+
+### Phase 7 – Multi-tenant Enhancements
+
+* Namespace isolation, per-site PVC.
+* Terraform module generates tenant CRs automatically.
+
+Future phases can layer in: Ed-tech-specific plugins, GPU inference services, marketplace publishing.
+
+# Logical Dependency Chain
+1. Bootstrap foundation – repo scaffolding, CI, dev-container (Phase 0).
+2. Provisioning baseline – Terraform + Helm overlay so a cluster can come up (Phase 1).
+3. Operator minimal – reconcile `MoodleSite` → Helm install (visible front end reachable).
+4. Plugin pipeline – PHP plugin + Rust native skeletons (Phase 2).
+5. Observability/backups – ensures safe experimentation (Phase 3).
+6. First WASM widget – user-visible improvement; validates front-end toolchain (Phase 4).
+7. AI tooling – speeds up all following PRs, so install early (Phase 5).
+8. Upgrade automation – prevents regressions as features grow (Phase 6).
+9. Multi-tenant & polish – only after single-tenant path solid.
+
+Each step is atomic, delivers something demo-able, and unlocks the next layer.
+
+# Risks and Mitigations  
+| Risk                            | Mitigation                                                                                      |
+| ------------------------------- | ----------------------------------------------------------------------------------------------- |
+| Rust-PHP ABI drift          | Lock PHP minor version in CI matrix; upstream watchlist.                                        |
+| Operator complexity         | Use `kube-rs` scaffolding, pair with community slack, add extensive e2e tests early.            |
+| Junior bandwidth            | Bake AI pair-programming + roo automations into every task; 20 % sprint capacity for learning.  |
+| MVP creep                   | Freeze Phase scope; anything extra becomes future-phase item.                                   |
+| Resource costs (local LLMs) | Prioritise 2-4 GB models (Phi-3 mini, Gemma 2B) for dev; only run large models in CI-on-demand. |
+
+# Appendix  
+### Research Highlights
+
+* Rust native extensions outperform Zend C by 1.7× in benchmarks while eliminating seg-fault risk.
+* Moodle 4.7 LTS officially supports PHP 8.3—matches ext-php-rs current stable.
+* Bitnami’s Moodle chart adopted by >600 GitHub repos; strong upstream activity.
+* kube-rs operator pattern reduces LoC by \~40 % vs. kubebuilder Go for similar CRDs.
+
+### Key Technical Specs
+
+| Spec                   | Value                                     |
+| ---------------------- | ----------------------------------------- |
+| Rust toolchain     | 1.79 (stable)                             |
+| Target WASM        | `wasm32-unknown-unknown`, optimised `-O2` |
+| Helm chart version | Bitnami Moodle 14.2.x                     |
+| Terraform          | HCL 2, state in S3/GCS with locking       |
+| MCP transport      | HTTP 1.1 JSON, 30 s default timeout       |
+| License            | GPL-3.0 + MIT (dual where possible)       |
+</PRD>
