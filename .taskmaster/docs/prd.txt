@@ -36,7 +36,7 @@ A cloud-native, operator-driven Moodle 5 distribution designed to simplify deplo
 
 ## Plugin Synchronization (Init Container or Sidecar)
 
-* Dynamically fetches Moodle plugins (themes, AI models, quiz modules).
+* Dynamically fetches Moodle plugins (themes, AI models, quiz modules...).
 * Supports initial boot fetching or continuous polling for live updates.
 
 ## Observability Pack

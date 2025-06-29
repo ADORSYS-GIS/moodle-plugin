@@ -1,79 +1,193 @@
 {
-  "master": {
+  "main": {
     "tasks": [
       {
         "id": 1,
-        "title": "Initialize Mono-Repository Structure",
-        "description": "Create the foundational mono-repository structure with proper directory layout, workspace configuration, and initial documentation",
-        "details": "Set up mono-repo with directories: /plugins (PHP, Rust native, WASM), /infrastructure (Terraform, Helm), /operator (Rust K8s operator), /tools (MCP, roo), /docs. Initialize Cargo workspace for Rust components, composer.json for PHP plugins, and root-level package.json for WASM builds. Create README.md with architecture overview and getting started guide.",
-        "testStrategy": "Verify directory structure exists, validate workspace configurations compile/parse correctly, ensure documentation renders properly",
+        "title": "Project Scaffolding and CI Setup",
+        "description": "Initialize the main project repository with a standard layout for multiple operators, Helm charts, and documentation. Set up a basic CI pipeline using GitHub Actions or GitLab CI to run linting, formatting, and initial build checks for Rust components.",
+        "details": "Create a monorepo structure with directories for `operators/`, `charts/`, `plugins/`, `docs/`, and `.github/workflows`. The initial CI workflow (`ci.yml`) should use `cargo fmt --check`, `cargo clippy -- -D warnings`, and `cargo build` for each operator workspace.",
+        "testStrategy": "Verify that the CI pipeline triggers on pull requests and fails if formatting, linting, or build errors are present. Ensure the repository structure is clear and documented in a root README.md.",
         "priority": "high",
         "dependencies": [],
         "status": "pending",
         "subtasks": [
           {
             "id": 1,
-            "title": "Create Directory Structure and Basic Files",
-            "description": "Set up the complete mono-repository directory structure with all required folders and initialize basic configuration files",
+            "title": "Initialize Git Repository and Root README",
+            "description": "Create the new monorepo on the Git hosting platform (e.g., GitHub) and clone it locally. Add a root README.md file with a basic project description.",
             "dependencies": [],
-            "details": "Create root directory structure: /plugins (with subdirs: php, rust-native, wasm), /infrastructure (with subdirs: terraform, helm), /operator, /tools (with subdirs: mcp, roo), /docs. Initialize .gitignore, .gitattributes, and basic project structure files. Create placeholder README files in each major directory.",
-            "status": "pending",
-            "testStrategy": "Verify directory structure exists and all placeholder files are created correctly"
+            "details": "Initialize a new Git repository. Create a `README.md` file at the root level. The README should briefly explain the purpose of the monorepo and its intended contents. Commit and push this initial file.",
+            "status": "in-progress",
+            "testStrategy": "Verify that the repository is accessible and the `README.md` file is present on the `main` branch."
           },
           {
             "id": 2,
-            "title": "Initialize Rust Workspace Configuration",
-            "description": "Set up Cargo workspace configuration for all Rust components including the operator and native plugins",
+            "title": "Establish Core Directory Structure",
+            "description": "Create the standard top-level directory structure for the monorepo to house operators, charts, plugins, documentation, and CI workflows.",
             "dependencies": [
               1
             ],
-            "details": "Create root Cargo.toml with workspace configuration including members: operator, plugins/rust-native/*, tools/roo. Configure workspace dependencies for common crates like tokio, serde, clap. Set up workspace-level metadata and edition settings. Initialize individual Cargo.toml files for each Rust component with proper package metadata.",
+            "details": "In the root of the repository, create the following directories: `operators/`, `charts/`, `plugins/`, `docs/`, and `.github/workflows`. Add a `.gitkeep` file to each empty directory to ensure they are committed to Git.",
             "status": "pending",
-            "testStrategy": "Run 'cargo check' to verify workspace configuration is valid and all members are properly configured"
+            "testStrategy": "Run `ls -la` in the project root to confirm that all specified directories exist and have been committed to the repository."
           },
           {
             "id": 3,
-            "title": "Configure PHP and JavaScript Package Management",
-            "description": "Set up composer.json for PHP plugins and package.json for WASM builds and tooling",
+            "title": "Scaffold a Placeholder Rust Operator",
+            "description": "Create a minimal, compilable Rust binary application inside the `operators/` directory to serve as a placeholder for testing the CI pipeline.",
             "dependencies": [
-              1
+              2
             ],
-            "details": "Create composer.json in /plugins/php with autoloading configuration, development dependencies (PHPUnit, PHP-CS-Fixer), and package metadata. Create root-level package.json with WASM build tools (wasm-pack, webpack), development scripts, and workspace configuration for JavaScript tooling. Set up .npmrc and composer configuration files.",
+            "details": "Navigate to the `operators/` directory and run `cargo new --bin operator-placeholder`. This will generate a simple 'Hello, world!' Rust project that can be used for initial build and lint checks.",
             "status": "pending",
-            "testStrategy": "Run 'composer install' and 'npm install' to verify package configurations are valid"
+            "testStrategy": "Navigate to `operators/operator-placeholder` and run `cargo run`. It should compile and print 'Hello, world!'."
           },
           {
             "id": 4,
-            "title": "Create Infrastructure Configuration Templates",
-            "description": "Initialize Terraform and Helm chart templates with basic structure and configuration",
+            "title": "Configure Root Cargo Workspace",
+            "description": "Set up a root `Cargo.toml` to define a Rust workspace, making it easier to manage and build all operators from the project root.",
             "dependencies": [
-              1
+              3
             ],
-            "details": "Create Terraform module structure in /infrastructure/terraform with main.tf, variables.tf, outputs.tf, and versions.tf. Set up provider configurations for major cloud platforms. Create Helm chart template in /infrastructure/helm with Chart.yaml, values.yaml, and basic template structure for deployment, service, and configmap. Include terraform.tfvars.example and values-dev.yaml examples.",
+            "details": "Create a `Cargo.toml` file in the project root. Define a `[workspace]` section and add the placeholder operator as a member: `members = [\"operators/operator-placeholder\"]`. This allows running `cargo` commands from the root for all member crates.",
             "status": "pending",
-            "testStrategy": "Run 'terraform validate' and 'helm lint' to verify configuration syntax"
+            "testStrategy": "From the project root, run `cargo check --workspace`. The command should successfully check the `operator-placeholder` crate without errors."
           },
           {
             "id": 5,
-            "title": "Create Comprehensive Documentation",
-            "description": "Write detailed README.md with architecture overview, getting started guide, and development workflow documentation",
+            "title": "Create Initial GitHub Actions Workflow File",
+            "description": "Create the basic CI workflow file in `.github/workflows/` and configure it to trigger on pushes and pull requests to the main branch.",
             "dependencies": [
-              2,
-              3,
-              4
+              2
             ],
-            "details": "Create root README.md with project overview, architecture diagram (ASCII or mermaid), component descriptions, prerequisites, and quick start guide. Include development setup instructions for each language/tool, build commands, testing procedures, and contribution guidelines. Create CONTRIBUTING.md with coding standards, PR process, and development workflow. Add LICENSE file and CODE_OF_CONDUCT.md.",
+            "details": "Create a new file named `ci.yml` inside the `.github/workflows/` directory. Define the workflow's `name` (e.g., 'Rust CI'). Set up the `on` trigger for `push` to `branches: [ main ]` and for `pull_request` targeting `branches: [ main ]`.",
             "status": "pending",
-            "testStrategy": "Review documentation for completeness and test all setup instructions on a clean environment"
+            "testStrategy": "Push a commit with this file. Go to the 'Actions' tab in the GitHub repository to see if the workflow is recognized, even if it has no jobs yet."
+          },
+          {
+            "id": 6,
+            "title": "Add a CI Job with Rust Toolchain Setup",
+            "description": "Define a single job within the CI workflow that runs on an Ubuntu runner and sets up the required Rust toolchain.",
+            "dependencies": [
+              5
+            ],
+            "details": "In `ci.yml`, add a `jobs` section with a job named `build-and-test`. Specify `runs-on: ubuntu-latest`. Add steps to checkout the code (`actions/checkout@v4`) and install the Rust toolchain (`actions-rust-lang/setup-rust-toolchain@v1`).",
+            "status": "pending",
+            "testStrategy": "Trigger the CI workflow. Verify that the `build-and-test` job runs and successfully completes the checkout and Rust setup steps."
+          },
+          {
+            "id": 7,
+            "title": "Implement 'Format Check' Step in CI",
+            "description": "Add a step to the CI job to check for code formatting consistency across the entire workspace using `cargo fmt`.",
+            "dependencies": [
+              4,
+              6
+            ],
+            "details": "In the `build-and-test` job within `ci.yml`, add a new step after the toolchain setup. The step should be named 'Check formatting' and run the command `cargo fmt --all -- --check`.",
+            "status": "pending",
+            "testStrategy": "Trigger the CI workflow. The 'Check formatting' step should pass. Introduce a formatting error locally, push to a new branch, and open a PR to ensure the check fails as expected."
+          },
+          {
+            "id": 8,
+            "title": "Implement 'Clippy Lint' Step in CI",
+            "description": "Add a step to the CI job to run `cargo clippy` for static analysis, treating all warnings as errors to maintain high code quality.",
+            "dependencies": [
+              7
+            ],
+            "details": "In the `build-and-test` job, add a new step named 'Run Clippy'. It should execute `cargo clippy --workspace -- -D warnings`. The `--workspace` flag ensures it runs on all crates in the workspace.",
+            "status": "pending",
+            "testStrategy": "Trigger the CI workflow and verify the 'Run Clippy' step passes. Introduce code that triggers a Clippy warning (e.g., `let x = vec![1,2,3]; x.clone()`) and verify the CI step fails."
+          },
+          {
+            "id": 9,
+            "title": "Implement 'Build' Step in CI",
+            "description": "Add a final step to the CI job to build all targets in the workspace, ensuring the project is always in a compilable state.",
+            "dependencies": [
+              8
+            ],
+            "details": "In the `build-and-test` job, add a final step named 'Build project'. This step will run the command `cargo build --workspace --verbose` to compile all crates defined in the root workspace.",
+            "status": "pending",
+            "testStrategy": "Trigger the CI workflow. The 'Build project' step should complete successfully. Introduce a compilation error and verify the step fails."
+          },
+          {
+            "id": 10,
+            "title": "Scaffold Documentation and Helm Chart Placeholders",
+            "description": "Create placeholder content in the `docs/` and `charts/` directories to complete the initial project scaffolding.",
+            "dependencies": [
+              2
+            ],
+            "details": "In the `docs/` directory, create a simple `index.md` file with a title like '# Project Documentation'. In the `charts/` directory, use the Helm CLI to create a placeholder chart by running `helm create placeholder-chart`.",
+            "status": "pending",
+            "testStrategy": "Verify that `docs/index.md` exists and contains the title. Verify that the `charts/placeholder-chart` directory is created and contains a valid `Chart.yaml` file."
           }
         ]
       },
       {
         "id": 2,
-        "title": "Setup Development Container Environment",
-        "description": "Configure VS Code dev-container with all required tools and dependencies for the development workflow",
-        "details": "Create .devcontainer/devcontainer.json with Rust 1.79, PHP 8.3, Node.js, kubectl, helm, terraform, docker-in-docker. Include VS Code extensions for Rust, PHP, Kubernetes. Pre-configure MCP servers and roo CLI. Add docker-compose.dev.yml for local services (Postgres, Redis, MCP servers).",
-        "testStrategy": "Test dev-container builds successfully, all tools are accessible and functional, MCP servers start correctly",
+        "title": "Local Development Environment with Docker Compose",
+        "description": "Create a Docker Compose setup to run a complete local development environment. This includes Moodle, a PostgreSQL database, Redis cache, and placeholders for future services like ChromaDB.",
+        "details": "Create a `docker-compose.yml` file at the project root. Use the official Moodle image, `postgres:16`, and `redis:7-alpine`. Configure volumes for persistent data (`moodledata`, `postgres_data`). Use environment variables for configuration to mimic Kubernetes secrets.",
+        "testStrategy": "Run `docker-compose up -d`. Verify that all services start correctly and that the Moodle instance is accessible at `http://localhost:8080` and can connect to the database and cache.",
+        "priority": "high",
+        "dependencies": [
+          1,
+          31
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Create `docker-compose.yml` and Define PostgreSQL Service",
+            "description": "Initialize the `docker-compose.yml` file at the project root and add the PostgreSQL database service. This service is the foundational component for Moodle and other future services.",
+            "dependencies": [],
+            "details": "Create a `docker-compose.yml` file. Define a service named `postgres` using the `postgres:16` image. Configure `POSTGRES_USER`, `POSTGRES_PASSWORD`, and `POSTGRES_DB` using environment variables directly in the file for now. Create and map a named volume `postgres_data` to `/var/lib/postgresql/data` for data persistence. Define the named volume at the top level of the file.",
+            "status": "pending",
+            "testStrategy": "Run `docker-compose up -d postgres`. Verify the container is running using `docker ps`. Check that the `postgres_data` volume has been created using `docker volume ls`."
+          },
+          {
+            "id": 2,
+            "title": "Add Redis Service for Caching",
+            "description": "Enhance the Docker Compose setup by adding a Redis service. This service will be used by Moodle for session and application caching to improve performance.",
+            "dependencies": [],
+            "details": "In the existing `docker-compose.yml`, add a new service named `redis`. Use the `redis:7-alpine` image. No persistent volume is required for a development cache. The service will be accessible to other services on the same Docker network via its service name `redis` on the default port `6379`.",
+            "status": "pending",
+            "testStrategy": "Run `docker-compose up -d redis`. Exec into the running postgres container (`docker-compose exec postgres bash`) and attempt to ping the redis service (`ping redis`) to verify network connectivity between services."
+          },
+          {
+            "id": 3,
+            "title": "Integrate Moodle Service with Database and Redis",
+            "description": "Add the main Moodle application service to the `docker-compose.yml` and configure it to connect to the previously defined PostgreSQL and Redis services.",
+            "dependencies": [],
+            "details": "Add a service named `moodle` using a suitable official Moodle image. Use `depends_on` to ensure `postgres` and `redis` start first. Configure environment variables for database connection (`MOODLE_DATABASE_HOST=postgres`, `MOODLE_DATABASE_USER`, etc.) and Redis caching. Map a named volume `moodledata` to Moodle's persistent data directory (e.g., `/bitnami/moodle` or `/var/www/moodledata`). Expose a port (e.g., `8080:8080`) to access the Moodle UI.",
+            "status": "pending",
+            "testStrategy": "Run `docker-compose up -d`. Access `http://localhost:8080` in a browser. You should see the Moodle setup or login page. Check the Moodle container logs (`docker-compose logs moodle`) for successful connection messages to the database and Redis."
+          },
+          {
+            "id": 4,
+            "title": "Externalize Configuration into a `.env` File",
+            "description": "Refactor the `docker-compose.yml` to use an external `.env` file for all sensitive and configurable values, such as database credentials. This improves security and maintainability, mimicking Kubernetes secret management.",
+            "dependencies": [],
+            "details": "Create a `.env` file in the project root. Move all environment variable definitions (e.g., `POSTGRES_USER=moodleuser`) from the `docker-compose.yml` into this file. In `docker-compose.yml`, replace the hardcoded values with variable placeholders (e.g., `POSTGRES_USER: ${POSTGRES_USER}`). Create a `.env.example` file that lists the required variables without their values. Add `.env` to the project's `.gitignore` file.",
+            "status": "pending",
+            "testStrategy": "Stop and remove the current environment (`docker-compose down`). After creating the `.env` file, run `docker-compose up -d`. Verify that all services start correctly and Moodle is accessible, confirming that variables from the `.env` file are being loaded."
+          },
+          {
+            "id": 5,
+            "title": "Finalize with Documentation and Service Placeholders",
+            "description": "Complete the local development setup by adding documentation and a placeholder for the future ChromaDB service. This ensures the setup is easy for other developers to use and extend.",
+            "dependencies": [],
+            "details": "Add comments to the `docker-compose.yml` explaining the purpose of each service, volume, and network. Create a `README.md` file in the root directory with sections for 'Prerequisites' (Docker), 'Setup' (e.g., `cp .env.example .env` and fill it out), and 'Usage' (`docker-compose up -d`, `docker-compose down`). Add a commented-out service definition for `chromadb` as a placeholder for future development.",
+            "status": "pending",
+            "testStrategy": "Ask a team member to follow the `README.md` instructions from a clean checkout of the repository. They should be able to successfully start the entire environment without further assistance."
+          }
+        ]
+      },
+      {
+        "id": 31,
+        "title": "Local Development Environment with K8s",
+        "description": "Install a k8s distribution locally for testing",
+        "details": "Document how to install K3s, k9s, helm and metallb inside a multipass and configure traefik. This also optionnally can includ a small nginx for testing networking.",
+        "testStrategy": "Destroy the multipass machine and ensure everything's gone. Then recreate everything till it works. This process should take less than 30min, provided internet to download artifacts.",
         "priority": "high",
         "dependencies": [
           1
@@ -82,65 +196,124 @@
         "subtasks": [
           {
             "id": 1,
-            "title": "Create Base DevContainer Configuration",
-            "description": "Set up the foundational .devcontainer/devcontainer.json file with base image, runtime tools, and container settings",
+            "title": "Install Multipass",
+            "description": "Install Multipass on the local machine to create and manage virtual machines.",
             "dependencies": [],
-            "details": "Create .devcontainer/devcontainer.json with Ubuntu-based image, install Rust 1.79, PHP 8.3, Node.js LTS, and configure container settings like port forwarding, volume mounts, and user permissions. Set up the base container environment without extensions or additional tooling.",
+            "details": "Download and install the latest version of Multipass suitable for your operating system.",
             "status": "pending",
-            "testStrategy": "Verify container builds successfully and all runtime versions are correct by running version commands for each tool"
+            "testStrategy": "Verify installation by running 'multipass version' and 'multipass list'."
           },
           {
             "id": 2,
-            "title": "Install DevOps and Container Tools",
-            "description": "Add kubectl, helm, terraform, and docker-in-docker capabilities to the development container",
+            "title": "Create Multipass VM",
+            "description": "Create a new virtual machine using Multipass for the Kubernetes environment.",
             "dependencies": [
               1
             ],
-            "details": "Extend the devcontainer.json to install kubectl, helm, terraform CLI tools. Configure docker-in-docker feature to enable Docker commands within the container. Set up proper permissions and socket mounting for Docker access.",
+            "details": "Use Multipass CLI to launch a VM with sufficient resources (e.g., 2 CPUs, 4GB RAM).",
             "status": "pending",
-            "testStrategy": "Test each tool installation by running help commands and verify Docker daemon accessibility from within the container"
+            "testStrategy": "Check VM status with 'multipass list' and ensure it is running."
           },
           {
             "id": 3,
-            "title": "Configure VS Code Extensions and Settings",
-            "description": "Add required VS Code extensions for Rust, PHP, and Kubernetes development with optimized settings",
-            "dependencies": [
-              1
-            ],
-            "details": "Configure extensions array in devcontainer.json including rust-analyzer, PHP Intelephense, Kubernetes extension, Docker extension, and other productivity extensions. Add customizations for VS Code settings to optimize the development experience for multi-language development.",
-            "status": "pending",
-            "testStrategy": "Verify all extensions are installed and functional by opening sample files in each language and checking IntelliSense functionality"
-          },
-          {
-            "id": 4,
-            "title": "Setup MCP Servers and Roo CLI Integration",
-            "description": "Pre-configure MCP (Model Context Protocol) servers and integrate roo CLI tool within the development environment",
+            "title": "Install K3s on VM",
+            "description": "Install the K3s lightweight Kubernetes distribution inside the Multipass VM.",
             "dependencies": [
               2
             ],
-            "details": "Install and configure MCP servers as part of the container setup. Install roo CLI tool and configure it for the project structure. Create initialization scripts that start MCP servers automatically when the container starts.",
+            "details": "SSH into the VM and follow the official K3s installation instructions.",
             "status": "pending",
-            "testStrategy": "Verify MCP servers start correctly and roo CLI is accessible and functional within the container environment"
+            "testStrategy": "Run 'kubectl get nodes' to confirm the K3s cluster is operational."
+          },
+          {
+            "id": 4,
+            "title": "Install k9s",
+            "description": "Install k9s, a terminal UI for managing Kubernetes clusters, inside the VM.",
+            "dependencies": [
+              3
+            ],
+            "details": "Download and install the latest k9s binary compatible with the VM's OS.",
+            "status": "pending",
+            "testStrategy": "Launch k9s and verify it connects to the K3s cluster."
           },
           {
             "id": 5,
-            "title": "Create Local Services Docker Compose Configuration",
-            "description": "Set up docker-compose.dev.yml for local development services including Postgres, Redis, and MCP servers",
+            "title": "Install Helm",
+            "description": "Install Helm, the Kubernetes package manager, inside the VM.",
             "dependencies": [
-              4
+              3
             ],
-            "details": "Create docker-compose.dev.yml with services for PostgreSQL database, Redis cache, and MCP server containers. Configure proper networking, volumes, and environment variables. Integrate with the devcontainer to automatically start these services or provide easy commands to manage them.",
+            "details": "Download and install the latest Helm binary and initialize it for use with K3s.",
             "status": "pending",
-            "testStrategy": "Test that all services start correctly with docker-compose up, verify connectivity between services, and ensure data persistence through container restarts"
+            "testStrategy": "Run 'helm version' and 'helm repo list' to confirm installation."
+          },
+          {
+            "id": 6,
+            "title": "Install MetalLB",
+            "description": "Deploy MetalLB as a load balancer for the K3s cluster using Helm.",
+            "dependencies": [
+              5
+            ],
+            "details": "Add the MetalLB Helm repo, install the chart, and configure an address pool.",
+            "status": "pending",
+            "testStrategy": "Check MetalLB pods are running and test service exposure with a LoadBalancer type service."
+          },
+          {
+            "id": 7,
+            "title": "Configure Traefik Ingress Controller",
+            "description": "Set up and configure Traefik as the ingress controller for the K3s cluster.",
+            "dependencies": [
+              3
+            ],
+            "details": "Ensure Traefik is enabled in K3s or install it via Helm, then configure ingress routes.",
+            "status": "pending",
+            "testStrategy": "Deploy a test ingress resource and verify routing through Traefik."
+          },
+          {
+            "id": 8,
+            "title": "Document Installation Steps",
+            "description": "Document the step-by-step process for installing and configuring all components.",
+            "dependencies": [
+              6,
+              7
+            ],
+            "details": "Create a comprehensive guide covering Multipass, K3s, k9s, Helm, MetalLB, and Traefik setup.",
+            "status": "pending",
+            "testStrategy": "Review documentation for completeness and clarity; have another user follow the steps."
+          },
+          {
+            "id": 9,
+            "title": "Deploy Test Nginx Application",
+            "description": "Optionally deploy a simple Nginx application to test networking and ingress.",
+            "dependencies": [
+              6,
+              7
+            ],
+            "details": "Use kubectl or Helm to deploy Nginx and expose it via a LoadBalancer and Ingress.",
+            "status": "pending",
+            "testStrategy": "Access Nginx via the assigned IP and ingress route to confirm connectivity."
+          },
+          {
+            "id": 10,
+            "title": "Validate End-to-End Environment",
+            "description": "Perform end-to-end validation of the local Kubernetes environment and all installed tools.",
+            "dependencies": [
+              4,
+              8,
+              9
+            ],
+            "details": "Test cluster management with k9s, application deployment, ingress routing, and load balancing.",
+            "status": "pending",
+            "testStrategy": "Run a checklist covering all components and confirm successful operation."
           }
         ]
       },
       {
         "id": 3,
-        "title": "Implement CI/CD Pipeline Foundation",
-        "description": "Set up GitHub Actions workflows for linting, testing, and building across all components",
-        "details": "Create .github/workflows with jobs for: Rust linting/testing (cargo clippy, cargo test), PHP linting (phpcs, phpstan), Terraform validation, Helm chart linting. Use matrix strategy for multi-arch builds. Configure caching for dependencies. Add smoke tests that verify basic compilation.",
-        "testStrategy": "All workflows pass on sample code, caching works correctly, multi-arch builds succeed",
+        "title": "Define `MoodleSite` CRD",
+        "description": "Define the `MoodleSite` Custom Resource Definition (CRD) schema. This CRD will be the primary interface for users to declare a desired Moodle instance.",
+        "details": "Create the CRD manifest `moodlesite.crd.yaml`. The spec should include fields for `version`, `domain`, `replicas`, `databaseSecretName`, `cacheSecretName`, `auth.oauth` (with `enabled`, `issuer`), `headless` (with `enabled`, `mode`), and `pluginSync` (with `mode`, `manifestUrl`). Use OpenAPI v3 schema for validation.",
+        "testStrategy": "Apply the CRD to a local Kubernetes cluster (like `kind` or `k3d`). Use `kubectl explain MoodleSite.spec` to verify the schema. Create a sample `MoodleSite` custom resource and ensure it can be created without errors.",
         "priority": "high",
         "dependencies": [
           1
@@ -149,67 +322,110 @@
         "subtasks": [
           {
             "id": 1,
-            "title": "Create GitHub Actions Workflow Structure and Base Configuration",
-            "description": "Set up the foundational GitHub Actions workflow directory structure and create base workflow files with common configurations like triggers, environment variables, and caching strategies.",
+            "title": "Initialize CRD Manifest with Basic Structure",
+            "description": "Create the `moodlesite.crd.yaml` file and define the basic CRD structure, including `apiVersion`, `kind`, `metadata`, and the `spec` block with `group`, `names`, and `scope`.",
             "dependencies": [],
-            "details": "Create .github/workflows directory. Set up main CI workflow file with triggers (push, pull_request on main/develop branches). Configure workflow-level environment variables, secrets handling, and establish dependency caching strategy using actions/cache for Rust cargo, PHP composer, and Node.js packages. Define matrix strategy structure for multi-architecture builds (linux/amd64, linux/arm64).",
+            "details": "Use `apiVersion: apiextensions.k8s.io/v1` and `kind: CustomResourceDefinition`. Set `metadata.name` to `moodlesites.moodle.example.com`. For the `spec`, define `group: moodle.example.com`, `scope: Namespaced`, and `names` (plural: `moodlesites`, singular: `moodlesite`, kind: `MoodleSite`). Also, set up the `spec.versions` array with a single version entry (e.g., `v1alpha1`) marked as `served: true` and `storage: true`.",
             "status": "pending",
-            "testStrategy": "Verify workflow files are syntactically valid using GitHub's workflow validation. Test trigger conditions with sample commits."
+            "testStrategy": "Apply the manifest to a Kubernetes cluster using `kubectl apply -f moodlesite.crd.yaml`. Verify the CRD is created by running `kubectl get crd moodlesites.moodle.example.com`."
           },
           {
             "id": 2,
-            "title": "Implement Rust Component Linting and Testing Jobs",
-            "description": "Create dedicated GitHub Actions jobs for Rust components including cargo clippy for linting, cargo test for unit testing, and cargo build for compilation verification.",
-            "dependencies": [
-              1
-            ],
-            "details": "Add Rust toolchain setup using actions-rs/toolchain. Configure cargo clippy job with appropriate lint levels and failure conditions. Set up cargo test job with coverage reporting. Implement cargo build verification across matrix architectures. Configure Rust-specific caching for target/ and ~/.cargo directories. Add job for security audit using cargo audit.",
+            "title": "Add Core Spec Fields: `version`, `domain`, `replicas`",
+            "description": "Add the fundamental fields `version`, `domain`, and `replicas` to the `spec.versions[0].schema.openAPIV3Schema.properties.spec.properties` section of the CRD.",
+            "dependencies": [],
+            "details": "Define `version` as a string, `domain` as a string, and `replicas` as an integer. Add descriptive text for each field. For `replicas`, set a default value of 1 and a minimum value of 0.",
             "status": "pending",
-            "testStrategy": "Create sample Rust code with intentional lint issues and failing tests to verify job detection. Test caching effectiveness across workflow runs."
+            "testStrategy": "Apply the updated manifest. Attempt to create a custom resource instance with these fields and ensure it's accepted by the API server. Verify the default value for `replicas` is applied if omitted."
           },
           {
             "id": 3,
-            "title": "Implement PHP Component Linting and Analysis Jobs",
-            "description": "Set up GitHub Actions jobs for PHP code quality checks using phpcs for coding standards and phpstan for static analysis.",
-            "dependencies": [
-              1
-            ],
-            "details": "Configure PHP environment setup using shivammathur/setup-php action. Implement phpcs job with PSR-12 coding standards and custom ruleset configuration. Set up phpstan job with appropriate analysis levels and configuration files. Add composer dependency caching. Include PHP syntax checking and potential security scanning with tools like psalm or phpmd.",
+            "title": "Add Secret Reference Fields: `databaseSecretName`, `cacheSecretName`",
+            "description": "Add `databaseSecretName` and `cacheSecretName` string fields to the `spec` properties. These will hold the names of the Kubernetes Secrets containing connection details.",
+            "dependencies": [],
+            "details": "Both fields should be of type `string`. Add descriptions explaining that they must refer to a Secret in the same namespace as the `MoodleSite` resource.",
             "status": "pending",
-            "testStrategy": "Create PHP code samples with coding standard violations and type errors to verify detection. Test different PHP versions if required."
+            "testStrategy": "Apply the updated manifest. Create a `MoodleSite` instance including these fields to verify the schema is valid."
           },
           {
             "id": 4,
-            "title": "Implement Infrastructure Validation Jobs",
-            "description": "Create GitHub Actions jobs for validating Terraform configurations and Helm charts, ensuring infrastructure-as-code quality and syntax correctness.",
-            "dependencies": [
-              1
-            ],
-            "details": "Set up Terraform validation job using hashicorp/setup-terraform action. Configure terraform fmt, terraform validate, and terraform plan (dry-run) checks. Implement Helm chart linting using helm/chart-testing-action. Add terraform security scanning using tools like tfsec or checkov. Configure appropriate caching for Terraform providers and Helm dependencies.",
+            "title": "Define `auth.oauth` Object Structure and Fields",
+            "description": "Create the nested object structure for OAuth authentication under `spec.properties`. This includes adding an `auth` object, a nested `oauth` object, and its fields `enabled` and `issuer`.",
+            "dependencies": [],
+            "details": "In the `spec` properties, add a property `auth` of type `object`. Inside `auth.properties`, add a property `oauth` of type `object`. Inside `oauth.properties`, add `enabled` (boolean, default: false) and `issuer` (string, format: uri).",
             "status": "pending",
-            "testStrategy": "Create intentionally malformed Terraform and Helm configurations to verify validation catches errors. Test with various Terraform and Helm versions."
+            "testStrategy": "Apply the manifest. Test creating a CR with `auth.oauth.enabled: true` and a valid `auth.oauth.issuer` URL. Test that an invalid URL for `issuer` is rejected by the API server."
           },
           {
             "id": 5,
-            "title": "Implement Smoke Tests and Multi-Architecture Build Verification",
-            "description": "Create comprehensive smoke tests that verify basic compilation and functionality across all components, and implement multi-architecture build verification with proper artifact handling.",
+            "title": "Define `headless` Object and Fields",
+            "description": "Define the `headless` object in the `spec` and add its fields: `enabled` (boolean) and `mode` (string with enum validation).",
+            "dependencies": [],
+            "details": "Add a `headless` property of type `object` to the `spec`. Inside, add `enabled` (boolean, default: false) and `mode` (string). The `mode` field should have an `enum` validation constraint with values `['full', 'api-only']` and a default of `full`.",
+            "status": "pending",
+            "testStrategy": "Apply the manifest. Verify that a CR with `headless.mode: 'api-only'` is valid, but `headless.mode: 'invalid-mode'` is rejected. Check that the default values are applied when the `headless` block is omitted."
+          },
+          {
+            "id": 6,
+            "title": "Define `pluginSync` Object and Fields",
+            "description": "Define the `pluginSync` object in the `spec` and add its fields: `mode` (string with enum) and `manifestUrl` (string with URI format).",
+            "dependencies": [],
+            "details": "Add a `pluginSync` property of type `object` to the `spec`. Inside, add `mode` (string, enum: `['on-boot', 'periodic']`, default: `on-boot`) and `manifestUrl` (string, `format: uri`).",
+            "status": "pending",
+            "testStrategy": "Apply the manifest. Verify that a CR with a valid `manifestUrl` is accepted and an invalid one is rejected. Check enum validation for `mode`."
+          },
+          {
+            "id": 7,
+            "title": "Define the `status` Block Schema",
+            "description": "Add the `status` subresource to the CRD schema to report the observed state of the Moodle instance.",
             "dependencies": [
-              2,
-              3,
               4
             ],
-            "details": "Develop smoke test suite that performs basic compilation checks for all components. Implement cross-compilation verification for Rust components across target architectures. Create integration smoke tests that verify component interactions. Set up artifact collection and storage for successful builds. Add build time optimization and parallel job execution. Configure notification system for build failures and success metrics collection.",
+            "details": "In `spec.versions[0]`, add `subresources: { status: {} }`. Define the `status` schema under `openAPIV3Schema.properties.status`. Include `observedGeneration` (integer), `moodleUrl` (string), `phase` (string), and `conditions` (array of objects, following Kubernetes API conventions with `type`, `status`, `reason`, `message`, `lastTransitionTime`).",
             "status": "pending",
-            "testStrategy": "Run smoke tests against known working and broken configurations. Verify multi-arch builds produce expected artifacts. Test artifact download and deployment simulation."
+            "testStrategy": "Apply the manifest. Check that the `status` subresource is enabled on the CRD by inspecting the output of `kubectl get crd moodlesites.moodle.example.com -o yaml`."
+          },
+          {
+            "id": 8,
+            "title": "Implement `additionalPrinterColumns` for `kubectl`",
+            "description": "Add `additionalPrinterColumns` to the CRD definition for improved `kubectl get` output, showing key information at a glance.",
+            "dependencies": [],
+            "details": "In `spec.versions[0]`, add the `additionalPrinterColumns` array. Create columns for `DOMAIN` (`.spec.domain`), `VERSION` (`.spec.version`), `REPLICAS` (`.spec.replicas`), and `STATUS` (`.status.phase`).",
+            "status": "pending",
+            "testStrategy": "Apply the manifest. Create a `MoodleSite` resource and manually update its status. Run `kubectl get moodlesites` and verify the new columns are displayed with the correct data."
+          },
+          {
+            "id": 9,
+            "title": "Enforce Required Fields Validation",
+            "description": "Update the `spec` schema to mark essential fields as required, ensuring that users provide the minimum necessary configuration.",
+            "dependencies": [
+              6
+            ],
+            "details": "In the `openAPIV3Schema.properties.spec` object, add a `required` array containing `['version', 'domain', 'databaseSecretName']`. This makes the CR invalid if any of these fields are omitted.",
+            "status": "pending",
+            "testStrategy": "Apply the updated manifest. Attempt to create a `MoodleSite` resource that omits the `domain` field. Confirm that the API server rejects the request with a clear validation error."
+          },
+          {
+            "id": 10,
+            "title": "Final Review and Schema Cleanup",
+            "description": "Perform a final review of the entire `moodlesite.crd.yaml` manifest. Ensure consistent formatting, clear descriptions for all fields, and that all requirements from the parent task are met.",
+            "dependencies": [
+              7,
+              8,
+              9
+            ],
+            "details": "Read through the complete YAML file. Check for typos, inconsistent indentation, and unclear field descriptions. Verify that all specified fields (`version`, `domain`, `replicas`, secrets, `auth`, `headless`, `pluginSync`) are present with the correct types and validation rules.",
+            "status": "pending",
+            "testStrategy": "Manually inspect the final `moodlesite.crd.yaml` file against the original task description. Apply the final manifest to a clean cluster and create a comprehensive `MoodleSite` instance that uses all fields to ensure no validation errors occur."
           }
         ]
       },
       {
         "id": 4,
-        "title": "Create Base Terraform Module",
-        "description": "Develop the foundational Terraform module for provisioning cloud infrastructure",
-        "details": "Create modules/moodle-infrastructure with: VPC/networking, EKS/GKE/AKS cluster (1.31+), RDS Postgres, ElastiCache Redis, S3/blob storage, IAM roles. Support AWS, GCP, Azure providers. Include variables.tf for customization, outputs.tf for cluster connection info. Add examples/ directory with dev/staging/prod configurations.",
-        "testStrategy": "Use Terratest to validate plan generation, test apply/destroy cycles in isolated environments, verify outputs are correct",
+        "title": "Moodle Operator Scaffolding",
+        "description": "Bootstrap the Moodle Operator project using Rust and the `kube-rs` library. This will create the basic project structure for the operator's reconciliation logic.",
+        "details": "In the `operators/moodle-operator` directory, initialize a new Rust project. Add `kube`, `kube-runtime`, `tokio`, `serde`, and `thiserror` as dependencies in `Cargo.toml`. Create a `main.rs` with the basic structure for initializing a `Controller` that watches `MoodleSite` resources.",
+        "testStrategy": "Compile the initial operator code successfully (`cargo build`). The operator should be able to start and connect to the Kubernetes API without crashing, though it won't perform any actions yet.",
         "priority": "high",
         "dependencies": [
           1
@@ -219,12 +435,13 @@
       },
       {
         "id": 5,
-        "title": "Fork and Customize Bitnami Helm Chart",
-        "description": "Create customized Helm chart overlay based on Bitnami Moodle chart with opinionated defaults",
-        "details": "Fork Bitnami Moodle 14.2.x chart into charts/moodle-platform. Add overlays for: GPU node affinity, Prometheus ServiceMonitor, custom init containers, PVC templates for moodledata (RWX), ingress with TLS. Use Kustomize for environment-specific patches. Include values-dev.yaml, values-prod.yaml.",
-        "testStrategy": "Helm lint passes, chart installs successfully on test cluster, all custom resources are created correctly",
+        "title": "Implement Core Reconciliation Loop",
+        "description": "Implement the core reconciliation loop for the Moodle Operator. The operator will watch for `MoodleSite` resources and trigger reconciliation logic on create, update, or delete events.",
+        "details": "Implement the `reconcile` function within the operator. This function will receive a `MoodleSite` object. The initial implementation will log the object's details. Implement error handling and requeue logic using `Ok(Action::requeue(duration))` and `Err(error)`. Use `finalizers` to handle cleanup on deletion.",
+        "testStrategy": "Deploy the operator to a local cluster. Create, update, and delete a `MoodleSite` CR. Verify that the operator logs show the corresponding reconciliation events being triggered for each action.",
         "priority": "high",
         "dependencies": [
+          3,
           4
         ],
         "status": "pending",
@@ -232,10 +449,62 @@
       },
       {
         "id": 6,
-        "title": "Define Kubernetes Custom Resource Definitions",
-        "description": "Create CRDs for MoodleSite, Backup, and UpgradePlan resources",
-        "details": "Define CRDs in operator/crds/: MoodleSite (spec: version, replicas, storage, plugins), Backup (spec: schedule, retention, storage), UpgradePlan (spec: fromVersion, toVersion, strategy). Use OpenAPI schema validation. Include status fields for reconciliation state, conditions, observedGeneration.",
-        "testStrategy": "CRDs install successfully, kubectl validation works, sample resources pass schema validation",
+        "title": "Operator Logic for Kubernetes Deployment and Service",
+        "description": "Extend the operator to create and manage a Kubernetes `Deployment` and `Service` for each `MoodleSite` resource.",
+        "details": "In the `reconcile` function, build a `Deployment` spec using the official Moodle image. Set replicas based on `MoodleSite.spec.replicas`. Mount volumes for Moodle code and data. Create a `ClusterIP` `Service` to expose the Moodle pods. Ensure the operator sets itself as the owner of these resources for garbage collection.",
+        "testStrategy": "Create a `MoodleSite` CR. Verify that the operator creates a corresponding `Deployment` and `Service` with the correct specs. Deleting the `MoodleSite` CR should automatically delete the associated `Deployment` and `Service`.",
+        "priority": "high",
+        "dependencies": [
+          5
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 7,
+        "title": "Operator Logic for Kubernetes Ingress",
+        "description": "Add logic to the Moodle Operator to create an `Ingress` resource, making the Moodle instance accessible from outside the cluster.",
+        "details": "Based on the `MoodleSite.spec.domain` field, the operator will generate an `Ingress` resource. The ingress rules will route traffic for the specified domain to the Moodle `Service`. TLS configuration can be handled via annotations for `cert-manager` or by referencing a secret.",
+        "testStrategy": "With an ingress controller running in the cluster, create a `MoodleSite` CR with a domain. Verify the `Ingress` resource is created. Access the Moodle instance via the specified domain and confirm it resolves correctly.",
+        "priority": "high",
+        "dependencies": [
+          6
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 8,
+        "title": "Operator Logic for PersistentVolumeClaim (PVC)",
+        "description": "Implement the creation of a `PersistentVolumeClaim` (PVC) for Moodle's shared data (`moodledata`).",
+        "details": "The operator will create a PVC with an `ReadWriteMany` (RWX) access mode, as required for multi-replica Moodle deployments. The storage class and size can be configurable in the `MoodleSite` CRD. The PVC name must be unique per deployment to avoid collisions.",
+        "testStrategy": "Create a `MoodleSite` CR. Verify that a PVC is created with the correct name, access mode, and storage request. Check that the Moodle pods in the `Deployment` successfully mount this PVC.",
+        "priority": "high",
+        "dependencies": [
+          6
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 9,
+        "title": "Secret Management for DB/Cache Configuration",
+        "description": "Implement logic for the operator to read database and cache connection details from pre-existing Kubernetes `Secret`s.",
+        "details": "The operator will read the secret names from `MoodleSite.spec.databaseSecretName` and `MoodleSite.spec.cacheSecretName`. It will then fetch these secrets and inject the connection details as environment variables into the Moodle `Deployment` pods. Implement a pre-flight check to ensure the secrets exist before proceeding.",
+        "testStrategy": "Create two secrets, one for DB and one for cache. Create a `MoodleSite` CR referencing them. Inspect the created Moodle pods and verify that the correct environment variables (e.g., `MOODLE_DB_HOST`, `MOODLE_DB_USER`) are set from the secrets.",
+        "priority": "high",
+        "dependencies": [
+          5
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 10,
+        "title": "Define `MoodleBackup` CRD",
+        "description": "Define the `MoodleBackup` CRD schema. This CRD will allow users to trigger on-demand or scheduled backups of a Moodle instance.",
+        "details": "Create the `moodlebackup.crd.yaml` manifest. The spec should include `moodleSiteName` (to target a specific instance), `storage.s3.bucket`, `storage.s3.secretName`, and an optional `schedule` field in cron format.",
+        "testStrategy": "Apply the CRD to a local cluster. Verify the schema with `kubectl explain MoodleBackup.spec`. Create a sample `MoodleBackup` resource and ensure it's accepted by the API server.",
         "priority": "medium",
         "dependencies": [
           1
@@ -244,104 +513,291 @@
         "subtasks": []
       },
       {
-        "id": 7,
-        "title": "Implement Basic Kubernetes Operator",
-        "description": "Create minimal Rust-based Kubernetes operator using kube-rs that reconciles MoodleSite resources",
-        "details": "Build operator using kube-rs framework in operator/src/. Implement controller for MoodleSite CRD that: watches for changes, installs/updates Helm releases using helm-library, updates status conditions, emits Kubernetes events. Include proper error handling, exponential backoff, and leader election for HA.",
-        "testStrategy": "Operator deploys successfully, reconciles MoodleSite resources, Helm releases are created/updated correctly, status is reported accurately",
-        "priority": "high",
-        "dependencies": [
-          5,
-          6
-        ],
-        "status": "pending",
-        "subtasks": []
-      },
-      {
-        "id": 8,
-        "title": "Create PHP Plugin Template and Framework",
-        "description": "Develop standardized PHP plugin template with testing framework and CI integration",
-        "details": "Create plugins/php-template/ with: standard Moodle plugin structure, PHPUnit test setup, phpcs/phpstan configuration, composer.json with dev dependencies. Include example plugin demonstrating best practices. Add Makefile for common tasks (test, lint, package). Integrate with mono-repo CI pipeline.",
-        "testStrategy": "Template generates valid Moodle plugin, tests run successfully, linting passes, plugin installs in test Moodle instance",
-        "priority": "medium",
-        "dependencies": [
-          3
-        ],
-        "status": "pending",
-        "subtasks": []
-      },
-      {
-        "id": 9,
-        "title": "Setup Rust Native Plugin Infrastructure",
-        "description": "Create build system and template for Rust native plugins using ext-php-rs",
-        "details": "Setup plugins/rust-native/ with: ext-php-rs 0.11+ integration, build.rs for cross-compilation, PHP stub generation, .so loading mechanism. Create example plugin (e.g., fast gradebook calculations). Add cargo-php for easier development. Configure CI for multi-arch builds (x86_64, aarch64).",
-        "testStrategy": "Rust plugin compiles to .so, loads correctly in PHP 8.3, FFI calls work as expected, performance benchmarks show improvement",
-        "priority": "medium",
-        "dependencies": [
-          3
-        ],
-        "status": "pending",
-        "subtasks": []
-      },
-      {
-        "id": 10,
-        "title": "Implement Prometheus Monitoring Integration",
-        "description": "Add comprehensive monitoring and observability for the operator and Moodle deployment",
-        "details": "Integrate prometheus-client in Rust operator for custom metrics (reconciliation time, error rates, resource counts). Create Grafana dashboards in monitoring/ directory. Add ServiceMonitor resources for automatic Prometheus discovery. Include alerting rules for common issues (pod crashes, backup failures).",
-        "testStrategy": "Metrics are exported correctly, Grafana dashboards display data, alerts fire appropriately in test scenarios",
-        "priority": "medium",
-        "dependencies": [
-          7
-        ],
-        "status": "pending",
-        "subtasks": []
-      },
-      {
         "id": 11,
-        "title": "Implement Backup and Restore Functionality",
-        "description": "Add automated backup and restore capabilities through the Kubernetes operator",
-        "details": "Extend operator to handle Backup CRD: create CronJobs for scheduled backups, implement backup logic (database dump, moodledata sync to object storage), restore functionality from backup snapshots. Use Velero integration where available. Add backup retention policies and cleanup jobs.",
-        "testStrategy": "Backups are created on schedule, restore process works correctly, retention policies clean up old backups, backup integrity is verified",
+        "title": "Backup Operator Scaffolding",
+        "description": "Bootstrap the Backup Operator project using Rust and `kube-rs`.",
+        "details": "In `operators/backup-operator`, initialize a new Rust project. Add `kube`, `kube-runtime`, `tokio`, and other necessary dependencies. Set up the `main.rs` to create a `Controller` that watches `MoodleBackup` resources.",
+        "testStrategy": "Compile the initial operator code successfully. The operator should start and connect to the Kubernetes API.",
         "priority": "medium",
         "dependencies": [
-          7,
-          6
+          1
         ],
         "status": "pending",
         "subtasks": []
       },
       {
         "id": 12,
-        "title": "Setup WASM Build Pipeline",
-        "description": "Create build system for Rust to WASM compilation with frontend integration",
-        "details": "Setup plugins/wasm/ with: wasm-bindgen integration, wasm-pack for builds, Vite bundler configuration, AMD module output for Moodle compatibility. Create build pipeline that generates optimized WASM (-O2), JS bindings, and TypeScript definitions. Add hot-reload for development.",
-        "testStrategy": "WASM modules compile successfully, integrate with Vite build, load correctly in browser, performance is acceptable",
+        "title": "Implement Backup Operator Logic with Restic",
+        "description": "Implement the backup logic within the Backup Operator. It will create a Kubernetes `Job` that runs `restic` to back up the Moodle PVC and database to an S3-compatible backend.",
+        "details": "On reconciling a `MoodleBackup` CR, the operator will: 1. Find the target `MoodleSite`'s PVC. 2. Create a `Job` that mounts the PVC. 3. The job's container will run a script to dump the PostgreSQL database and then use `restic` to back up the PVC contents and the SQL dump to the S3 bucket configured in the CR.",
+        "testStrategy": "Create a `MoodleSite` and some data. Create a `MoodleBackup` CR. Verify that a `Job` is created and completes successfully. Check the S3 bucket to confirm that a `restic` snapshot has been created.",
         "priority": "medium",
         "dependencies": [
-          3
+          8,
+          10,
+          11
         ],
         "status": "pending",
         "subtasks": []
       },
       {
         "id": 13,
-        "title": "Create Sample WASM Widget",
-        "description": "Develop a sample interactive WASM widget to validate the frontend toolchain",
-        "details": "Build example widget (e.g., interactive quiz timer or grade calculator) using leptos or yew framework. Implement: Rust logic compilation to WASM, JavaScript interop, Moodle theme integration, fallback for non-WASM browsers. Include widget loader that injects into Moodle pages.",
-        "testStrategy": "Widget loads and functions correctly in Moodle, fallback works without WASM, performance is better than pure JS equivalent",
+        "title": "Plugin Synchronization via Init Container",
+        "description": "Implement the plugin synchronization feature using an `initContainer`. This container will run before the main Moodle container, download plugins from a manifest, and place them in a shared volume.",
+        "details": "Modify the Moodle `Deployment` logic in the Moodle Operator. When `pluginSync.mode` is 'init', add an `initContainer`. This container will use a tool like `wget` or `curl` to parse a JSON manifest file (from `pluginSync.manifestUrl`) and download the specified plugins into a shared `emptyDir` volume mounted at `/var/www/html/moodle/plugins`.",
+        "testStrategy": "Create a `MoodleSite` with `pluginSync.mode: init` and a valid manifest URL. Verify the `initContainer` is added to the pod spec. Check the Moodle pod's logs to see the download process. Log into Moodle and confirm the plugins are installed and available.",
         "priority": "medium",
         "dependencies": [
-          12
+          6
         ],
         "status": "pending",
         "subtasks": []
       },
       {
         "id": 14,
-        "title": "Setup MCP Server Infrastructure",
-        "description": "Configure Model-Context-Protocol servers for AI tooling integration",
-        "details": "Setup tools/mcp/ with Docker containers for: Phi-3 mini server, Stagehand browser automation, Filesystem server. Create docker-compose.mcp.yml for local development. Configure HTTP transport with 30s timeout. Add health checks and restart policies.",
-        "testStrategy": "MCP servers start successfully, respond to health checks, can handle basic requests, resource usage is within limits",
+        "title": "Plugin Synchronization via Sidecar",
+        "description": "Implement the plugin synchronization feature using a `sidecar` container for continuous, live updates.",
+        "details": "Modify the Moodle `Deployment` logic. When `pluginSync.mode` is 'sidecar', add a sidecar container to the Moodle pod. This sidecar will periodically poll the manifest URL, compare it with the current state, and download/update plugins as needed into the shared volume. This requires a mechanism to trigger a cache clear in Moodle.",
+        "testStrategy": "Create a `MoodleSite` with `pluginSync.mode: sidecar`. Update the remote plugin manifest. Verify that the sidecar container detects the change, downloads the new plugin, and that it appears in the Moodle admin interface after a cache purge.",
+        "priority": "low",
+        "dependencies": [
+          13
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 15,
+        "title": "Define Quiz Backend CRDs",
+        "description": "Define the CRDs required for the AI Quiz feature: `QuizBackend`, `ChromaDB`, and `QuizPluginBinding`.",
+        "details": "Create CRD manifests for each. `QuizBackend.spec` will define the quiz service deployment. `ChromaDB.spec` will define the vector database instance. `QuizPluginBinding.spec` will link a `MoodleSite` to a `QuizBackend` instance, containing connection details.",
+        "testStrategy": "Apply all three CRDs to a local cluster. Use `kubectl explain` on each to validate their schemas and fields. Ensure they can be created without errors.",
+        "priority": "medium",
+        "dependencies": [
+          1
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 16,
+        "title": "Quiz Backend Operator Scaffolding",
+        "description": "Bootstrap the Quiz Backend Operator project using Rust and `kube-rs`.",
+        "details": "In `operators/quiz-backend-operator`, initialize a new Rust project. Add dependencies for `kube-rs` and Helm integration if needed. Set up `main.rs` to watch `QuizBackend`, `ChromaDB`, and `QuizPluginBinding` resources.",
+        "testStrategy": "Compile the initial operator code successfully. The operator should start and connect to the Kubernetes API.",
+        "priority": "medium",
+        "dependencies": [
+          1
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 17,
+        "title": "Quiz Operator Helm Integration",
+        "description": "Implement logic in the Quiz Backend Operator to deploy the quiz-backend service and ChromaDB using their respective Helm charts.",
+        "details": "When a `QuizBackend` or `ChromaDB` CR is created, the operator will use a Rust Helm client library to install or upgrade the corresponding Helm chart. The values for the Helm release will be derived from the CR's spec.",
+        "testStrategy": "Create a `QuizBackend` CR. Verify the operator deploys the quiz service via Helm. Create a `ChromaDB` CR. Verify the operator deploys ChromaDB. Check `helm list` to see the releases.",
+        "priority": "medium",
+        "dependencies": [
+          15,
+          16
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 18,
+        "title": "Implement `QuizPluginBinding` Logic",
+        "description": "Implement the `QuizPluginBinding` logic, which connects a Moodle instance to a deployed quiz backend.",
+        "details": "When a `QuizPluginBinding` is created, the Quiz Backend Operator will find the target `QuizBackend` service endpoint and the target `MoodleSite`. It will then update the Moodle `Deployment` (or a `ConfigMap`/`Secret`) with the necessary environment variables to connect to the quiz service.",
+        "testStrategy": "Deploy a Moodle instance and a quiz backend. Create a `QuizPluginBinding` CR linking them. Inspect the Moodle pods and verify they have been updated with the correct environment variables for the quiz service endpoint.",
+        "priority": "medium",
+        "dependencies": [
+          6,
+          17
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 19,
+        "title": "Integrate OpenTelemetry Exporters",
+        "description": "Integrate OpenTelemetry exporters into the Moodle Docker image and all Rust-based operators for comprehensive observability.",
+        "details": "For Moodle, install and configure the OpenTelemetry PHP extension. For the Rust operators, add the `opentelemetry` and `tracing-opentelemetry` crates. Configure all components to export traces and metrics to a configurable OpenTelemetry Collector endpoint.",
+        "testStrategy": "Deploy the stack with an OpenTelemetry Collector. Perform actions in Moodle and with the operators. Verify that traces and metrics appear in the collector's logs or a connected backend like Jaeger or Prometheus.",
+        "priority": "medium",
+        "dependencies": [
+          4,
+          6,
+          11,
+          16
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 20,
+        "title": "Deploy `kube-prometheus-stack`",
+        "description": "Deploy the `kube-prometheus-stack` to provide Prometheus for metrics collection and Grafana for visualization.",
+        "details": "Add a Helm chart dependency or manifests to the project to deploy `kube-prometheus-stack`. Configure Prometheus to scrape metrics from the OpenTelemetry Collector, the Moodle pods, and the operators.",
+        "testStrategy": "Deploy the stack. Access the Prometheus UI and verify that targets for the operators and Moodle are present and healthy. Check that metrics are being collected.",
+        "priority": "medium",
+        "dependencies": [
+          19
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 21,
+        "title": "Create Default Grafana Dashboards",
+        "description": "Create pre-configured Grafana dashboards for monitoring Moodle application performance, operator health, and resource usage.",
+        "details": "Develop JSON dashboard models for Grafana. One dashboard should focus on Moodle metrics (e.g., page load times, DB queries, user sessions). Another should monitor the health of the operators (e.g., reconciliation loops, errors). Dashboards should be provisioned automatically via `ConfigMaps`.",
+        "testStrategy": "Deploy the stack. Access the Grafana UI and verify that the custom dashboards are available. Check that the panels are populated with data from Prometheus.",
+        "priority": "medium",
+        "dependencies": [
+          20
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 22,
+        "title": "Setup Rust-PHP Extension Kit (`ext-php-rs`)",
+        "description": "Create a starter kit and documentation for building high-performance Moodle plugins using Rust and the `ext-php-rs` library.",
+        "details": "In the `plugins/` directory, create a template project (`rust-php-plugin-template`). This template will include a `Cargo.toml` with `ext-php-rs`, a `build.rs` script, and example Rust code that exposes a function to PHP. Document the build process and how to integrate the resulting `.so` file into the Moodle Docker image.",
+        "testStrategy": "Follow the documentation to build the template plugin. Add the compiled extension to the local Docker Compose Moodle setup. Create a small PHP script within Moodle to call the Rust function and verify it returns the expected result.",
+        "priority": "medium",
+        "dependencies": [
+          2
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Create Initial Directory Structure for `rust-php-plugin-template`",
+            "description": "Set up the basic folder layout for the new Moodle plugin template within the `plugins/` directory. This structure will house both the Rust source code and the Moodle PHP files.",
+            "dependencies": [],
+            "details": "In the Moodle `plugins/` directory, create a new directory named `rust-php-plugin-template`. This will serve as the root of our template project.",
+            "status": "pending",
+            "testStrategy": "Verify that the `plugins/rust-php-plugin-template` directory exists in the project structure."
+          },
+          {
+            "id": 2,
+            "title": "Initialize Rust Library Project with Cargo",
+            "description": "Use `cargo init` to create a new Rust library project inside the template directory. This will generate the `Cargo.toml` manifest and a basic `src/lib.rs` file.",
+            "dependencies": [],
+            "details": "Navigate into the `plugins/rust-php-plugin-template` directory and run the command `cargo init --lib`. This command initializes a new Rust project configured as a library.",
+            "status": "pending",
+            "testStrategy": "Check for the existence of `plugins/rust-php-plugin-template/Cargo.toml` and `plugins/rust-php-plugin-template/src/lib.rs`."
+          },
+          {
+            "id": 3,
+            "title": "Configure `Cargo.toml` for PHP Extension",
+            "description": "Modify the generated `Cargo.toml` to include the `ext-php-rs` dependency and configure the crate type to be a dynamic system library (`cdylib`), which is required for creating a `.so` file.",
+            "dependencies": [],
+            "details": "Add `ext-php-rs = \"0.11.0\"` under the `[dependencies]` section. Add a new `[lib]` section and set `crate-type = [\"cdylib\"]` to instruct the compiler to produce a C-compatible dynamic library.",
+            "status": "pending",
+            "testStrategy": "Run `cargo check` within the project directory to ensure the manifest is valid and dependencies can be resolved."
+          },
+          {
+            "id": 4,
+            "title": "Implement `build.rs` Script for `ext-php-rs`",
+            "description": "Create a `build.rs` file in the project root to configure the `ext-php-rs` build process, which handles the generation of PHP extension bindings.",
+            "dependencies": [],
+            "details": "Create a file named `build.rs` in the `plugins/rust-php-plugin-template` directory. Add the following content: `fn main() { ext_php_rs::build::build().unwrap(); }`. This script is executed by Cargo during the build.",
+            "status": "pending",
+            "testStrategy": "The success of this step will be validated during the first compilation in a later task."
+          },
+          {
+            "id": 5,
+            "title": "Implement a Sample Rust Function to Expose to PHP",
+            "description": "In `src/lib.rs`, write a simple Rust function that adds two numbers. This function will be exposed to the PHP runtime using macros provided by `ext-php-rs`.",
+            "dependencies": [],
+            "details": "Replace the content of `src/lib.rs` with an example function like `#[php_function] pub fn rust_add(a: i64, b: i64) -> i64 { a + b }`. Also, add the `#[php_module]` macro at the top of the file to register the module with PHP.",
+            "status": "pending",
+            "testStrategy": "Run `cargo build` to ensure the Rust code compiles successfully without errors."
+          },
+          {
+            "id": 6,
+            "title": "Create Moodle Plugin PHP Files (`version.php`, `lib.php`)",
+            "description": "Create the necessary PHP files for a basic Moodle local plugin that will be used to call the Rust function. This includes `version.php` for Moodle to recognize the plugin.",
+            "dependencies": [],
+            "details": "In `plugins/rust-php-plugin-template`, create a `version.php` file with standard Moodle plugin metadata (e.g., `$plugin->component`, `$plugin->version`). Create a `lib.php` or a test page (e.g., `index.php`) that checks `function_exists('rust_add')` and calls it.",
+            "status": "pending",
+            "testStrategy": "After installation in Moodle, check the Site Administration > Plugins > Plugin overview page to see if the new plugin is recognized."
+          },
+          {
+            "id": 7,
+            "title": "Document the Manual Build Process in `README.md`",
+            "description": "Create a `README.md` file in the template's root directory explaining how a developer can manually compile the Rust code into a shared object (`.so`) file.",
+            "dependencies": [],
+            "details": "The `README.md` should list prerequisites (Rust toolchain, `libclang-dev`). It must include the command `cargo build --release` and explain that the output will be in `target/release/lib<project_name>.so`. It should also explain how to manually copy this file to the PHP extensions directory and enable it via a `.ini` file.",
+            "status": "pending",
+            "testStrategy": "Have a peer review the `README.md` for clarity and accuracy of the build steps."
+          },
+          {
+            "id": 8,
+            "title": "Modify Moodle Dockerfile to Install Rust Build Environment",
+            "description": "Create or modify a `Dockerfile` for the Moodle environment to include the Rust toolchain and necessary system dependencies required for compiling the extension.",
+            "dependencies": [],
+            "details": "In the `Dockerfile`, add `RUN` commands to install `rustup` and set the default Rust toolchain. Use the package manager (e.g., `apt-get`) to install `build-essential`, `clang`, and `libclang-dev`.",
+            "status": "pending",
+            "testStrategy": "Build the Docker image using `docker build`. The build should complete without errors related to the installation of Rust or its dependencies."
+          },
+          {
+            "id": 9,
+            "title": "Automate Extension Build and Installation in Docker",
+            "description": "Extend the `Dockerfile` to automatically compile the Rust plugin during the image build process and copy the resulting `.so` file to the correct PHP extensions directory.",
+            "dependencies": [],
+            "details": "Add a `COPY` command to bring the `plugins/rust-php-plugin-template` source code into the image. Add a `RUN` command to execute `cargo build --release` within that directory. Follow with `RUN` commands to copy the generated `.so` file to the PHP extension path and create a corresponding `.ini` file (e.g., `echo \"extension=<project_name>.so\" > /path/to/php/conf.d/rust-plugin.ini`).",
+            "status": "pending",
+            "testStrategy": "After the image is built, run a container and execute `php -m` to verify the Rust extension is listed in the output."
+          },
+          {
+            "id": 10,
+            "title": "Document Docker-based Workflow and Verification",
+            "description": "Update the `README.md` to explain the complete, automated workflow using Docker. This includes building the image, running the container, and verifying the integration within Moodle.",
+            "dependencies": [],
+            "details": "Add a section to `README.md` with the exact `docker build` and `docker run` commands. Provide instructions on how to access the Moodle instance and navigate to the test page created in a previous step to see the output of the Rust function, confirming the end-to-end setup works.",
+            "status": "pending",
+            "testStrategy": "A new developer should be able to follow the `README.md` instructions to successfully build the image, run Moodle, and see the Rust function's output on the test page."
+          }
+        ]
+      },
+      {
+        "id": 23,
+        "title": "Implement `gradebook_fastpath` Plugin",
+        "description": "Develop the `gradebook_fastpath` Moodle plugin, a PHP extension written in Rust to optimize gradebook calculations.",
+        "details": "Using the Rust-PHP kit, implement a Rust function that accepts a large dataset representing a gradebook (e.g., as a JSON string or serialized array) and performs complex calculations efficiently. Expose this function to PHP. The Moodle plugin part will be a lightweight PHP wrapper that calls this Rust function.",
+        "testStrategy": "Create unit tests in Rust for the calculation logic. Create an integration test in PHP that calls the extension with sample data and asserts the correctness and performance of the result compared to a native PHP implementation.",
+        "priority": "medium",
+        "dependencies": [
+          22
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 24,
+        "title": "Implement `plagiarism_detector` Plugin",
+        "description": "Develop the `plagiarism_detector` Moodle plugin using Rust for the core text comparison logic.",
+        "details": "Using the Rust-PHP kit, create a Rust function that implements a text similarity algorithm (e.g., Jaccard index or Levenshtein distance). This function will be called by a Moodle plagiarism plugin to compare student submissions against each other or a corpus of documents.",
+        "testStrategy": "Unit test the Rust similarity algorithm with known inputs and outputs. In Moodle, create two test submissions with a known degree of similarity and run the plagiarism check. Verify that the plugin reports a score consistent with the expected result.",
+        "priority": "low",
+        "dependencies": [
+          22
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 25,
+        "title": "WASM Widget Pack SDK Setup",
+        "description": "Create a starter kit for building Moodle front-end widgets using WebAssembly (WASM), Leptos, Vite, Tailwind CSS, and DaisyUI.",
+        "details": "In the `plugins/` directory, create a template project (`wasm-widget-template`). This template will include a Rust project using Leptos, a `package.json` configured with Vite for building, and `tailwind.config.js` with DaisyUI. Document the process of building the WASM/JS/CSS assets and integrating them into a Moodle theme or plugin.",
+        "testStrategy": "Build the template project. Verify that it produces optimized WASM, JS, and CSS files. Create a simple Moodle plugin that includes these assets and renders the sample Leptos component on a page. The component should be interactive.",
         "priority": "medium",
         "dependencies": [
           2
@@ -350,81 +806,38 @@
         "subtasks": []
       },
       {
-        "id": 15,
-        "title": "Implement Roo CLI Tool",
-        "description": "Create the roo CLI tool for routing events to MCP servers and AI automation",
-        "details": "Build tools/roo/ CLI in Rust with: YAML configuration parsing, HTTP client for MCP communication, event routing logic, shell command execution, GitHub API integration for PR comments. Include roo.yaml template with common rules (test failures, changelog generation, code review).",
-        "testStrategy": "Roo CLI executes commands correctly, routes to appropriate MCP servers, integrates with GitHub webhooks, configuration validation works",
+        "id": 26,
+        "title": "Implement WASM Quiz Timer Widget",
+        "description": "Develop an interactive quiz timer widget using the WASM widget pack.",
+        "details": "Using the Leptos-based SDK, create a component that displays a countdown timer. The timer's duration should be configurable via HTML attributes. The component should be self-contained and provide a simple interface for starting, pausing, and stopping.",
+        "testStrategy": "Unit test the timer logic in Rust. Manually test the component in a browser to ensure it displays correctly and the timer functions as expected. Verify it works when embedded into a Moodle quiz page.",
         "priority": "medium",
         "dependencies": [
-          14
+          25
         ],
         "status": "pending",
         "subtasks": []
       },
       {
-        "id": 16,
-        "title": "Integrate AI-Powered CI Hooks",
-        "description": "Add AI automation to CI pipeline for code review, changelog generation, and test failure analysis",
-        "details": "Extend GitHub Actions to trigger roo on: test failures (get AI suggestions), PR creation (automated review), release preparation (changelog generation). Configure webhook endpoints, secure token handling, rate limiting. Add fallback mechanisms when AI services are unavailable.",
-        "testStrategy": "AI hooks trigger correctly on CI events, suggestions are relevant and helpful, fallbacks work when services are down",
+        "id": 27,
+        "title": "Implement Headless SPA Mode",
+        "description": "Implement the headless SPA mode, allowing Moodle to serve a separate single-page application for the front-end.",
+        "details": "The Moodle Operator will, when `headless.enabled` is true in the `MoodleSite` CR, deploy a second `Deployment` containing the SPA (e.g., a static Nginx server). It will also configure the Moodle `Ingress` to route API calls (`/webservice/*`) to the Moodle backend and all other traffic to the SPA front-end.",
+        "testStrategy": "Create a `MoodleSite` with headless mode enabled. Verify that two deployments (Moodle backend, SPA frontend) are created. Access the domain and confirm the SPA loads. Test that an API call to a Moodle web service is correctly routed to the backend.",
         "priority": "low",
         "dependencies": [
-          15,
-          3
-        ],
-        "status": "pending",
-        "subtasks": []
-      },
-      {
-        "id": 17,
-        "title": "Implement Rolling Upgrade Automation",
-        "description": "Add automated rolling upgrade capabilities to the Kubernetes operator",
-        "details": "Extend operator to handle UpgradePlan CRD: blue-green deployments, canary releases, automatic rollback on failure, health checks during upgrades. Implement upgrade strategies (immediate, scheduled, manual approval). Add rollback annotation support for emergency situations.",
-        "testStrategy": "Upgrades complete successfully without downtime, rollbacks work correctly, health checks prevent bad deployments, upgrade status is accurately reported",
-        "priority": "medium",
-        "dependencies": [
-          7,
-          6
-        ],
-        "status": "pending",
-        "subtasks": []
-      },
-      {
-        "id": 18,
-        "title": "Add Terraform Drift Detection",
-        "description": "Implement drift detection between Terraform state and actual cluster resources",
-        "details": "Create tools/drift-detector/ that: compares Terraform state with Kubernetes resources, detects configuration drift, reports discrepancies via Prometheus metrics, optionally auto-corrects minor drifts. Run as CronJob in cluster or external CI job.",
-        "testStrategy": "Drift detection identifies real configuration differences, false positives are minimized, auto-correction works safely for approved changes",
-        "priority": "low",
-        "dependencies": [
-          4,
           7
         ],
         "status": "pending",
         "subtasks": []
       },
       {
-        "id": 19,
-        "title": "Implement Multi-Tenant Namespace Isolation",
-        "description": "Add support for multi-tenant deployments with proper namespace isolation",
-        "details": "Extend operator to support: per-tenant namespaces, RBAC isolation, separate PVCs for moodledata, network policies for tenant separation. Update Terraform module to generate multiple MoodleSite CRs. Add tenant management CLI commands to roo.",
-        "testStrategy": "Tenants are properly isolated, resources don't leak between namespaces, RBAC prevents cross-tenant access, scaling works correctly",
+        "id": 28,
+        "title": "`roo` VS Code Integration",
+        "description": "Develop and document `roo` chat rules for VS Code to automate common development tasks like test generation, release note creation, and code improvements.",
+        "details": "Create a set of `roo` rules (`.roo/`) in the repository. For test generation, create a rule that takes a Rust function as input and generates a skeleton unit test. For release notes, create a rule that summarizes git commits. Integrate with `roo` MCPs like `Phi-3` for generation and `Filesystem` for writing files.",
+        "testStrategy": "Execute the `roo` rules from within VS Code on sample code. Verify that the generated tests compile and that the release notes are sensible. Document the usage for other developers on the team.",
         "priority": "low",
-        "dependencies": [
-          7,
-          15
-        ],
-        "status": "pending",
-        "subtasks": []
-      },
-      {
-        "id": 20,
-        "title": "Create Comprehensive Documentation",
-        "description": "Develop complete documentation for installation, configuration, and usage",
-        "details": "Create docs/ with: architecture overview, installation guide, configuration reference, plugin development guide, troubleshooting, API reference. Use mdBook or similar for static site generation. Include diagrams, code examples, and video tutorials where helpful.",
-        "testStrategy": "Documentation is accurate and up-to-date, examples work correctly, users can successfully follow guides",
-        "priority": "medium",
         "dependencies": [
           1
         ],
@@ -432,79 +845,37 @@
         "subtasks": []
       },
       {
-        "id": 21,
-        "title": "Setup Performance Benchmarking Suite",
-        "description": "Create automated performance testing and benchmarking for Rust components",
-        "details": "Build benchmarks/ with: Rust native plugin performance tests, WASM widget benchmarks, operator reconciliation timing, end-to-end deployment performance. Use criterion.rs for Rust benchmarks, integrate with CI for regression detection.",
-        "testStrategy": "Benchmarks run consistently, performance regressions are detected, results are comparable across runs",
+        "id": 29,
+        "title": "Implement OAuth Configuration in Operator",
+        "description": "Extend the Moodle Operator to configure Moodle's built-in OAuth 2 authentication based on the `MoodleSite` CR.",
+        "details": "Add logic to the operator's `reconcile` function. When `auth.oauth.enabled` is true, the operator will run a one-time `Job` after the initial Moodle install. This job will use Moodle's command-line tool (`moosh` or `php admin/cli/`) to configure the OAuth 2 identity provider with the `issuer` URL and other details from the CR.",
+        "testStrategy": "Set up a mock OAuth provider. Create a `MoodleSite` CR with OAuth configuration enabled. Verify the operator runs the configuration job. Attempt to log into the Moodle instance via the OAuth provider.",
+        "priority": "medium",
+        "dependencies": [
+          6
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 30,
+        "title": "Create Terraform Module for Cloud Deployment",
+        "description": "Create a Terraform module for automated deployment of the entire Moodle operator ecosystem to a cloud Kubernetes service (e.g., EKS, GKE, AKS).",
+        "details": "Develop a Terraform module that provisions a Kubernetes cluster (optional) and installs the Moodle Operator, Backup Operator, and Quiz Backend Operator CRDs and deployments. The module should also install dependencies like an ingress controller and `cert-manager`.",
+        "testStrategy": "Run `terraform apply` with the module targeting a cloud provider. Verify that all operator pods are running and ready. Create a `MoodleSite` CR on the new cluster and confirm that a Moodle instance is deployed successfully.",
         "priority": "low",
         "dependencies": [
-          9,
-          13
-        ],
-        "status": "pending",
-        "subtasks": []
-      },
-      {
-        "id": 22,
-        "title": "Implement Security Scanning and Compliance",
-        "description": "Add security scanning and compliance checks to the CI/CD pipeline",
-        "details": "Integrate security tools: cargo audit for Rust dependencies, composer audit for PHP, Trivy for container scanning, Checkov for Terraform. Add SAST scanning with CodeQL. Create security policy documentation and vulnerability response procedures.",
-        "testStrategy": "Security scans complete without critical issues, vulnerabilities are properly reported, compliance checks pass",
-        "priority": "medium",
-        "dependencies": [
-          3
-        ],
-        "status": "pending",
-        "subtasks": []
-      },
-      {
-        "id": 23,
-        "title": "Create Integration Test Suite",
-        "description": "Develop comprehensive end-to-end integration tests for the entire platform",
-        "details": "Build tests/ with: full deployment tests (Terraform + Helm + Operator), plugin integration tests, upgrade/rollback scenarios, backup/restore validation, multi-tenant scenarios. Use testcontainers for isolated testing, kind for Kubernetes testing.",
-        "testStrategy": "Integration tests cover all major workflows, tests are reliable and fast, CI can run tests automatically",
-        "priority": "medium",
-        "dependencies": [
-          7,
+          5,
           11,
-          17
-        ],
-        "status": "pending",
-        "subtasks": []
-      },
-      {
-        "id": 24,
-        "title": "Setup Release Automation",
-        "description": "Implement automated release process with semantic versioning and changelog generation",
-        "details": "Create release workflow that: uses conventional commits for version bumping, generates changelogs automatically, builds and publishes container images, creates GitHub releases, updates Helm chart versions. Use release-please or similar tooling.",
-        "testStrategy": "Releases are created automatically, versions are correct, artifacts are published successfully, changelogs are accurate",
-        "priority": "low",
-        "dependencies": [
-          16,
-          3
-        ],
-        "status": "pending",
-        "subtasks": []
-      },
-      {
-        "id": 25,
-        "title": "Optimize Resource Usage and Scaling",
-        "description": "Implement resource optimization and horizontal scaling capabilities",
-        "details": "Add: HorizontalPodAutoscaler for Moodle pods, VerticalPodAutoscaler recommendations, resource requests/limits optimization, node affinity rules for efficient scheduling. Implement cluster autoscaling integration. Add cost optimization recommendations.",
-        "testStrategy": "Scaling works correctly under load, resource usage is optimized, cost recommendations are accurate, performance is maintained during scaling events",
-        "priority": "low",
-        "dependencies": [
-          7,
-          10
+          16
         ],
         "status": "pending",
         "subtasks": []
       }
     ],
     "metadata": {
-      "created": "2025-06-29T09:43:45.692Z",
-      "updated": "2025-06-29T09:43:45.693Z",
+      "created": "2025-06-29T13:02:26.593Z",
+      "updated": "2025-06-29T13:35:36.350Z",
       "description": "Tasks for main context"
     }
   }
