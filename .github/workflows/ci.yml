@@ -10,5 +10,5 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - name: Placeholder Step
-      run: echo "Hello from CI"
+    - uses: actions/checkout@v4
+    - uses: actions-rust-lang/setup-rust-toolchain@v1
