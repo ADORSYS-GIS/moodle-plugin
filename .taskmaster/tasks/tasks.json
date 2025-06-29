@@ -17,7 +17,7 @@
             "description": "Create the new monorepo on the Git hosting platform (e.g., GitHub) and clone it locally. Add a root README.md file with a basic project description.",
             "dependencies": [],
             "details": "Initialize a new Git repository. Create a `README.md` file at the root level. The README should briefly explain the purpose of the monorepo and its intended contents. Commit and push this initial file.",
-            "status": "in-progress",
+            "status": "done",
             "testStrategy": "Verify that the repository is accessible and the `README.md` file is present on the `main` branch."
           },
           {
@@ -28,7 +28,7 @@
               1
             ],
             "details": "In the root of the repository, create the following directories: `operators/`, `charts/`, `plugins/`, `docs/`, and `.github/workflows`. Add a `.gitkeep` file to each empty directory to ensure they are committed to Git.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Run `ls -la` in the project root to confirm that all specified directories exist and have been committed to the repository."
           },
           {
@@ -39,7 +39,7 @@
               2
             ],
             "details": "Navigate to the `operators/` directory and run `cargo new --bin operator-placeholder`. This will generate a simple 'Hello, world!' Rust project that can be used for initial build and lint checks.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Navigate to `operators/operator-placeholder` and run `cargo run`. It should compile and print 'Hello, world!'."
           },
           {
@@ -50,7 +50,7 @@
               3
             ],
             "details": "Create a `Cargo.toml` file in the project root. Define a `[workspace]` section and add the placeholder operator as a member: `members = [\"operators/operator-placeholder\"]`. This allows running `cargo` commands from the root for all member crates.",
-            "status": "pending",
+            "status": "in-progress",
             "testStrategy": "From the project root, run `cargo check --workspace`. The command should successfully check the `operator-placeholder` crate without errors."
           },
           {
@@ -875,7 +875,7 @@
     ],
     "metadata": {
       "created": "2025-06-29T13:02:26.593Z",
-      "updated": "2025-06-29T13:35:36.350Z",
+      "updated": "2025-06-29T13:39:40.323Z",
       "description": "Tasks for main context"
     }
   }
