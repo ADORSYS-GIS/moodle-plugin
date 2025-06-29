@@ -16,3 +16,5 @@ jobs:
       run: cargo fmt --all -- --check
     - name: Run Clippy
       run: cargo clippy --workspace -- -D warnings
+    - name: Build project
+      run: cargo build --workspace --verbose
