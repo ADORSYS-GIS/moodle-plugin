@@ -1,176 +1,197 @@
 <context>
-# Overview  
-## What it is
-A single mono-repository that houses everything required to run a modern, high-performance Moodle deployment—plugins (PHP, Rust/native, and Rust→WASM), IaC for cloud and Kubernetes, and a custom Rust-based Kubernetes operator—managed and augmented by lightweight AI tooling via the Model-Context-Protocol (MCP).
+# Overview
 
-### Problem it solves
-- Fragmentation – today, Moodle plugins, infrastructure code, and deployment scripts live in separate silos that drift out of sync.
-- Performance & safety – critical Moodle logic written in PHP alone can be slow and memory-unsafe C extensions are hard to maintain.
-- Day-2 operations – upgrades, backups, and scaling require manual Helm changes or fragile bash scripts.
+A cloud-native, operator-driven Moodle 5 distribution designed to simplify deployment and management of fully isolated Moodle instances. This solution integrates Rust-powered performance enhancements, AI-driven quiz creation, optional headless SPA interfaces, and automated backups, supported by comprehensive observability. It's tailored for DevOps teams, universities, schools, and training institutions seeking a robust, high-performance, and managed Moodle environment without having to assemble individual PHP, infrastructure, and AI tools.
 
-### Who it’s for
-- DevOps-oriented Moodle admins running multi-tenant or high-traffic sites.
-- Moodle plugin developers who want shared CI, versioning, and AI-assisted workflows.
-- Ed-tech SaaS companies needing repeatable, cloud-agnostic deployments.
+# Core Features
 
-Why it’s valuable
-- "Single-commit" releases: code, charts, and Terraform move together.
-- Rust extensions deliver 3-10× speed-ups with memory safety.
-- The operator gives push-button upgrades and automated backups.
-- AI agents (via MCP) shorten feedback loops—code review, changelog drafting, release-note generation.
+## Moodle Operator
 
-# Core Features  
-| # | Feature                           | What it does                                                                           | Why it matters                                                    | How it works (high-level)                                                                  |
-| - | --------------------------------- | -------------------------------------------------------------------------------------- | ----------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
-| 1 | Rust–PHP native plugins       | Speeds up CPU-heavy Moodle tasks (e.g., gradebook calculations).                       | Removes PHP bottlenecks without C extension headaches.            | `ext-php-rs` generates safe FFI; compiled `.so` loaded by PHP 8.3.                         |
-| 2 | Rust → WASM front-end add-ons | Interactive UI widgets (timers, charts) that share logic with backend.                 | Fewer bugs, richer UX, code reuse.                                | `leptos` or `yew`, bundled with Vite; shipped as AMD modules Moodle can load.              |
-| 3 | Terraform module              | One-command provisioning of Moodle + DB + object storage on any cloud.                 | Consistent staging/prod environments, drift detection.            | Root module + env overlays; Terratest ensures plan stability.                              |
-| 4 | Helm chart overlay            | Opinionated chart on top of Bitnami’s base with sane defaults (GPU, cron, Prometheus). | Simplifies K8s install; integrates with ArgoCD/GitOps.            | Values YAML + Kustomize patch layer.                                                       |
-| 5 | Rust Kubernetes operator      | Automates upgrades, backups, blue-green rollouts, and restores.                        | Eliminates manual chart tweaks; enforces best-practice day-2 ops. | `kube-rs` watches CRDs, triggers Helm actions, reports via Prometheus.                     |
-| 6 | MCP-powered AI tooling        | LLM agents generate docs, review PRs, run shell/Stagehand tasks.                       | "Force multiplier" for a small team; faster onboarding.           | `roo` rules route events to local/remote MCP servers (Phi-3, Stagehand, Filesystem, etc.). |
+* Automates Moodle deployment with Kubernetes resources (Deployment, Service, Ingress, PVC).
+* Requires only a database and cache configuration via Kubernetes secrets, leveraging external management like CloudNativePG.
+* Flexible CRD configuration:
+
+  * Authentication: OAuth configuration (enabled, issuer).
+  * Headless SPA option: Enablement and mode (full or admin-only).
+  * Plugin synchronization: Modes (init container or sidecar) and plugin manifest URLs.
+
+## Backup Operator
+
+* Automates Moodle backups to S3-compatible storage using restic, triggered by MoodleBackup CRDs.
+
+## Quiz Backend Operator
+
+* Manages deployment and lifecycle of quiz-backend service and ChromaDB via Helm charts.
+* Connects seamlessly with Moodle through QuizPluginBinding CRD.
+
+## Rust-PHP Extension Kit
+
+* Facilitates high-performance PHP extensions via ext-php-rs.
+* Includes exemplary plugins like plagiarism detection and gradebook optimization.
+
+## WASM Widget Pack
+
+* Front-end components built using Leptos, Vite, Tailwind, and DaisyUI.
+* Provides widgets like timers and quiz review interfaces with progressive enhancement.
+
+## Plugin Synchronization (Init Container or Sidecar)
+
+* Dynamically fetches Moodle plugins (themes, AI models, quiz modules).
+* Supports initial boot fetching or continuous polling for live updates.
+
+## Observability Pack
+
+* Integrated OpenTelemetry exporters for PHP and Rust.
+* Includes dashboards via Grafana and Prometheus (kube-prometheus-stack).
+
+## roo VS Code Integration
+
+* Provides automated generation of tests, release notes, and code improvements directly within VS Code via roo chat rules.
 
 # User Experience
-Personas
-- Dev-Ops Engineer "Ange" – owns uptime, wants repeatable infra.
-- Plugin Developer "Christian" – writes PHP/Rust code, values fast CI feedback and AI pair-programming.
-- Teacher/Admin "Favour" – non-technical, just wants new quiz widget working (indirect beneficiary).
 
-Key User Flows
-- New environment spin-up: terraform apply → resources created → Helm release auto-rolled by operator → Moodle up.
-- Deploying a new plugin: Push code → GitHub Action builds, tests, and publishes Docker image → operator detects new tag → zero-downtime rollout.
-- Emergency rollback: kubectl annotate moodle.myorg/tenant-1 rollback=tag → operator swaps deployment.
-- AI-assisted code review: PR fails tests → roo rule triggers Phi-3/Gemma suggestion → reviewer gets diff proposal.
+## Personas
 
-UI/UX Considerations
-- Admin dashboard (Grafana) surfaces operator status, backup history.
-- Moodle UI loads WASM widgets progressively; fallbacks for no-WASM browsers.
-- Dev onboarding via VS Code dev-container with pre-configured MCP/roo CLI.
+* Christian (DevOps Engineer): Responsible for deploying and maintaining Moodle instances. She prioritizes reliability, ease of updates, observability, and rapid response to issues. Her primary interaction involves managing Kubernetes clusters, monitoring performance metrics, and ensuring uptime and security.
+* Favour (Plugin Developer): Focuses on creating and maintaining Moodle plugins, leveraging Rust and PHP for backend enhancements and WASM for interactive front-end elements. His workflow involves coding, continuous integration testing, debugging, and ensuring seamless plugin integration.
+* Ange (Teacher/Student): The direct end-user, engaging daily with the Moodle interface. Clara values responsiveness, intuitive navigation, and reliable functionality. Her typical activities include creating or completing assignments, quizzes, and accessing course materials.
+* External Institutions (Administrators): Institutions like universities and schools requiring fully managed Moodle deployments. They focus on stable, hassle-free operations with minimal direct intervention, typically interacting with higher-level configuration or analytics dashboards.
+
+## Key User Flows
+
+### Cluster Deployment
+
+* Aisha: Initiates deployment by applying MoodleSite CRDs.
+* Operator reconciles the CRD, creating Kubernetes resources.
+* Moodle becomes accessible via configured ingress, ready for immediate use.
+
+### Local Development
+
+* Ben: Uses Docker Compose to spin up local Moodle and associated services.
+* Codes plugins iteratively, leveraging roo integration for automated tests and debugging assistance.
+* Validates plugin functionality quickly in a controlled environment before committing changes.
+
+### AI Quiz Generation
+
+* Clara (Teacher): Adds lesson content into Moodle.
+* Content is automatically processed by the quiz backend and stored in ChromaDB.
+* Clara (Student): Initiates a quiz, and dynamically generated questions based on stored lesson vectors are served.
+
+### SPA Mode Activation
+
+* Aisha: Sets the headless SPA option through the MoodleSite CRD configuration.
+* Operator deploys Moodle with either a full front-end SPA or an admin-only interface based on the configuration.
+* Users interact with an optimized UI, offering enhanced responsiveness and modern interactions.
+
+## UI/UX Considerations
+
+* Consistency and Responsiveness: Employing Tailwind CSS and DaisyUI ensures consistent design language and a responsive layout across devices and resolutions.
+* Robustness and Accessibility: WASM widgets include fallback mechanisms to ensure functionality remains accessible, even when advanced browser capabilities are limited.
+* Developer Experience Enhancements: Features such as visible trace IDs in developer mode improve debugging and monitoring capabilities, helping developers quickly identify and resolve issues.
 </context>
 <PRD>
 # Technical Architecture
-### System Components
 
-```
-┌──────────────┐
-│  Users       │
-└──────┬───────┘
-       │
-┌──────▼───────┐
-│ Moodle PHP   │◄── Rust native plugins (.so)
-└──────┬───────┘
-       │ WASM widgets
-┌──────▼───────┐
-│ Browser      │
-└──────────────┘
-```
+## System Components
 
-* Kubernetes cluster (any distro 1.31+)
-* Rust operator (controller)
-* Postgres + Redis (Bitnami sub-charts)
-* Object storage (S3-compatible)
-* MCP servers (Docker pods)
+* Moodle Operator (Rust, kube-rs)
+* Backup Operator (Rust, kube-rs)
+* Quiz Backend Operator (Rust, kube-rs, Helm)
+* Database (CloudNativePG PostgreSQL)
+* Cache (Redis Sentinel)
+* Vector Database (ChromaDB)
+* Observability (Grafana, kube-prometheus-stack)
 
-### Data Models
+## Data Models (CRDs)
 
-* CRDs – `MoodleSite`, `Backup`, `UpgradePlan`.
-* Terraform state – remote backend (S3/OSS).
-* Plugin registry – OCI image tags with semantic version labels.
+* MoodleSite
+* MoodleBackup
+* QuizBackend
+* ChromaDB
+* QuizPluginBinding
 
-### APIs & Integrations
+## APIs & Integrations
 
-| API                    | Direction                          | Purpose                                 |
-| ---------------------- | ---------------------------------- | --------------------------------------- |
-| Kubernetes API         | operator ↔ cluster                 | Manage resources, emit events           |
-| Helm API               | operator → tillerless Helm-library | Chart reconciliations                   |
-| Moodle Web-service API | WASM widgets ↔ backend             | Fetch quiz status, grades               |
-| MCP HTTP               | roo ↔ servers                      | LLM chat, shell exec, Stagehand browser |
-| Grafana OTLP           | operator → Grafana Agent           | Metrics & traces                        |
+* Kubernetes API and Helm libraries
+* Moodle 5 Web-service APIs
+* roo MCP integrations (Phi-3, Gemma, Stagehand, Filesystem)
+* OAuth 2 Identity Providers
 
-### Infrastructure Requirements
+## Infrastructure Requirements
 
-* Cluster size: start 3 × 4 vCPU/8 GB worker nodes (dev).
-* Build runners: GitHub-hosted or self-hosted with Docker-in-Docker for multi-arch.
-* Persistent storage: RWX PVCs (e.g., EFS, NFS) for Moodledata.
+* Kubernetes (version ≥ 1.31), RWX StorageClass, ingress controller
+* S3-compatible backup storage
+* Optional GPU support for AI models
 
-# Development Roadmap  
-### Phase 0 – Project Scaffold
+# Development Roadmap
 
-* Mono-repo layout, dev-container, CI smoke test, linting.
+1. Foundation: Repository scaffolding, Docker Compose setup, continuous integration.
+2. Core Operator MVP: Moodle deployment using CRDs and external databases/caches.
+3. Plugin Management: Immutable image strategy with plugin-sync options.
+4. Quiz Backend: AI-powered backend services and Moodle integration.
+5. Observability: Integrating OpenTelemetry and Grafana monitoring.
+6. Backup Automation: Scheduled backups via Backup Operator.
+7. Enhanced UI: Headless SPA mode with modern UI components.
+8. Advanced Features: Rust-based plagiarism detection.
+9. Cloud Deployment Automation: Terraform module for rapid cloud deployments.
 
-### Phase 1 – Core Moodle Runtime
+# Logical Development Sequence
 
-* Fork Bitnami chart overlay, base Terraform module, minimal CRD (`MoodleSite`) with operator that just installs Helm.
+1. Docker Compose for local development.
+2. Basic Kubernetes operator for initial deployment.
+3. Scaffolding for tests and integration workflows.
+4. SDKs for Rust-PHP plugins and WASM widgets.
+5. Observability tooling integration.
+6. Backup mechanisms for data security.
+7. UI enhancements with headless SPA mode.
+8. Automated cloud deployment tooling.
 
-### Phase 2 – Plugin Foundations
+# Risks and Mitigations
 
-* PHP plugin template + unit-test framework.
-* Rust native plugin skeleton with ext-php-rs build chain.
+* Database Configuration Issues: Implement pre-flight connection tests within the operator.
+* Scaling ChromaDB: Initial single-node deployment, scale horizontally as needed.
+* Plugin Integrity: SHA-256 validation for all downloaded plugins.
+* Resource Collisions: Operator-enforced unique PVC names per deployment.
+* Resource Constraints for Local AI: Use resource-efficient LLMs by default, with configurable options.
 
-### Phase 3 – Observability & Backups
+# Plugin Catalogue
 
-* Grafana dashboards, Prometheus ServiceMonitor.
-* Operator backup/restore CRD + job.
+* Rust plugins: plagiarism\_detector, gradebook\_fastpath
+* Quiz services: quiz\_backend, quiz\_bank\_plugin
+* AI integration: ai\_models\_plugin
+* UI: theme\_minimal, wasm\_widgets\_pack
 
-### Phase 4 – Rust → WASM Widgets
+# Research & Specifications
 
-* Build pipeline (wasm-bindgen, vite).
-* Inject widget loader into Moodle theme.
+* Moodle 5 official PostgreSQL and Nginx documentation
+* ext-php-rs ABI compatibility
+* CloudNativePG and ChromaDB operator details
+* OpenTelemetry extensions for PHP
+* roo MCP server integrations
 
-### Phase 5 – AI/roo Tooling
+# Rust ↔ WASM / Front-end Integration
 
-* Ship `roo.yaml`, local Phi-3 + Stagehand + Filesystem servers in `docker-compose.dev.yml`.
-* Roo CI hooks (test fail, changelog summariser).
+* Document handling (PDFium/MuPDF)
+* Scientific visualizations (C/OpenGL Rust simulations)
+* Real-time media processing (FFmpeg/Tiny-WaveTrimmer)
+* In-browser algorithm execution via WASI
+* Browser-based data analytics with Polars
 
-### Phase 6 – Upgrade Automation
+# Rust ↔ PHP / Back-end Integration
 
-* Operator handles rolling upgrades, canary, rollback annotation.
-* Drift detection between Terraform & cluster.
+* High-performance microservices for chat and real-time communication (Axum/Actix)
+* PHP extension integration for intensive tasks like CSV parsing, encryption, LaTeX rendering
 
-### Phase 7 – Multi-tenant Enhancements
+# Admin-side Rust Tools
 
-* Namespace isolation, per-site PVC.
-* Terraform module generates tenant CRs automatically.
+* High-speed nightly backups with Rust zstd
+* NLP-enhanced tagging for forums
+* Efficient large-scale report generation
 
-Future phases can layer in: Ed-tech-specific plugins, GPU inference services, marketplace publishing.
+# Migration Roadmap
 
-# Logical Dependency Chain
-1. Bootstrap foundation – repo scaffolding, CI, dev-container (Phase 0).
-2. Provisioning baseline – Terraform + Helm overlay so a cluster can come up (Phase 1).
-3. Operator minimal – reconcile `MoodleSite` → Helm install (visible front end reachable).
-4. Plugin pipeline – PHP plugin + Rust native skeletons (Phase 2).
-5. Observability/backups – ensures safe experimentation (Phase 3).
-6. First WASM widget – user-visible improvement; validates front-end toolchain (Phase 4).
-7. AI tooling – speeds up all following PRs, so install early (Phase 5).
-8. Upgrade automation – prevents regressions as features grow (Phase 6).
-9. Multi-tenant & polish – only after single-tenant path solid.
-
-Each step is atomic, delivers something demo-able, and unlocks the next layer.
-
-# Risks and Mitigations  
-| Risk                            | Mitigation                                                                                      |
-| ------------------------------- | ----------------------------------------------------------------------------------------------- |
-| Rust-PHP ABI drift          | Lock PHP minor version in CI matrix; upstream watchlist.                                        |
-| Operator complexity         | Use `kube-rs` scaffolding, pair with community slack, add extensive e2e tests early.            |
-| Junior bandwidth            | Bake AI pair-programming + roo automations into every task; 20 % sprint capacity for learning.  |
-| MVP creep                   | Freeze Phase scope; anything extra becomes future-phase item.                                   |
-| Resource costs (local LLMs) | Prioritise 2-4 GB models (Phi-3 mini, Gemma 2B) for dev; only run large models in CI-on-demand. |
-
-# Appendix  
-### Research Highlights
-
-* Rust native extensions outperform Zend C by 1.7× in benchmarks while eliminating seg-fault risk.
-* Moodle 4.7 LTS officially supports PHP 8.3—matches ext-php-rs current stable.
-* Bitnami’s Moodle chart adopted by >600 GitHub repos; strong upstream activity.
-* kube-rs operator pattern reduces LoC by \~40 % vs. kubebuilder Go for similar CRDs.
-
-### Key Technical Specs
-
-| Spec                   | Value                                     |
-| ---------------------- | ----------------------------------------- |
-| Rust toolchain     | 1.79 (stable)                             |
-| Target WASM        | `wasm32-unknown-unknown`, optimised `-O2` |
-| Helm chart version | Bitnami Moodle 14.2.x                     |
-| Terraform          | HCL 2, state in S3/GCS with locking       |
-| MCP transport      | HTTP 1.1 JSON, 30 s default timeout       |
-| License            | GPL-3.0 + MIT (dual where possible)       |
+* Pilot: Integrate PDF viewer (WASM) and asynchronous CSV export service (Rust).
+* Expansion: Deploy computationally intensive question types (WASM) and Redis-backed Rust worker queue.
+* Optimization: Dynamic loading of WASM modules; Rust acceleration of core PHP tasks.
+* Security and Stability: Browser-side sandboxing (WASI) and secured Rust services with OAuth2 integration.
 </PRD>

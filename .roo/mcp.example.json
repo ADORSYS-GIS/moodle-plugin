@@ -1,0 +1,199 @@
+{
+  "mcpServers": {
+    "memory": {
+      "command": "docker",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "mcp/memory"
+      ],
+      "alwaysAllow": [
+        "create_entities",
+        "create_relations",
+        "add_observations",
+        "delete_entities",
+        "delete_observations",
+        "delete_relations",
+        "read_graph",
+        "search_nodes",
+        "open_nodes"
+      ],
+      "disabled": false
+    },
+    "fetch": {
+      "command": "docker",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "mcp/fetch"
+      ],
+      "alwaysAllow": [
+        "fetch"
+      ],
+      "disabled": false
+    },
+    "sequentialthinking": {
+      "command": "docker",
+      "args": [
+        "run",
+        "--rm",
+        "-i",
+        "mcp/sequentialthinking"
+      ],
+      "alwaysAllow": [
+        "sequentialthinking"
+      ],
+      "disabled": false
+    },
+    "github": {
+      "command": "docker",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "-e",
+        "GITHUB_PERSONAL_ACCESS_TOKEN",
+        "ghcr.io/github/github-mcp-server"
+      ],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "YOUR_GITHUB_PAT"
+      },
+      "alwaysAllow": [
+        "get_pull_request_reviews",
+        "get_pull_request_comments",
+        "search_users",
+        "search_repositories",
+        "search_issues",
+        "search_code",
+        "request_copilot_review",
+        "list_tags",
+        "list_secret_scanning_alerts",
+        "list_pull_requests",
+        "list_issues",
+        "list_commits",
+        "list_code_scanning_alerts",
+        "list_branches",
+        "get_tag",
+        "get_secret_scanning_alert",
+        "get_pull_request_status",
+        "get_pull_request_files",
+        "get_me",
+        "get_pull_request",
+        "get_issue_comments",
+        "get_issue",
+        "get_file_contents",
+        "get_commit",
+        "get_code_scanning_alert",
+        "add_issue_comment",
+        "add_pull_request_review_comment_to_pending_review",
+        "assign_copilot_to_issue",
+        "create_and_submit_pull_request_review",
+        "create_branch",
+        "create_issue",
+        "create_or_update_file",
+        "create_pending_pull_request_review",
+        "create_pull_request",
+        "create_repository",
+        "delete_file",
+        "delete_pending_pull_request_review",
+        "dismiss_notification",
+        "fork_repository",
+        "get_notification_details",
+        "get_pull_request_diff",
+        "list_notifications",
+        "manage_repository_notification_subscription",
+        "mark_all_notifications_read",
+        "merge_pull_request",
+        "push_files",
+        "submit_pending_pull_request_review",
+        "update_issue",
+        "update_pull_request",
+        "update_pull_request_branch"
+      ],
+      "disabled": false,
+      "timeout": 300
+    },
+    "context7": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@upstash/context7-mcp@latest"
+      ],
+      "alwaysAllow": [
+        "resolve-library-id",
+        "get-library-docs"
+      ],
+      "disabled": false
+    },
+    "brave-search": {
+      "command": "docker",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "-e",
+        "BRAVE_API_KEY",
+        "mcp/brave-search"
+      ],
+      "env": {
+        "BRAVE_API_KEY": "YOUR_BRAVE_AT"
+      },
+      "alwaysAllow": [
+        "brave_web_search",
+        "brave_local_search"
+      ],
+      "disabled": false
+    },
+    "taskmaster-ai": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "--package=task-master-ai",
+        "task-master-ai"
+      ],
+      "env": {
+        "OPENAI_BASE_URL": "https://ai.kivoyo.me/api",
+        "OPENAI_API_KEY": "YOUR_KIVOYO_SK"
+      },
+      "type": "stdio",
+      "alwaysAllow": [
+        "initialize_project",
+        "models",
+        "rules",
+        "parse_prd",
+        "analyze_project_complexity",
+        "expand_task",
+        "expand_all",
+        "get_tasks",
+        "get_task",
+        "next_task",
+        "complexity_report",
+        "set_task_status",
+        "generate",
+        "add_task",
+        "update_task",
+        "update",
+        "add_subtask",
+        "remove_task",
+        "update_subtask",
+        "remove_subtask",
+        "clear_subtasks",
+        "move_task",
+        "add_dependency",
+        "remove_dependency",
+        "validate_dependencies",
+        "fix_dependencies",
+        "list_tags",
+        "add_tag",
+        "research",
+        "copy_tag",
+        "rename_tag",
+        "use_tag",
+        "delete_tag"
+      ],
+      "timeout": 300
+    }
+  }
+}
