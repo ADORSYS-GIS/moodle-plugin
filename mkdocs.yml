@@ -57,21 +57,14 @@ plugins:
 
 nav:
   - Home: index.md
-  - Getting Started:
-    - Installation: getting-started/installation.md
-    - Configuration: getting-started/configuration.md
-  - User Guide:
-    - API Reference: user-guide/api-reference.md
-    - Examples: user-guide/examples.md
-  - Architecture:
-    - Overview: architecture/overview.md
-    - Components: architecture/components.md
-  - Deployment:
-    - Helm Chart: deployment/helm-chart.md
-    - Docker: deployment/docker.md
-  - Development:
-    - Contributing: development/contributing.md
-    - Testing: development/testing.md
-  - About:
-    - License: about/license.md
-    - Changelog: about/changelog.md
+  - Overview: overview.md
+  - Features: features.md
+  - What is Moodle: what-is-moodle.md
+  - Concepts:
+      - Architecture: concepts/01-architecture.md
+  - Guides:
+      - Moodle Operation: guides/01-moodle-operation.md
+      - Local Moodle with Docker: guides/02-local-moodle-with-docker.md
+      - Online Moodle with k8s: guides/03-online-moodle-with-k8s.md
+      - k8s Operator Model: guides/04-k8s-operator-model.md
+      - Moodle Optimisations with Rust: guides/05-moodle-optimisations-with-rust.md

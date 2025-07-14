@@ -1,19 +1,15 @@
 services:
   # https://github.com/bitnami/containers/tree/main/bitnami/moodle
-  moodle:
+  moodle-init:
     image: docker.io/bitnami/moodle:5.0
-    deploy:
+    deploy: &moodle_deploy
       resources:
         limits:
           cpus: "1"
           memory: 500M
-    ports:
-      - "8080:8080"
-      - "8443:8443"
-    environment:
-      PHP_DEFAULT_MEMORY_LIMIT: 400m
-      MOODLE_SKIP_BOOTSTRAP: true
-      ALLOW_EMPTY_PASSWORD: "no"
+    environment: &moodle_environment
+      PHP_DEFAULT_MEMORY_LIMIT: 500m
+      ALLOW_EMPTY_PASSWORD: yes
       MOODLE_EMAIL: admin@adorsys-gis.local
       MOODLE_USERNAME: adorsys-gis
       MOODLE_PASSWORD: adorsys-gis-password
@@ -21,22 +17,42 @@ services:
       MOODLE_DATABASE_HOST: mariadb
       MOODLE_DATABASE_PORT_NUMBER: 3306
       MOODLE_DATABASE_USER: adorsys-gis
-      MOODLE_DATABASE_PASSWORD: miaou
       MOODLE_DATABASE_NAME: gis-moodle
       MOODLE_SMTP_HOST: maildev
       MOODLE_SMTP_PORT: 1025
-      MOODLE_REVERSEPROXY: true
       BITNAMI_DEBUG: true
       EXTRA_LOCALES: "fr_FR.UTF-8 UTF-8, de_DE.UTF-8 UTF-8"
+    entrypoint: /bin/bash
+    command: # This script was removed from https://github.com/bitnami/containers/blob/main/bitnami/moodle/5.0/debian-12/rootfs/opt/bitnami/scripts/moodle/entrypoint.sh
+      - -c
+      - |
+        set -ex
+
+        # Load Moodle environment
+        . /opt/bitnami/scripts/moodle-env.sh
+
+        # Load libraries
+        . /opt/bitnami/scripts/libbitnami.sh
+        . /opt/bitnami/scripts/liblog.sh
+        . /opt/bitnami/scripts/libwebserver.sh
+
+        print_welcome_page
+
+        info "** Starting Moodle setup **"
+        . /opt/bitnami/scripts/"$(web_server_type)"/setup.sh
+        . /opt/bitnami/scripts/php/setup.sh
+        . /opt/bitnami/scripts/mysql-client/setup.sh
+        . /opt/bitnami/scripts/postgresql-client/setup.sh
+        . /opt/bitnami/scripts/moodle/setup.sh
+        . /post-init.sh
+        info "** Moodle setup finished! **"
+
     volumes:
       - moodle_data:/bitnami/moodle
-      # Local source‑controlled plugins (read‑only)
-      - ./plugins:/bitnami/moodle/custom/plugins:ro
-      # Plugins downloaded via Moodle UI go here (read‑write)
-      - plugins_downloads:/bitnami/moodle/plugins:ro
-    depends_on:
+      - moodledata_data:/bitnami/moodledata
+    depends_on: &moodle_depends_on
       mariadb:
-        condition: service_healthy
+        condition: service_started
       redis:
         condition: service_healthy
       minio:
@@ -44,11 +60,25 @@ services:
       plugin-downloader:
         condition: service_completed_successfully
 
-    healthcheck:
-      test: [ "CMD", "/opt/bitnami/scripts/moodle/healthcheck.sh" ]
-      interval: 30s
-      timeout: 10s
-      retries: 5
+  # https://github.com/bitnami/containers/tree/main/bitnami/moodle
+  moodle:
+    image: docker.io/bitnami/moodle:5.0
+    deploy: *moodle_deploy
+    ports:
+      - "8080:8080"
+      - "8443:8443"
+    environment: *moodle_environment
+    volumes:
+      - moodle_data:/bitnami/moodle
+      - moodledata_data:/bitnami/moodledata
+      # Local source‑controlled plugins (read‑only)
+      - ./plugins:/bitnami/moodle/plugins/custom/plugins:ro
+      # Plugins downloaded via Moodle UI go here (read‑write)
+      - plugins_downloads:/bitnami/moodle/plugins/downloaded:ro
+    depends_on:
+      <<: *moodle_depends_on
+      moodle-init:
+        condition: service_completed_successfully
 
   plugin-downloader:
     image: alpine/git:latest # Using an image with wget/curl and unzip.
@@ -82,16 +112,14 @@ services:
           cpus: "0.5"
           memory: 512M
     environment:
-      MARIADB_ROOT_USER: adorsys-gis
-      MARIADB_ROOT_PASSWORD: miaou
+      ALLOW_EMPTY_PASSWORD: yes
+      MARIADB_USER: adorsys-gis
       MARIADB_DATABASE: gis-moodle
+      MARIADB_CHARACTER_SET: utf8mb4
+      MARIADB_COLLATE: utf8mb4_unicode_ci
+      BITNAMI_DEBUG: true
     volumes:
       - mariadb_data:/bitnami/mariadb
-    healthcheck:
-      test: [ "CMD", "/opt/bitnami/scripts/mariadb/healthcheck.sh" ]
-      interval: 15s
-      timeout: 5s
-      retries: 6
 
   redis:
     image: docker.io/bitnami/redis:8.0
@@ -101,13 +129,13 @@ services:
           cpus: "0.25"
           memory: 256M
     environment:
-      - REDIS_PASSWORD=waff
+      ALLOW_EMPTY_PASSWORD: yes
     ports:
       - "6379:6379"
     volumes:
       - redis_data:/bitnami/redis/data
     healthcheck:
-      test: [ "CMD", "redis-cli", "-a", "waff", "--raw", "incr", "ping" ]
+      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
       interval: 15s
       timeout: 5s
       retries: 5
@@ -124,11 +152,10 @@ services:
     environment:
       ADMINER_DEFAULT_SERVER: mariadb
       ADMINER_DEFAULT_USERNAME: adorsys-gis
-      ADMINER_DEFAULT_PASSWORD: miaou
       ADMINER_DESIGN: dracula
       ADMINER_PLUGINS: tables-filter tinymce
     healthcheck:
-      test: [ "CMD", "wget", "-qO-", "http://localhost:8080" ]
+      test: ["CMD", "wget", "-qO-", "http://localhost:8080"]
       interval: 30s
       timeout: 5s
       retries: 3
@@ -148,7 +175,7 @@ services:
     volumes:
       - minio_data:/bitnami/minio/data
     healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:9000/minio/health/live" ]
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
       interval: 30s
       timeout: 10s
       retries: 5
@@ -158,8 +185,8 @@ services:
     deploy:
       resources:
         limits:
-          cpus: "1"
-          memory: 500M
+          cpus: "0.25"
+          memory: 125M
     ports:
       - "19090:9090"
     environment:
@@ -202,10 +229,35 @@ services:
       - "1080:1080"
       - "1025:1025"
     healthcheck:
-      test: [ "CMD", "wget", "-qO-", "http://localhost:1080" ]
+      test: ["CMD", "wget", "-qO-", "http://localhost:1080"]
       interval: 30s
       timeout: 5s
       retries: 3
+
+  fileserver:
+    image: halverneus/static-file-server
+    deploy:
+      resources:
+        limits:
+          cpus: "0.1"
+          memory: 50M
+    ports:
+      - "18081:8080"
+    environment:
+      CORS: true
+      HOST: 0.0.0.0
+    volumes:
+      - moodle_data:/web/moodle_data
+      - moodledata_data:/web/moodledata_data
+      - plugins_downloads:/web/plugins_downloads
+      - mariadb_data:/web/mariadb_data
+      - redis_data:/web/redis_data
+      - minio_data:/web/minio_data
+
+#  selenium:
+#    image: "selenium/standalone-chrome"
+#    volumes:
+#      - /dev/shm:/dev/shm
 
 volumes:
   moodle_data:
