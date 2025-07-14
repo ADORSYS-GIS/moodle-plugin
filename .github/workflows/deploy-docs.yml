@@ -35,6 +35,8 @@ jobs:
 
   deploy-website:
     runs-on: ubuntu-latest
+    permissions: 
+      contents: write
     needs:
       - lint-docs
     steps:
