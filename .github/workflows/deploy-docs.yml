@@ -22,11 +22,9 @@ jobs:
 
       - name: markdownlint
         uses: DavidAnson/markdownlint-cli2-action@v20
-        continue-on-error: true
         with:
           globs: |
             docs/*.md
-            *.md
 
       - name: Check for typos
         uses: sobolevn/misspell-fixer-action@master
