@@ -1,0 +1,56 @@
+apiVersion: v1
+entries:
+  moodle:
+  - apiVersion: v2
+    appVersion: 1.16.0
+    created: "2025-07-14T11:11:15.642001748Z"
+    dependencies:
+    - name: common
+      repository: https://charts.bitnami.com/bitnami
+      version: 2.31.3
+    - name: app-template
+      repository: https://bjw-s-labs.github.io/helm-charts
+      version: 4.0.1
+    description: A Helm chart for Kubernetes
+    digest: cde27d5a1e5483801653ab0e6759bda6e5e0dc88f531abc3b2dd826f50dcea08
+    keywords:
+    - moodle
+    - lms
+    maintainers:
+    - email: selastlambou@gmail.com
+      name: Stephane Segning
+    - email: gis-udm@adorsys.com
+      name: Adorsys GIS
+    name: moodle
+    type: application
+    urls:
+    - https://github.com/ADORSYS-GIS/moodle-plugin/releases/download/moodle-0.1.0/moodle-0.1.0.tgz
+    version: 0.1.0
+  moodle-operator:
+  - apiVersion: v2
+    appVersion: 1.16.0
+    created: "2025-07-14T11:11:15.797235562Z"
+    dependencies:
+    - name: common
+      repository: https://charts.bitnami.com/bitnami
+      version: 2.31.3
+    - name: app-template
+      repository: https://bjw-s-labs.github.io/helm-charts
+      version: 4.0.1
+    description: A Helm chart for Kubernetes
+    digest: ab733141dfbda1b36ebe2526ffde3680be175c18e82d7e924e4bfd217c5f8f97
+    keywords:
+    - moodle
+    - lms
+    - operator
+    maintainers:
+    - email: selastlambou@gmail.com
+      name: Stephane Segning
+    - email: gis-udm@adorsys.com
+      name: Adorsys GIS
+    name: moodle-operator
+    type: application
+    urls:
+    - https://github.com/ADORSYS-GIS/moodle-plugin/releases/download/moodle-operator-0.1.0/moodle-operator-0.1.0.tgz
+    version: 0.1.0
+generated: "2025-07-14T11:11:15.797244889Z"
