@@ -1,0 +1,77 @@
+site_name: Moodle Plugin
+site_description: Documentation for the Moodle Plugin
+site_author: Adorsys Team
+repo_url: https://github.com/ADORSYS-GIS/moodle-plugin
+repo_name: ADORSYS-GIS/moodle-plugin
+
+theme:
+  name: material
+  palette:
+    - scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/toggle-switch-off-outline
+        name: Switch to dark mode
+    - scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/toggle-switch
+        name: Switch to light mode
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.expand
+    - navigation.indexes
+    - navigation.top
+    - search.highlight
+    - search.share
+    - content.code.copy
+    - content.code.annotate
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.tabbed:
+      alternate_style: true
+  - tables
+  - footnotes
+  - attr_list
+  - md_in_html
+  - def_list
+  - pymdownx.tasklist:
+      custom_checkbox: true
+
+plugins:
+  - search
+  - git-revision-date-localized:
+      enable_creation_date: true
+  - minify:
+      minify_html: true
+
+nav:
+  - Home: index.md
+  - Getting Started:
+    - Installation: getting-started/installation.md
+    - Configuration: getting-started/configuration.md
+  - User Guide:
+    - API Reference: user-guide/api-reference.md
+    - Examples: user-guide/examples.md
+  - Architecture:
+    - Overview: architecture/overview.md
+    - Components: architecture/components.md
+  - Deployment:
+    - Helm Chart: deployment/helm-chart.md
+    - Docker: deployment/docker.md
+  - Development:
+    - Contributing: development/contributing.md
+    - Testing: development/testing.md
+  - About:
+    - License: about/license.md
+    - Changelog: about/changelog.md

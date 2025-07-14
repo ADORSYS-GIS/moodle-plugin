@@ -1,0 +1,142 @@
+version: '3.8'
+
+services:
+  # https://github.com/bitnami/containers/tree/main/bitnami/moodle
+  moodle:
+    image: docker.io/bitnami/moodle:5.0
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 500M
+    ports:
+      - '8080:8080'
+      - '8443:8443'
+    environment:
+      - MOODLE_DATABASE_HOST=mariadb
+      - MOODLE_DATABASE_PORT_NUMBER=3306
+      - MOODLE_DATABASE_USER=adorsys-gis
+      - MOODLE_DATABASE_PASSWORD=miaou
+      - MOODLE_DATABASE_NAME=moodle
+    volumes:
+      - 'moodle_data:/bitnami/moodle'
+      - 'moodledata_data:/bitnami/moodledata'
+    depends_on:
+      - postgres
+
+  # https://github.com/bitnami/containers/tree/main/bitnami/mariadb
+  mariadb:
+    image: docker.io/bitnami/mariadb:11.8
+    ports:
+      - '3306:3306'
+    volumes:
+      - 'mariadb_data:/bitnami/mariadb'
+    environment:
+      - MARIADB_USER=adorsys-gis
+      - MARIADB_PASSWORD=miaou
+      - MARIADB_DATABASE=moodle
+    healthcheck:
+      test: ['CMD', '/opt/bitnami/scripts/mariadb/healthcheck.sh']
+      interval: 15s
+      timeout: 5s
+      retries: 6
+
+  adminer:
+    image: adminer
+    deploy:
+      resources:
+        limits:
+          cpus: '0.05'
+          memory: 50M
+    ports:
+      - ${ADMINER_PORT:-18080}:8080
+    environment:
+      ADMINER_DEFAULT_SERVER: mariadb
+      ADMINER_DEFAULT_USERNAME: adorsys-gis
+      ADMINER_DEFAULT_PASSWORD: miaou
+      ADMINER_DESIGN: dracula
+      ADMINER_PLUGINS: tables-filter tinymce
+
+  redis:
+    image: docker.io/bitnami/redis:8.0
+    environment:
+      - REDIS_PASSWORD=waff
+    ports:
+      - '6379:6379'
+    volumes:
+      - 'redis_data:/bitnami/redis/data'
+
+  minio:
+    image: bitnami/minio:latest
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 500M
+    volumes:
+      - minio_data:/bitnami/minio/data
+    ports:
+      - "19000:9000"
+    environment:
+      MINIO_ROOT_USER: minio-gis
+      MINIO_ROOT_PASSWORD: kwak-kwak
+      MINIO_BROWSER_SESSION_DURATION: 7d
+      MINIO_BROWSER_LOGIN_ANIMATION: off
+
+  minio-object-browser:
+    image: bitnami/minio-object-browser
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 500M
+    ports:
+      - "19090:9090"
+    environment:
+      CONSOLE_PBKDF_PASSPHRASE: some-passphrase
+      CONSOLE_PBKDF_SALT: some-salt
+      CONSOLE_MINIO_SERVER: "http://minio:9000"
+    command:
+      - server
+
+  minio-init:
+    image: bitnami/minio
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 500M
+    volumes:
+      - .docker/minio/policy.json:/tmp/policy.json
+    command:
+      - /bin/bash
+      - -c
+      - |-
+        set -e;
+        
+        sleep 5;
+
+        mc alias set bucketer http://minio:9000 minio-gis kwak-kwak;
+        mc admin service restart bucketer --wait --json;
+
+        sleep 5;
+
+        mc mb bucketer/moodle --ignore-existing
+
+        mc anonymous set-json /tmp/policy.json bucketer/moodle
+    depends_on:
+      minio:
+        condition: service_started
+
+  maildev:
+    image: maildev/maildev
+    ports:
+      - '1080:1080'
+      - '1025:1025'
+
+volumes:
+  moodledata_data:
+  moodle_data:
+  mariadb_data:
+  minio_data:
+  redis_data:
