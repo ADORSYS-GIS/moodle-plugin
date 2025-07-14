@@ -1,0 +1,70 @@
+site_name: Moodle Plugin
+site_description: Documentation for the Moodle Plugin
+site_author: Adorsys Team
+repo_url: https://github.com/ADORSYS-GIS/moodle-plugin
+repo_name: ADORSYS-GIS/moodle-plugin
+
+theme:
+  name: material
+  palette:
+    - scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/toggle-switch-off-outline
+        name: Switch to dark mode
+    - scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/toggle-switch
+        name: Switch to light mode
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.expand
+    - navigation.indexes
+    - navigation.top
+    - search.highlight
+    - search.share
+    - content.code.copy
+    - content.code.annotate
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.tabbed:
+      alternate_style: true
+  - tables
+  - footnotes
+  - attr_list
+  - md_in_html
+  - def_list
+  - pymdownx.tasklist:
+      custom_checkbox: true
+
+plugins:
+  - search
+  - git-revision-date-localized:
+      enable_creation_date: true
+  - minify:
+      minify_html: true
+
+nav:
+  - Home: index.md
+  - Overview: overview.md
+  - Features: features.md
+  - What is Moodle: what-is-moodle.md
+  - Concepts:
+      - Architecture: concepts/01-architecture.md
+  - Guides:
+      - Moodle Operation: guides/01-moodle-operation.md
+      - Local Moodle with Docker: guides/02-local-moodle-with-docker.md
+      - Online Moodle with k8s: guides/03-online-moodle-with-k8s.md
+      - k8s Operator Model: guides/04-k8s-operator-model.md
+      - Moodle Optimisations with Rust: guides/05-moodle-optimisations-with-rust.md

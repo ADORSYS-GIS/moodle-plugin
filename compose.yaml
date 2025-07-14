@@ -1,0 +1,268 @@
+services:
+  # https://github.com/bitnami/containers/tree/main/bitnami/moodle
+  moodle-init:
+    image: docker.io/bitnami/moodle:5.0
+    deploy: &moodle_deploy
+      resources:
+        limits:
+          cpus: "1"
+          memory: 500M
+    environment: &moodle_environment
+      PHP_DEFAULT_MEMORY_LIMIT: 500m
+      ALLOW_EMPTY_PASSWORD: yes
+      MOODLE_EMAIL: admin@adorsys-gis.local
+      MOODLE_USERNAME: adorsys-gis
+      MOODLE_PASSWORD: adorsys-gis-password
+      MOODLE_SITE_NAME: "GIS Tests"
+      MOODLE_DATABASE_HOST: mariadb
+      MOODLE_DATABASE_PORT_NUMBER: 3306
+      MOODLE_DATABASE_USER: adorsys-gis
+      MOODLE_DATABASE_NAME: gis-moodle
+      MOODLE_SMTP_HOST: maildev
+      MOODLE_SMTP_PORT: 1025
+      BITNAMI_DEBUG: true
+      EXTRA_LOCALES: "fr_FR.UTF-8 UTF-8, de_DE.UTF-8 UTF-8"
+    entrypoint: /bin/bash
+    command: # This script was removed from https://github.com/bitnami/containers/blob/main/bitnami/moodle/5.0/debian-12/rootfs/opt/bitnami/scripts/moodle/entrypoint.sh
+      - -c
+      - |
+        set -ex
+
+        # Load Moodle environment
+        . /opt/bitnami/scripts/moodle-env.sh
+
+        # Load libraries
+        . /opt/bitnami/scripts/libbitnami.sh
+        . /opt/bitnami/scripts/liblog.sh
+        . /opt/bitnami/scripts/libwebserver.sh
+
+        print_welcome_page
+
+        info "** Starting Moodle setup **"
+        . /opt/bitnami/scripts/"$(web_server_type)"/setup.sh
+        . /opt/bitnami/scripts/php/setup.sh
+        . /opt/bitnami/scripts/mysql-client/setup.sh
+        . /opt/bitnami/scripts/postgresql-client/setup.sh
+        . /opt/bitnami/scripts/moodle/setup.sh
+        . /post-init.sh
+        info "** Moodle setup finished! **"
+
+    volumes:
+      - moodle_data:/bitnami/moodle
+      - moodledata_data:/bitnami/moodledata
+    depends_on: &moodle_depends_on
+      mariadb:
+        condition: service_started
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+      plugin-downloader:
+        condition: service_completed_successfully
+
+  # https://github.com/bitnami/containers/tree/main/bitnami/moodle
+  moodle:
+    image: docker.io/bitnami/moodle:5.0
+    deploy: *moodle_deploy
+    ports:
+      - "8080:8080"
+      - "8443:8443"
+    environment: *moodle_environment
+    volumes:
+      - moodle_data:/bitnami/moodle
+      - moodledata_data:/bitnami/moodledata
+      # Local source‑controlled plugins (read‑only)
+      - ./plugins:/bitnami/moodle/plugins/custom/plugins:ro
+      # Plugins downloaded via Moodle UI go here (read‑write)
+      - plugins_downloads:/bitnami/moodle/plugins/downloaded:ro
+    depends_on:
+      <<: *moodle_depends_on
+      moodle-init:
+        condition: service_completed_successfully
+
+  plugin-downloader:
+    image: alpine/git:latest # Using an image with wget/curl and unzip.
+    deploy:
+      resources:
+        limits:
+          cpus: "0.2"
+          memory: 128M
+    volumes:
+      - plugins_downloads:/plugin_downloads
+      - ./.docker/plugin-downloader/download_plugin.sh:/scripts/download_plugins.sh:ro
+    environment:
+      PLUGINS_DIR: "/plugin_downloads"
+      # List of plugins to download. Format: "URL,TARGET_DIR;URL,TARGET_DIR;..."
+      # Use full, direct download links to the .zip files.
+      # TARGET_DIR is the expected folder name after unzipping (e.g., 'mod_minilesson').
+      PLUGINS_TO_DOWNLOAD: >
+        https://moodle.org/plugins/download.php/36782/theme_seo_moodle50_2025070900.zip,theme_seo;
+        https://moodle.org/plugins/download.php/36820/mod_minilesson_moodle50_2025071300.zip,mod_minilesson;
+        https://moodle.org/plugins/download.php/36766/theme_boost_union_moodle50_2025041414.zip,theme_boost_union;
+        https://moodle.org/plugins/download.php/36807/mod_pdfannotator_moodle50_2025071100.zip,mod_pdfannotator
+    entrypoint: /bin/sh
+    command:
+      - "/scripts/download_plugins.sh"
+
+  mariadb:
+    image: docker.io/bitnami/mariadb
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 512M
+    environment:
+      ALLOW_EMPTY_PASSWORD: yes
+      MARIADB_USER: adorsys-gis
+      MARIADB_DATABASE: gis-moodle
+      MARIADB_CHARACTER_SET: utf8mb4
+      MARIADB_COLLATE: utf8mb4_unicode_ci
+      BITNAMI_DEBUG: true
+    volumes:
+      - mariadb_data:/bitnami/mariadb
+
+  redis:
+    image: docker.io/bitnami/redis:8.0
+    deploy:
+      resources:
+        limits:
+          cpus: "0.25"
+          memory: 256M
+    environment:
+      ALLOW_EMPTY_PASSWORD: yes
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/bitnami/redis/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+
+  adminer:
+    image: adminer
+    deploy:
+      resources:
+        limits:
+          cpus: "0.1"
+          memory: 128M
+    ports:
+      - "18080:8080"
+    environment:
+      ADMINER_DEFAULT_SERVER: mariadb
+      ADMINER_DEFAULT_USERNAME: adorsys-gis
+      ADMINER_DESIGN: dracula
+      ADMINER_PLUGINS: tables-filter tinymce
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8080"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  minio:
+    image: bitnami/minio:latest
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 512M
+    ports:
+      - "19000:9000"
+    environment:
+      MINIO_ROOT_USER: minio-gis
+      MINIO_ROOT_PASSWORD: kwak-kwak
+    volumes:
+      - minio_data:/bitnami/minio/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  minio-object-browser:
+    image: bitnami/minio-object-browser
+    deploy:
+      resources:
+        limits:
+          cpus: "0.25"
+          memory: 125M
+    ports:
+      - "19090:9090"
+    environment:
+      CONSOLE_PBKDF_PASSPHRASE: some-passphrase
+      CONSOLE_PBKDF_SALT: some-salt
+      CONSOLE_MINIO_SERVER: "http://minio:9000"
+    command:
+      - server
+
+  minio-init:
+    image: bitnami/minio-client:latest
+    deploy:
+      resources:
+        limits:
+          cpus: "0.2"
+          memory: 256M
+    volumes:
+      - .docker/minio/policy.json:/tmp/policy.json
+    command:
+      - /bin/bash
+      - -c
+      - |-
+        set -e;
+
+        mc alias set bucketer http://minio:9000 minio-gis kwak-kwak;
+        mc mb bucketer/moodle --ignore-existing
+        mc anonymous set-json /tmp/policy.json bucketer/moodle
+    depends_on:
+      minio:
+        condition: service_healthy
+
+  maildev:
+    image: maildev/maildev
+    deploy:
+      resources:
+        limits:
+          cpus: "0.1"
+          memory: 128M
+    ports:
+      - "1080:1080"
+      - "1025:1025"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:1080"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  fileserver:
+    image: halverneus/static-file-server
+    deploy:
+      resources:
+        limits:
+          cpus: "0.1"
+          memory: 50M
+    ports:
+      - "18081:8080"
+    environment:
+      CORS: true
+      HOST: 0.0.0.0
+    volumes:
+      - moodle_data:/web/moodle_data
+      - moodledata_data:/web/moodledata_data
+      - plugins_downloads:/web/plugins_downloads
+      - mariadb_data:/web/mariadb_data
+      - redis_data:/web/redis_data
+      - minio_data:/web/minio_data
+
+#  selenium:
+#    image: "selenium/standalone-chrome"
+#    volumes:
+#      - /dev/shm:/dev/shm
+
+volumes:
+  moodle_data:
+  moodledata_data:
+  plugins_downloads:
+  mariadb_data:
+  redis_data:
+  minio_data:

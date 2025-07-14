@@ -22,3 +22,21 @@ version: 0.1.0
 # follow Semantic Versioning. They should reflect the version the application is using.
 # It is recommended to use it with quotes.
 appVersion: "1.16.0"
+
+keywords:
+  - moodle
+  - lms
+
+maintainers:
+  - name: Stephane Segning
+    email: selastlambou@gmail.com
+  - name: Adorsys GIS
+    email: gis-udm@adorsys.com
+
+dependencies:
+  - name: common
+    version: 2.31.3
+    repository: https://charts.bitnami.com/bitnami
+  - name: app-template
+    version: 4.0.1
+    repository: https://bjw-s-labs.github.io/helm-charts

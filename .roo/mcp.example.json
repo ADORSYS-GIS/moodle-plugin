@@ -2,12 +2,7 @@
   "mcpServers": {
     "memory": {
       "command": "docker",
-      "args": [
-        "run",
-        "-i",
-        "--rm",
-        "mcp/memory"
-      ],
+      "args": ["run", "-i", "--rm", "mcp/memory"],
       "alwaysAllow": [
         "create_entities",
         "create_relations",
@@ -23,28 +18,14 @@
     },
     "fetch": {
       "command": "docker",
-      "args": [
-        "run",
-        "-i",
-        "--rm",
-        "mcp/fetch"
-      ],
-      "alwaysAllow": [
-        "fetch"
-      ],
+      "args": ["run", "-i", "--rm", "mcp/fetch"],
+      "alwaysAllow": ["fetch"],
       "disabled": false
     },
     "sequentialthinking": {
       "command": "docker",
-      "args": [
-        "run",
-        "--rm",
-        "-i",
-        "mcp/sequentialthinking"
-      ],
-      "alwaysAllow": [
-        "sequentialthinking"
-      ],
+      "args": ["run", "--rm", "-i", "mcp/sequentialthinking"],
+      "alwaysAllow": ["sequentialthinking"],
       "disabled": false
     },
     "github": {
@@ -113,86 +94,6 @@
         "update_pull_request_branch"
       ],
       "disabled": false,
-      "timeout": 300
-    },
-    "context7": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "@upstash/context7-mcp@latest"
-      ],
-      "alwaysAllow": [
-        "resolve-library-id",
-        "get-library-docs"
-      ],
-      "disabled": false
-    },
-    "brave-search": {
-      "command": "docker",
-      "args": [
-        "run",
-        "-i",
-        "--rm",
-        "-e",
-        "BRAVE_API_KEY",
-        "mcp/brave-search"
-      ],
-      "env": {
-        "BRAVE_API_KEY": "YOUR_BRAVE_AT"
-      },
-      "alwaysAllow": [
-        "brave_web_search",
-        "brave_local_search"
-      ],
-      "disabled": false
-    },
-    "taskmaster-ai": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "--package=task-master-ai",
-        "task-master-ai"
-      ],
-      "env": {
-        "OPENAI_BASE_URL": "https://ai.kivoyo.me/api",
-        "OPENAI_API_KEY": "YOUR_KIVOYO_SK"
-      },
-      "type": "stdio",
-      "alwaysAllow": [
-        "initialize_project",
-        "models",
-        "rules",
-        "parse_prd",
-        "analyze_project_complexity",
-        "expand_task",
-        "expand_all",
-        "get_tasks",
-        "get_task",
-        "next_task",
-        "complexity_report",
-        "set_task_status",
-        "generate",
-        "add_task",
-        "update_task",
-        "update",
-        "add_subtask",
-        "remove_task",
-        "update_subtask",
-        "remove_subtask",
-        "clear_subtasks",
-        "move_task",
-        "add_dependency",
-        "remove_dependency",
-        "validate_dependencies",
-        "fix_dependencies",
-        "list_tags",
-        "add_tag",
-        "research",
-        "copy_tag",
-        "rename_tag",
-        "use_tag",
-        "delete_tag"
-      ],
       "timeout": 300
     }
   }

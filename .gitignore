@@ -27,3 +27,4 @@ mcp.json
 config.json
 
 target
+*.tgz
