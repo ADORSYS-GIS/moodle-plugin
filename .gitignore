@@ -28,3 +28,5 @@ config.json
 
 target
 *.tgz
+
+frontend-example

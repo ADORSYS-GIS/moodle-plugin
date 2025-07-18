@@ -69,6 +69,16 @@ docker-compose up -d
 
 #### Kubernetes Deployment Example
 
+#### Frontend WASM Example
+
+To build and run the frontend WASM example:
+1. Build the WASM module and copy necessary files:
+   ```bash
+   wasm-pack build --target web --out-dir ./frontend-example/pkg ./packages/moodle-wasm-example
+   ```
+2. Open `frontend-example/index.html` in a web browser to view the example.
+
+
 To deploy Moodle on a Kubernetes cluster:
 
 ```bash
