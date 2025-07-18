@@ -48,17 +48,17 @@ We're building this enhanced Moodle for some very important reasons, aiming for 
 customers!
 
 - **Faster Learning for New Engineers:** We want new team members to get up to speed quickly!
-  - _Our Goal:_ Onboarding new engineers in 5 days or less. ⏱️
+    - _Our Goal:_ Onboarding new engineers in 5 days or less. ⏱️
 - **Consistent & Reliable Deployments:** We want Moodle to be deployed the exact same way every time, whether it's for
   testing or for our customers.
-  - _Our Goal:_ No unexpected changes reported by Terraform for two releases in a row. ✨
+    - _Our Goal:_ No unexpected changes reported by Terraform for two releases in a row. ✨
 - **Significant Performance Boosts:** Make Moodle lightning fast!
-  - _Our Goal:_ At least **30% faster page loading** for complex courses. 🚀
+    - _Our Goal:_ At least **30% faster page loading** for complex courses. 🚀
 - **Top-Noch Reliability:** Ensure Moodle is always available when you need it.
-  - _Our Goal:_ **99.9% uptime** (that's almost always on!) and recovery from any issues in less than 15 minutes. 💪
+    - _Our Goal:_ **99.9% uptime** (that's almost always on!) and recovery from any issues in less than 15 minutes. 💪
 - **Flexible Deployment Options:** Make Moodle deployable in many different ways to suit various needs.
-  - _Our Goal:_ By Q4 2025, deliver and prove five different ways to deploy Moodle (like serverless, pure Kubernetes,
-    cloud-only, container-only, or on your own hardware). 🌍
+    - _Our Goal:_ By Q4 2025, deliver and prove five different ways to deploy Moodle (like serverless, pure Kubernetes,
+      cloud-only, container-only, or on your own hardware). 🌍
 
 ---
 

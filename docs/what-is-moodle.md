@@ -90,5 +90,7 @@ With this latest release, Moodle continues to evolve into a more intelligent, ac
 platform—empowering educators and learners alike.
 
 [1]: https://en.wikipedia.org/wiki/Moodle?utm_source=adorsys-gis "Moodle"
+
 [2]: https://docs.moodle.org/en/Features?utm_source=adorsys-gis "Features - MoodleDocs"
+
 [3]: https://docs.moodle.org/en/New_features?utm_source=adorsys-gis "New features - MoodleDocs"

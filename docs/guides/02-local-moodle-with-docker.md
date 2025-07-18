@@ -1,6 +1,7 @@
 # Local Development Setup (Docker Compose)
 
-This guide shows you how to spin up a complete local Moodle environment using Docker Compose, including custom PHP plugins and integration with Redis, MinIO, and MailDev.
+This guide shows you how to spin up a complete local Moodle environment using Docker Compose, including custom PHP
+plugins and integration with Redis, MinIO, and MailDev.
 
 ## Prerequisites
 
@@ -20,7 +21,8 @@ Create or update `docker-compose.yml` at the repo root with the following conten
 
 ## 2. Explanation of Services
 
-- **moodle**: Bitnami Moodle image configured to connect to MariaDB, Redis (sessions & cache), and MinIO (ObjectFS plugin).
+- **moodle**: Bitnami Moodle image configured to connect to MariaDB, Redis (sessions & cache), and MinIO (ObjectFS
+  plugin).
 
 - Mounts `././plugins` as read-only into `custom/plugins` so your local code is immediately available.
 - **mariadb**: MariaDB for Moodle’s main database.

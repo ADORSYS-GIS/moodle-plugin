@@ -66,7 +66,8 @@ Our platform is built for modern, efficient deployment:
 
 - **Cloud-Agnostic Distribution:** Deploy Moodle seamlessly on any cloud provider (AWS, Google Cloud, Azure) or even on
   your own on-premise infrastructure. You choose where it lives!
-- **Local Development in Docker:** Developers can easily set up and work on Moodle on their local machines using *Docker*, ensuring consistency and a smooth workflow.
+- **Local Development in Docker:** Developers can easily set up and work on Moodle on their local machines using
+  *Docker*, ensuring consistency and a smooth workflow.
 - **End-to-End Provisioning with Terraform:** We use **Terraform** to automate the entire setup process, from
   infrastructure to application deployment, ensuring repeatable and error-free environments across development, staging,
   and production.

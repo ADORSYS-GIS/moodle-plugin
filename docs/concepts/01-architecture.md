@@ -64,9 +64,9 @@ end
 
 - **Custom Resource Definitions (CRDs)**: `MoodleCluster`, `MoodleBackup`, `MoodleScalePolicy`.
 - **Responsibilities**:
-  - Provision & reconcile Knative Services or k8s Deployments.
-  - Manage Helm releases via the Go-Helm SDK (FFI layer in Rust).
-  - Watch DB credentials in AWS SM / Vault and rotate if needed.
+    - Provision & reconcile Knative Services or k8s Deployments.
+    - Manage Helm releases via the Go-Helm SDK (FFI layer in Rust).
+    - Watch DB credentials in AWS SM / Vault and rotate if needed.
 
 ### 2.5 Terraform & Infrastructure
 
@@ -105,18 +105,18 @@ end
   personalized recommendations.
 - **Integration**: Deployed as a KServe `InferenceService` CRD on the Kubernetes cluster alongside Moodle services.
 - **Workload Types**:
-  - **CPU inference** for lightweight models (e.g., logistic regression, decision trees).
-  - **GPU inference** for deep learning models (e.g., BERT, CNNs) via GPU-enabled nodes.
+    - **CPU inference** for lightweight models (e.g., logistic regression, decision trees).
+    - **GPU inference** for deep learning models (e.g., BERT, CNNs) via GPU-enabled nodes.
 
 - **Model Versioning & Rollouts**:
-  1. Store model artifacts in object storage (S3/GCS) with semantic versioning (e.g., `model:v1.2.0`).
-  2. Define KServe `CanaryRollout` policy to gradually shift traffic from the old revision to the new one.
-  3. Monitor inference metrics (latency, error rate) via Prometheus before promoting the new model.
+    1. Store model artifacts in object storage (S3/GCS) with semantic versioning (e.g., `model:v1.2.0`).
+    2. Define KServe `CanaryRollout` policy to gradually shift traffic from the old revision to the new one.
+    3. Monitor inference metrics (latency, error rate) via Prometheus before promoting the new model.
 
 - **Storage**: Model artifacts pulled at start-up via InitContainers; cached on local PVC for fast warm starts.
 - **Autoscaling & Scaling Policies**:
-  - KServe’s built-in autoscaler adjusts replica count based on request rate and GPU utilization.
-  - Configure `minReplicas` and `maxReplicas` to control cost and SLA.
+    - KServe’s built-in autoscaler adjusts replica count based on request rate and GPU utilization.
+    - Configure `minReplicas` and `maxReplicas` to control cost and SLA.
 
 ---
 
@@ -126,11 +126,11 @@ end
 > default for production workloads.
 
 | Model                    | Description                                               | Pros                                                        | Cons                                         |
-| ------------------------ | --------------------------------------------------------- | ----------------------------------------------------------- | -------------------------------------------- |
+|--------------------------|-----------------------------------------------------------|-------------------------------------------------------------|----------------------------------------------|
 | 🐳 Pure Kubernetes       | k8s Deployments + HPA; StatefulSets for DB & storage      | Production-ready, full control, rich ecosystem              | Operational complexity, setup overhead       |
 | ☁️ Cloud-Native Managed  | EKS/GKE + RDS + ElastiCache/Memorystore + Secrets Manager | Simplified operations, auto-managed upgrades, high SLA      | Vendor lock-in, can be costlier              |
 | 📦 Container-Only        | Docker Compose or ECS Fargate with external services      | Fast provisioning, low orchestration footprint              | Limited autoscaling, manual infra updates    |
-| 🏗️ Bare Metal            | VMs or bare-metal servers running Docker or k3s           | Maximum performance, no virtualization overhead             | High ops burden, low elasticity              |
+| 🏗️ Bare Metal           | VMs or bare-metal servers running Docker or k3s           | Maximum performance, no virtualization overhead             | High ops burden, low elasticity              |
 | 🌐 Serverless (Optional) | Knative Services for web & micro-services                 | Scale-to-zero, cost-efficient for low-traffic demos/tenants | Cold-start latency, limited stateful support |
 
 ---
