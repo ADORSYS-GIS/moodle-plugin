@@ -1,0 +1,21 @@
+🎉 Moodle Helm Chart Installed!
+
+🔗 Access Moodle:
+- LoadBalancer:
+    kubectl get svc -n {{ .Release.Namespace }} {{ .Release.Name }}
+- NodePort (local test):
+    NODE_PORT=$(kubectl get svc {{ .Release.Name }} -n {{ .Release.Namespace }} -o jsonpath="{.spec.ports[0].nodePort}")
+    NODE_IP=$(kubectl get nodes -o jsonpath="{.items[0].status.addresses[0].address}")
+    echo "http://$NODE_IP:$NODE_PORT"
+
+🔐 Admin Login:
+- Username: {{ .Values.moodle.moodleUsername }}
+- Password: {{ .Values.moodle.moodlePassword }}
+
+💾 Data:
+- Persistent across restarts (PVC used)
+
+🧾 Logs:
+    kubectl logs -n {{ .Release.Namespace }} <moodle-pod-name>
+
+📘 Docs: https://moodle.org/
