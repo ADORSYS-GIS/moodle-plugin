@@ -1,0 +1,15 @@
+moodle:
+  moodleUsername: admin
+  moodlePassword: adorsys-gis
+  moodleEmail: gis-udm@adorsys.com
+
+  service:
+    type: LoadBalancer
+
+  mariadb:
+    enabled: false
+
+  persistence:
+    enabled: true
+    size: 10Gi
+  
