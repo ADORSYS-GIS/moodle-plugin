@@ -23,8 +23,3 @@ postgresql:
     persistence:
       enabled: false  # Disable PVC for local test clusters
 
-moodleDatabaseType: "pgsql"
-moodleDatabaseHost: postgresql
-moodleDatabaseName: bitnamimoodle
-moodleDatabaseUser: moodle
-moodleDatabasePassword: moodlepassword
