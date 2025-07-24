@@ -1,0 +1,19 @@
+postgresql:
+  enabled: true
+  auth:
+    username: moodle
+    password: moodlepassword
+    database: bitnamimoodle
+  primary:
+    persistence:
+      enabled: false  # Disable PVC for local dev/testing
+
+moodleDatabaseType: "pgsql"
+moodleDatabaseHost: postgresql
+moodleDatabaseName: bitnamimoodle
+moodleDatabaseUser: moodle
+moodleDatabasePassword: moodlepassword
+
+moodleUsername: user
+moodlePassword: bitnami123
+moodleEmail: user@example.com
