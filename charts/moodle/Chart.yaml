@@ -7,9 +7,8 @@ description: |
   Moodle in a cloud-native infrastructure.
 
 type: application
-
 version: 0.1.0
-appVersion: "1.16.0"
+appVersion: "5.0"
 
 keywords:
   - moodle
@@ -37,3 +36,7 @@ dependencies:
       - mysql
       - persistence
       - psql
+  - name: postgresql
+    version: 12.5.7
+    repository: https://charts.bitnami.com/bitnami
+    condition: postgresql.enabled
