@@ -1,3 +1,18 @@
+moodle:
+  moodleUsername: admin
+  moodlePassword: adorsys-gis
+  moodleEmail: gis-udm@adorsys.com
+
+  service:
+    type: LoadBalancer
+
+  mariadb:
+    enabled: false
+
+  persistence:
+    enabled: true
+    size: 10Gi
+
 postgresql:
   enabled: false
   auth:
@@ -13,7 +28,3 @@ moodleDatabaseHost: postgresql
 moodleDatabaseName: bitnamimoodle
 moodleDatabaseUser: moodle
 moodleDatabasePassword: moodlepassword
-
-moodleUsername: user
-moodlePassword: bitnami123
-moodleEmail: user@example.com

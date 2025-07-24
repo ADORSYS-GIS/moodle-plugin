@@ -1,56 +1,55 @@
 
 ---
 
-
 # Moodle Helm Chart
 
-This Helm chart deploys [Moodle](https://moodle.org/) on a Kubernetes cluster. It supports optional deployment of Bitnami's PostgreSQL chart for internal database provisioning or allows integration with external PostgreSQL databases such as GCP CloudSQL or Amazon RDS.
+This Helm chart deploys [Moodle](https://moodle.org/) on a Kubernetes cluster. It wraps the [Bitnami Moodle chart](https://github.com/bitnami/charts/tree/main/bitnami/moodle) and supports optional deployment of Bitnami's PostgreSQL chart for internal database provisioning, or integration with external PostgreSQL services like GCP CloudSQL or Amazon RDS.
 
 ---
 
 ## ✨ Features
 
-- Deploys Moodle LMS using Bitnami's chart
-- Optional built-in PostgreSQL database using Bitnami PostgreSQL
-- Easy integration with external PostgreSQL (CloudSQL, RDS)
-- Works with local clusters (k3s, Minikube, KinD)
-- Helm-native configuration for cloud-native deployments
+* Deploys Moodle LMS using Bitnami's official chart
+* Optional built-in PostgreSQL database using Bitnami PostgreSQL
+* Easy integration with external PostgreSQL (CloudSQL, RDS)
+* Persistent volume support
+* Helm-native configuration for cloud-native deployments
+* Works with local clusters (k3s, Minikube, KinD)
 
 ---
 
-## 🚀 Usage
+## 🛠️ Requirements
 
-### ✅ Prerequisites
-
-- Helm 3.x
-- A Kubernetes cluster (e.g., k3s via Multipass)
-- Internet access to pull Bitnami charts
+* Helm 3.x
+* Kubernetes 1.21+ (tested with k3s)
+* Internet access to fetch Bitnami dependencies
 
 ---
 
-### 🔧 Installation Options
+## 🔧 Installation Options
 
-#### Option 1: External PostgreSQL (default)
+### Option 1: External PostgreSQL (default)
 
-`values.yaml` assumes an external database like CloudSQL or RDS:
+This is the default approach using `values.yaml`, assuming an external database like CloudSQL or RDS:
 
 ```bash
 cd charts/moodle
-helm dependency update
+helm dependency build
 helm install my-moodle . --values values.yaml
 ```
 
-#### Option 2: Internal PostgreSQL (Bitnami dependency)
+### Option 2: Internal PostgreSQL (Bitnami dependency)
 
 Use this if you want to deploy Moodle with an in-cluster PostgreSQL database:
 
 ```bash
+helm dependency build
 helm install my-moodle . -f values-postgres.yaml
 ```
 
 ---
 
-### 🔁 Uninstall
+## 🔁 Uninstall
 
 ```bash
 helm uninstall my-moodle
@@ -92,7 +91,7 @@ Then open:
 
 ---
 
-### 🔁 Alternative: Access via Multipass VM IP (NodePort)
+### Alternative: Access via Multipass VM IP (NodePort)
 
 1. Upgrade with `NodePort` enabled (in `values.yaml` or `values-postgres.yaml`):
 
@@ -100,7 +99,7 @@ Then open:
 helm upgrade my-moodle . -f values-postgres.yaml
 ```
 
-2. Get NodePort value:
+2. Get the NodePort:
 
 ```bash
 kubectl get svc my-moodle
@@ -122,7 +121,7 @@ This chart includes the following dependencies:
 * [bitnami/moodle](https://artifacthub.io/packages/helm/bitnami/moodle)
 * [bitnami/postgresql](https://artifacthub.io/packages/helm/bitnami/postgresql) (conditionally enabled)
 
-Defined in `Chart.yaml` and pulled via:
+They are defined in `Chart.yaml` and pulled via:
 
 ```bash
 helm dependency update
@@ -139,3 +138,4 @@ You can customize either using `-f <file>` or `--set key=value`.
 
 > 💡 Tip: Never hardcode production secrets in your values files. Use `--set`, `helm secrets`, or a CI/CD vault integration.
 
+---
