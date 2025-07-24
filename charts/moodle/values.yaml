@@ -1,5 +1,5 @@
 postgresql:
-  enabled: true
+  enabled: false
   auth:
     username: moodle
     password: moodlepassword
