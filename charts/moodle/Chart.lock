@@ -1,0 +1,9 @@
+dependencies:
+- name: common
+  repository: https://charts.bitnami.com/bitnami
+  version: 2.31.3
+- name: app-template
+  repository: https://bjw-s-labs.github.io/helm-charts
+  version: 4.0.1
+digest: sha256:bd6e1005dd04d4ef66642c60ad71091bf00a658fd3f574483e7bce2774b5458b
+generated: "2025-07-14T04:32:32.414701+02:00"

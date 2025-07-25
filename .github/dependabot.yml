@@ -1,0 +1,16 @@
+version: 2
+updates:
+  - package-ecosystem: "cargo"
+    directory: "./"
+    schedule:
+      interval: "weekly"
+    allow:
+      - dependency-type: production
+    open-pull-requests-limit: 10
+  - package-ecosystem: "helm"
+    directory: "./charts"
+    schedule:
+      interval: "weekly"
+    allow:
+      - dependency-type: production
+    open-pull-requests-limit: 10

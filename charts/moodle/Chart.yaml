@@ -1,0 +1,39 @@
+apiVersion: v2
+name: moodle
+description: |
+  Moodle is a free, open-source learning platform, also known as a Learning Management System (LMS), 
+  designed to help educators create and manage online courses and learning environments. 
+  This Helm chart deploys Moodle on Kubernetes, providing a scalable and flexible way to run 
+  Moodle in a cloud-native infrastructure.
+
+type: application
+
+version: 0.1.0
+appVersion: "1.16.0"
+
+keywords:
+  - moodle
+  - lms
+
+maintainers:
+  - name: Stephane Segning
+    email: selastlambou@gmail.com
+  - name: Adorsys GIS
+    email: gis-udm@adorsys.com
+
+dependencies:
+  - name: common
+    version: 2.31.3
+    repository: https://charts.bitnami.com/bitnami
+    tags:
+      - common
+  - name: moodle
+    version: 27.0.3
+    repository: https://charts.bitnami.com/bitnami
+    tags:
+      - moodle
+      - php
+      - apache
+      - mysql
+      - persistence
+      - psql

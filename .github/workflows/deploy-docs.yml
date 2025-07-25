@@ -1,0 +1,104 @@
+name: Deploy Docs and Helm Chart
+
+on:
+  push:
+    paths:
+      - "mkdocs.yml"
+      - "**/accept.txt"
+      - "charts"
+      - "docs"
+      - ".github/workflows/deploy-docs.yml"
+
+jobs:
+  lint-docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Vale linting
+        uses: errata-ai/vale-action@v2
+        with:
+          files: "docs"
+
+      - name: markdownlint
+        uses: DavidAnson/markdownlint-cli2-action@v20
+        with:
+          globs: |
+            docs/*.md
+
+      - name: Check for typos
+        uses: sobolevn/misspell-fixer-action@master
+        with:
+          options: "-rsvn docs/"
+
+  deploy-website:
+    runs-on: ubuntu-latest
+    permissions: 
+      contents: write
+    needs:
+      - lint-docs
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # MkDocs Steps
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Install MkDocs and dependencies
+        run: |
+          pip install mkdocs-material
+          pip install mkdocs-git-revision-date-localized-plugin
+          pip install mkdocs-minify-plugin
+          pip install pymdown-extensions --force
+
+      - name: Build MkDocs site
+        run: mkdocs build --clean
+
+      - name: Deploy MkDocs to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./site
+          keep_files: true
+
+  deploy-helm:
+    needs:
+      - deploy-website
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configure Git
+        run: |
+          git config user.name "$GITHUB_ACTOR"
+          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
+
+      - name: Install Helm
+        uses: azure/setup-helm@v4
+        env:
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+
+      - name: Add repos to Helm
+        run: |
+          helm repo add bjw-s https://bjw-s-labs.github.io/helm-charts
+          helm repo add bitnami https://charts.bitnami.com/bitnami
+          helm repo update
+
+      - name: Run chart-releaser
+        uses: helm/chart-releaser-action@v1
+        if: github.ref == 'refs/heads/main'
+        env:
+          CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+        with:
+          skip_existing: false
+          charts_dir: "charts"
