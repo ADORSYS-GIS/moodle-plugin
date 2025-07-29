@@ -169,7 +169,7 @@ helm dependency update
 Customize with:
 
 ```bash
-helm install my-moodle . -f my-custom-values.yaml
+helm install my-moodle . -f cnpg-values.yaml
 ```
 
 > 💡 Tip: Never hardcode production secrets in your values files. Use `--set`, `helm secrets`, or a CI/CD vault integration.
