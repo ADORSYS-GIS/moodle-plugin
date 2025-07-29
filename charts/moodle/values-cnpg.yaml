@@ -1,0 +1,11 @@
+cloudnative-pg:
+  enabled: true
+  fullnameOverride: moodle-postgresql
+  auth:
+    username: moodle
+    password: moodlepass
+    database: moodledb
+  primary:
+    persistence:
+      enabled: true
+      size: 8Gi
