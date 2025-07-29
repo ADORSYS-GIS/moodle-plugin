@@ -23,7 +23,7 @@ moodle:
     database: moodledb
 
 cloudnative-pg:
-  enabled: true
+  enabled: false
   fullnameOverride: moodle-postgresql
   auth:
     username: moodle
