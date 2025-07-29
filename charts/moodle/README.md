@@ -68,7 +68,7 @@ cloudnative-pg:
 
 ```bash
 helm dependency build
-helm install my-moodle . -f values.yaml
+helm install my-moodle . -f values-cnpg.yaml
 ```
 
 ---
@@ -91,11 +91,6 @@ helm template my-moodle . --values values.yaml
 
 This renders all manifests to stdout without deploying.
 
-You can verify CNPG resources like this:
-
-```bash
-helm template my-moodle . -f values.yaml | grep -C 5 "postgresql.cnpg.io"
-```
 
 ---
 
@@ -123,7 +118,7 @@ Then open:
 
 ### Alternative: Access via Multipass VM IP (NodePort)
 
-1. Upgrade with `NodePort` enabled (in `values.yaml` or `values-postgres.yaml`):
+1. Upgrade with `NodePort` enabled (in `values.yaml` ):
 
 ```bash
 helm upgrade my-moodle . -f values-postgres.yaml
@@ -164,13 +159,7 @@ helm dependency update
 
 * `values.yaml` – for use with external databases (default)
 * `values-postgres.yaml` – enables internal PostgreSQL (Bitnami)
-* You can also enable `cloudnative-pg` directly in `values.yaml`
-
-Customize with:
-
-```bash
-helm install my-moodle . -f cnpg-values.yaml
-```
+* `values-postgres.yaml`– used to enable CloudNativePG(Bitnami)  
 
 > 💡 Tip: Never hardcode production secrets in your values files. Use `--set`, `helm secrets`, or a CI/CD vault integration.
 
