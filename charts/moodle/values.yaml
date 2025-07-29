@@ -9,17 +9,27 @@ moodle:
   mariadb:
     enabled: false
 
+  postgresql:
+    enabled: false
+
   persistence:
     enabled: true
     size: 10Gi
 
-postgresql:
-  enabled: false
+  externalDatabase:
+    host: moodle-postgresql-rw
+    user: moodle
+    password: moodlepass
+    database: moodledb
+
+cloudnative-pg:
+  enabled: true
+  fullnameOverride: moodle-postgresql
   auth:
     username: moodle
-    password: moodlepassword
-    database: bitnamimoodle
+    password: moodlepass
+    database: moodledb
   primary:
     persistence:
-      enabled: false  # Disable PVC for local test clusters
-
+      enabled: true
+      size: 8Gi
