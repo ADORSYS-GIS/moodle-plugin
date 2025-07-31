@@ -49,6 +49,10 @@ spec:
                       type: string
                     password:
                       type: string
+                    type:
+                      type: string
+                      enum: ["mariadb", "mysqli", "pgsql", "auroramysql"]
+                      description: "Type of database backend"
             status:
               type: object
               description: "Current observed state of the Moodle deployment"

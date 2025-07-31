@@ -40,10 +40,9 @@ pub async fn create_or_update_replicaset(moodle: &Moodle, client: &Client) -> Re
             },
             EnvVar {
                 name: "MOODLE_DATABASE_TYPE".to_string(),
-                value: Some("mysql".to_string()),
+                value: Some(moodle.spec.database.db_type.clone()),
                 ..Default::default()
-            }
-            ,
+            },
             EnvVar {
                 name: "MOODLE_DATABASE_PORT_NUMBER".to_string(),
                 value: Some(moodle.spec.database.port.to_string()),

@@ -29,6 +29,7 @@ pub struct DatabaseConfig {
     pub port: u16,
     pub user: String,
     pub password: String,
+    pub db_type: String, // e.g. "pgsql", "mariadb", etc.
 }
 
 #[derive(Debug, Deserialize, Serialize, Clone, Default, PartialEq, JsonSchema)]

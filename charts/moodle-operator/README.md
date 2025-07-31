@@ -27,6 +27,7 @@ spec:
     port: 5432
     user: moodle_user
     password: secret123
+    type: pgsql
 ```
 
 ### Apply with ;
