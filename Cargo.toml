@@ -4,6 +4,8 @@ members = [
     "packages/operator",
 ]
 
+resolver = "3"
+
 [profile.prod]
 inherits = "release"
 lto = true
