@@ -37,6 +37,9 @@ spec:
                   type: string
                   enum: ["ClusterIP", "NodePort", "LoadBalancer"]
                   description: "Kubernetes Service type"
+                pvcName:
+                  type: string
+                  description: "Name of the PersistentVolumeClaim to be used by the Moodle pod"
                 database:
                   type: object
                   description: "Database connection configuration"
@@ -53,6 +56,9 @@ spec:
                       type: string
                       enum: ["mariadb", "mysqli", "pgsql", "auroramysql"]
                       description: "Type of database backend"
+                    name:
+                      type: string
+                      description: "Name of the database used by Moodle"
             status:
               type: object
               description: "Current observed state of the Moodle deployment"

@@ -4,18 +4,19 @@ pub enum Error {
     #[error("Failed to create replicaset: {0}")]
     ReplicaSetCreationFailed(#[from] kube::Error),
     
-    #[error("Failed to create pv: {0}")]
-    PersistenceVolumeCreationFailed(String),
-    
-    #[error("Failed to get Moodle CR: {0}")]
-    MoodleCRGetFailed(kube::Error),
-    
     #[error("Failed to get ReplicaSet: {0}")]
     ReplicaSetGetFailed( kube::Error),
     
-    #[error("Failed to patch Moodle status: {0}")]
-    StatusPatchFailed( kube::Error),
-    
-    #[error("Moodle resource has no namespace")]
-    MissingNamespace,
+}
+
+impl Error {
+    pub fn is_not_found(&self) -> bool {
+        match self {
+            Error::ReplicaSetGetFailed(kube::Error::Api(api_err)) => match api_err.code {
+                404 => true,
+                _ => false,
+            },
+            _ => false,
+        }
+    }
 }

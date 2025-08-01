@@ -14,11 +14,11 @@ use crate::error::Error;
 
 pub async fn create_or_update_replicaset(moodle: &Moodle, client: &Client) -> Result<(), Error> {
     let namespace = moodle.namespace().unwrap();
-    let replicas = moodle.spec.replicas;
-    let db_label_value = &moodle.spec.database.host; // e.g., "my-database"
-    let labels = BTreeMap::from([("app".to_string(), db_label_value.clone())]);
+    let app_label_value = moodle.name_any();
+    let labels = BTreeMap::from([("app".to_string(), app_label_value)]);
     
-    let rs_name = format!("moodle-rs-{}", moodle.name_any());
+    
+    let rs_name =  moodle.name_any();
     let rs_api: Api<ReplicaSet> = Api::namespaced(client.clone(), &namespace);
     
     
@@ -60,19 +60,19 @@ pub async fn create_or_update_replicaset(moodle: &Moodle, client: &Client) -> Re
             },
             EnvVar {
                 name: "MOODLE_DATABASE_NAME".to_string(),
-                value: Some("bitnami_moodle".to_string()), // must match MariaDB creation
+                value: Some(moodle.spec.database.name.clone()), 
                 ..Default::default()
             },
+            
             ]),
             ..Default::default()
         };
         
         
-        
         let volume = Volume {
             name: "moodle-data".to_string(),
             persistent_volume_claim: Some(PersistentVolumeClaimVolumeSource {
-                claim_name: format!("pvc-{}-0", moodle.name_any()), // one PVC for now
+                claim_name: moodle.spec.pvc_name.clone(),               
                 ..Default::default()
             }),
             ..Default::default()
@@ -91,6 +91,7 @@ pub async fn create_or_update_replicaset(moodle: &Moodle, client: &Client) -> Re
         };
         
         let rs_spec = ReplicaSetSpec {
+            replicas: Some(moodle.spec.replicas),
             selector: LabelSelector {
                 match_labels: Some(labels.clone()),
                 ..Default::default()
@@ -114,14 +115,24 @@ pub async fn create_or_update_replicaset(moodle: &Moodle, client: &Client) -> Re
         match rs_api.get(&rs_name).await {
             Ok(_) => {
                 let patch = Patch::Apply(&replicaset);
-                rs_api.patch(&rs_name, &PatchParams::apply("moodle-operator"), &patch).await?;
+                match rs_api
+                .patch(&rs_name, &PatchParams::apply("moodle-operator").force(), &patch)
+                .await
+                {
+                    Ok(_) => return Ok(()),
+                    Err(err) => return Err(Error::ReplicaSetCreationFailed(err)),
+                };
             }
-            Err(_) => {
-                rs_api.create(&pp, &replicaset).await?;
+            Err(err) => {
+                let err = Error::ReplicaSetGetFailed(err);
+                match err.is_not_found() {
+                    true => match rs_api.create(&pp, &replicaset).await {
+                        Ok(_) => return Ok(()),
+                        Err(err) => return Err(Error::ReplicaSetCreationFailed(err)),
+                    },
+                    false => return Err(err),
+                };
             }
-        }
-        Ok(())
-    } 
-    
-    
-    
+        }        
+        
+    }

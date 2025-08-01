@@ -19,7 +19,9 @@ pub struct MoodleSpec {
     pub image: String,
     pub replicas: i32,
     #[serde(rename = "serviceType")]
-    pub service_type: String, // Could also use enum for ClusterIP, etc.
+    pub service_type: String,
+    #[serde(rename = "pvcName")]
+    pub pvc_name: String,
     pub database: DatabaseConfig,
 }
 
@@ -29,7 +31,9 @@ pub struct DatabaseConfig {
     pub port: u16,
     pub user: String,
     pub password: String,
+    #[serde(rename = "type")]
     pub db_type: String, // e.g. "pgsql", "mariadb", etc.
+    pub name: String,  
 }
 
 #[derive(Debug, Deserialize, Serialize, Clone, Default, PartialEq, JsonSchema)]
