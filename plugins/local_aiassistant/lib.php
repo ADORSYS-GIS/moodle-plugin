@@ -58,15 +58,11 @@ function local_aiassistant_before_footer(): string {
         return '';
     }
 
-    // Then, check if the user has permission.
-    if (!has_capability('local/aiassistant:use', context_system::instance())) {
-        return '';
-    }
-    // We still check the capability here before outputting any HTML.
+    // Then, check if the user has permission to use the assistant ai.
     if (!has_capability('local_aiassistant:use', context_system::instance())) {
         return '';
     }
-
+    
     // Render the Floating Action Button.
     $fab = \html_writer::tag(
         'button',
