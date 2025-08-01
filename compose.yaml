@@ -1,4 +1,55 @@
+# Moodle AI Plugin - Manual Host Build Docker Compose
 services:
+  # --------------------------------------------------------------------
+  # NEW Service: Rust Build Initializer
+  # This is a one-shot service that runs as root to fix permissions on the
+  # shared Cargo cache volumes before the actual build starts.
+  # --------------------------------------------------------------------
+  rust-build-init:
+    image: rust:1.84-bookworm
+    # This command runs as root by default.
+    command: chown -R 1000:1000 /usr/local/cargo/registry /usr/local/cargo/git
+    volumes:
+      - cargo_registry:/usr/local/cargo/registry
+      - cargo_git:/usr/local/cargo/git
+  # --------------------------------------------------------------------
+  # Service 1: Rust Build Runner (Manual Trigger)
+  # This is a one-shot service that you run manually to compile your Rust code.
+  # It mounts your source code and the final 'target' directory.
+  # --------------------------------------------------------------------
+  rust-build-runner:
+    # Use the official Rust image, which has the 'cargo' command.
+    image: rust:1.84-bookworm
+    # The command to execute when this service is run.
+    command: cargo build --release
+    # We need to run as a user that matches your host's file permissions.
+    # Replace 1000:1000 with your host's UID:GID if different.
+    user: "1000:1000"
+    working_dir: /app/src
+    volumes:
+      # --- Volume Mounts Explained ---
+      # 1. Mount your Rust source code into the container.
+      #    - Host Path: ./packages/rust_processor
+      #    - Container Path: /app/src
+      #    - Why: This gives the 'cargo' command inside the container access to your code.
+      - ./packages/rust_processor:/app/src
+
+      # 2. Mount the Cargo registry and cache directories.
+      #    - Why (CRITICAL OPTIMIZATION): The first time you build, Cargo downloads gigabytes of
+      #      dependency source code ('registry') and compiles them ('git'). By persisting
+      #      these directories in named volumes, subsequent builds will be dramatically
+      #      faster, as they won't need to re-download or re-compile every dependency.
+      - cargo_registry:/usr/local/cargo/registry
+      - cargo_git:/usr/local/cargo/git
+    depends_on:
+      # CRITICAL: This ensures the permission fix runs before the build.
+      rust-build-init:
+        condition: service_completed_successfully
+
+  # --------------------------------------------------------------------
+  # Service 2: The Live Moodle Application
+  # --------------------------------------------------------------------
+
   # https://github.com/bitnami/containers/tree/main/bitnami/moodle
   moodle-init:
     image: docker.io/bitnami/moodle:5.0
@@ -22,6 +73,8 @@ services:
       MOODLE_SMTP_PORT: 1025
       BITNAMI_DEBUG: true
       EXTRA_LOCALES: "fr_FR.UTF-8 UTF-8, de_DE.UTF-8 UTF-8"
+    env_file:
+      - .env # Loads the OPENAI_API_KEY for the Moodle environment.
     entrypoint: /bin/bash
     command: # This script was removed from https://github.com/bitnami/containers/blob/main/bitnami/moodle/5.0/debian-12/rootfs/opt/bitnami/scripts/moodle/entrypoint.sh
       - -c
@@ -48,6 +101,7 @@ services:
         info "** Moodle setup finished! **"
 
     volumes:
+      # Persistent volumes for Moodle's code and data directories.
       - moodle_data:/bitnami/moodle
       - moodledata_data:/bitnami/moodledata
     depends_on: &moodle_depends_on
@@ -75,9 +129,24 @@ services:
       - ./plugins:/bitnami/moodle/plugins/custom/plugins:ro
       # Plugins downloaded via Moodle UI go here (read‑write)
       - plugins_downloads:/bitnami/moodle/plugins/downloaded:ro
+      # 2. Mount your custom PHP plugin source code.
+      - ./plugins/local_aiassistant:/bitnami/moodle/local/aiassistant:ro
+
+      # 3. Mount the **RESULT** of your manual build directly into the container's "toolbox".
+      #    - Host Path: ./packages/rust_processor/target/release/moodle-ai-processor
+      #    - Container Path: /app/moodle-ai-processor
+      #    - Why: This takes the specific binary file you created and places it at the
+      #      exact path ('/app/moodle-ai-processor') that your PHP code expects to find it.
+      #      The ':ro' (read-only) flag is a security best practice, as Moodle
+      #      should never need to modify its own executable.
+      - ./packages/rust_processor/target/release/moodle-ai-processor:/app/moodle-ai-processor:ro
     depends_on:
       <<: *moodle_depends_on
       moodle-init:
+        condition: service_completed_successfully
+      # CRITICAL: The Moodle service will not start until the Rust binary
+      # has been successfully compiled and copied.
+      rust-build-runner:
         condition: service_completed_successfully
 
   plugin-downloader:
@@ -266,3 +335,5 @@ volumes:
   mariadb_data:
   redis_data:
   minio_data:
+  cargo_registry:
+  cargo_git:
