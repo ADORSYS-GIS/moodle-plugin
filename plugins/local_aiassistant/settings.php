@@ -64,18 +64,15 @@ if ($ADMIN->fulltree) {
         ''
     ));
 
-    // Rust binary path with basic validation (non-empty)
-    $setting = new admin_setting_configtext(
+    // Rust binary path with validation
+    $settings->add(new admin_setting_configtext(
         'local_aiassistant/rust_binary_path',
         get_string('rust_binary_path', 'local_aiassistant'),
         get_string('rust_binary_path_desc', 'local_aiassistant'),
-        '/app/moodle-ai-processor',
-        PARAM_PATH
-    );
-    $setting->set_validate_function(function ($value) {
-        return empty($value) ? get_string('path_required', 'local_aiassistant') : true;
-    });
-    $settings->add($setting);
+        '/app/moodle-ai-processor', // default value
+        PARAM_PATH, // parameter type
+        50  // length - size limit of the input field
+    ));
 
     // 3. Add our newly created page to the correct category in the main admin tree.
     //    This is the final step that makes the link appear.
