@@ -1,5 +1,6 @@
 <?php
 $string['pluginname'] = 'AI Assistant';
+$string['settings'] = 'AI Assistant settings';
 
 // Settings page strings
 $string['openai_api_key'] = 'OpenAI API Key';
