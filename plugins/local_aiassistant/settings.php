@@ -27,6 +27,28 @@ if ($ADMIN->fulltree) {
 
     // 2. Add the individual settings fields to our page object.
 
+    // === [General Settings Section] ===
+    $settings->add(new admin_setting_heading(
+        'local_aiassistant/general_heading',
+        get_string('general_settings_heading', 'local_aiassistant'),
+        ''
+    ));
+
+    // Enable/disable the plugin
+    $settings->add(new admin_setting_configcheckbox(
+        'local_aiassistant/enabled',
+        get_string('enabled', 'local_aiassistant'),
+        get_string('enabled_desc', 'local_aiassistant'),
+        1
+    ));
+
+    // === [API Settings Section] ===
+    $settings->add(new admin_setting_heading(
+        'local_aiassistant/api_heading',
+        get_string('api_settings_heading', 'local_aiassistant'),
+        ''
+    ));
+
     // Add the OpenAI API Key setting.
     $settings->add(new admin_setting_configpasswordunmask(
         'local_aiassistant/openai_api_key',
@@ -35,14 +57,25 @@ if ($ADMIN->fulltree) {
         '' // Default value.
     ));
 
-    // Add the path to the Rust binary.
-    $settings->add(new admin_setting_configtext(
+    // === [Binary Settings Section] ===
+    $settings->add(new admin_setting_heading(
+        'local_aiassistant/binary_heading',
+        get_string('binary_settings_heading', 'local_aiassistant'),
+        ''
+    ));
+
+    // Rust binary path with basic validation (non-empty)
+    $setting = new admin_setting_configtext(
         'local_aiassistant/rust_binary_path',
         get_string('rust_binary_path', 'local_aiassistant'),
         get_string('rust_binary_path_desc', 'local_aiassistant'),
-        '/app/moodle-ai-processor', // Default path for our Docker environment.
+        '/app/moodle-ai-processor',
         PARAM_PATH
-    ));
+    );
+    $setting->set_validate_function(function ($value) {
+        return empty($value) ? get_string('path_required', 'local_aiassistant') : true;
+    });
+    $settings->add($setting);
 
     // 3. Add our newly created page to the correct category in the main admin tree.
     //    This is the final step that makes the link appear.

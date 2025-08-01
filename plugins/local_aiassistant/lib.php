@@ -51,6 +51,17 @@ class local_aiassistant_observer {
  * @return string The HTML for the initial UI placeholders.
  */
 function local_aiassistant_before_footer(): string {
+    global $PAGE;
+
+    // First, check if the entire plugin is enabled in the settings.
+    if (!get_config('local_aiassistant', 'enabled')) {
+        return '';
+    }
+
+    // Then, check if the user has permission.
+    if (!has_capability('local/aiassistant:use', context_system::instance())) {
+        return '';
+    }
     // We still check the capability here before outputting any HTML.
     if (!has_capability('local_aiassistant:use', context_system::instance())) {
         return '';
