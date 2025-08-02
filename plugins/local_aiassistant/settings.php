@@ -12,7 +12,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+defined('MOODLE_INTERNAL') || die('Direct access to this script is forbidden.');
 
 // This check is a Moodle standard to ensure the admin tree is being built.
 // It is the replacement for the 'isset($settings)' check and is more reliable.

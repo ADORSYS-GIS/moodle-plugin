@@ -31,8 +31,8 @@ class local_aiassistant_observer {
     public static function on_before_header(\core\event\base $event): void {
         global $PAGE;
 
-        // First, check if the user has permission to use the assistant.
-        if (!has_capability('local_aiassistant:use', context_system::instance())) {
+        // First, check if the PLugin is enabled or if the user has permission to use the assistant.
+        if (!get_config('local_aiassistant', 'enabled') || !has_capability('local/aiassistant:use', context_system::instance())) {
             return;
         }
 
@@ -53,13 +53,8 @@ class local_aiassistant_observer {
 function local_aiassistant_before_footer(): string {
     global $PAGE;
 
-    // First, check if the entire plugin is enabled in the settings.
-    if (!get_config('local_aiassistant', 'enabled')) {
-        return '';
-    }
-
-    // Then, check if the user has permission to use the assistant ai.
-    if (!has_capability('local_aiassistant:use', context_system::instance())) {
+    // First, check if the entire plugin is enabled in the settings or if the user has permission to use the assistant.
+    if (!get_config('local_aiassistant', 'enabled') || !has_capability('local/aiassistant:use', context_system::instance())) {
         return '';
     }
     
