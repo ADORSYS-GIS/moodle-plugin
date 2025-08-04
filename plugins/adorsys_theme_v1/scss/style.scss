@@ -1,3 +1,34 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+//=============================================================================
+// Vertical Sidebar Layout Overrides
+// Permanently show nav drawer as a fixed sidebar and hide top navbar.
+//
+// - Hide the default top navigation bar
+#page-header .navbar {
+  display: none !important;
+}
+//
+// - Show the side navigation drawer permanently
+#nav-drawer {
+  display: block !important;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  width: 250px;
+  overflow-y: auto;
+  background-color: #f8f9fa;
+  border-right: 1px solid #ddd;
+  z-index: 1020;
+}
+//
+// - Shift page content to the right of the sidebar
+#page {
+  margin-left: 250px !important;
+}
+//
+// Ensure content at root level is correctly spaced
+body {
+  padding-left: 0 !important;
+}
