@@ -7,6 +7,8 @@ document.addEventListener('DOMContentLoaded', () => {
   toggle.className = 'fixed top-4 right-4 p-2 bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded shadow-lg z-50';
   document.body.appendChild(toggle);
 
+// Initialize page transition
+document.documentElement.classList.add('loaded');
   // Initialize theme from localStorage
   const stored = localStorage.getItem('theme');
   if (stored === 'dark') {

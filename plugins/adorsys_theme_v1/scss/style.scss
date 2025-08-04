@@ -1,3 +1,15 @@
+//=============================================================================
+// Page Transition Animations (fade & slide-in)
+html {
+  opacity: 0;
+  transform: translateX(50px);
+  transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+}
+html.loaded body {
+  opacity: 1;
+  transform: translateX(0);
+}
+//=============================================================================
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
