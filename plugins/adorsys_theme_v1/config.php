@@ -8,3 +8,7 @@ $THEME->javascripts = ['theme'];
 $THEME->editor_sheets = [];
 $THEME->enable_dock = false;
 $THEME->rendererfactory = 'theme_overridden_renderer_factory';
+
+
+// CSS post-processing callback.
+$THEME->csspostprocess = 'theme_boost_css_postprocess';

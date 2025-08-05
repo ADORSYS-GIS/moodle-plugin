@@ -1,6 +1,5 @@
 module.exports = {
   darkMode: 'class',
-  darkMode: 'class',
   content: [
     './**/*.php',
     './layout/**/*.php',
