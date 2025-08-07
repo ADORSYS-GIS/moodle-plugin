@@ -1,81 +1,81 @@
 # Adorsys Theme v1
 
-A custom Moodle theme built with Tailwind CSS and Webpack based on the Boost parent theme.
+A custom Moodle theme plugin based on Boost, built with Tailwind CSS and Webpack.
+
+This repository contains the **adorsys_theme_v1** folder under `plugins/`, designed as a classical Moodle theme scaffold following the [Creating a custom theme](https://docs.moodle.org/dev/Creating_a_custom_theme) guide.
 
 ## Prerequisites
 
 - Node.js (>=14)
 - Yarn
-- Docker & Docker Compose
-- Moodle Docker environment from `compose.yaml`
+- Docker & Docker Compose (see root `compose.yaml`)
 
-## Installation
+## Setup & Build
 
-```bash
-cd plugins/adorsys-theme-v1
-yarn install
+1. Change into the theme folder:
+   ```bash
+   cd plugins/adorsys_theme_v1
+   ```
+
+2. Initialize dependencies and build assets:
+   ```bash
+   yarn install
+   yarn build
+   ```
+
+3. For development with live rebuilds:
+   ```bash
+   yarn dev
+   ```
+
+## Project Structure
+
+```
+adorsys_theme_v1/
+├── config.php           # Moodle theme definition
+├── version.php
+├── settings.php         # Admin settings stub
+├── lib.php              # Empty lib stub
+├── package.json
+├── webpack.config.js    # SCSS compilation
+├── tailwind.config.js
+├── postcss.config.js
+├── scss/
+│   └── style.scss       # Tailwind entry
+├── style/
+│   ├── all.css          # Compiled CSS
+│   └── bundle.js        # JS bundle placeholder
+│
+├── lang/en/
+│   └── theme_adorsys_theme_v1.php
+└── pix/                 # Images & screenshot for theme picker
 ```
 
-## Build
+## Docker Integration
 
-Compile SCSS and bundle assets:
-
-```bash
-yarn build
-```
-
-Generated files will be in `style/`:
-- `all.css` — compiled CSS
-- `bundle.js` — placeholder JS bundle
-
-## Development
-
-Watch for changes and rebuild automatically:
-
-```bash
-yarn build --watch
-```
-
-## Docker Setup
-
-Mount this theme into your Moodle container:
-
+To mount the theme in your Moodle container, add to `docker-compose.yml` under the `moodle` service:
 ```yaml
-    volumes:
-      - ./plugins/adorsys-theme-v1:/bitnami/moodle/theme/adorsys-theme-v1:ro
+volumes:
+  - ./plugins/adorsys_theme_v1:/bitnami/moodle/theme/adorsys_theme_v1:ro
 ```
-
-Then start or restart your Docker Compose stack:
-
+Then restart:
 ```bash
 docker compose up -d
 ```
+Finally, purge Moodle caches in the UI (Site administration → Development → Purge all caches) to see your theme.
 
-Purge theme cache in Moodle admin to see updates.
+## Demo
 
-## File Structure
+1. Start your Docker stack:
+   ```bash
+   docker compose up -d
+   ```
+2. Navigate to `http://localhost:8080/` (or your host’s mapped port).
+3. In Site administration → Appearance → Theme selector, choose **Adorsys Theme v1** and confirm.
+4. Observe inherited Boost layout; any SCSS changes will reload after `yarn dev`.
 
-```
-adorsys-theme-v1/
-├── config.php
-├── version.php
-├── settings.php
-├── lang/en/theme_adorsys-theme-v1.php
-├── tailwind.config.js
-├── postcss.config.js
-├── webpack.config.js
-├── scss/
-│   └── style.scss
-└── style/
-    ├── all.css
-    └── bundle.js
-```
+## Next Steps
 
-## Customization
-
-- Add SCSS partials under `scss/` and import them in `style.scss`.
-- Extend Tailwind config in `tailwind.config.js`.
-- Define theme settings in `settings.php`.
 
 ## License
 
