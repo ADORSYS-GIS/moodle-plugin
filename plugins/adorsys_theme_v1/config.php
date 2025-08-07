@@ -25,49 +25,49 @@
 defined('MOODLE_INTERNAL') || die();
 
 $THEME->name = 'adorsys_theme_v1';
-$THEME->sheets = ['main'];
 $THEME->parents = [];
-$THEME->enable_dock = false;
-$THEME->rendererfactory = 'theme_overridden_renderer_factory';
-
-// Using precompiled CSS from Webpack
-
+$THEME->sheets = ['main']; // Use this if you are not compiling your CSS via Webpack
+$THEME->scss = function($theme) {
+    return theme_adorsys_theme_v1_get_main_scss_content($theme);
+};
 $THEME->layouts = [
     'default' => [
         'file' => 'default.php',
         'regions' => ['side-pre', 'side-post'],
         'defaultregion' => 'side-pre',
     ],
-    'course' => [
-        'file' => 'default.php',
-        'regions' => ['side-pre', 'side-post'],
-        'defaultregion' => 'side-pre',
-    ],
-    'frontpage' => [
-        'file' => 'default.php',
-        'regions' => ['side-pre', 'side-post'],
-        'defaultregion' => 'side-pre',
-    ],
-    'admin' => [
-        'file' => 'default.php',
+    'columns1' => [
+        'file' => 'columns1.php',
         'regions' => ['side-pre'],
         'defaultregion' => 'side-pre',
     ],
-    'mydashboard' => [
-        'file' => 'default.php',
+    'columns2' => [
+        'file' => 'columns2.php',
+        'regions' => ['side-pre', 'side-post'],
+        'defaultregion' => 'side-pre',
+    ],
+    'secure' => [
+        'file' => 'secure.php',
+        'regions' => [],
+    ],
+    'embedded' => [
+        'file' => 'embedded.php',
+        'regions' => [],
+    ],
+    'standard' => [    // Make sure 'standard' layout points to the new file
+        'file' => 'drawers.php',
         'regions' => ['side-pre', 'side-post'],
         'defaultregion' => 'side-pre',
     ],
     'login' => [
-        'file' => 'default.php',
-        'regions' => [],
-    ],
-    'popup' => [
-        'file' => 'default.php',
-        'regions' => [],
-    ],
-    'print' => [
-        'file' => 'default.php',
+        'file' => 'login.php',
         'regions' => [],
     ],
 ];
+
+$THEME->page_init = 'theme_adorsys_theme_v1_page_init';  // Hook into page init
+
+$THEME->rendererfactory = 'theme_overridden_renderer_factory'; // If you have custom renderers
+
+$THEME->settings = true;  // Optional: If you have a settings.php
+
