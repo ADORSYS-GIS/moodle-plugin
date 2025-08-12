@@ -2,6 +2,7 @@ services:
   # https://github.com/bitnami/containers/tree/main/bitnami/moodle
   moodle-init:
     image: docker.io/bitnami/moodle:5.0
+    user: root # Run as root to allow script execution
     deploy: &moodle_deploy
       resources:
         limits:
@@ -72,9 +73,9 @@ services:
       - moodle_data:/bitnami/moodle
       - moodledata_data:/bitnami/moodledata
       # Local source‑controlled plugins (read‑only)
-      - ./plugins:/bitnami/moodle/plugins/custom/plugins:ro
+      - ./plugins/local:/bitnami/moodle/local
       # Plugins downloaded via Moodle UI go here (read‑write)
-      - plugins_downloads:/bitnami/moodle/plugins/downloaded:ro
+      - plugins_downloads:/bitnami/moodle/plugins/downloaded
     depends_on:
       <<: *moodle_depends_on
       moodle-init:

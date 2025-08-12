@@ -11,6 +11,7 @@ node_modules
 
 # Environment variables
 .env
+local/ai_openai_v1/rust_processor/.env
 
 # Editor directories and files
 .idea

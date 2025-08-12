@@ -1,7 +1,7 @@
 [workspace]
 members = [
     "packages/moodle-wasm-example",
-    "packages/operator",
+    "packages/operator", "plugins/local/ai_openai_v1/rust_processor",
 ]
 
 [profile.prod]
