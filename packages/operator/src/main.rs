@@ -8,6 +8,7 @@ mod reconciller;
 mod telemetry;
 use crate::{reconciller::controller::controller_moodle_cluster, telemetry::{logging::init_logs_and_tracing,telemetry_server::{ start_otel_server}}};
 
+
 #[derive(Clone)]
 struct Data {
     client: Client,
@@ -32,6 +33,23 @@ async fn main() -> Result<()> {
         }
     );
     let _ = start_otel_server().await;
+    
+    Ok(())
+
+}
+
+#[global_allocator]
+static GLOBAL: MiMalloc = MiMalloc;
+
+
+#[tokio::main]
+async fn main() -> Result<()> {
+    tracing_subscriber::fmt::init();
+    
+    let client = Client::try_default().await?;
+    
+    info!("Started controller");
+    controller_moodle_cluster(&client).await;
     
     Ok(())
 }

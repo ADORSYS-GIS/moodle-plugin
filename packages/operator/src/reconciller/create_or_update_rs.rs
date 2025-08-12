@@ -10,8 +10,10 @@ use kube::Resource;
 use kube::{Api, Client, ResourceExt};
 use std::collections::BTreeMap;
 
+
 use crate::crds::crd::Moodle;
 use crate::error::Error;
+
 
 pub async fn create_or_update_replicaset(moodle: &Moodle, client: &Client) -> Result<(), Error> {
     let namespace = moodle.namespace().unwrap();
@@ -21,11 +23,13 @@ pub async fn create_or_update_replicaset(moodle: &Moodle, client: &Client) -> Re
     let rs_name = moodle.name_any();
     let rs_api: Api<ReplicaSet> = Api::namespaced(client.clone(), &namespace);
 
+
     let pvc_mount = VolumeMount {
         name: "moodle-data".to_string(),
         mount_path: "/bitnami/moodle".to_string(),
         ..Default::default()
     };
+
 
     let container = Container {
         name: "moodle".to_string(),

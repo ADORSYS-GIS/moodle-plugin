@@ -9,6 +9,7 @@ use crate::{
     Data,
 };
 
+
 pub async fn reconcile(moodle: Arc<Moodle>, ctx: Arc<Data>) -> Result<Action, Error> {
     let client = &ctx.client;
     
@@ -30,6 +31,7 @@ pub async fn reconcile(moodle: Arc<Moodle>, ctx: Arc<Data>) -> Result<Action, Er
         return Ok(Action::requeue(std::time::Duration::from_secs(30)));
     }
     
+
     match create_or_update_replicaset(&moodle, client).await {
         Ok(_) => {
             tracing::info!("Successfully created or updated ReplicaSet.");
@@ -45,3 +47,4 @@ pub async fn reconcile(moodle: Arc<Moodle>, ctx: Arc<Data>) -> Result<Action, Er
         30,
     )))
 }
+
