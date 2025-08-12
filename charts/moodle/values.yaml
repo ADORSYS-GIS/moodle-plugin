@@ -1,8 +1,9 @@
 moodle:
+  debug: true
   moodleUsername: admin
   moodlePassword: adorsys-gis
   moodleEmail: gis-udm@adorsys.com
-
+  moodleDatabaseType: pgsql
   service:
     type: LoadBalancer
 
@@ -14,14 +15,34 @@ moodle:
 
   persistence:
     enabled: true
+    existingClaim: ""
     size: 10Gi
 
   externalDatabase:
     host: moodle-postgresql-rw
+    port: 5432
     user: moodle
-    password: moodlepass
     database: moodledb
+    existingSecret: moodle-db-secret
+    # externalDatabasePasswordKey: mariadb-password
+    type: pgsql
 
-cloudnative-pg:
-  enabled: true
-  fullnameOverride: moodle-postgresql
+  readinessProbe:
+    enabled: true
+    path: /login/index.php
+    port: 8080
+    initialDelaySeconds: 120
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 6
+    successThreshold: 1
+
+  livenessProbe:
+    enabled: true
+    path: /login/index.php
+    port: 8080
+    initialDelaySeconds: 180
+    periodSeconds: 20
+    timeoutSeconds: 5
+    failureThreshold: 6
+    successThreshold: 1
