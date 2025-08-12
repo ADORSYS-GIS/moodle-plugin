@@ -1,19 +1,12 @@
-postgresql:
-  enabled: true
-  auth:
-    username: moodle
-    password: moodlepassword
-    database: bitnamimoodle
-  primary:
-    persistence:
-      enabled: false  # Disable PVC for local dev/testing
-
 moodleDatabaseType: "pgsql"
-moodleDatabaseHost: postgresql
-moodleDatabaseName: bitnamimoodle
+moodleDatabaseHost: moodle-postgresql-rw  # ✅ service from CNPG cluster
+moodleDatabaseName: moodledb              # ✅ must match `initdb.database`
 moodleDatabaseUser: moodle
-moodleDatabasePassword: moodlepassword
+moodleDatabasePassword: moodlepass        # ✅ must match user secret
 
 moodleUsername: user
 moodlePassword: bitnami123
 moodleEmail: user@example.com
+
+postgresql:
+  enabled: false  # ✅ because you're not using Bitnami PostgreSQL chart
