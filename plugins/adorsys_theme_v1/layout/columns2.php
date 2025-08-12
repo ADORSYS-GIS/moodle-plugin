@@ -1,30 +1,21 @@
 <?php
 defined('MOODLE_INTERNAL') || die();
 
-echo $OUTPUT->doctype();
-?>
-<html <?= $OUTPUT->htmlattributes() ?>>
-<head>
-    <title><?= $PAGE->title ?></title>
-    <?= $OUTPUT->standard_head_html() ?>
-</head>
-<body <?= $OUTPUT->body_attributes() ?>>
-<?= $OUTPUT->standard_top_of_body_html() ?>
+$blockshtml = $OUTPUT->blocks('side-pre');
+$hasblocks = strpos($blockshtml, 'data-block=') !== false;
 
-<div id="page" class="min-h-screen flex">
-    <aside id="region-side-pre" class="w-1/4 p-4 bg-gray-200">
-        <?= $OUTPUT->blocks('side-pre') ?>
-    </aside>
+$templatecontext = [
+    'output' => $OUTPUT,
+    'bodyattributes' => $OUTPUT->body_attributes(),
+    'hasblocks' => $hasblocks,
+    'sidepreblocks' => $blockshtml,
+    'maincontent' => $OUTPUT->main_content(),
+    'navbar' => $OUTPUT->navbar(),
+    'pageheading' => $PAGE->heading,
+    'hasnavbar' => empty($PAGE->layout_options['nonavbar']) && $PAGE->has_navbar(),
+    'hasfooter' => empty($PAGE->layout_options['nofooter']),
+    'footer' => $OUTPUT->standard_footer_html(),
+    'standardendhtml' => $OUTPUT->standard_end_of_body_html(),
+];
 
-    <main id="region-main" class="flex-1 p-4">
-        <?= $OUTPUT->main_content() ?>
-    </main>
-</div>
-
-<footer class="p-4">
-    <?= $OUTPUT->standard_footer_html() ?>
-</footer>
-
-<?= $OUTPUT->standard_end_of_body_html() ?>
-</body>
-</html>
+echo $OUTPUT->render_from_template('theme_adorsys_theme_v1/default', $templatecontext);

@@ -22,52 +22,129 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+
 defined('MOODLE_INTERNAL') || die();
 
 $THEME->name = 'adorsys_theme_v1';
+
 $THEME->parents = [];
-$THEME->sheets = ['main']; // Use this if you are not compiling your CSS via Webpack
-$THEME->scss = function($theme) {
-    return theme_adorsys_theme_v1_get_main_scss_content($theme);
-};
+
 $THEME->layouts = [
+
+    'standard' => [
+        'file' => 'drawers.php', 
+        'regions' => ['side-pre', 'side-post'],
+        'defaultregion' => 'side-pre',
+    ],
+    // Used by default for most pages.
     'default' => [
         'file' => 'default.php',
         'regions' => ['side-pre', 'side-post'],
         'defaultregion' => 'side-pre',
     ],
-    'columns1' => [
-        'file' => 'columns1.php',
-        'regions' => ['side-pre'],
-        'defaultregion' => 'side-pre',
-    ],
-    'columns2' => [
+
+    // Used for course main page.
+    'course' => [
         'file' => 'columns2.php',
         'regions' => ['side-pre', 'side-post'],
         'defaultregion' => 'side-pre',
     ],
-    'secure' => [
-        'file' => 'secure.php',
-        'regions' => [],
-    ],
-    'embedded' => [
-        'file' => 'embedded.php',
-        'regions' => [],
-    ],
-    'standard' => [    // Make sure 'standard' layout points to the new file
-        'file' => 'drawers.php',
+
+    // Used for course modules (like assignments, quizzes).
+    'incourse' => [
+        'file' => 'columns2.php',
         'regions' => ['side-pre', 'side-post'],
         'defaultregion' => 'side-pre',
     ],
+
+    // Site home page.
+    'frontpage' => [
+        'file' => 'default.php',
+        'regions' => ['side-pre', 'side-post'],
+        'defaultregion' => 'side-pre',
+    ],
+
+    // User dashboard.
+    'mydashboard' => [
+        'file' => 'default.php',
+        'regions' => ['side-pre', 'side-post'],
+        'defaultregion' => 'side-pre',
+    ],
+
+    // My courses page.
+    'mycourses' => [
+        'file' => 'default.php',
+        'regions' => ['side-pre', 'side-post'],
+        'defaultregion' => 'side-pre',
+    ],
+
+    // Login page.
     'login' => [
         'file' => 'login.php',
         'regions' => [],
     ],
+
+    // Admin pages.
+    'admin' => [
+        'file' => 'columns2.php',
+        'regions' => ['side-pre'],
+        'defaultregion' => 'side-pre',
+    ],
+
+    // Category pages.
+    'coursecategory' => [
+        'file' => 'columns2.php',
+        'regions' => ['side-pre'],
+        'defaultregion' => 'side-pre',
+    ],
+
+    // Embedded pages.
+    'embedded' => [
+        'file' => 'embedded.php',
+        'regions' => [],
+    ],
+
+    // Secure layout.
+    'secure' => [
+        'file' => 'secure.php',
+        'regions' => [],
+    ],
+
+    // Maintenance page.
+    'maintenance' => [
+        'file' => 'maintenance.php',
+        'regions' => [],
+    ],
+
+    // Popup windows.
+    'popup' => [
+        'file' => 'embedded.php',
+        'regions' => [],
+    ],
+
+    // Redirection pages.
+    'redirect' => [
+        'file' => 'embedded.php',
+        'regions' => [],
+    ],
+
+    // Report layout.
+    'report' => [
+        'file' => 'columns2.php',
+        'regions' => ['side-pre'],
+        'defaultregion' => 'side-pre',
+    ],
 ];
 
-$THEME->page_init = 'theme_adorsys_theme_v1_page_init';  // Hook into page init
+$THEME->page_init = 'theme_adorsys_theme_v1_page_init';
 
-$THEME->rendererfactory = 'theme_overridden_renderer_factory'; // If you have custom renderers
+$THEME->rendererfactory = 'theme_overridden_renderer_factory';
 
-$THEME->settings = true;  // Optional: If you have a settings.php
+$THEME->settings = true;
+
+$THEME->scss = function($theme) {
+    return theme_adorsys_theme_v1_get_main_scss_content($theme);
+};
+
+
 

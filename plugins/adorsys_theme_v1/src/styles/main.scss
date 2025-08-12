@@ -1,5 +1,24 @@
 @import "tailwindcss";
 
+
+// Custom Styles
 body {
-    @apply text-base text-gray-800;
+  @apply bg-gray-50 text-gray-900 font-sans;
+}
+
+h2 {
+  @apply text-3xl font-bold text-gray-800;
+}
+
+form input,
+form button {
+  @apply w-full block rounded border border-gray-300 px-3 py-2 focus:outline-none focus:ring focus:border-indigo-300;
+}
+
+form button {
+  @apply bg-indigo-600 text-white font-semibold hover:bg-indigo-700 transition-colors;
+}
+
+.shadow-md {
+  @apply shadow-lg;
 }
