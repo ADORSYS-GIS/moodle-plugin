@@ -1,0 +1,27 @@
+[package]
+name = "ai_utils"
+version = "0.1.0"
+edition = "2021"
+description = "Shared utilities for the AI package: config, logging, metrics, and errors"
+license = "Apache-2.0"
+authors = ["GIS Moodle Team <gis@moodle.com>"]
+
+[dependencies]
+serde = { version = "1.0", features = ["derive"] }
+thiserror = "1.0"
+log = "0.4"
+env_logger = "0.10"
+once_cell = "1.20"
+serde_json = "1.0.142"
+serde_yaml = "0.9.34"
+tracing = "0.1.40"
+tracing-subscriber = { version = "0.3.18", features = ["fmt", "env-filter", "registry"] }
+tracing-appender = "0.2.3"
+is-terminal = "0.4.13"
+
+# Optional: if you want Prometheus instrumentation later, enable it per-crate as needed.
+# prometheus = { version = "0.15", optional = true }
+
+[dev-dependencies]
+serial_test = "3.1.1"  # For #[serial]
+tempfile = "3.10.1"
