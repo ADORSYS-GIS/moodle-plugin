@@ -7,7 +7,7 @@ moodle:
     type: LoadBalancer
 
   mariadb:
-    enabled: false
+    enabled: true
 
   postgresql:
     enabled: false
@@ -23,5 +23,5 @@ moodle:
     database: moodledb
 
 cloudnative-pg:
-  enabled: true
+  enabled: false
   fullnameOverride: moodle-postgresql
