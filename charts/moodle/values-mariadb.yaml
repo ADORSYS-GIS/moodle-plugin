@@ -1,0 +1,13 @@
+mariadb:
+  auth:
+    rootPassword: moodlerootpass
+ 
+    database: bitnami_moodle
+   
+    username: bn_moodle
+   
+    password: moodlepass
+  primary:
+    persistence:
+      enabled: true
+      storageClass: local-path
