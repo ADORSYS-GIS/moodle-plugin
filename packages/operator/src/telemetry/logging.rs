@@ -16,7 +16,7 @@ fn get_resource() -> Resource {
     RESOURCE
     .get_or_init(|| {
         Resource::builder()
-        .with_service_name("otlp-actix-http")
+        .with_service_name("otlp-hyper-http")
         .build()
     })
     .clone()
