@@ -23,11 +23,4 @@ $templatecontext = [
     'standardendhtml' => $OUTPUT->standard_end_of_body_html(),
 ];
 
-// Use your custom renderer (required for get_template_context()).
-$themeoutput = $PAGE->get_renderer('theme_adorsys_theme_v1');
-
-// Get full template context from your custom renderer.
-$context = $themeoutput->get_template_context();
-
-// Render the main layout Mustache template (includes navbar, sideblocks, footer via partials).
-echo $themeoutput->render_from_template('theme_adorsys_theme_v1/default', $context);
+echo $OUTPUT->render_from_template('theme_adorsys_theme_v1/default', $templatecontext);

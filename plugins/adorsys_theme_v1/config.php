@@ -59,21 +59,21 @@ $THEME->layouts = [
 
     // Site home page.
     'frontpage' => [
-        'file' => 'default.php',
+        'file' => 'drawers.php',
         'regions' => ['side-pre', 'side-post'],
         'defaultregion' => 'side-pre',
     ],
 
     // User dashboard.
     'mydashboard' => [
-        'file' => 'default.php',
+        'file' => 'drawers.php',
         'regions' => ['side-pre', 'side-post'],
         'defaultregion' => 'side-pre',
     ],
 
     // My courses page.
     'mycourses' => [
-        'file' => 'default.php',
+        'file' => 'drawers.php',
         'regions' => ['side-pre', 'side-post'],
         'defaultregion' => 'side-pre',
     ],
