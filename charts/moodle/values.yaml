@@ -9,9 +9,6 @@ moodle:
   mariadb:
     enabled: true
 
-  postgresql:
-    enabled: false
-
   persistence:
     enabled: true
     size: 10Gi
@@ -22,6 +19,3 @@ moodle:
     password: moodlepass
     database: moodledb
 
-cloudnative-pg:
-  enabled: false
-  fullnameOverride: moodle-postgresql
