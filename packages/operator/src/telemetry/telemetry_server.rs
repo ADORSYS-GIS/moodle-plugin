@@ -132,7 +132,7 @@ pub async fn start_otel_server() -> Result<()> {
             let service = service_fn(move |req| handle_request(req, Arc::clone(&metrics)));
 
             if let Err(err) = http1::Builder::new().serve_connection(io, service).await {
-                eprintln!("Error serving connection: {:?}", err);
+                eprintln!("Error serving connection: {err:?}");
             }
         });
     }

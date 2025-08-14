@@ -36,7 +36,7 @@ pub async fn reconcile(moodle: Arc<Moodle>, ctx: Arc<Data>) -> Result<Action, Er
         }
         Err(e) => {
             tracing::error!("Failed to create or update ReplicaSet: {}", e);
-            return Err(e.into());
+            return Err(e);
         }
     }
 
