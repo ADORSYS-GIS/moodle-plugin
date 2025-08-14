@@ -18,10 +18,11 @@ tracing = "0.1.40"
 tracing-subscriber = { version = "0.3.18", features = ["fmt", "env-filter", "registry"] }
 tracing-appender = "0.2.3"
 is-terminal = "0.4.13"
+lazy_static = "1.5.0"  # For shared test log path
 
-# Optional: if you want Prometheus instrumentation later, enable it per-crate as needed.
-# prometheus = { version = "0.15", optional = true }
+# Optional: add metrics later (e.g., `prometheus`) when needed.
 
 [dev-dependencies]
 serial_test = "3.1.1"  # For #[serial]
 tempfile = "3.10.1"
+lazy_static = "1.5.0"
