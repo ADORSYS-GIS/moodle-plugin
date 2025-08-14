@@ -1,9 +1,15 @@
 //! utils/src/logging.rs
 //!
 //! Global logging initialization for the AI stack.
-//! - Console logging is enabled by default.
-//! - File logging is optional and non-blocking (tracing-appender).
-//! - Safe single initialization via `Once` and persistent `WorkerGuard`.
+//! - Console logging is enabled by default (ANSI only when stderr is a TTY).
+//! - File logging is optional and non-blocking via `tracing-appender`.
+//! - Initialization is one-time per process via `Once`; subsequent calls are no-ops.
+//! - The global file destination (if any) is defined by the first successful init.
+//!
+//! Notes:
+//! - Filtering uses `EnvFilter`, honoring `RUST_LOG` if present; otherwise a provided
+//!   `level` (like "info", "debug"). Invalid levels fall back to `info`.
+//! - There is no runtime reload/change of log level in this build (no `reload` feature).
 //!
 //! Usage:
 //!   init_logger("info", None)?; // console only
@@ -19,6 +25,7 @@ use tracing_subscriber::{fmt, Registry};
 // Explicitly import EnvFilter and bring extension traits into scope for `.with` and `.with_filter`.
 use tracing_subscriber::EnvFilter;
 use tracing_subscriber::prelude::*;
+// reload feature removed to match current crate feature set
 
 // Import WorkerGuard; call the crate-level `tracing_appender::non_blocking` function directly
 use tracing_appender::non_blocking::WorkerGuard;
@@ -30,20 +37,27 @@ static INIT_LOGGER: Once = Once::new();
 /// Holds the file appender background worker guard if file logging is enabled.
 /// Keeping this alive prevents dropped logs.
 static FILE_GUARD: OnceLock<WorkerGuard> = OnceLock::new();
+// No reload handle without the reload feature
 
-/// Initialize global logger:
-/// - `level`: e.g., "info", "debug", "warn", supports `RUST_LOG`-style directives.
-/// - `file_path`: optional absolute or relative file path for non-blocking file logs.
-///                Parent directories are created if missing.
+fn create_filter(level: &str) -> EnvFilter {
+    EnvFilter::try_from_default_env().unwrap_or_else(|_| {
+        EnvFilter::try_new(level.to_string()).unwrap_or(EnvFilter::new("info"))
+    })
+}
+
+/// Initialize the global logger (idempotent).
+/// - `level`: e.g., "info", "debug", honors `RUST_LOG` if set; invalid values fall back to `info`.
+/// - `file_path`: optional path for non-blocking file logging. If provided on the first call,
+///                the process will log to this file for its lifetime. Parent directories are
+///                created if missing; on failure, the logger falls back to console-only.
 ///
-/// Safe to call multiple times; only the first call will configure the global subscriber.
-/// Subsequent calls are no-ops and return `Ok(())`.
+/// Safe to call multiple times; only the first call sets the global subscriber.
+/// Subsequent calls return `Ok(())` without changing the existing configuration.
 pub fn init_logger(level: &str, file_path: Option<&str>) -> Result<(), Box<dyn Error>> {
     // We build everything inside `call_once`. If it has already run, this function is a no-op.
     INIT_LOGGER.call_once(|| {
-        // 1) Build an EnvFilter for the console layer (fall back to provided level)
-        let console_filter = EnvFilter::try_from_default_env()
-            .unwrap_or_else(|_| EnvFilter::new(level.to_string()));
+        // 1) Build EnvFilter (fixed for process lifetime)
+        let fixed_filter = create_filter(level);
 
         // 2) Console layer (ANSI on TTY; includes target names, timestamps)
         let console_layer = fmt::layer()
@@ -51,7 +65,7 @@ pub fn init_logger(level: &str, file_path: Option<&str>) -> Result<(), Box<dyn E
             .with_thread_ids(true)
             .with_thread_names(true)
             .with_ansi(is_terminal::is_terminal(std::io::stderr()))
-            .with_filter(console_filter);
+            .with_filter(fixed_filter);
 
         // 3) Base subscriber with console layer
         let base = Registry::default().with(console_layer);
@@ -77,18 +91,13 @@ pub fn init_logger(level: &str, file_path: Option<&str>) -> Result<(), Box<dyn E
                     // Keep the guard alive for the process lifetime
                     let _ = FILE_GUARD.set(guard);
 
-                    // Build a filter for the file layer as well
-                    let file_filter = EnvFilter::try_from_default_env()
-                        .unwrap_or_else(|_| EnvFilter::new(level.to_string()));
-
                     // Add file layer (no ANSI for files)
                     let file_layer = fmt::layer()
                         .with_ansi(false)
                         .with_target(true)
                         .with_thread_ids(true)
                         .with_thread_names(true)
-                        .with_writer(non_blocking_writer)
-                        .with_filter(file_filter);
+                        .with_writer(non_blocking_writer);
 
                     let subscriber = base.with(file_layer);
                     if let Err(e) = tracing::subscriber::set_global_default(subscriber) {
