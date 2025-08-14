@@ -10,4 +10,4 @@ $templatecontext = [
     'standardendhtml' => $OUTPUT->standard_end_of_body_html(),
 ];
 
-echo $OUTPUT->render_from_template('theme_adorsys_theme_v1/default', $templatecontext);
+echo $OUTPUT->render_from_template('theme_adorsys_theme_v1/maintenance', $templatecontext);

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="{{ output.get_lang() }}">
+<head>
+    {{{ output.standard_head_html }}}
+</head>
+<body {{{ bodyattributes }}} class="bg-white text-gray-800">
+
+    {{#hasnavbar}}
+    <header class="bg-blue-600 text-white py-4">
+        <div class="container mx-auto px-4">
+            {{{ navbar }}}
+        </div>
+    </header>
+    {{/hasnavbar}}
+
+    <main class="container mx-auto px-4 py-10">
+        <section id="region-main">
+            {{{ maincontent }}}
+        </section>
+    </main>
+
+    {{#hasfooter}}
+    <footer class="bg-gray-800 text-white py-6">
+        <div class="container mx-auto text-center">
+            {{{ footer }}}
+        </div>
+    </footer>
+    {{/hasfooter}}
+
+    {{{ output.standard_end_of_body_html }}}
+</body>
+</html>

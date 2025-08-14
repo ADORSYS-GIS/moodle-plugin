@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="{{ output.get_lang() }}">
+<head>
+    {{{ output.standard_head_html }}}
+</head>
+<body {{{ bodyattributes }}}>
+
+    {{#hasnavbar}}
+    <header class="bg-blue-600 text-white py-4">
+        <div class="container mx-auto px-4">
+            {{{ navbar }}}
+        </div>
+    </header>
+    {{/hasnavbar}}
+
+    <div class="flex">
+        {{#hasblocks}}
+        <aside class="w-64 bg-gray-100 p-4 hidden lg:block" data-region="blocks-column">
+            {{{ sidepreblocks }}}
+        </aside>
+        {{/hasblocks}}
+
+        <main class="flex-1 p-6">
+            {{{ maincontent }}}
+        </main>
+    </div>
+
+    {{#hasfooter}}
+    <footer class="bg-gray-800 text-white py-6 text-center">
+        {{{ footer }}}
+    </footer>
+    {{/hasfooter}}
+
+    {{{ output.standard_end_of_body_html }}}
+</body>
+</html>

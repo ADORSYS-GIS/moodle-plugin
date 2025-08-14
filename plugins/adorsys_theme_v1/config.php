@@ -134,6 +134,12 @@ $THEME->layouts = [
         'regions' => ['side-pre'],
         'defaultregion' => 'side-pre',
     ],
+
+     'my' => [
+        'file' => 'columns2.php',  // or your layout file
+        'regions' => ['side-pre'],
+        'defaultregion' => 'side-pre',
+    ],
 ];
 
 $THEME->page_init = 'theme_adorsys_theme_v1_page_init';
@@ -145,6 +151,8 @@ $THEME->settings = true;
 $THEME->scss = function($theme) {
     return theme_adorsys_theme_v1_get_main_scss_content($theme);
 };
+
+$THEME->favicon = 'favicon.ico';
 
 
 

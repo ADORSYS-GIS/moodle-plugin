@@ -1,20 +1,11 @@
 <?php
 defined('MOODLE_INTERNAL') || die();
 
-echo $OUTPUT->doctype();
-?>
-<html <?= $OUTPUT->htmlattributes(); ?>>
-<head>
-    <title><?= $PAGE->title ?></title>
-    <?= $OUTPUT->standard_head_html(); ?>
-</head>
-<body <?= $OUTPUT->body_attributes(); ?> class="bg-white text-gray-900 font-sans">
-<?= $OUTPUT->standard_top_of_body_html(); ?>
+$templatecontext = [
+    'output' => $OUTPUT,
+    'bodyattributes' => $OUTPUT->body_attributes(),
+    'maincontent' => $OUTPUT->main_content(),
+    'standardendhtml' => $OUTPUT->standard_end_of_body_html(),
+];
 
-<main class="p-4">
-    <?= $OUTPUT->main_content(); ?>
-</main>
-
-<?= $OUTPUT->standard_end_of_body_html(); ?>
-</body>
-</html>
+echo $OUTPUT->render_from_template('theme_adorsys_theme_v1/embedded', $templatecontext);

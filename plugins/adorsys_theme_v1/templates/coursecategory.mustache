@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="{{ output.get_lang() }}">
+<head>
+    {{{ output.standard_head_html }}}
+</head>
+<body {{{ bodyattributes }}}>
+
+    {{#hasnavbar}}
+    <header class="bg-blue-500 text-white px-4 py-3">
+        {{{ navbar }}}
+    </header>
+    {{/hasnavbar}}
+
+    <div class="flex">
+        {{#hasblocks}}
+        <aside class="w-64 p-4 bg-blue-50" data-region="blocks-column">
+            {{{ sidepreblocks }}}
+        </aside>
+        {{/hasblocks}}
+
+        <main class="flex-1 p-6">
+            {{{ maincontent }}}
+        </main>
+    </div>
+
+    {{{ output.standard_end_of_body_html }}}
+</body>
+</html>

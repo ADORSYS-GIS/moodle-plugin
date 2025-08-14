@@ -8,3 +8,8 @@ function theme_adorsys_theme_v1_page_init(moodle_page $page) {
     // Load Tailwind CSS (compiled via Webpack)
     $page->requires->css(new moodle_url('/theme/adorsys_theme_v1/style/main.css'));
 }
+
+function theme_adorsys_theme_v1_get_main_scss_content($theme) {
+    $scss = file_get_contents(__DIR__ . '/styles/main.scss');
+    return $scss;
+}
