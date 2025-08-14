@@ -1,0 +1,29 @@
+receivers:
+  otlp:
+    protocols:
+      grpc:
+      http:
+  prometheus:
+    config:
+      scrape_configs:
+        - job_name: 'moodle-operator'
+          scrape_interval: 5s
+          static_configs:
+            - targets: ['host.docker.internal:9090']
+
+exporters:
+  debug:
+  prometheus:
+    endpoint: "0.0.0.0:8889"
+
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      exporters: [debug]
+    metrics:
+      receivers: [otlp, prometheus]
+      exporters: [prometheus]
+    logs:
+      receivers: [otlp]
+      exporters: [debug]

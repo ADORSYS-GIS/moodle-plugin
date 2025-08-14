@@ -9,10 +9,9 @@ use crate::{
     Data,
 };
 
-
 pub async fn reconcile(moodle: Arc<Moodle>, ctx: Arc<Data>) -> Result<Action, Error> {
     let client = &ctx.client;
-    
+
     if moodle.meta().deletion_timestamp.is_some() {
         info!(
             "Moodle {} is marked for deletion. Skipping reconciliation.",
@@ -20,8 +19,8 @@ pub async fn reconcile(moodle: Arc<Moodle>, ctx: Arc<Data>) -> Result<Action, Er
         );
         return Ok(Action::await_change());
     }
-    
-        // Validate the Moodle CRD
+
+    // Validate the Moodle CRD
     if let Err(validation_err) = moodle.spec.validate() {
         tracing::error!(
             "Invalid Moodle CRD {}: {}. Will requeue.",
@@ -30,7 +29,6 @@ pub async fn reconcile(moodle: Arc<Moodle>, ctx: Arc<Data>) -> Result<Action, Er
         );
         return Ok(Action::requeue(std::time::Duration::from_secs(30)));
     }
-    
 
     match create_or_update_replicaset(&moodle, client).await {
         Ok(_) => {
@@ -41,10 +39,9 @@ pub async fn reconcile(moodle: Arc<Moodle>, ctx: Arc<Data>) -> Result<Action, Er
             return Err(e.into());
         }
     }
-    
+
     //  requeue after 30s
     Ok(controller::Action::requeue(std::time::Duration::from_secs(
         30,
     )))
 }
-
