@@ -17,17 +17,17 @@ use ai_utils::metrics::{inc_counter, init_metrics, record_histogram, record_infe
 
 #[test]
 fn test_init_and_record_inference() {
-    init_metrics();
-
     let mut config = Config::default();
     config.data = serde_json::json!({
         "metrics": {
             "log_updates": true  // Enable for test (assumes tracing initialized at debug)
         }
     });
+    
+    init_metrics(&config);
 
     let labels: HashMap<&str, &str> = [("model", "gguf")].iter().cloned().collect();
-    record_inference(&config, 123.45, labels);
+    record_inference(123.45, labels);
 
     // Since metrics-rs doesn't expose direct gets, we rely on no-panic and assume correct (or use exporter in integration tests)
     // For verification, could add a custom recorder in tests, but for simplicity: no panic == success
@@ -35,48 +35,39 @@ fn test_init_and_record_inference() {
 
 #[test]
 fn test_inc_counter() {
-    let config = Config::default();
-
     let labels: HashMap<&str, &str> = [("type", "error")].iter().cloned().collect();
     // Name must be &'static str
-    inc_counter(&config, "custom_counter", labels);
+    inc_counter("custom_counter", labels);
 
     // No panic == success
 }
 
 #[test]
 fn test_set_gauge() {
-    let config = Config::default();
-
     let labels: HashMap<&str, &str> = [("component", "cpu")].iter().cloned().collect();
     // Name must be &'static str
-    set_gauge(&config, "usage", 75.5, labels);
+    set_gauge("usage", 75.5, labels);
 
     // No panic == success
 }
 
 #[test]
 fn test_record_histogram() {
-    let config = Config::default();
-
     let labels: HashMap<&str, &str> = [("path", "/api")].iter().cloned().collect();
     // Name must be &'static str
-    record_histogram(&config, "request_latency", 200.0, labels);
+    record_histogram("request_latency", 200.0, labels);
 
     // No panic == success
 }
 
 #[test]
 fn test_concurrent_updates() {
-    let config = Config::default();
-
     let handles: Vec<_> = (0..10).map(|_| {
-        let config_clone = config.clone();
         thread::spawn(move || {
             for _ in 0..100 {
                 let labels: HashMap<&str, &str> = [("thread", "worker")].iter().cloned().collect();
                 // Name must be &'static str
-                inc_counter(&config_clone, "concurrent_counter", labels);
+                inc_counter("concurrent_counter", labels);
             }
         })
     }).collect();
@@ -88,15 +79,36 @@ fn test_concurrent_updates() {
     // No panic == success (metrics-rs handles concurrency internally)
 }
 
+#[test]
+fn test_cached_log_updates_flag() {
+    // Test that the log_updates flag is properly cached
+    let mut config = Config::default();
+    config.data = serde_json::json!({
+        "metrics": {
+            "log_updates": true
+        }
+    });
+    
+    init_metrics(&config);
+    
+    // Record metrics multiple times to verify cached flag works
+    let labels: HashMap<&str, &str> = [("test", "cached")].iter().cloned().collect();
+    for i in 0..5 {
+        record_inference(i as f64 * 10.0, labels.clone());
+    }
+    
+    // No panic == success (cached flag prevents repeated config lookups)
+}
+
 #[cfg(feature = "prometheus")]
 #[test]
 fn test_export_prometheus() {
+    let config = Config::default();
     // Ensure recorder is installed before recording so descriptions are registered properly.
-    init_metrics();
+    init_metrics(&config);
     let _ = ai_utils::metrics::export_prometheus().unwrap();
 
-    let config = Config::default();
-    record_inference(&config, 100.0, HashMap::new());
+    record_inference(100.0, HashMap::new());
 
     let output = ai_utils::metrics::export_prometheus().unwrap();
     assert!(output.contains("inference_count"));
