@@ -43,8 +43,16 @@ Use this if you want to deploy Moodle with an in-cluster PostgreSQL or Mariadb d
 
 ```bash
 helm dependency build
-helm install  my-moodle . --values values.yaml --values values-mariadb.yaml --values values-postgres.yaml
+
+helm install my-moodle . \
+  -n moodle \
+  --create-namespace \
+  --values values.yaml \
+  --values values-mariadb.yaml \
+  --values values-postgres.yaml
+
 ```
+
 #### NB
 The database deployed will be based on one you enable as true.
 
@@ -66,7 +74,7 @@ helm uninstall my-moodle
 ### Dry Run (Template Only)
 
 ```bash
-helm template  my-moodle . --values values.yaml --values values-mariadb.yaml --values values-postgres.yaml
+helm template  my-moodle . -n moodle --values values.yaml --values values-mariadb.yaml --values values-postgres.yaml
 ```
 
 This renders all manifests to stdout without deploying.
