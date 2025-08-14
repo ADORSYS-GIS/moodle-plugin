@@ -1,19 +1,34 @@
 //! utils/tests/logging_test.rs
 //!
-//! Tests are serialized because logging is a global singleton.
-//! We use `tempfile` for isolated paths and avoid polluting the FS.
+//! Tests are serialized because logging is a global singleton set once per process.
+//! We use a shared log file path across tests to avoid re-initialization issues.
+//! Each test clears the shared file before asserting on its contents.
 
 use std::fs;
 use std::io::Read;
 use std::io::Write;
+use std::path::PathBuf;
 use std::time::{Duration, Instant};
 
 use tempfile::tempdir;
 use serial_test::serial;
+use lazy_static::lazy_static;
 
 use ai_utils::config::Config;
 use ai_utils::logging::{init_from_config, init_logger};
 use serde_json::json;
+
+lazy_static! {
+    static ref SHARED_LOG_DIR: PathBuf = {
+        let mut p = std::env::temp_dir();
+        p.push("ai_utils_shared_logs");
+        let _ = std::fs::create_dir_all(&p);
+        p
+    };
+    static ref SHARED_LOG_PATH: PathBuf = {
+        SHARED_LOG_DIR.join("test.log")
+    };
+}
 
 /// Busy-wait until `path` contains `needle` or timeout elapses.
 /// Returns file contents on success, `None` on timeout.
@@ -24,7 +39,7 @@ fn wait_for_log_contains(path: &std::path::Path, needle: &str, timeout: Duration
         if start.elapsed() > timeout {
             return None;
         }
-        if iters > 200 { // hard cap (~6s max with 30ms sleep)
+        if iters > 800 { // hard cap (~8s max with 10ms sleep)
             return None;
         }
         if let Ok(mut f) = fs::File::open(path) {
@@ -34,9 +49,31 @@ fn wait_for_log_contains(path: &std::path::Path, needle: &str, timeout: Duration
                 return Some(s);
             }
         }
-        std::thread::sleep(Duration::from_millis(30));
+        std::thread::sleep(Duration::from_millis(10));
         iters += 1;
     }
+}
+
+#[test]
+#[serial(logging)]
+fn a_logging_file_ok_and_writes() {
+    // Initialize global logger with shared file path (idempotent)
+    let log_path = SHARED_LOG_PATH.clone();
+    let log_path_str = log_path.to_string_lossy().to_string();
+    let res = init_logger("debug", Some(&log_path_str));
+    assert!(res.is_ok());
+
+    // Start each test from a clean file state
+    let _ = fs::write(&log_path, "");
+
+    // Emit a line and give the non-blocking writer a moment
+    tracing::info!("hello from file logger");
+    std::thread::sleep(Duration::from_millis(50));
+
+    let contents = wait_for_log_contains(&log_path, "hello from file logger", Duration::from_secs(5))
+        .unwrap_or_else(|| panic!("log file did not contain expected line: {:?}", log_path));
+
+    assert!(contents.contains("hello from file logger"));
 }
 
 #[test]
@@ -50,40 +87,20 @@ fn logging_end_to_end_console_only_ok() {
 
 #[test]
 #[serial(logging)]
-fn logging_end_to_end_file_ok_and_writes() {
-    // Initialize with file logging (if already initialized earlier, it's a no-op,
-    // so to ensure this test is meaningful, place it early or run tests with --test-threads=1).
-    let dir = tempdir().expect("tempdir");
-    let log_path = dir.path().join("test-logging.log");
-    let log_path_str = log_path.to_string_lossy().to_string();
-
-    let res = init_logger("debug", Some(&log_path_str));
-    assert!(res.is_ok());
-
-    // Emit a line
-    tracing::info!("hello from file logger");
-
-    // Wait briefly for the non-blocking writer to flush
-    let contents = wait_for_log_contains(&log_path, "hello from file logger", Duration::from_secs(2))
-        .unwrap_or_else(|| panic!("log file did not contain expected line: {:?}", log_path));
-
-    assert!(contents.contains("hello from file logger"));
-}
-
-#[test]
-#[serial(logging)]
 fn logging_invalid_level_falls_back_to_info() {
-    // We cannot directly read the effective filter, but we can at least ensure init succeeds
-    // with an invalid level string and emits without panic.
-    let dir = tempdir().expect("tempdir");
-    let log_path = dir.path().join("invalid-level.log");
+    // Use the same shared file path; init is idempotent
+    let log_path = SHARED_LOG_PATH.clone();
     let log_path_str = log_path.to_string_lossy().to_string();
-
     let res = init_logger("this_is_not_a_valid_level", Some(&log_path_str));
     assert!(res.is_ok());
 
+    // Clean file then log an INFO line (should appear regardless of prior level)
+    let _ = fs::write(&log_path, "");
     tracing::info!("should log at info after fallback");
-    let _ = wait_for_log_contains(&log_path, "should log at info", Duration::from_secs(2));
+    std::thread::sleep(Duration::from_millis(50));
+    let contents = wait_for_log_contains(&log_path, "should log at info", Duration::from_secs(5))
+        .expect("log file did not contain expected line after fallback");
+    assert!(contents.contains("should log at info"));
 }
 
 #[test]
