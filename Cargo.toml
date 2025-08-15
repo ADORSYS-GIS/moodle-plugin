@@ -3,6 +3,9 @@ members = [
     "packages/moodle-wasm-example",
     "packages/operator",
     "packages/ai-package/utils",
+    "packages/ai-package/ai-core",
+    "packages/ai-package/ipc-handler",
+    "packages/ai-package/model-serving",
 ]
 
 [profile.prod]
