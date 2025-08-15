@@ -1,0 +1,19 @@
+[package]
+name = "ai-core"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+thiserror = "1.0.64"
+serde_json = "1.0.128"
+serde_yaml = "0.9.34"
+
+# Optional for channel/async conversions
+tokio = { version = "1.40.0", features = ["rt"], optional = true }
+crossbeam-channel = { version = "0.5.13", optional = true }
+
+[features]
+default = []
+backtrace = []
+tokio = ["dep:tokio"]
+crossbeam = ["dep:crossbeam-channel"]
