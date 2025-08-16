@@ -23,14 +23,6 @@ form button {
   @apply shadow-lg;
 }
 
-/* Resize only IMG icons */
-img.icon {
-  width: 1.25rem !important;
-  height: 1.25rem !important;
-  display: inline-block;
-  vertical-align: middle;
-  object-fit: contain;
-}
 
 /* Fix giant icons (SVG and font icons) */
 svg.icon,
@@ -71,15 +63,14 @@ img[src*="settings"] {
   height: 1.25rem !important;
 }
 
-/* Hide those arrow characters inside .tree_item */
-.tree_item.branch {
-  font-size: 0; /* Temporarily hide all text */
+/* 🔥 Remove Moodle's tree arrows injected via background-image on navigation */
+.block_navigation .block_tree [aria-expanded="true"],
+.block_navigation .block_tree [aria-expanded="false"] {
+  background-image: none !important;
+  padding-left: 0 !important; /* Optional: remove extra space for the icon */
+  background-repeat: no-repeat;
+  background-size: 0 0;
 }
-
-.tree_item.branch a {
-  font-size: 1rem; /* Restore font for actual link text */
-}
-
 
 /* Reduce size of warning/search font icons */
 .icon.fa-exclamation-triangle,
@@ -89,7 +80,7 @@ img[src*="settings"] {
   height: 1.25rem !important;
 }
 
-/* ✅ Specific fix for the giant search icon inside the button */
+/* Specific fix for the giant search icon inside the button */
 button.search-icon > img.icon {
   width: 1.25rem !important;
   height: 1.25rem !important;
@@ -99,33 +90,11 @@ button.search-icon > img.icon {
   display: inline-block;
 }
 
-/* 🧹 Optional global reset for icon images if needed */
+/*  Optional global reset for icon images if needed */
 img.icon {
   all: unset;
   width: 1.25rem !important;
   height: 1.25rem !important;
   display: inline-block;
   object-fit: contain;
-}
-.loginbox { /* Moodle often wraps the login form in a div with this class */
-  // Example: Add some internal padding if not already handled by 'p-8' on main
-  padding: 1rem; // Adjust as needed
-}
-
-.loginbox label {
-  @apply block text-sm font-medium text-gray-700 mb-1;
-}
-
-.loginbox input[type="text"],
-.loginbox input[type="password"] {
-  // These are already covered by your global form input rule, but you could add specific overrides
-  @apply mb-4; // Add margin-bottom to separate fields
-}
-
-.loginbox .form-control { // Another common Moodle class for form elements
-  @apply mb-4;
-}
-
-.loginbox #login_error { // For login error messages
-  @apply text-red-600 text-sm mb-4;
 }
