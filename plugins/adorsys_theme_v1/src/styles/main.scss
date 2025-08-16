@@ -72,6 +72,14 @@ img[src*="settings"] {
   background-size: 0 0;
 }
 
+/* 🔥 Remove background-image arrows from settings block tree */
+.block_settings .block_tree [aria-expanded="true"],
+.block_settings .block_tree [aria-expanded="false"] {
+  background-image: none !important;
+  background: none !important;
+  padding-left: 0 !important; /* Optional: remove space reserved for the icon */
+}
+
 /* Reduce size of warning/search font icons */
 .icon.fa-exclamation-triangle,
 .icon.fa-search {
