@@ -63,7 +63,7 @@ img[src*="settings"] {
   height: 1.25rem !important;
 }
 
-/* 🔥 Remove Moodle's tree arrows injected via background-image on navigation */
+/*  Remove Moodle's tree arrows injected via background-image on navigation */
 .block_navigation .block_tree [aria-expanded="true"],
 .block_navigation .block_tree [aria-expanded="false"] {
   background-image: none !important;
@@ -72,7 +72,7 @@ img[src*="settings"] {
   background-size: 0 0;
 }
 
-/* 🔥 Remove background-image arrows from settings block tree */
+/*  Remove background-image arrows from settings block tree */
 .block_settings .block_tree [aria-expanded="true"],
 .block_settings .block_tree [aria-expanded="false"] {
   background-image: none !important;
