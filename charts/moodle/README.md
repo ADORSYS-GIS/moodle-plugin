@@ -44,17 +44,23 @@ Use this if you want to deploy Moodle with an in-cluster MariaDB database:
 
 ```bash
 helm dependency build
-helm install my-moodle . -n moodle --create-namespace --values values.yaml,values-mariadb.yaml,values-postgres.yaml```
-```Used to enable and configureUsed to enable and configure
+helm install my-moodle . \
+  -n moodle \
+  --create-namespace \
+  -f values.yaml -f values-mariadb.yaml
+```
+
 ### Option 3: Internal PostgreSQL (Bitnami dependency)
 
 Use this if you want to deploy Moodle with an in-cluster PostgreSQL database:
 
 ```bash
 helm dependency build
-helm install my-moodle . -n moodle --create-namespace --values values.yaml,values-mariadb.yaml,values-postgres.yaml
+helm install my-moodle . \
+  -n moodle \
+  --create-namespace \
+  -f values.yaml -f values-postgres.yaml
 ```
-
 
 > **Note**: Only enable one database type at a time. The database deployed will be based on which one you enable as `true` in your values file.
 
@@ -74,13 +80,13 @@ helm uninstall my-moodle
 
 ```bash
 # Test with default values
-helm template my-moodle . --values values.yaml
+helm template my-moodle . -f values.yaml
 
 # Test with MariaDB
-helm template my-moodle . --values values-mariadb.yaml
+helm template my-moodle . -f values-mariadb.yaml
 
 # Test with PostgreSQL
-helm template my-moodle . --values values-postgres.yaml
+helm template my-moodle . -f values-postgres.yaml
 ```
 
 This renders all manifests to stdout without deploying.
@@ -89,9 +95,12 @@ This renders all manifests to stdout without deploying.
 
 ## 🖥️ Local Cluster Access (k3s via Multipass)
 
-###  Monitor
+### Install and Monitor
 
 ```bash
+# Install the chart (example: MariaDB)
+helm install my-moodle . -f values.yaml -f values-mariadb.yaml
+
 # Check pod status
 kubectl get pods
 
@@ -114,7 +123,7 @@ Then open: [http://localhost:8080](http://localhost:8080)
 1. Update with NodePort service type:
 
 ```bash
-helm upgrade my-moodle . --values values-mariadb.yaml --set moodle.service.type=NodePort
+helm upgrade my-moodle . -f values-mariadb.yaml --set moodle.service.type=NodePort
 ```
 
 2. Get the NodePort:
@@ -156,8 +165,8 @@ For more information on configuring these dependencies, see the respective value
 ## 🧾 Values Files
 
 * `values.yaml` – for use with external databases (default)
-* `values-postgres.yaml` – enables and configure internal PostgreSQL (Bitnami)
-* `values-mariadb.yaml` – enables and configure internal MariaDB (Bitnami)
+* `values-postgres.yaml` – enables and configures internal PostgreSQL (Bitnami)
+* `values-mariadb.yaml` – enables and configures internal MariaDB (Bitnami)
 
 > 💡 **Tip**: Never hardcode production secrets in your values files. Use `--set`, `helm secrets`, or a CI/CD vault integration.
 
@@ -199,7 +208,7 @@ moodle:
 
 ## 🚀 Quick Start
 
-1. **Clone and navigate to the chart directory:**
+1. **Navigate to the chart directory:**
    ```bash
    cd charts/moodle
    ```
@@ -211,7 +220,7 @@ moodle:
 
 3. **Install with MariaDB:**
    ```bash
-   helm install my-moodle . --values values-mariadb.yaml
+   helm install my-moodle . -f values.yaml -f values-mariadb.yaml
    ```
 
 4. **Access Moodle:**
@@ -255,5 +264,4 @@ moodle:
 * Check persistent volumes: `kubectl get pvc`
 * Check events: `kubectl get events --sort-by='.lastTimestamp'`
 
----
 
