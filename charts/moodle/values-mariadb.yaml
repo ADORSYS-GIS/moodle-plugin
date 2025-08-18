@@ -1,10 +1,11 @@
-mariadb:
-  auth:
-    username: bn_moodle_adorsys
-    password: moodlepass
-    rootPassword: moodlerootpass
-    database: bitnami_moodle
-  primary:
-    persistence:
-      enabled: true
-      storageClass: local-path
+moodle:
+  mariadb:
+    auth:
+      username: bn_moodle_adorsys
+      password: moodlepass
+      rootPassword: moodlerootpass
+      database: bitnami_moodle
+    primary:
+      persistence:
+        enabled: false
+        storageClass: local-path
