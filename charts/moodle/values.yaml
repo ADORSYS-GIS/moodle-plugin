@@ -6,16 +6,19 @@ moodle:
   service:
     type: LoadBalancer
 
-  mariadb:
-    enabled: true
-
   persistence:
     enabled: true
     size: 10Gi
 
+  mariadb:
+    enabled: true
   externalDatabase:
-    host: moodle-postgresql-rw
-    user: moodle
+    type: pgsql
+    host: my-moodle-postgresql
+    port: 5432
+    user: bn_moodle_adorsys
     password: moodlepass
     database: moodledb
 
+postgresql:
+  enabled: false
