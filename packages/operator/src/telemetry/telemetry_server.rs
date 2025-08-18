@@ -5,6 +5,7 @@ use hyper::{
     Request, Response, StatusCode,
 };
 
+use kube::Client;
 use prometheus::{Encoder, Gauge, IntCounter, Registry, TextEncoder};
 use std::net::SocketAddr;
 use std::sync::Arc;
@@ -87,6 +88,25 @@ async fn handle_request(
             Ok(response)
         }
 
+        (&Method::GET, "/readyz") => match check_kube_readyz().await {
+            Ok(_) => {
+                let body = r#"{"status": "ok"}"#;
+                Ok(Response::builder()
+                    .status(StatusCode::OK)
+                    .header(header::CONTENT_TYPE, "application/json")
+                    .body(full(body))
+                    .unwrap())
+            }
+            Err(err) => {
+                let body = format!(r#"{{"status": "error", "message": "{err}"}}"#);
+                Ok(Response::builder()
+                    .status(StatusCode::SERVICE_UNAVAILABLE)
+                    .header(header::CONTENT_TYPE, "application/json")
+                    .body(full(body))
+                    .unwrap())
+            }
+        },
+
         _ => Ok(Response::builder()
             .status(StatusCode::NOT_FOUND)
             .body(full(NOTFOUND))
@@ -135,5 +155,24 @@ pub async fn start_otel_server() -> Result<()> {
                 eprintln!("Error serving connection: {err:?}");
             }
         });
+    }
+}
+async fn check_kube_readyz() -> Result<String> {
+    let client = Client::try_default().await?;
+
+    let req = Request::builder().uri("/readyz?verbose").body(Vec::new())?; // Empty body
+
+    // Use request_text, not request<T>
+    let text = client.request_text(req).await?;
+
+    let all_ok = text
+        .lines()
+        .filter(|line| line.contains("[+]"))
+        .all(|line| line.to_lowercase().contains("ok"));
+
+    if all_ok {
+        Ok("Kubernetes API server is ready".into())
+    } else {
+        Err(format!("Kubernetes API server not ready:\n{text}").into())
     }
 }
