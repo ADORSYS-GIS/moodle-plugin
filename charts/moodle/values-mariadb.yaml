@@ -1,9 +1,9 @@
 mariadb:
   auth:
+    username: bn_moodle_adorsys
+    password: moodlepass
     rootPassword: moodlerootpass
     database: bitnami_moodle
-    username: bn_moodle
-    password: moodlepass
   primary:
     persistence:
       enabled: true
