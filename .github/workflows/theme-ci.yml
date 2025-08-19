@@ -26,4 +26,4 @@ jobs:
           yarn build
       - name: Verify build outputs
         run: |
-          test -f plugins/adorsys-theme-v1/src/styles/main.scss && test -f plugins/adorsys-theme-v1/dist/js/main.js
+          test -f plugins/adorsys_theme_v1/src/styles/main.scss && test -f plugins/adorsys_theme_v1/dist/js/main.js
