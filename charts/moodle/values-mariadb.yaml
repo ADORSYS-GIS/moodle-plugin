@@ -1,5 +1,6 @@
 moodle:
   mariadb:
+    enabled: true
     auth:
       username: bn_moodle_adorsys
       password: moodlepass
