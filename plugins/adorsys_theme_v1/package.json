@@ -34,5 +34,8 @@
   },
   "dependencies": {
     "@tailwindcss/typography": "^0.5.16"
+  },
+  "engines": {
+    "node": ">=18"
   }
 }
