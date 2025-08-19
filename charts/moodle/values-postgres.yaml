@@ -1,4 +1,5 @@
-postgresql:   
+postgresql: 
+  enabled: false 
   auth:
       postgresPassword: rootPass
       username: bn_moodle_adorsys
