@@ -1,1 +1,0 @@
-{"version":3,"file":"js/main.js","mappings":"mBAEAA,QAAQC,IAAI,oC","sources":["webpack://adorsys_theme_v1/./src/index.ts"],"sourcesContent":["import \"./styles/main.scss\";\n\nconsole.log(\"Adorsys Moodle theme initialized.\");\n"],"names":["console","log"],"sourceRoot":""}

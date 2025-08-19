@@ -14,7 +14,7 @@ This repository contains the **adorsys_theme_v1** folder under `plugins/`, desig
 
 1. Change into the theme folder:
    ```bash
-   cd plugins/adorsys_theme_v1
+   cd plugins/gis-theme/adorsys_theme_v1
    ```
 
 2. Initialize dependencies and build assets:
@@ -43,9 +43,7 @@ adorsys_theme_v1/
 │
 ├── src/                      # Source files (JS/TS, components, etc.)
 │   └── index.ts              # (example) Main entry for JS/TS
-│
-├── dist/js                    
-│   └── main.js                
+│                
 │
 ├── templates/                # Mustache templates used by Moodle
 │   └── some_template.mustache
@@ -70,7 +68,7 @@ adorsys_theme_v1/
 To mount the theme in your Moodle container, add to `docker-compose.yml` under the `moodle` service:
 ```yaml
 volumes:
-  - ./plugins/adorsys_theme_v1:/bitnami/moodle/theme/adorsys_theme_v1:ro
+  - ./outputs/plugins/gis-theme/adorsys_theme_v1:/bitnami/moodle/theme/adorsys_theme_v1:ro
 ```
 Then restart:
 ```bash

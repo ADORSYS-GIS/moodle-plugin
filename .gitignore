@@ -30,3 +30,7 @@ target
 *.tgz
 
 frontend-example
+
+# Ignore generated theme build
+outputs/
+
