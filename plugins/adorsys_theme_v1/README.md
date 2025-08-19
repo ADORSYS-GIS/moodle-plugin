@@ -1,8 +1,8 @@
 # Adorsys Theme v1
 
-A custom Moodle theme plugin based on Boost, built with Tailwind CSS and Webpack.
+A custom Moodle theme plugin  built with Tailwind CSS, CssNano, Tailwind/Postcss and Webpack.
 
-This repository contains the **adorsys_theme_v1** folder under `plugins/`, designed as a classical Moodle theme scaffold following the [Creating a custom theme](https://docs.moodle.org/dev/Creating_a_custom_theme) guide.
+This repository contains the **adorsys_theme_v1** folder under `plugins/`, designed as a classical Moodle theme scaffold.
 
 ## Prerequisites
 
@@ -23,32 +23,46 @@ This repository contains the **adorsys_theme_v1** folder under `plugins/`, desig
    yarn build
    ```
 
-3. For development with live rebuilds:
-   ```bash
-   yarn dev
-   ```
-
 ## Project Structure
 
 ```
 adorsys_theme_v1/
-├── config.php           # Moodle theme definition
+├── config.php                # Moodle theme definition
 ├── version.php
-├── settings.php         # Admin settings stub
-├── lib.php              # Empty lib stub
+├── settings.php              # Admin settings stub
+├── lib.php                   # Empty lib stub
 ├── package.json
-├── webpack.config.js    # SCSS compilation
-├── tailwind.config.js
-├── postcss.config.js
-├── scss/
-│   └── style.scss       # Tailwind entry
-├── style/
-│   ├── all.css          # Compiled CSS
-│   └── bundle.js        # JS bundle placeholder
+├── tsconfig.json             # TypeScript configuration
+├── webpack.config.ts         # SCSS/JS build config
+├── postcss.config.mjs        # PostCSS plugins (e.g., Tailwind, autoprefixer)
 │
-├── lang/en/
-│   └── theme_adorsys_theme_v1.php
-└── pix/                 # Images & screenshot for theme picker
+├── scss/
+│   └── style.scss            # Tailwind CSS entry
+│
+├── style/                    # (optional) Custom static CSS files
+│
+├── src/                      # Source files (JS/TS, components, etc.)
+│   └── index.ts              # (example) Main entry for JS/TS
+│
+├── dist/js                    
+│   └── main.js                
+│
+├── templates/                # Mustache templates used by Moodle
+│   └── some_template.mustache
+│
+├── layout/                   # Layout files for Moodle (e.g., columns, drawers)
+│   └── some_layout_files.php
+│
+├── classes/                  # PHP classes (autoloaded by Moodle)
+│   └── output/
+│       └── renderer.php
+│
+├── lang/
+│   └── en/
+│       └── theme_adorsys_theme_v1.php
+│
+└── pix/                      # Theme images (logos, icons, etc.)
+
 ```
 
 ## Docker Integration
@@ -72,7 +86,7 @@ Finally, purge Moodle caches in the UI (Site administration → Development → 
    ```
 2. Navigate to `http://localhost:8080/` (or your host’s mapped port).
 3. In Site administration → Appearance → Theme selector, choose **Adorsys Theme v1** and confirm.
-4. Observe inherited Boost layout; any SCSS changes will reload after `yarn dev`.
+
 
 ## Next Steps
 

@@ -1,0 +1,29 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - adorsys-theme-v1
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+          cache: 'yarn'
+      - name: Install dependencies
+        run: |
+          cd plugins/adorsys-theme-v1
+          yarn install --frozen-lockfile
+      - name: Build theme assets
+        run: |
+          cd plugins/adorsys-theme-v1
+          yarn build
+      - name: Verify build outputs
+        run: |
+          test -f plugins/adorsys-theme-v1/src/styles/main.scss && test -f plugins/adorsys-theme-v1/dist/js/main.js

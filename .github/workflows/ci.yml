@@ -1,29 +1,20 @@
-name: CI
+name: Rust CI
 
 on:
   push:
-    branches:
-      - adorsys-theme-v1
+    branches: [main]
   pull_request:
+    branches: [main]
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - name: Use Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '16'
-          cache: 'yarn'
-      - name: Install dependencies
-        run: |
-          cd plugins/adorsys-theme-v1
-          yarn install --frozen-lockfile
-      - name: Build theme assets
-        run: |
-          cd plugins/adorsys-theme-v1
-          yarn build
-      - name: Verify build outputs
-        run: |
-          test -f plugins/adorsys-theme-v1/style/all.css && test -f plugins/adorsys-theme-v1/style/bundle.js
+      - uses: actions/checkout@v4
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Check formatting
+        run: cargo fmt --all -- --check
+      - name: Run Clippy
+        run: cargo clippy --workspace -- -D warnings
+      - name: Build project
+        run: cargo build --workspace --verbose

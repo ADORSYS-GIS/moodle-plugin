@@ -45,14 +45,14 @@ $THEME->layouts = [
 
     // Used for course main page.
     'course' => [
-        'file' => 'columns2.php',
+        'file' => 'columns.php',
         'regions' => ['side-pre', 'side-post'],
         'defaultregion' => 'side-pre',
     ],
 
     // Used for course modules (like assignments, quizzes).
     'incourse' => [
-        'file' => 'columns2.php',
+        'file' => 'columns.php',
         'regions' => ['side-pre', 'side-post'],
         'defaultregion' => 'side-pre',
     ],
@@ -86,14 +86,14 @@ $THEME->layouts = [
 
     // Admin pages.
     'admin' => [
-        'file' => 'columns2.php',
+        'file' => 'columns.php',
         'regions' => ['side-pre'],
         'defaultregion' => 'side-pre',
     ],
 
     // Category pages.
     'coursecategory' => [
-        'file' => 'columns2.php',
+        'file' => 'columns.php',
         'regions' => ['side-pre'],
         'defaultregion' => 'side-pre',
     ],
@@ -130,16 +130,11 @@ $THEME->layouts = [
 
     // Report layout.
     'report' => [
-        'file' => 'columns2.php',
+        'file' => 'columns.php',
         'regions' => ['side-pre'],
         'defaultregion' => 'side-pre',
     ],
 
-    //  'my' => [
-    //     'file' => 'columns2.php',  // or your layout file
-    //     'regions' => ['side-pre'],
-    //     'defaultregion' => 'side-pre',
-    // ],
 ];
 
 $THEME->page_init = 'theme_adorsys_theme_v1_page_init';
@@ -152,7 +147,6 @@ $THEME->scss = function($theme) {
     return theme_adorsys_theme_v1_get_main_scss_content($theme);
 };
 
-$THEME->favicon = 'pix/favicon.ico';
 
 
 

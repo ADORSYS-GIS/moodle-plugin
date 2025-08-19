@@ -10,6 +10,6 @@ function theme_adorsys_theme_v1_page_init(moodle_page $page) {
 }
 
 function theme_adorsys_theme_v1_get_main_scss_content($theme) {
-    $scss = file_get_contents(__DIR__ . '/styles/main.scss');
+    $scss = file_get_contents(__DIR__ . 'src/styles/main.scss');
     return $scss;
 }
