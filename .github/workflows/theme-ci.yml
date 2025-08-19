@@ -22,7 +22,7 @@ jobs:
           yarn install --frozen-lockfile
       - name: Build theme assets
         run: |
-          cd plugins/adorsys-theme-v1
+          cd plugins/adorsys_theme_v1
           yarn build
       - name: Verify build outputs
         run: |
