@@ -5,13 +5,19 @@ moodle:
 
   service:
     type: LoadBalancer
-
+    ports:
+      http: 80
+      https: 443
+    targetPorts:
+      http: 8080
+      https: 8443
+      
   persistence:
     enabled: true
     size: 10Gi
 
   mariadb:
-    enabled: true
+    enabled: false
   externalDatabase:
     type: pgsql
     host: my-moodle-postgresql
