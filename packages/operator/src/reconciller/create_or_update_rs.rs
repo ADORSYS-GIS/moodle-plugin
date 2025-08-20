@@ -120,19 +120,19 @@ pub async fn create_or_update_replicaset(moodle: &Moodle, client: &Client) -> Re
                 )
                 .await
             {
-                Ok(_) => return Ok(()),
-                Err(err) => return Err(Error::ReplicaSetCreationFailed(err)),
-            };
+                Ok(_) => Ok(()),
+                Err(err) => Err(Error::ReplicaSetCreationFailed(err)),
+            }
         }
         Err(err) => {
             let err = Error::ReplicaSetGetFailed(err);
             match err.is_not_found() {
                 true => match rs_api.create(&pp, &replicaset).await {
-                    Ok(_) => return Ok(()),
-                    Err(err) => return Err(Error::ReplicaSetCreationFailed(err)),
+                    Ok(_) => Ok(()),
+                    Err(err) => Err(Error::ReplicaSetCreationFailed(err)),
                 },
-                false => return Err(err),
-            };
+                false => Err(err),
+            }
         }
     }
 }
