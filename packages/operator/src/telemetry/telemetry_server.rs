@@ -6,7 +6,7 @@ use hyper::{
 };
 
 use kube::Client;
-use prometheus::{Encoder, Gauge, IntCounter, Registry, TextEncoder};
+use prometheus::{Encoder, Gauge, Registry, TextEncoder};
 use std::net::SocketAddr;
 use std::sync::Arc;
 use sysinfo::{get_current_pid, ProcessesToUpdate, System};
@@ -21,7 +21,6 @@ type BoxBody = http_body_util::combinators::BoxBody<Bytes, hyper::Error>;
 #[derive(Debug)]
 pub struct AppMetrics {
     registry: Registry,
-    request_counter: IntCounter,
     memory_gauge: Gauge,
     cpu_gauge: Gauge,
 }
@@ -30,21 +29,15 @@ impl AppMetrics {
     pub fn new() -> Self {
         let registry = Registry::new();
 
-        let request_counter =
-            IntCounter::new("http_requests_total", "Number of HTTP requests").unwrap();
         let memory_gauge =
             Gauge::new("app_memory_bytes", "Memory used by the app in bytes").unwrap();
         let cpu_gauge = Gauge::new("app_cpu_percent", "CPU usage percent of the app").unwrap();
 
-        registry
-            .register(Box::new(request_counter.clone()))
-            .unwrap();
         registry.register(Box::new(memory_gauge.clone())).unwrap();
         registry.register(Box::new(cpu_gauge.clone())).unwrap();
 
         Self {
             registry,
-            request_counter,
             memory_gauge,
             cpu_gauge,
         }
@@ -62,15 +55,6 @@ async fn handle_request(
     metrics: Arc<Mutex<AppMetrics>>,
 ) -> Result<Response<BoxBody>> {
     match (req.method(), req.uri().path()) {
-        (&Method::GET, "/") => {
-            {
-                let metrics = metrics.lock().await;
-                metrics.request_counter.inc();
-            }
-
-            Ok(Response::new(full("Hello! This request was counted.")))
-        }
-
         (&Method::GET, "/metrics") => {
             let encoder = TextEncoder::new();
             let metrics = metrics.lock().await;
@@ -135,18 +119,20 @@ async fn update_system_metrics(metrics: Arc<Mutex<AppMetrics>>) {
     }
 }
 
-pub async fn start_otel_server() -> Result<()> {
+pub async fn start_otel_server(bind_address: SocketAddr) -> Result<()> {
     let app_metrics = Arc::new(Mutex::new(AppMetrics::new()));
     let metrics_clone = app_metrics.clone();
     tokio::spawn(update_system_metrics(metrics_clone));
-    let addr: SocketAddr = "0.0.0.0:8888".parse()?;
-    let listener = TcpListener::bind(addr).await?;
 
-    info!("Metrics Server running at http://{addr}");
+    let listener = TcpListener::bind(bind_address).await?;
+
+    info!("Metrics Server running at http://{bind_address}");
 
     loop {
         let (stream, _) = listener.accept().await?;
         let metrics = Arc::clone(&app_metrics);
+
+        // Spawn a new task to handle the incoming HTTP connection
         tokio::spawn(async move {
             let io = hyper_util::rt::TokioIo::new(stream);
             let service = service_fn(move |req| handle_request(req, Arc::clone(&metrics)));
@@ -157,12 +143,12 @@ pub async fn start_otel_server() -> Result<()> {
         });
     }
 }
+
 async fn check_kube_readyz() -> Result<String> {
     let client = Client::try_default().await?;
 
     let req = Request::builder().uri("/readyz?verbose").body(Vec::new())?; // Empty body
 
-    // Use request_text, not request<T>
     let text = client.request_text(req).await?;
 
     let all_ok = text

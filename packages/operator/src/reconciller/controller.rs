@@ -1,3 +1,4 @@
+use anyhow::Result;
 use futures::StreamExt;
 use kube::{Api, Client, ResourceExt};
 use kube_runtime::{controller, Controller};
@@ -6,8 +7,8 @@ use tracing::{error, info};
 
 use crate::{crds::crd::Moodle, error::Error, reconciller::reconcille_moodle::reconcile, Data};
 
-pub async fn controller_moodle_cluster(client: &Client) {
-    let moodles: Api<Moodle> = Api::namespaced(client.clone(), "default");
+pub async fn controller_moodle_cluster(client: &Client) -> Result<()> {
+    let moodles = Api::all(client.clone());
 
     Controller::new(moodles, Default::default())
         .run(
@@ -24,6 +25,10 @@ pub async fn controller_moodle_cluster(client: &Client) {
             }
         })
         .await;
+
+    Err(anyhow::anyhow!(
+        "controller_moodle_cluster exited unexpectedly"
+    ))
 }
 
 fn error_policy(moodle: Arc<Moodle>, err: &Error, _ctx: Arc<Data>) -> controller::Action {

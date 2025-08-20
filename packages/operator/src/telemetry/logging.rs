@@ -3,7 +3,7 @@ use tracing_subscriber::{prelude::*, EnvFilter};
 use opentelemetry_appender_tracing::layer::OpenTelemetryTracingBridge;
 use opentelemetry_otlp::{LogExporter, Protocol, WithExportConfig};
 use opentelemetry_sdk::{logs::SdkLoggerProvider, Resource};
-use std::{env, sync::OnceLock};
+use std::sync::OnceLock;
 
 static RESOURCE: OnceLock<Resource> = OnceLock::new();
 
@@ -17,13 +17,10 @@ fn get_resource() -> Resource {
         .clone()
 }
 
-pub fn init_logs_and_tracing() -> SdkLoggerProvider {
-    let endpoint = env::var("OTEL_LOGS_EXPORTER_ENDPOINT") // log exporter endpoint
-        .unwrap_or_else(|_| "http://localhost:4318/v1/logs".into());
-
+pub fn init_logs_and_tracing(log_exporter_endpoint: &str) -> SdkLoggerProvider {
     let exporter = LogExporter::builder()
         .with_http()
-        .with_endpoint(&endpoint)
+        .with_endpoint(log_exporter_endpoint)
         .with_protocol(Protocol::HttpBinary)
         .build()
         .expect("Failed to create log exporter");
