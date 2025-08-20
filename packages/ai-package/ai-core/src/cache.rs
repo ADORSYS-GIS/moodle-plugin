@@ -13,7 +13,7 @@
 //!
 //! fn main() -> Result<()> {
 //!     let config = Config::default();
-//!     let mut cache = Cache::from_config(&config)?;
+//!     let cache = Cache::from_config(&config)?;
 //!     cache.insert("prompt1", "response1".to_string());
 //!     if let Some(response) = cache.get("prompt1") {
 //!         println!("Cache hit: {}", response);
@@ -21,6 +21,12 @@
 //!     Ok(())
 //! }
 //! ```
+//!
+//! Notes:
+//! - `/cache/max_size` defaults to 100 when not set. An explicit value of 0 is rejected with
+//!   `InvalidArgument`.
+//! - `insert` and `clear` take `&self` (interior mutability). Share `Cache` across threads with
+//!   `Arc<Cache<_, _>>` when needed.
 
 use lru::LruCache;
 use std::collections::HashMap;
@@ -81,11 +87,16 @@ where
     /// Insert a key-value pair into the cache.
     pub fn insert(&self, key: K, value: V) {
         let mut inner = self.inner.lock().unwrap();
-        let evicted = inner.put(key, value);
+        let before_len = inner.len();
+        let existed = { inner.get(&key).is_some() };
+        // Insert the new value
+        inner.put(key, value);
+        let after_len = inner.len();
 
         metrics::inc_counter("cache_inserts", self.labels_for_metrics());
 
-        if evicted.is_some() {
+        // Eviction occurs when inserting a new key while already at capacity
+        if !existed && after_len == before_len {
             metrics::inc_counter("cache_evictions", self.labels_for_metrics());
             debug!("Cache at capacity; oldest entry evicted");
         }
