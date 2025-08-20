@@ -1,12 +1,10 @@
-
 #[derive(Debug, thiserror::Error)]
 pub enum Error {
     #[error("Failed to create replicaset: {0}")]
     ReplicaSetCreationFailed(#[from] kube::Error),
-    
+
     #[error("Failed to get ReplicaSet: {0}")]
-    ReplicaSetGetFailed( kube::Error),
-    
+    ReplicaSetGetFailed(kube::Error),
 }
 
 impl Error {
