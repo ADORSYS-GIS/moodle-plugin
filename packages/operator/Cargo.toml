@@ -9,7 +9,7 @@ kube = { version = "1.1.0", features = ["runtime", "derive", "admission", "rustl
 kube-runtime = "1.1.0"
 serde = { version = "1.0.219", features = ["derive"] }
 serde_json = "1.0.142"
-tokio = { version = "1.46.1", features = ["macros", "rt-multi-thread"] }
+tokio = { version = "1.47.1", features = ["macros", "rt-multi-thread"] }
 thiserror = "2.0.15"
 tracing = "0.1.41"
 k8s-openapi = { version = "0.25.0", features = ["latest", "schemars"] }
