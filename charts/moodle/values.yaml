@@ -10,7 +10,7 @@ moodle:
   mariadb:
     enabled: false
 
-  postgresql:
+postgresql:
     enabled: false
 
   persistence:
