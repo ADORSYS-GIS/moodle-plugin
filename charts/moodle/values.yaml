@@ -18,13 +18,6 @@ moodle:
 
   mariadb:
     enabled: false
-  externalDatabase:
-    type: pgsql
-    host: my-moodle-postgresql
-    port: 5432
-    user: bn_moodle_adorsys
-    password: moodlepass
-    database: moodledb
-
+  
 postgresql:
   enabled: false
