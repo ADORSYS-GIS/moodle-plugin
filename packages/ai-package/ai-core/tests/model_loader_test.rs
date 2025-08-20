@@ -3,7 +3,7 @@
 //! Unit tests for model_loader.rs to verify loading, discovery, caching, and error handling.
 
 use ai_core::{errors::AiCoreError, model_loader::{ModelLoader, ModelFormat}};
-use ai_utils::config::Config;
+use ai_utils::Config;
 use std::path::PathBuf;
 use tempfile::tempdir;
 use std::fs;
