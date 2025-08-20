@@ -15,11 +15,11 @@
 //! use ai_utils::Config;
 //!
 //! fn main() -> Result<()> {
-//!     let mut config = Config::default();
-//!     config.merge_from_yaml("config.yaml")?;
-//!     let loader = ModelLoader::from_config(&config)?;
-//!     let model = loader.load(Some("model.gguf"))?;
-//!     Ok(())
+//! let mut config = Config::default();
+//! config.merge_from_yaml("config.yaml")?;
+//! let loader = ModelLoader::from_config(&config)?;
+//! let model = loader.load(Some("model.gguf"))?;
+//! Ok(())
 //! }
 //! ```
 //! Async (with "tokio" feature):
@@ -29,24 +29,21 @@
 //!
 //! #[tokio::main]
 //! async fn main() -> Result<()> {
-//!     let mut config = Config::default();
-//!     config.merge_from_yaml("config.yaml")?;
-//!     let loader = ModelLoader::from_config(&config)?;
-//!     let model = loader.load_async(Some("model.gguf")).await?;
-//!     Ok(())
+//! let mut config = Config::default();
+//! config.merge_from_yaml("config.yaml")?;
+//! let loader = ModelLoader::from_config(&config)?;
+//! let model = loader.load_async(Some("model.gguf")).await?;
+//! Ok(())
 //! }
 //! ```
-
 use std::collections::HashMap;
 use std::fs;
 use std::path::{Path, PathBuf};
 use std::sync::Arc;
 use std::time::Instant;
-
 use ai_utils::{config::Config, metrics};
 use crate::errors::{AiCoreError, Result};
-use tracing;
-
+use tracing::warn;
 /// Supported model formats (extendable).
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum ModelFormat {
@@ -54,7 +51,6 @@ pub enum ModelFormat {
     Onnx,
     Other,
 }
-
 /// Represents a loaded AI model and its associated metadata.
 /// The `data` field is a placeholder for the actual model backend (e.g., ONNX runtime session).
 #[derive(Debug, Clone)]
@@ -70,7 +66,6 @@ pub struct Model {
     /// Placeholder for the loaded model data (replace with backend-specific type).
     pub data: Arc<Vec<u8>>,
 }
-
 /// Loader responsible for managing AI models.
 #[derive(Debug)]
 pub struct ModelLoader {
@@ -87,7 +82,6 @@ pub struct ModelLoader {
     /// Expected checksums from config for validation (optional).
     pub checksums: HashMap<String, String>,
 }
-
 impl ModelLoader {
     /// Create a new `ModelLoader` from a configuration.
     ///
@@ -117,7 +111,7 @@ impl ModelLoader {
                         "onnx" => ModelFormat::Onnx,
                         _ => ModelFormat::Other,
                     })
-                    .filter(|f| *f != ModelFormat::Other)  // Exclude unknown
+                    .filter(|f| *f != ModelFormat::Other) // Exclude unknown
                     .collect()
             })
             .unwrap_or_else(|| vec![ModelFormat::Gguf, ModelFormat::Onnx]);
@@ -130,11 +124,9 @@ impl ModelLoader {
                     .collect()
             })
             .unwrap_or_default();
-
         if supported_formats.is_empty() {
-            tracing::warn!("No supported formats configured; defaulting to GGUF and ONNX");
+            warn!("No supported formats configured; defaulting to GGUF and ONNX");
         }
-
         Ok(Self {
             base_path: PathBuf::from(base_path),
             default_backend: backend,
@@ -144,7 +136,6 @@ impl ModelLoader {
             checksums,
         })
     }
-
     /// Load a model from a specific relative path or auto-discover if path is None.
     /// Uses cache if already loaded.
     pub fn load(&mut self, relative_path: Option<&str>) -> Result<Arc<Model>> {
@@ -158,14 +149,12 @@ impl ModelLoader {
                 "No path provided and auto-discover disabled",
             ));
         };
-
         // Check cache
         if let Some(cached) = self.cache.get(&full_path) {
             let duration = start.elapsed().as_secs_f64();
             self.record_metrics(&full_path, duration, "success", true);
             return Ok(cached.clone());
         }
-
         // Validate and load
         if !full_path.exists() {
             return Err(AiCoreError::not_found(format!(
@@ -173,7 +162,6 @@ impl ModelLoader {
                 full_path.display()
             )));
         }
-
         // Detect format
         let format = match full_path.extension().and_then(|e| e.to_str()) {
             Some("gguf") => ModelFormat::Gguf,
@@ -183,7 +171,6 @@ impl ModelLoader {
                 full_path.display()
             ))),
         };
-
         if !self.supported_formats.contains(&format) {
             return Err(AiCoreError::unsupported(format!(
                 "unsupported model format {:?} for {}",
@@ -191,25 +178,21 @@ impl ModelLoader {
                 full_path.display()
             )));
         }
-
         // Load data
         let model_data = fs::read(&full_path).map_err(|e| AiCoreError::with_context(format!(
             "reading model file at {}",
             full_path.display()
         ), e))?;
-
         // Validate checksum if configured
         let model_name = full_path.file_name().unwrap_or_default().to_string_lossy().to_string();
         if let Some(expected_checksum) = self.checksums.get(&model_name) {
-            let actual_checksum = format!("{:x}", md5::compute(&model_data));  // Simple MD5; use SHA256 for prod
+            let actual_checksum = format!("{:x}", md5::compute(&model_data)); // Simple MD5; use SHA256 for prod
             if actual_checksum != *expected_checksum {
                 return Err(AiCoreError::cache("checksum mismatch".to_string()));
             }
         }
-
         // Extract metadata (placeholder; parse from file header or config)
         let metadata = HashMap::from([("version".to_string(), "1.0".to_string())]);
-
         let model = Arc::new(Model {
             path: full_path.clone(),
             format,
@@ -217,16 +200,12 @@ impl ModelLoader {
             metadata,
             data: Arc::new(model_data),
         });
-
         // Cache the model
         self.cache.insert(full_path.clone(), model.clone());
-
         let duration = start.elapsed().as_secs_f64();
         self.record_metrics(&full_path, duration, "success", false);
-
         Ok(model.clone())
     }
-
     /// Async variant for loading (requires "tokio" feature).
     #[cfg(feature = "tokio")]
     pub async fn load_async(&mut self, relative_path: Option<&str>) -> Result<Arc<Model>> {
@@ -234,37 +213,32 @@ impl ModelLoader {
         let full_path = if let Some(path) = relative_path {
             self.base_path.join(path)
         } else if self.auto_discover {
-            self.discover_model()? .into_iter().next().ok_or(AiCoreError::not_found("no models found"))?
+            self.discover_model()?.into_iter().next().ok_or(AiCoreError::not_found("no models found"))?
         } else {
             return Err(AiCoreError::invalid_arg(
                 "No path provided and auto-discover disabled",
             ));
         };
-
         if let Some(cached) = self.cache.get(&full_path) {
             let duration = start.elapsed().as_secs_f64();
             self.record_metrics(&full_path, duration, "success", true);
             return Ok(cached.clone());
         }
-
         // Use tokio::fs::read for proper async file I/O
         let model_data = tokio::fs::read(&full_path).await.map_err(|e| AiCoreError::with_context(format!(
             "async reading model file at {}",
             full_path.display()
         ), e))?;
-
         // Validate checksum if configured
         let model_name = full_path.file_name().unwrap_or_default().to_string_lossy().to_string();
         if let Some(expected_checksum) = self.checksums.get(&model_name) {
-            let actual_checksum = format!("{:x}", md5::compute(&model_data));  // Simple MD5; use SHA256 for prod
+            let actual_checksum = format!("{:x}", md5::compute(&model_data)); // Simple MD5; use SHA256 for prod
             if actual_checksum != *expected_checksum {
                 return Err(AiCoreError::cache("checksum mismatch".to_string()));
             }
         }
-
         // Extract metadata (placeholder; parse from file header or config)
         let metadata = HashMap::from([("version".to_string(), "1.0".to_string())]);
-
         let model = Arc::new(Model {
             path: full_path.clone(),
             format: ModelFormat::Gguf, // Simplified - in a real implementation this would be determined like sync version
@@ -272,16 +246,12 @@ impl ModelLoader {
             metadata,
             data: Arc::new(model_data),
         });
-
         // Cache the model
         self.cache.insert(full_path.clone(), model.clone());
-
         let duration = start.elapsed().as_secs_f64();
         self.record_metrics(&full_path, duration, "success", false);
-
         Ok(model.clone())
     }
-
     /// Discover models in the base directory by scanning for supported formats.
     /// Returns a vec of matching paths, sorted by last modified (newest first).
     fn discover_model(&self) -> Result<Vec<PathBuf>> {
@@ -314,7 +284,6 @@ impl ModelLoader {
         models.reverse();
         Ok(models)
     }
-
     /// Record model loading metrics.
     fn record_metrics(&self, path: &PathBuf, duration: f64, status: &str, from_cache: bool) {
         let format_label = format!("{:?}", self.detect_format(path).unwrap_or(ModelFormat::Other));
@@ -323,10 +292,8 @@ impl ModelLoader {
         labels.insert("format", format_label.as_str());
         labels.insert("status", status);
         labels.insert("from_cache", if from_cache { "true" } else { "false" });
-
         metrics::record_histogram("model_load_duration_seconds", duration, labels.clone());
         metrics::inc_counter("model_load_total", labels);
-
         tracing::info!(
             "Loaded model '{}' (format={}, backend={}, duration={:.2}s, from_cache={}, status={})",
             path.display(),
@@ -337,7 +304,6 @@ impl ModelLoader {
             status
         );
     }
-
     /// Detect format from path (helper).
     fn detect_format(&self, path: &Path) -> Option<ModelFormat> {
         match path.extension().and_then(|e| e.to_str()) {
