@@ -12,7 +12,6 @@
 //! - Optional backtrace capture (enable with the `backtrace` feature).
 //! - Convenience helpers for retry logic and context enrichment.
 
-use std::fmt;
 use std::result;
 use std::{error::Error as StdError};
 
@@ -266,6 +265,39 @@ impl From<crossbeam_channel::RecvError> for AiCoreError {
 impl From<tokio::task::JoinError> for AiCoreError {
     fn from(e: tokio::task::JoinError) -> Self {
         AiCoreError::Join(e.to_string())
+    }
+}
+
+impl From<ai_utils::errors::Error> for AiCoreError {
+    fn from(e: ai_utils::errors::Error) -> Self {
+        AiCoreError::Other {
+            message: format!("utils error: {}", e),
+            source: Some(Box::new(e)),
+            #[cfg(feature = "backtrace")]
+            backtrace: Backtrace::capture(),
+        }
+    }
+}
+
+impl From<Box<dyn std::error::Error + Send + Sync>> for AiCoreError {
+    fn from(e: Box<dyn std::error::Error + Send + Sync>) -> Self {
+        AiCoreError::Other {
+            message: format!("external error: {}", e),
+            source: Some(e),
+            #[cfg(feature = "backtrace")]
+            backtrace: Backtrace::capture(),
+        }
+    }
+}
+
+impl From<Box<dyn std::error::Error>> for AiCoreError {
+    fn from(e: Box<dyn std::error::Error>) -> Self {
+        AiCoreError::Other {
+            message: format!("external error: {}", e),
+            source: None, // Can't store Box<dyn Error> in source field that expects Send + Sync
+            #[cfg(feature = "backtrace")]
+            backtrace: Backtrace::capture(),
+        }
     }
 }
 
