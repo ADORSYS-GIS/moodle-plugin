@@ -1,7 +1,6 @@
 use kube::CustomResource;
-use serde::{Deserialize, Serialize};
 use schemars::JsonSchema;
-
+use serde::{Deserialize, Serialize};
 
 #[derive(CustomResource, Debug, Deserialize, Serialize, Clone, JsonSchema)]
 #[kube(
@@ -33,7 +32,7 @@ pub struct DatabaseConfig {
     pub password: String,
     #[serde(rename = "type")]
     pub db_type: String, // e.g. "pgsql", "mariadb", etc.
-    pub name: String,  
+    pub name: String,
 }
 
 #[derive(Debug, Deserialize, Serialize, Clone, Default, PartialEq, JsonSchema)]

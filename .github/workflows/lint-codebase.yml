@@ -24,12 +24,12 @@ jobs:
           fetch-depth: "0"
 
       - name: Run ESLint and post results
-        uses: super-linter/super-linter@v7
+        uses: super-linter/super-linter@v8
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VALIDATE_DOCKERFILE_HADOLINT: "true"
           VALIDATE_GITHUB_ACTIONS: "true"
           VALIDATE_GITLEAKS: "true"
           VALIDATE_GIT_MERGE_CONFLICT_MARKERS: "true"
-          #VALIDATE_RUST_CLIPPY: "true" # TODO Activate this in a next future
+          VALIDATE_RUST_CLIPPY: "true"
           #VALIDATE_YAML: "true" # TODO Activate this in a next future
