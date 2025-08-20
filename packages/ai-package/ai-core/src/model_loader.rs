@@ -10,32 +10,43 @@
 //!
 //! # Usage
 //! Synchronous:
-//! ```rust
+//! ```rust,no_run
 //! use ai_core::{model_loader::ModelLoader, Result};
 //! use ai_utils::Config;
 //!
 //! fn main() -> Result<()> {
-//! let mut config = Config::default();
-//! config.merge_from_yaml("config.yaml")?;
-//! let loader = ModelLoader::from_config(&config)?;
-//! let model = loader.load(Some("model.gguf"))?;
-//! Ok(())
+//!     // Create a minimal config for demonstration
+//!     let mut config = Config::new();
+//!     config.data["models"]["base_path"] = serde_json::json!("/path/to/models");
+//!     config.data["models"]["backend"] = serde_json::json!("onnx");
+//!     
+//!     let mut loader = ModelLoader::from_config(&config)?;
+//!     let model = loader.load(Some("model.gguf"))?;
+//!     Ok(())
 //! }
 //! ```
 //! Async (with "tokio" feature):
-//! ```rust
+//! ```rust,ignore
 //! use ai_core::{model_loader::ModelLoader, Result};
 //! use ai_utils::Config;
 //!
 //! #[tokio::main]
 //! async fn main() -> Result<()> {
-//! let mut config = Config::default();
-//! config.merge_from_yaml("config.yaml")?;
-//! let loader = ModelLoader::from_config(&config)?;
-//! let model = loader.load_async(Some("model.gguf")).await?;
-//! Ok(())
+//!     // Create a minimal config for demonstration
+//!     let mut config = Config::new();
+//!     config.data["models"]["base_path"] = serde_json::json!("/path/to/models");
+//!     config.data["models"]["backend"] = serde_json::json!("onnx");
+//!     
+//!     let mut loader = ModelLoader::from_config(&config)?;
+//!     let model = loader.load_async(Some("model.gguf")).await?;
+//!     Ok(())
 //! }
 //! ```
+//!
+//! Runnable async example (outside doctests):
+//! - Build and run with Tokio feature enabled:
+//!   `cargo run -p ai-core --features tokio --example async_loader`
+//!
 use std::collections::HashMap;
 use std::fs;
 use std::path::{Path, PathBuf};
