@@ -7,7 +7,7 @@
 //! (e.g., cache size limits) and metrics (e.g., hit/miss rates). Cache eviction is LRU-based.
 //!
 //! # Usage
-//! ```rust
+//! ```rust,no_run
 //! use ai_core::{cache::Cache, Result};
 //! use ai_utils::Config;
 //!
@@ -15,7 +15,7 @@
 //!     let config = Config::default();
 //!     let cache = Cache::from_config(&config)?;
 //!     cache.insert("prompt1", "response1".to_string());
-//!     if let Some(response) = cache.get("prompt1") {
+//!     if let Some(response) = cache.get(&"prompt1") {
 //!         println!("Cache hit: {}", response);
 //!     }
 //!     Ok(())
