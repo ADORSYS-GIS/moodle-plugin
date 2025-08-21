@@ -7,16 +7,16 @@
 //! `ai_utils` for configuration and metrics. Outputs are generic (e.g., String for text, Vec<f32> for embeddings).
 //!
 //! # Usage
-//! ```rust
+//! ```rust,no_run
 //! use ai_core::{inference::InferenceEngine, model_loader::ModelLoader, Result};
- //! use ai_utils::Config;
+//! use ai_utils::Config;
 //!
 //! fn main() -> Result<()> {
 //!     let config = Config::default();
-//!     let loader = ModelLoader::from_config(&config)?;
-//!     let model = loader.load(None)?;
+//!     let mut loader = ModelLoader::from_config(&config)?;
+//!     let model = loader.load(Some("model.gguf"))?;
 //!     let engine = InferenceEngine::from_config(&config)?;
-//!     let output = engine.infer(&model, "Hello, world!")?;  // Single input
+//!     let _output = engine.infer(&model, "Hello, world!")?;  // Single input
 //!     Ok(())
 //! }
 //! ```
