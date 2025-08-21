@@ -8,6 +8,7 @@
 //! 2. Call `init(&config)` to initialize logging and metrics once per process.
 //! 3. Construct a `ModelLoader` from the config, then load models (sync or async).
 //! 4. Use `Cache` for memoization where appropriate.
+//! 5. Run inference with `InferenceEngine`.
 //!
 //! # Example
 //! ```rust,no_run
@@ -33,10 +34,12 @@
 pub mod errors;
 pub mod model_loader;
 pub mod cache;
+pub mod inference;
 // Re-export key types for easy access
 pub use errors::{AiCoreError, Result};
 pub use model_loader::{Model, ModelLoader, ModelFormat};
 pub use cache::Cache;
+pub use inference::InferenceEngine;
 
 use ai_utils::{logging::init_from_config, metrics as utils_metrics, Config};
 
