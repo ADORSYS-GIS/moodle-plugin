@@ -17,16 +17,21 @@ It defines a new resource type: `Moodle`, which lets you configure Moodle deploy
 apiVersion: moodle.adorsys.com/v1
 kind: Moodle
 metadata:
-  name: my-moodle
+  name: my-moodle-cr
+  namespace: default
 spec:
-  image: bitnami/moodle:5.0.3
-  replicas: 2
-  serviceType: LoadBalancer
+  image: bitnami/moodle:latest
+  replicas: 4
+  serviceType: ClusterIP
+  pvcName: my-moodle-pvc
   database:
-    host: postgres.default.svc.cluster.local
+    host: my-database-postgresql
     port: 5432
-    user: moodle_user
-    password: secret123
+    user: bn_moodle
+    password: secret
+    type: pgsql
+    name: bitnami_moodle  
+
 ```
 
 ### Apply with ;

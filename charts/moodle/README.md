@@ -3,6 +3,7 @@
 
 This Helm chart deploys [Moodle](https://moodle.org/) on a Kubernetes cluster. It wraps the [Bitnami Moodle chart](https://github.com/bitnami/charts/tree/main/bitnami/moodle) and supports optional deployment of Bitnami's PostgreSQL chart for internal database provisioning, or integration with external PostgreSQL services (including CloudNativePG).
 
+
 ---
 
 ## ✨ Features
@@ -11,6 +12,7 @@ This Helm chart deploys [Moodle](https://moodle.org/) on a Kubernetes cluster. I
 * Optional built-in PostgreSQL database (Bitnami)
 * Optional CloudNativePG cluster deployment
 * Easy integration with external PostgreSQL (CloudSQL, RDS, CNPG, etc.)
+
 * Persistent volume support
 * Helm-native configuration for cloud-native deployments
 * Works with local clusters (k3s, Minikube, KinD)
@@ -54,16 +56,16 @@ helm install my-moodle . \
   -f values-cnpg.yaml
 ```
 
-### Option 3: External CNPG (CloudNativePG)
+### Option 4: Internal PostgreSQL (CloudNativePG dependency)
 
-If you manage PostgreSQL via CNPG (installed separately), treat it as an external DB and point Moodle to the CNPG service using `values-cnpg.yaml`:
+This chart also supports deploying a PostgreSQL cluster using [Bitnami's CloudNativePG](https://github.com/bitnami/charts/tree/main/bitnami/cloudnative-pg):
+
+1. **Install CloudNativePG CRDs** (only once per cluster):
 
 ```bash
-helm dependency build
-helm install my-moodle . -f values.yaml -f values-cnpg.yaml -n moodle
+kubectl apply --server-side -f \
+  https://raw.githubusercontent.com/cloudnative-pg/cloudnative-pg/release-1.27/releases/cnpg-1.27.0.yaml
 ```
-
-> **Note**: Only one database mode should be used at a time. For external DB, set `postgresql.enabled: false` and configure `moodle.externalDatabase`.
 
 
 ---
@@ -93,6 +95,7 @@ helm template my-moodle . -f values.yaml -f values-cnpg.yaml
 
 This renders all manifests to stdout without deploying.
 
+
 ---
 
 ## 🖥️ Local Cluster Access (k3s via Multipass)
@@ -121,8 +124,10 @@ kubectl port-forward svc/my-moodle 8080:80
 
 Then open: [http://localhost:8080](http://localhost:8080)
 
+
 #### Option 2: NodePort Access
 1. Update with NodePort service type:
+
 
 ```bash
 helm upgrade my-moodle . -f values.yaml --set moodle.service.type=NodePort
@@ -149,6 +154,7 @@ This chart includes the following dependencies, which are managed in `Chart.yaml
 * [bitnami/moodle](https://artifacthub.io/packages/helm/bitnami/moodle) – core Moodle deployment
 * [bitnami/postgresql](https://artifacthub.io/packages/helm/bitnami/postgresql) – optional internal PostgreSQL database
 * [bitnami/common](https://artifacthub.io/packages/helm/bitnami/common) – common Bitnami utilities
+* [bitnami/cloudnative-pg](https://artifacthub.io/packages/helm/bitnami/cloudnative-pg) (conditionally enabled)
 
 **Note**: CloudNativePG resources are deployed directly by this chart when `cnpg.enabled: true`.
 
@@ -165,10 +171,10 @@ For more information on configuring these dependencies, see the respective value
 ## 🧾 Values Files
 
 * `values.yaml` – for use with external databases (default)
+
 * `values-postgres.yaml` – enables and configures internal PostgreSQL (Bitnami)
 * `values-cnpg.yaml` – deploys CNPG cluster and configures Moodle to use it
 
-> 💡 **Tip**: Never hardcode production secrets in your values files. Use `--set`, `helm secrets`, or a CI/CD vault integration.
 
 ---
 
@@ -206,6 +212,10 @@ moodle:
    ```bash
    helm install my-moodle . -f values.yaml -f values-cnpg.yaml
    ```
+
+* `values-postgres.yaml` – enables internal PostgreSQL (Bitnami)
+* `values-cnpg.yaml`– used to enable CloudNativePG(Bitnami)  
+
 
 4. **Access Moodle:**
    ```bash

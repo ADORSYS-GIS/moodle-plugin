@@ -10,6 +10,9 @@ moodle:
   mariadb:
     enabled: false
 
+  postgresql:
+    enabled: false
+
   persistence:
     enabled: true
     existingClaim: "" #create an external PVC and set this to its name
