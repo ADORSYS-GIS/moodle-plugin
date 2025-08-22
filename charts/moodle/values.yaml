@@ -2,26 +2,24 @@ moodle:
   moodleUsername: admin
   moodlePassword: adorsys-gis
   moodleEmail: gis-udm@adorsys.com
-
   service:
     type: LoadBalancer
-
-  mariadb:
-    enabled: false
-
-  postgresql:
-    enabled: false
-
+    ports:
+      http: 80
+      https: 443
+    targetPorts:
+      http: 8080
+      https: 8443
   persistence:
     enabled: true
     size: 10Gi
-
+  mariadb:
+    enabled: false  
   externalDatabase:
-    host: moodle-postgresql-rw
-    user: moodle
-    password: moodlepass
-    database: moodledb
+    enabled: false 
 
-cloudnative-pg:
-  enabled: true
-  fullnameOverride: moodle-postgresql
+postgresql:
+  enabled: false
+
+cnpg:
+  enabled: false  
