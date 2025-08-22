@@ -10,39 +10,16 @@ moodle:
   mariadb:
     enabled: false
 
-postgresql:
-    enabled: false
-
   persistence:
     enabled: true
-    existingClaim: ""
+    existingClaim: "" #create an external PVC and set this to its name
     size: 10Gi
 
   externalDatabase:
-    host: moodle-postgresql-rw
-    port: 5432
-    user: moodle
-    database: moodledb
-    existingSecret: moodle-db-secret
-    # externalDatabasePasswordKey: mariadb-password
-    type: pgsql
+    enabled: false
 
-  readinessProbe:
-    enabled: true
-    path: /login/index.php
-    port: 8080
-    initialDelaySeconds: 120
-    periodSeconds: 10
-    timeoutSeconds: 5
-    failureThreshold: 6
-    successThreshold: 1
+postgresql:
+  enabled: false
 
-  livenessProbe:
-    enabled: true
-    path: /login/index.php
-    port: 8080
-    initialDelaySeconds: 180
-    periodSeconds: 20
-    timeoutSeconds: 5
-    failureThreshold: 6
-    successThreshold: 1
+cnpg:
+  enabled: false
