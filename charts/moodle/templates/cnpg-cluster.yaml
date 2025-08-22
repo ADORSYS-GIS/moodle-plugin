@@ -1,0 +1,50 @@
+{{- if .Values.cnpg.enabled }}
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: {{ include "common.names.fullname" . }}-pg
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "common.labels.standard" . | nindent 4 }}
+    app.kubernetes.io/component: database
+spec:
+  instances: {{ .Values.cnpg.instances }}
+  imageName: {{ .Values.cnpg.imageName }}
+  
+  bootstrap:
+    initdb:
+      database: {{ .Values.cnpg.database }}
+      owner: {{ .Values.cnpg.owner }}
+      secret:
+        name: {{ .Values.cnpg.secretName }}
+  
+  superuserSecret:
+    name: {{ .Values.cnpg.secretName }}
+  
+  storage:
+    storageClass: {{ .Values.cnpg.storage.storageClass }}
+    size: {{ .Values.cnpg.storage.size }}
+  
+  {{- if .Values.cnpg.resources }}
+  resources:
+    {{- if .Values.cnpg.resources.requests }}
+    requests:
+      {{- if .Values.cnpg.resources.requests.memory }}
+      memory: {{ .Values.cnpg.resources.requests.memory | quote }}
+      {{- end }}
+      {{- if .Values.cnpg.resources.requests.cpu }}
+      cpu: {{ .Values.cnpg.resources.requests.cpu | quote }}
+      {{- end }}
+    {{- end }}
+    {{- if .Values.cnpg.resources.limits }}
+    limits:
+      {{- if .Values.cnpg.resources.limits.memory }}
+      memory: {{ .Values.cnpg.resources.limits.memory | quote }}
+      {{- end }}
+      {{- if .Values.cnpg.resources.limits.cpu }}
+      cpu: {{ .Values.cnpg.resources.limits.cpu | quote }}
+      {{- end }}
+    {{- end }}
+  {{- end }}
+{{- end }} 

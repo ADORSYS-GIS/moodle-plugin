@@ -4,7 +4,7 @@ description: |
   Moodle is a free, open-source learning platform, also known as a Learning Management System (LMS), 
   designed to help educators create and manage online courses and learning environments. 
   This Helm chart deploys Moodle on Kubernetes, providing a scalable and flexible way to run 
-  Moodle in a cloud-native infrastructure.
+  Moodle.
 
 type: application
 version: 0.1.0
@@ -40,7 +40,5 @@ dependencies:
     version: 12.5.7
     repository: https://charts.bitnami.com/bitnami
     condition: postgresql.enabled
-  - name: cloudnative-pg
-    version: 1.0.8
-    repository: https://charts.bitnami.com/bitnami
-    condition: cloudnative-pg.enabled
+
+
