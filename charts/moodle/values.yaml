@@ -20,3 +20,6 @@ moodle:
 
 postgresql:
   enabled: false
+
+cnpg:
+  enabled: false  
