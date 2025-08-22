@@ -5,5 +5,8 @@ dependencies:
 - name: moodle
   repository: https://charts.bitnami.com/bitnami
   version: 27.0.3
-digest: sha256:416aa33c6745b7ce8de2f9a9f4a4d2818f8e5aa5ee14106ee477ece775550986
-generated: "2025-08-06T09:11:16.392437333+01:00"
+- name: postgresql
+  repository: https://charts.bitnami.com/bitnami
+  version: 12.5.7
+digest: sha256:7c75ee640cc38355f805228db0637f993b292bad59e81e6497e29afa58b8fc2d
+generated: "2025-08-20T23:09:55.25190555+01:00"
