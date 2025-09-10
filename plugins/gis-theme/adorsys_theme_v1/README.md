@@ -26,41 +26,38 @@ This repository contains the **adorsys_theme_v1** folder under `plugins/`, desig
 ## Project Structure
 
 ```
+```
 adorsys_theme_v1/
-├── config.php                # Moodle theme definition
-├── version.php
-├── settings.php              # Admin settings stub
-├── lib.php                   # Empty lib stub
-├── package.json
-├── tsconfig.json             # TypeScript configuration
-├── webpack.config.ts         # SCSS/JS build config
-├── postcss.config.mjs        # PostCSS plugins (e.g., Tailwind, autoprefixer)
-│
-├── scss/
-│   └── style.scss            # Tailwind CSS entry
-│
-├── style/                    # (optional) Custom static CSS files
-│
-├── src/                      # Source files (JS/TS, components, etc.)
-│   └── index.ts              # (example) Main entry for JS/TS
-│                
-│
-├── templates/                # Mustache templates used by Moodle
-│   └── some_template.mustache
-│
-├── layout/                   # Layout files for Moodle (e.g., columns, drawers)
-│   └── some_layout_files.php
-│
-├── classes/                  # PHP classes (autoloaded by Moodle)
+├── classes/                    # PHP classes (autoloaded by Moodle)
 │   └── output/
-│       └── renderer.php
-│
-├── lang/
+│       └── renderer.php        # Renders the theme's output
+├── config.php                  # Moodle theme definition
+├── lang/                       # Language files for internationalization
 │   └── en/
-│       └── theme_adorsys_theme_v1.php
-│
-└── pix/                      # Theme images (logos, icons, etc.)
-
+│       └── theme_adorsys_theme_v1.php # English language strings
+├── layout/                     # Defines the page layouts for different Moodle contexts
+│   └── some_layout_files.php   # (e.g., columns.php, default.php, login.php)
+├── lib.php                     # Empty library stub (for theme-specific functions)
+├── package.json                # Project dependencies and scripts
+├── pix/                        # Theme images and assets
+│   ├── favicon.ico             # Favicon for the theme
+│   └── screenshot.png          # Screenshot for Moodle theme selector
+├── postcss.config.mjs          # PostCSS configuration (e.g., Tailwind CSS, Autoprefixer)
+├── README.md                   # This README file
+├── settings.php                # Admin settings for the theme
+├── src/                        # Source files (TypeScript, SCSS, etc.)
+│   ├── assets/                 # Static assets like images or fonts
+│   ├── index.ts                # Main TypeScript entry file
+│   └── styles/                 # SCSS stylesheets
+│       └── main.scss           # Main SCSS file
+├── templates/                  # Mustache templates used by Moodle for rendering
+│   ├── some_mustache_files.mustache # (e.g., columns.mustache, default.mustache)
+│   └── partials/               # Reusable Mustache partials
+│       └── some_partials.mustache # (e.g., footer.mustache, navbar.mustache)
+├── tsconfig.json               # TypeScript configuration
+├── version.php                 # Moodle plugin version details
+├── webpack.config.ts           # Webpack configuration for asset bundling
+└── yarn.lock                   # Yarn dependency lock file
 ```
 
 ## Docker Integration
