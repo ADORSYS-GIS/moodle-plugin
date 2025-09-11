@@ -21,7 +21,7 @@ tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 opentelemetry_sdk = "0.30.0"
 opentelemetry-otlp = "0.30.0"
 opentelemetry-appender-tracing = "0.30.0"
-prometheus = "0.13.4"
+prometheus = "0.14.0"
 hyper = { version = "1.6.0", features = ["full"] }
 sysinfo = "0.37.0"
 http-body-util = "0.1.3"
