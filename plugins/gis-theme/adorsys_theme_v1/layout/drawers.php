@@ -1,14 +1,16 @@
 <?php
 defined('MOODLE_INTERNAL') || die();
 
-$blockshtml = $OUTPUT->blocks('side-pre');
-$hasblocks = strpos($blockshtml, 'data-block=') !== false;
+$sidepreblockshtml = $OUTPUT->blocks('side-pre');
+$sidepostblockshtml = $OUTPUT->blocks('side-post');
+$hasblocks = (strpos($sidepreblockshtml, 'data-block=') !== false || strpos($sidepostblockshtml, 'data-block=') !== false);
 
 $templatecontext = [
     'output' => $OUTPUT,
     'bodyattributes' => $OUTPUT->body_attributes(),
     'hasblocks' => $hasblocks,
-    'sidepreblocks' => $blockshtml,
+    'sidepreblocks' => $sidepreblockshtml,
+    'sidepostblocks' => $sidepostblockshtml,
     'maincontent' => $OUTPUT->main_content(),
     'navbar' => $OUTPUT->navbar(),
     'pageheading' => $PAGE->heading,
