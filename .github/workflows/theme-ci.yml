@@ -11,14 +11,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+
       - name: Use Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '18'
-         
+
       - name: Cache Yarn dependencies
         uses: actions/cache@v3
-        with: 
+        with:
           path: |
             ~/.cache/yarn
           key: ${{ runner.os }}-yarn-${{ hashFiles('plugins/gis-theme/adorsys_theme_v1/yarn.lock') }}
@@ -29,10 +30,13 @@ jobs:
         run: |
           cd plugins/gis-theme/adorsys_theme_v1
           yarn install --frozen-lockfile
+
       - name: Build theme assets
-        run: |
-          cd plugins/gis-theme/adorsys_theme_v1
-          yarn build
+        working-directory: plugins/gis-theme/adorsys_theme_v1
+        run: yarn build
+        env:
+          NODE_OPTIONS: --loader ts-node/esm
+
       - name: Verify source file
         run: |
-          test -f plugins/gis-theme/adorsys_theme_v1/src/styles/main.scss 
+          test -f plugins/gis-theme/adorsys_theme_v1/src/styles/main.scss
