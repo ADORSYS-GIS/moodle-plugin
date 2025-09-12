@@ -37,7 +37,7 @@ adorsys_theme_v1/
 │       └── theme_adorsys_theme_v1.php # English language strings
 ├── layout/                     # Defines the page layouts for different Moodle contexts
 │   └── some_layout_files.php   # (e.g., columns.php, default.php, login.php)
-├── lib.php                     # Empty library stub (for theme-specific functions)
+├── lib.php                     # Contains important functions for loading assets and compiling SCSS
 ├── package.json                # Project dependencies and scripts
 ├── pix/                        # Theme images and assets
 │   ├── favicon.ico             # Favicon for the theme
