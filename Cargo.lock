@@ -1026,8 +1026,8 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "778f98664beaf4c3c11372721e14310d1ae00f5e2d9aabcf8906c881aa4e9f51"
 dependencies = [
  "k8s-openapi 0.25.0",
- "kube-client",
- "kube-core",
+ "kube-client 1.1.0",
+ "kube-core 1.1.0",
  "kube-derive",
 ]
 
@@ -1053,9 +1053,43 @@ dependencies = [
  "hyper-util",
  "jsonpath-rust",
  "k8s-openapi 0.25.0",
- "kube-core",
+ "kube-core 1.1.0",
  "pem",
  "rustls",
+ "secrecy",
+ "serde",
+ "serde_json",
+ "serde_yaml",
+ "thiserror 2.0.16",
+ "tokio",
+ "tokio-util",
+ "tower",
+ "tower-http",
+ "tracing",
+]
+
+[[package]]
+name = "kube-client"
+version = "2.0.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4987d57a184d2b5294fdad3d7fc7f278899469d21a4da39a8f6ca16426567a36"
+dependencies = [
+ "base64",
+ "bytes",
+ "chrono",
+ "either",
+ "futures",
+ "home",
+ "http",
+ "http-body",
+ "http-body-util",
+ "hyper",
+ "hyper-timeout",
+ "hyper-util",
+ "jsonpath-rust",
+ "k8s-openapi 0.26.0",
+ "kube-core 2.0.1",
+ "pem",
  "secrecy",
  "serde",
  "serde_json",
@@ -1078,9 +1112,26 @@ dependencies = [
  "derive_more",
  "form_urlencoded",
  "http",
- "json-patch",
  "k8s-openapi 0.25.0",
  "schemars 0.8.22",
+ "serde",
+ "serde-value",
+ "serde_json",
+ "thiserror 2.0.16",
+]
+
+[[package]]
+name = "kube-core"
+version = "2.0.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "914bbb770e7bb721a06e3538c0edd2babed46447d128f7c21caa68747060ee73"
+dependencies = [
+ "chrono",
+ "derive_more",
+ "form_urlencoded",
+ "http",
+ "json-patch",
+ "k8s-openapi 0.26.0",
  "serde",
  "serde-value",
  "serde_json",
@@ -1103,9 +1154,9 @@ dependencies = [
 
 [[package]]
 name = "kube-runtime"
-version = "1.1.0"
+version = "2.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2f1326e946fadf6248febdf8a1c001809c3899ccf48cb9768cbc536b741040dc"
+checksum = "6aea4de4b562c5cc89ab10300bb63474ae1fa57ff5a19275f2e26401a323e3fd"
 dependencies = [
  "ahash",
  "async-broadcast",
@@ -1116,8 +1167,8 @@ dependencies = [
  "hashbrown",
  "hostname",
  "json-patch",
- "k8s-openapi 0.25.0",
- "kube-client",
+ "k8s-openapi 0.26.0",
+ "kube-client 2.0.1",
  "parking_lot",
  "pin-project",
  "serde",
