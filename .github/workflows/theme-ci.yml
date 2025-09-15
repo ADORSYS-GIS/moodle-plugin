@@ -1,22 +1,22 @@
 name: CI
 
 on:
-  push:
-  pull_request:
+  push: {}
+  pull_request: {}
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Use Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: '18'
 
       - name: Cache Yarn dependencies
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: |
             ~/.cache/yarn
@@ -33,7 +33,7 @@ jobs:
         working-directory: plugins/gis-theme/adorsys_theme_v1
         run: yarn build
         env:
-          NODE_OPTIONS: --loader ts-node/esm
+          NODE_OPTIONS: '--loader ts-node/esm'
 
       - name: Verify source file
         run: |
