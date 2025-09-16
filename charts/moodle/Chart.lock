@@ -8,8 +8,5 @@ dependencies:
 - name: postgresql
   repository: https://charts.bitnami.com/bitnami
   version: 12.5.7
-- name: cloudnative-pg
-  repository: https://charts.bitnami.com/bitnami
-  version: 1.0.8
-digest: sha256:07750e9ea20b1ae8eb75e53863d964aecf06ea2058b292427a27e4b75837c532
-generated: "2025-07-28T16:43:47.686407931+01:00"
+digest: sha256:7c75ee640cc38355f805228db0637f993b292bad59e81e6497e29afa58b8fc2d
+generated: "2025-08-20T23:09:55.25190555+01:00"

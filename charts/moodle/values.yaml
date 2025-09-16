@@ -1,8 +1,9 @@
 moodle:
+  debug: true
   moodleUsername: admin
   moodlePassword: adorsys-gis
   moodleEmail: gis-udm@adorsys.com
-
+  moodleDatabaseType: pgsql
   service:
     type: LoadBalancer
 
@@ -14,14 +15,14 @@ moodle:
 
   persistence:
     enabled: true
+    existingClaim: "" #create an external PVC and set this to its name
     size: 10Gi
 
   externalDatabase:
-    host: moodle-postgresql-rw
-    user: moodle
-    password: moodlepass
-    database: moodledb
+    enabled: false
 
-cloudnative-pg:
-  enabled: true
-  fullnameOverride: moodle-postgresql
+postgresql:
+  enabled: false
+
+cnpg:
+  enabled: false
