@@ -1,20 +1,33 @@
 apiVersion: v2
 name: moodle-operator
-description: >
-  Helm chart for the Moodle Kubernetes Operator. It installs the Moodle CRD(s)
-  and deploys the controller that manages Moodle instances via custom resources.
-  Application dependencies (databases, caches, storage) are intentionally not
-  bundled—compose them via separate charts. Uses the 'app-template' library for
-  shared helpers and best practices.
+description: A Helm chart for Moodle Operator
+icon: https://moodle.org/theme/image.php/moodleorg/theme/1692005413/moodle_logo_small
+
+# A chart can be either an 'application' or a 'library' chart.
+#
+# Application charts are a collection of templates that can be packaged into versioned archives
+# to be deployed.
+#
+# Library charts provide useful utilities or functions for the chart developer. They're included as
+# a dependency of application charts to inject those utilities and functions into the rendering
+# pipeline. Library charts do not define any templates and therefore cannot be deployed.
 type: application
-version: 0.2.0              # bump from 0.1.0 since we’re changing deps/behavior
-appVersion: "1.16.0"        # keep your current operator image version/tag
+
+# This is the chart version. This version number should be incremented each time you make changes
+# to the chart and its templates, including the app version.
+# Versions are expected to follow Semantic Versioning (https://semver.org/)
+version: 0.1.0
+
+# This is the version number of the application being deployed. This version number should be
+# incremented each time you make changes to the application. Versions are expected to follow
+# Semantic Versioning (https://semver.org/)
+appVersion: "1.16.0"
 
 keywords:
   - moodle
-  - lms
   - operator
   - kubernetes
+  - education
   - helm
 
 maintainers:
