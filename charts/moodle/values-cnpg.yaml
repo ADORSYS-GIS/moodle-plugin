@@ -1,11 +1,32 @@
-cloudnative-pg:
-  enabled: true
-  fullnameOverride: moodle-postgresql
-  auth:
-    username: moodle
-    password: moodlepass
+
+moodle:
+  moodleDatabaseType: pgsql
+  externalDatabase:
+    enabled: true
+    host: my-moodle-pg-rw.moodle.svc.cluster.local
+    port: 5432
+    user: moodle
     database: moodledb
-  primary:
-    persistence:
-      enabled: true
-      size: 8Gi
+    existingSecret: moodle-db-secret
+    type: pgsql
+
+cnpg:
+  enabled: true
+  instances: 1
+  imageName: ghcr.io/cloudnative-pg/postgresql:15
+  database: moodledb
+  owner: moodle
+  secretName: moodle-db-secret
+  storage:
+    size: 5Gi
+    storageClass: local-path
+  resources:
+    requests:
+      memory: 512Mi
+      cpu: 500m
+    limits:
+      memory: 1Gi
+      cpu: 1
+
+
+
