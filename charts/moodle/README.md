@@ -167,6 +167,7 @@ e.g., http://10.81.206.74:30897
 
 ---
 
+
 ## 📦 Dependencies
 
 This chart includes the following dependencies, which are managed in `Chart.yaml`:
@@ -202,7 +203,7 @@ For more information on configuring these dependencies, see the respective value
 
 ### Service Configuration
 
-Configure the service type for external access:
+Configure the service type:
 
 ```yaml
 moodle:
