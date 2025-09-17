@@ -1,7 +1,7 @@
 
 # Moodle Helm Chart
 
-This Helm chart deploys [Moodle](https://moodle.org/) on a Kubernetes cluster. It wraps the [Bitnami Moodle chart](https://github.com/bitnami/charts/tree/main/bitnami/moodle) and supports optional deployment of Bitnami's PostgreSQL or MariaDB charts for internal database provisioning, or integration with external database services.
+This Helm chart deploys [Moodle](https://moodle.org/) on a Kubernetes cluster. It wraps the [Bitnami Moodle chart](https://github.com/bitnami/charts/tree/main/bitnami/moodle) and supports optional deployment of Bitnami's PostgreSQL chart or MariaDB charts for internal database provisioning, or integration with external PostgreSQL services (including CloudNativePG).
 
 ---
 
@@ -12,6 +12,7 @@ This Helm chart deploys [Moodle](https://moodle.org/) on a Kubernetes cluster. I
   - Bitnami PostgreSQL
   - Bitnami MariaDB
 * Easy integration with external databases (CloudSQL, RDS, etc.)
+* Optional CloudNativePG cluster deployment
 * Persistent volume support
 * Helm-native configuration for cloud-native deployments
 * Works with local clusters (k3s, Minikube, KinD)
@@ -23,6 +24,7 @@ This Helm chart deploys [Moodle](https://moodle.org/) on a Kubernetes cluster. I
 * Helm 3.x
 * Kubernetes 1.21+ (tested with k3s)
 * Internet access to fetch Bitnami dependencies
+* CloudNativePG operator installed (for CNPG option)
 
 ---
 
@@ -40,27 +42,46 @@ helm install my-moodle . --values values.yaml
 
 ### Option 2: Internal MariaDB (Bitnami dependency)
 
-Use this if you want to deploy Moodle with an in-cluster MariaDB database:
-
 ```bash
 helm dependency build
 helm install my-moodle . \
   -n moodle \
   --create-namespace \
-  -f values.yaml -f values-mariadb.yaml
+  -f values.yaml \
+  -f values-mariadb.yaml
 ```
-
 ### Option 3: Internal PostgreSQL (Bitnami dependency)
 
-Use this if you want to deploy Moodle with an in-cluster PostgreSQL database:
+```bash
+helm dependency build
+helm install my-moodle . \
+  -n moodle \
+  --create-namespace \
+  -f values.yaml \
+  -f values-postgres.yaml
+```
+
+### Option 4: CNPG Cluster + External Database
+
+Deploy Moodle with a CloudNativePG cluster managed by this chart:
 
 ```bash
 helm dependency build
 helm install my-moodle . \
   -n moodle \
   --create-namespace \
-  -f values.yaml -f values-postgres.yaml
+  -f values.yaml \
+  -f values-cnpg.yaml
 ```
+
+
+ **Install CloudNativePG CRDs** (only once per cluster):
+
+```bash
+kubectl apply --server-side -f \
+  https://raw.githubusercontent.com/cloudnative-pg/cloudnative-pg/release-1.27/releases/cnpg-1.27.0.yaml
+```
+
 
 > **Note**: Only enable one database type at a time. The database deployed will be based on which one you enable as `true` in your values file.
 
@@ -79,14 +100,17 @@ helm uninstall my-moodle
 ### Dry Run (Template Only)
 
 ```bash
-# Test with default values
+# Test with default (external DB)
 helm template my-moodle . -f values.yaml
 
 # Test with MariaDB
 helm template my-moodle . -f values-mariadb.yaml
 
-# Test with PostgreSQL
-helm template my-moodle . -f values-postgres.yaml
+# Test with internal PostgreSQL
+helm template my-moodle . -f values.yaml -f values-postgres.yaml
+
+# Test with external CNPG
+helm template my-moodle . -f values.yaml -f values-cnpg.yaml
 ```
 
 This renders all manifests to stdout without deploying.
@@ -95,17 +119,17 @@ This renders all manifests to stdout without deploying.
 
 ## 🖥️ Local Cluster Access (k3s via Multipass)
 
-### Install and Monitor
+### Monitor
 
 ```bash
-# Install the chart (example: MariaDB)
-helm install my-moodle . -f values.yaml -f values-mariadb.yaml
-
 # Check pod status
-kubectl get pods
+kubectl get pods -w
 
 # Check services
 kubectl get svc
+
+# Check CNPG cluster (if enabled)
+kubectl get postgresql.cnpg.io
 ```
 
 ### Access Options
@@ -119,11 +143,13 @@ kubectl port-forward svc/my-moodle 8080:80
 
 Then open: [http://localhost:8080](http://localhost:8080)
 
+
 #### Option 2: NodePort Access
 1. Update with NodePort service type:
 
+
 ```bash
-helm upgrade my-moodle . -f values-mariadb.yaml --set moodle.service.type=NodePort
+helm upgrade my-moodle . -f values.yaml --set moodle.service.type=NodePort
 ```
 
 2. Get the NodePort:
@@ -149,8 +175,9 @@ This chart includes the following dependencies, which are managed in `Chart.yaml
 * [bitnami/postgresql](https://artifacthub.io/packages/helm/bitnami/postgresql) – optional internal PostgreSQL database
 * [bitnami/mariadb](https://artifacthub.io/packages/helm/bitnami/mariadb) – optional internal MariaDB database
 * [bitnami/common](https://artifacthub.io/packages/helm/bitnami/common) – common Bitnami utilities
+* [bitnami/cloudnative-pg](https://artifacthub.io/packages/helm/bitnami/cloudnative-pg) (conditionally enabled)
 
-Dependencies are conditionally enabled based on your chosen values file or configuration.
+**Note**: CloudNativePG resources are deployed directly by this chart when `cnpg.enabled: true`.
 
 To update dependencies, run:
 
@@ -165,34 +192,13 @@ For more information on configuring these dependencies, see the respective value
 ## 🧾 Values Files
 
 * `values.yaml` – for use with external databases (default)
-* `values-postgres.yaml` – enables and configures internal PostgreSQL (Bitnami)
 * `values-mariadb.yaml` – enables and configures internal MariaDB (Bitnami)
+* `values-postgres.yaml` – enables and configures internal PostgreSQL (Bitnami)
+* `values-cnpg.yaml` – deploys CNPG cluster and configures Moodle to use it
 
-> 💡 **Tip**: Never hardcode production secrets in your values files. Use `--set`, `helm secrets`, or a CI/CD vault integration.
 
 ---
 
-## 🔧 Configuration
-
-### Database Selection
-
-The chart automatically configures Moodle based on your database choice:
-
-- **MariaDB**: Set `mariadb.enabled: true` and `postgresql.enabled: false`
-- **PostgreSQL**: Set `postgresql.enabled: true` and `mariadb.enabled: false`
-- **External**: Set both to `false` and configure `externalDatabase`
-
-### Persistence
-
-Enable persistent storage for your database:
-
-```yaml
-mariadb:
-  primary:
-    persistence:
-      enabled: true
-      size: 8Gi
-```
 
 ### Service Configuration
 
@@ -223,13 +229,27 @@ moodle:
    helm install my-moodle . -f values.yaml -f values-mariadb.yaml
    ```
 
+3. **Install with internal PostgreSQL:**
+   ```bash
+   helm install my-moodle . -f values.yaml -f values-postgres.yaml
+   ```
+
+   **OR install with CNPG cluster:**
+   ```bash
+   helm install my-moodle . -f values.yaml -f values-cnpg.yaml
+   ```
+
+* `values-postgres.yaml` – enables internal PostgreSQL (Bitnami)
+* `values-cnpg.yaml`– used to enable CloudNativePG(Bitnami)  
+
+
 4. **Access Moodle:**
    ```bash
    kubectl port-forward svc/my-moodle 8080:80
    # Open http://localhost:8080 in your browser
    ```
 
-5. **Default credentials:**
+5. **Default credentials (example):**
    - Username: `admin`
    - Password: `adorsys-gis`
    - Email: `gis-udm@adorsys.com`
@@ -255,6 +275,11 @@ moodle:
    ```bash
    kubectl logs deployment/my-moodle
    kubectl logs statefulset/my-moodle-mariadb-0
+   # If using internal PostgreSQL
+   kubectl logs statefulset/my-moodle-postgresql-0
+   # If using CNPG
+   kubectl get postgresql.cnpg.io
+   kubectl describe postgresql.cnpg.io my-moodle-pg
    ```
 
 ### Getting Help
@@ -263,5 +288,8 @@ moodle:
 * Check service status: `kubectl get svc`
 * Check persistent volumes: `kubectl get pvc`
 * Check events: `kubectl get events --sort-by='.lastTimestamp'`
+* Check CNPG resources: `kubectl get postgresql.cnpg.io`
+
+---
 
 
