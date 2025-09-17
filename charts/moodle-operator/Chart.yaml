@@ -4,7 +4,7 @@ description: >
   Helm chart for the Moodle Kubernetes Operator. It installs the Moodle CRD(s)
   and deploys the controller that manages Moodle instances via custom resources.
   Application dependencies (databases, caches, storage) are intentionally not
-  bundled—compose them via separate charts. Uses the 'common' library for
+  bundled—compose them via separate charts. Uses the 'app-template' library for
   shared helpers and best practices.
 type: application
 version: 0.2.0              # bump from 0.1.0 since we’re changing deps/behavior
@@ -24,6 +24,6 @@ maintainers:
     email: gis-udm@adorsys.com
 
 dependencies:
-  - name: common
-    version: 2.31.3
-    repository: https://charts.bitnami.com/bitnami
+  - name: app-template
+    version: 3.5.0
+    repository: https://bjw-s-labs.github.io/helm-charts
