@@ -68,6 +68,7 @@ rbac:
       - apiGroups: ["apps"]
         resources: ["deployments", "daemonsets", "replicasets", "statefulsets"]
         verbs: ["*"]
+{{ ... }}
       - apiGroups: ["moodle.io"]
         resources: ["*"]
         verbs: ["*"]
@@ -76,6 +77,25 @@ rbac:
 ## Upgrade from Previous Versions
 
 This chart has been updated to use the `app-template` library instead of the Bitnami `common` library for better maintainability and simplified configuration. The functionality remains the same, but the values structure follows app-template conventions.
+
+## Migration from Bitnami Common
+
+This chart has been migrated from using the Bitnami `common` library to the `bjw-s/app-template` v3.5.0 library for improved maintainability and modern Helm practices.
+
+### Version Decision
+
+We use **app-template v3.5.0** rather than the latest v4.x series due to:
+- **Compatibility**: v4.x has breaking changes that cause template rendering issues
+- **Stability**: v3.5.0 is proven stable and well-tested in production environments  
+- **Feature Completeness**: v3.5.0 provides all necessary features for operator deployment
+
+### Key Changes
+
+- **Dependency**: Now uses `bjw-s/app-template` v3.5.0 instead of `bitnami/common`
+- **Configuration**: Updated values.yaml structure to match app-template v3 schema
+- **Security**: Enhanced security context with non-root user and read-only filesystem
+- **Monitoring**: Built-in Prometheus ServiceMonitor support
+- **RBAC**: Comprehensive cluster role permissions for operator functionality
 
 ## Monitoring
 
