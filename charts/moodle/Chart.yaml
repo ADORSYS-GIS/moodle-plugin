@@ -40,8 +40,4 @@ dependencies:
     version: 12.5.7
     repository: https://charts.bitnami.com/bitnami
     condition: postgresql.enabled
-  - name: cloudnative-pg
-    version: 1.0.8
-    repository: https://charts.bitnami.com/bitnami
-    condition: cloudnative-pg.enabled
-
+  
