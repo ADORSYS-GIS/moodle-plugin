@@ -1,0 +1,40 @@
+name: CI
+
+on:
+  push: {}
+  pull_request: {}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Use Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: '18'
+
+      - name: Cache Yarn dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/yarn
+          key: ${{ runner.os }}-yarn-${{ hashFiles('plugins/gis-theme/adorsys_theme_v1/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+
+      - name: Install dependencies
+        run: |
+          cd plugins/gis-theme/adorsys_theme_v1
+          yarn install --frozen-lockfile
+
+      - name: Build theme assets
+        working-directory: plugins/gis-theme/adorsys_theme_v1
+        run: yarn build
+        env:
+          NODE_OPTIONS: '--loader ts-node/esm'
+
+      - name: Verify source file
+        run: |
+          test -f plugins/gis-theme/adorsys_theme_v1/src/styles/main.scss

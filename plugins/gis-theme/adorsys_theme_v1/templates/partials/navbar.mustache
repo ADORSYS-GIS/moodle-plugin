@@ -1,0 +1,13 @@
+<nav class="bg-white border-b shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+        <div class="flex items-center gap-4">
+            <a href="{{config.wwwroot}}" class="text-xl font-semibold text-gray-900">
+                {{sitename}}
+            </a>
+            {{{navbar}}}
+        </div>
+        <div class="flex items-center">
+            {{{ output.user_menu }}}
+        </div>
+    </div>
+</nav>

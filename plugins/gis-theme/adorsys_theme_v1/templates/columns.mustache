@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="{{ output.get_lang() }}">
+<head>
+    {{{ output.standard_head_html }}}
+</head>
+<body {{{ bodyattributes }}} class="bg-gray-50 text-gray-800">
+
+    {{#hasnavbar}}
+    <header class="bg-white shadow">
+        <div class="container mx-auto px-4 py-3">
+            {{{ navbar }}}
+        </div>
+    </header>
+    {{/hasnavbar}}
+
+    <main class="container mx-auto px-4 py-6 grid grid-cols-12 gap-4">
+        {{#sidepreblocks}}
+        <aside id="region-side-pre" class="col-span-3">
+            {{{ sidepreblocks }}}
+        </aside>
+        {{/sidepreblocks}}
+
+        <section id="region-main" class="col-span-6">
+            {{{ maincontent }}}
+        </section>
+
+        {{#sidepostblocks}}
+        <aside id="region-side-post" class="col-span-3">
+            {{{ sidepostblocks }}}
+        </aside>
+        {{/sidepostblocks}}
+    </main>
+
+    {{#hasfooter}}
+    <footer class="bg-gray-900 text-white py-6">
+        <div class="container mx-auto px-4">
+            {{{ footer }}}
+        </div>
+    </footer>
+    {{/hasfooter}}
+
+    {{{ output.standard_end_of_body_html }}}
+</body>
+</html>

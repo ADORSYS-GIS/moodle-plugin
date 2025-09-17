@@ -1,0 +1,108 @@
+/* Tailwind first */
+@import "tailwindcss";
+
+// Custom Styles
+body {
+  @apply bg-gray-50 text-gray-900 font-sans;
+}
+
+h2 {
+  @apply text-3xl font-bold text-gray-800;
+}
+
+form input,
+form button {
+  @apply w-full block rounded border border-gray-300 px-3 py-2 focus:outline-none focus:ring focus:border-indigo-300;
+}
+
+form button {
+  @apply bg-indigo-600 text-white font-semibold hover:bg-indigo-700 transition-colors;
+}
+
+.shadow-md {
+  @apply shadow-lg;
+}
+
+
+/* Fix giant icons (SVG and font icons) */
+svg.icon,
+.iconlarge svg,
+i.icon,
+i.fa,
+.icon i,
+.iconlarge i {
+  width: 1.25rem !important;
+  height: 1.25rem !important;
+  font-size: 1rem !important;
+  line-height: 1.25rem !important;
+  display: inline-block;
+  vertical-align: middle;
+  object-fit: contain;
+}
+
+/* Global SVG fix to prevent huge rendering */
+img[src$=".svg"],
+svg,
+svg[role="img"] {
+  width: 1.5rem !important;
+  height: 1.5rem !important;
+  max-width: 100%;
+  max-height: 100%;
+  display: inline-block;
+  vertical-align: middle;
+  object-fit: contain;
+}
+
+/* Specific overrides for known Moodle icons */
+img[src*="search"],
+img[src*="expanded"],
+img[src*="collapsed"],
+img[src*="navigationitem"],
+img[src*="settings"] {
+  width: 1.25rem !important;
+  height: 1.25rem !important;
+}
+
+/*  Remove Moodle's tree arrows injected via background-image on navigation */
+.block_navigation .block_tree [aria-expanded="true"],
+.block_navigation .block_tree [aria-expanded="false"] {
+  background-image: none !important;
+  padding-left: 0 !important; /* Optional: remove extra space for the icon */
+  background-repeat: no-repeat;
+  background-size: 0 0;
+}
+
+/*  Remove background-image arrows from settings block tree */
+.block_settings .block_tree [aria-expanded="true"],
+.block_settings .block_tree [aria-expanded="false"] {
+  background-image: none !important;
+  background: none !important;
+  padding-left: 0 !important; /* Optional: remove space reserved for the icon */
+}
+
+/* Reduce size of warning/search font icons */
+.icon.fa-exclamation-triangle,
+.icon.fa-search {
+  font-size: 1.25rem !important;
+  width: 1.25rem !important;
+  height: 1.25rem !important;
+}
+
+/* Specific fix for the giant search icon inside the button */
+button.search-icon > img.icon {
+  width: 1.25rem !important;
+  height: 1.25rem !important;
+  max-width: none !important;
+  max-height: none !important;
+  object-fit: contain;
+  display: inline-block;
+}
+
+/*  Optional global reset for icon images if needed */
+img.icon {
+  all: unset;
+  width: 1.25rem !important;
+  height: 1.25rem !important;
+  display: inline-block;
+  object-fit: contain;
+}
