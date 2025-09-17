@@ -6,23 +6,15 @@ moodle:
   moodleDatabaseType: pgsql
   service:
     type: LoadBalancer
-
   mariadb:
     enabled: false
-
   postgresql:
     enabled: false
-
   persistence:
     enabled: true
     existingClaim: "" #create an external PVC and set this to its name
     size: 10Gi
-
   externalDatabase:
     enabled: false
-
-postgresql:
-  enabled: false
-
 cnpg:
   enabled: false
