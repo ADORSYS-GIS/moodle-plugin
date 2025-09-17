@@ -1,0 +1,73 @@
+# Default values for moodle-operator chart
+# This chart deploys the Moodle Kubernetes Operator using the app-template library
+
+global:
+  nameOverride: ""
+  fullnameOverride: ""
+
+controllers:
+  main:
+    strategy: Recreate
+    
+    containers:
+      main:
+        image:
+          repository: moodle-operator
+          tag: "1.16.0"
+          pullPolicy: IfNotPresent
+        
+        env:
+          LOG_LEVEL: "info"
+          WATCH_NAMESPACE: ""
+        
+        resources:
+          limits:
+            cpu: 500m
+            memory: 512Mi
+          requests:
+            cpu: 100m
+            memory: 128Mi
+        
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          runAsNonRoot: true
+          runAsUser: 65534
+          capabilities:
+            drop:
+              - ALL
+
+service:
+  main:
+    controller: main
+    ports:
+      http:
+        port: 8080
+      metrics:
+        port: 8081
+
+serviceAccount:
+  main:
+    create: true
+    annotations: {}
+
+rbac:
+  main:
+    enabled: true
+    rules:
+      - apiGroups: [""]
+        resources: ["pods", "services", "endpoints", "persistentvolumeclaims", "events", "configmaps", "secrets"]
+        verbs: ["*"]
+      - apiGroups: ["apps"]
+        resources: ["deployments", "daemonsets", "replicasets", "statefulsets"]
+        verbs: ["*"]
+      - apiGroups: ["moodle.io"]
+        resources: ["*"]
+        verbs: ["*"]
+
+defaultPodOptions:
+  securityContext:
+    fsGroup: 65534
+    runAsGroup: 65534
+    runAsNonRoot: true
+    runAsUser: 65534
