@@ -1,0 +1,21 @@
+moodle:
+   externalDatabase:
+    host: moodle-postgresql-rw
+    user: moodle
+    type: pgsql
+    host: my-moodle-postgresql
+    port: 5432
+    user: bn_moodle_adorsys
+    password: moodlepass
+    database: moodledb
+postgresql: 
+  enabled: true
+  auth:
+    postgresPassword: rootPass
+    username: bn_moodle_adorsys
+    password: moodlepass
+    database: moodledb
+  persistence:
+    enabled: true
+    storageClass: local-path
+ 

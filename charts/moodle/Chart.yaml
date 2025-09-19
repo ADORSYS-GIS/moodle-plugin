@@ -40,5 +40,4 @@ dependencies:
     version: 12.5.7
     repository: https://charts.bitnami.com/bitnami
     condition: postgresql.enabled
-
-
+  
