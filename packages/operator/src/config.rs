@@ -6,6 +6,7 @@ use std::net::SocketAddr;
 pub struct OtelConfig {
     pub bind_address: SocketAddr,
     pub log_exporter_endpoint: String,
+    pub metrics_exporter_endpoint: String,
 }
 
 impl OtelConfig {
@@ -23,9 +24,14 @@ impl OtelConfig {
         let log_exporter_endpoint = env::var("OTEL_LOGS_EXPORTER")
             .unwrap_or_else(|_| "http://localhost:4318/v1/logs".into());
 
+        // Get metrics exporter endpoint
+        let metrics_exporter_endpoint = env::var("OTEL_METRICS_EXPORTER")
+            .unwrap_or_else(|_| "http://localhost:9090/api/v1/otlp/v1/metrics".into());
+
         Ok(OtelConfig {
             bind_address,
             log_exporter_endpoint,
+            metrics_exporter_endpoint,
         })
     }
 }

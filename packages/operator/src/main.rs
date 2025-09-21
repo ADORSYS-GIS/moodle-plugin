@@ -8,11 +8,13 @@ mod config;
 mod crds;
 mod error;
 mod reconciller;
+mod server;
 mod telemetry;
 use crate::{
     config::OtelConfig,
     reconciller::controller::controller_moodle_cluster,
-    telemetry::{logging::init_logs_and_tracing, telemetry_server::start_otel_server},
+    server::start_server,
+    telemetry::{logging::init_logs_and_tracing, metrics::init_system_metrics},
 };
 
 #[derive(Clone)]
@@ -29,7 +31,7 @@ async fn main() -> Result<()> {
     let config = OtelConfig::from_env()?;
 
     init_logs_and_tracing(&config.log_exporter_endpoint);
-
+    init_system_metrics(&config.metrics_exporter_endpoint);
     let client = Client::try_default().await?;
 
     // Create an mpsc channel for receiving errors from background tasks
@@ -47,7 +49,7 @@ async fn main() -> Result<()> {
     let otel_bind_addr = config.bind_address;
     let otel_error_tx = tx.clone();
     tokio::spawn(async move {
-        if let Err(e) = start_otel_server(otel_bind_addr).await {
+        if let Err(e) = start_server(otel_bind_addr).await {
             let _ = otel_error_tx.send(format!("OTEL server failed: {e}")).await;
         }
     });

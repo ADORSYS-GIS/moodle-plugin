@@ -1,22 +1,12 @@
-use tracing_subscriber::{prelude::*, EnvFilter};
-
 use opentelemetry_appender_tracing::layer::OpenTelemetryTracingBridge;
 use opentelemetry_otlp::{LogExporter, Protocol, WithExportConfig};
-use opentelemetry_sdk::{logs::SdkLoggerProvider, Resource};
-use std::sync::OnceLock;
+use opentelemetry_sdk::logs::SdkLoggerProvider;
+use tracing_subscriber::{prelude::*, EnvFilter};
 
-static RESOURCE: OnceLock<Resource> = OnceLock::new();
+use crate::telemetry::resource::get_resource;
 
-fn get_resource() -> Resource {
-    RESOURCE
-        .get_or_init(|| {
-            Resource::builder()
-                .with_service_name("otlp-hyper-http")
-                .build()
-        })
-        .clone()
-}
-
+/// Initialize logging and tracing with OpenTelemetry and tracing subscriber.
+/// - Sets up a log exporter to send logs to the specified OTLP endpoint.
 pub fn init_logs_and_tracing(log_exporter_endpoint: &str) -> SdkLoggerProvider {
     let exporter = LogExporter::builder()
         .with_http()
