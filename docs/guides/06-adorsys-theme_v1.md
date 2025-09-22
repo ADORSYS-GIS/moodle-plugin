@@ -1,6 +1,6 @@
 # 📘 How to Install and Use the Base Theme Plugin
 
-This guide will help you install the **Adorsys Theme v1** theme into your Moodle site using the ZIP release.
+This guide will help you install the **Adorsys Theme v1** theme into your Moodle site.
 
 ## ✅ Prerequisites
 
@@ -10,29 +10,43 @@ This guide will help you install the **Adorsys Theme v1** theme into your Moodle
 
 - Admin access to the Moodle UI
 
-## 🧩 Installation Steps
-###  Manual Installation via GitHub Release
+- Node.js (>=18)
 
-#### 1- Download the Plugin ZIP
+- Yarn
 
-Download the latest release from GitHub:
+- Docker & Docker Compose (see root `compose.yaml`)
 
+## 🧩 Mounting steps for Developers
+
+### Setup & Build
+
+1. Change into the theme folder:
+   ```bash
+   cd plugins/gis-theme/adorsys_theme_v1
+   ```
+
+2. Initialize dependencies and build assets:
+   ```bash
+   yarn install
+   yarn build
+   ```
+   
+ ### Docker Integration
+
+To mount the theme in your Moodle container, add to `docker-compose.yml`found at the root of the directory, under the `moodle` service:
+```yaml
+volumes:
+  - ./outputs/plugins/gis-theme/adorsys_theme_v1:/bitnami/moodle/theme/adorsys_theme_v1:ro
 ```
-https://github.com/ADORSYS-GIS/moodle-plugin/releases/tag/v1.0.0
-```
-#### 2- Installation
 
-- Go to `Site Admin -> Plugins -> Install plugins`, and upload the *zip* file **"adorsys_theme_v1.zip"**.
-- Select **theme** as the plugin type on the drop down.
-- Click on **install plugin from the ZIP file**.
-- Now go to **Site Administration > Notifications** 
-- Follow the on-screen steps to complete the installation.
+## Demo
 
-#### 3- Activation
-- How to enable the theme:
-```
-Site Administration -> Appearance -> Theme Selector
-```
-Select the **Adorsys Theme v1**. You should see your theme changing to the select theme.
+1. Start your Docker stack:
+   ```bash
+   docker compose up -d
+   ```
+2. Navigate to `http://localhost:8080/` (or your host’s mapped port).
 
+3. Purge Moodle caches in the UI (Site administration → Development → Purge all caches) to see your theme.
 
+4. In Site administration → Appearance → Theme selector, choose **Adorsys Theme v1** and confirm.

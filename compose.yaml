@@ -73,8 +73,6 @@ services:
       - moodledata_data:/bitnami/moodledata
       # Local source‑controlled plugins (read‑only)
       - ./plugins:/bitnami/moodle/plugins/custom/plugins:ro
-      # Theme plugin for moodle
-      - ./outputs/plugins/gis-theme/adorsys_theme_v1:/bitnami/moodle/theme/adorsys_theme_v1:ro
       # Plugins downloaded via Moodle UI go here (read‑write)
       - plugins_downloads:/bitnami/moodle/plugins/downloaded:ro
     depends_on:
