@@ -3,13 +3,13 @@ use std::env;
 use std::net::SocketAddr;
 
 #[derive(Debug, Clone)]
-pub struct OtelConfig {
+pub struct Config {
     pub bind_address: SocketAddr,
     pub log_exporter_endpoint: String,
     pub metrics_exporter_endpoint: String,
 }
 
-impl OtelConfig {
+impl Config {
     pub fn from_env() -> Result<Self> {
         // Get SERVER_HOST and SERVER_PORT
         let host = env::var("SERVER_HOST").unwrap_or_else(|_| "0.0.0.0".to_string());
@@ -28,7 +28,7 @@ impl OtelConfig {
         let metrics_exporter_endpoint = env::var("OTEL_METRICS_EXPORTER")
             .unwrap_or_else(|_| "http://localhost:9090/api/v1/otlp/v1/metrics".into());
 
-        Ok(OtelConfig {
+        Ok(Config {
             bind_address,
             log_exporter_endpoint,
             metrics_exporter_endpoint,

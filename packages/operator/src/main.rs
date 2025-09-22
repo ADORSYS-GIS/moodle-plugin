@@ -11,10 +11,10 @@ mod reconciller;
 mod server;
 mod telemetry;
 use crate::{
-    config::OtelConfig,
+    config::Config,
     reconciller::controller::controller_moodle_cluster,
     server::start_server,
-    telemetry::{logging::init_logs_and_tracing, metrics::init_system_metrics},
+    telemetry::{logging::LoggerHandle, metrics::MetricsHandle},
 };
 
 #[derive(Clone)]
@@ -28,10 +28,12 @@ static GLOBAL: MiMalloc = MiMalloc;
 #[tokio::main]
 async fn main() -> Result<()> {
     // Load OTEL-related configuration
-    let config = OtelConfig::from_env()?;
+    let config = Config::from_env()?;
 
-    init_logs_and_tracing(&config.log_exporter_endpoint);
-    init_system_metrics(&config.metrics_exporter_endpoint);
+    //Initialize logs
+    let logger_handle = LoggerHandle::init(&config.log_exporter_endpoint);
+    // Initialize metrics
+    let metrics_handle = MetricsHandle::init(&config.metrics_exporter_endpoint);
     let client = Client::try_default().await?;
 
     // Create an mpsc channel for receiving errors from background tasks
@@ -66,6 +68,10 @@ async fn main() -> Result<()> {
     });
 
     let _ = error_listener.await;
+
+    // Gracefully shutdown metrics and logging providers before exiting
+    metrics_handle.shutdown();
+    logger_handle.shutdown();
 
     Ok(())
 }
