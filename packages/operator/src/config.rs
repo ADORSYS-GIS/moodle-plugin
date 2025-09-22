@@ -18,7 +18,7 @@ impl Config {
         let addr_str = format!("{host}:{port}");
         let bind_address: SocketAddr = addr_str
             .parse()
-            .with_context(|| format!("Failed to parse OTEL bind address from '{addr_str}'"))?;
+            .with_context(|| format!("Failed to parse server bind address from '{addr_str}'"))?;
 
         // Get log exporter endpoint
         let log_exporter_endpoint = env::var("OTEL_LOGS_EXPORTER")

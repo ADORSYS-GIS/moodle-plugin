@@ -27,7 +27,7 @@ static GLOBAL: MiMalloc = MiMalloc;
 
 #[tokio::main]
 async fn main() -> Result<()> {
-    // Load OTEL-related configuration
+    // Load env configuration
     let config = Config::from_env()?;
 
     //Initialize logs
@@ -47,12 +47,12 @@ async fn main() -> Result<()> {
         }
     });
 
-    // Spawn OTEL Server Task
-    let otel_bind_addr = config.bind_address;
-    let otel_error_tx = tx.clone();
+    // Spawn Server Task
+    let server_bind_addr = config.bind_address;
+    let server_error_tx = tx.clone();
     tokio::spawn(async move {
-        if let Err(e) = start_server(otel_bind_addr).await {
-            let _ = otel_error_tx.send(format!("OTEL server failed: {e}")).await;
+        if let Err(e) = start_server(server_bind_addr).await {
+            let _ = server_error_tx.send(format!("server failed: {e}")).await;
         }
     });
 
