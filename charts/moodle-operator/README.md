@@ -11,7 +11,7 @@ This chart installs the **Moodle Kubernetes Operator** and its **CRD(s)**. The o
 > Note: application dependencies (DB, cache, storage) are **not bundled**. Bring your own PostgreSQL/MariaDB/Redis/etc. with separate charts and wire them via the `Moodle` resource spec.
 
 ## Requirements
-- Kubernetes ≥ 1.23
+- Kubernetes ≥ 1.28
 - Helm ≥ 3.8
 - Cluster permissions to install CRDs
 
@@ -22,56 +22,72 @@ helm install moodle-operator ./charts/moodle-operator
 
 ## Configuration
 
-The chart uses the [app-template](https://bjw-s-labs.github.io/helm-charts/docs/app-template/) library for simplified configuration. Key configuration options:
+This chart uses the [app-template](https://bjw-s-labs.github.io/helm-charts/docs/app-template/) chart as a dependency with the alias `operator`. All app-template values must therefore be nested under the top-level `operator:` key.
 
 ### Operator Configuration
 ```yaml
-controllers:
-  main:
-    containers:
-      main:
-        image:
-          repository: moodle-operator
-          tag: "1.16.0"
-        env:
-          LOG_LEVEL: "info"
-          WATCH_NAMESPACE: ""  # Empty = all namespaces
-        resources:
-          limits:
-            cpu: 500m
-            memory: 512Mi
-          requests:
-            cpu: 100m
-            memory: 128Mi
+operator:
+  controllers:
+    main:
+      containers:
+        main:
+          image:
+            repository: moodle-operator
+            tag: "1.16.0"
+          env:
+            - name: LOG_LEVEL
+              value: "info"
+            - name: WATCH_NAMESPACE
+              value: ""  # Empty = all namespaces
+          resources:
+            limits:
+              cpu: 500m
+              memory: 512Mi
+            requests:
+              cpu: 100m
+              memory: 128Mi
 ```
 
 ### Service Configuration
 ```yaml
-service:
-  main:
-    ports:
-      http:
-        port: 8080      # Operator API
-      metrics:
-        port: 8081      # Prometheus metrics
+operator:
+  service:
+    main:
+      ports:
+        http:
+          port: 8080      # Operator API
+        metrics:
+          port: 8081      # Metrics endpoint
 ```
 
-### RBAC Configuration
+### RBAC and ServiceAccount
 ```yaml
-rbac:
-  main:
-    enabled: true
-    rules:
-      - apiGroups: [""]
-        resources: ["pods", "services", "endpoints", "persistentvolumeclaims", "events", "configmaps", "secrets"]
-        verbs: ["*"]
-      - apiGroups: ["apps"]
-        resources: ["deployments", "daemonsets", "replicasets", "statefulsets"]
-        verbs: ["*"]
-{{ ... }}
-      - apiGroups: ["moodle.io"]
-        resources: ["*"]
-        verbs: ["*"]
+operator:
+  serviceAccount:
+    default:
+      enabled: true
+
+  rbac:
+    roles:
+      operator:
+        type: ClusterRole
+        rules:
+          - apiGroups: [""]
+            resources: ["pods", "services", "endpoints", "persistentvolumeclaims", "events", "configmaps", "secrets"]
+            verbs: ["*"]
+          - apiGroups: ["apps"]
+            resources: ["deployments", "daemonsets", "replicasets", "statefulsets"]
+            verbs: ["*"]
+          - apiGroups: ["moodle.adorsys.com"]
+            resources: ["*"]
+            verbs: ["*"]
+    bindings:
+      operator:
+        type: ClusterRoleBinding
+        roleRef:
+          identifier: operator
+        subjects:
+          - identifier: default  # binds the generated ServiceAccount
 ```
 
 ## Upgrade from Previous Versions
@@ -80,23 +96,23 @@ This chart has been updated to use the `app-template` library instead of the Bit
 
 ## Migration from Bitnami Common
 
-This chart has been migrated from using the Bitnami `common` library to the `bjw-s/app-template` v3.5.0 library for improved maintainability and modern Helm practices.
+This chart has been migrated from using the Bitnami `common` library to the `bjw-s/app-template` v4.3.0 library for improved maintainability and modern Helm practices.
 
 ### Version Decision
 
-We use **app-template v3.5.0** rather than the latest v4.x series due to:
-- **Compatibility**: v4.x has breaking changes that cause template rendering issues
-- **Stability**: v3.5.0 is proven stable and well-tested in production environments  
-- **Feature Completeness**: v3.5.0 provides all necessary features for operator deployment
+We use **app-template v4.3.0** which provides:
+- **Latest Features**: Access to the most recent app-template capabilities and improvements
+- **Enhanced Security**: Updated security contexts and best practices
+- **Better Performance**: Optimized template rendering and resource management
+- **Future Compatibility**: Aligned with the latest Helm and Kubernetes standards
 
 ### Key Changes
 
-- **Dependency**: Now uses `bjw-s/app-template` v3.5.0 instead of `bitnami/common`
-- **Configuration**: Updated values.yaml structure to match app-template v3 schema
+- **Dependency**: Now uses `bjw-s/app-template` v4.3.0 instead of `bitnami/common`
+- **Configuration**: Updated values.yaml structure to match app-template v4 schema
 - **Security**: Enhanced security context with non-root user and read-only filesystem
-- **Monitoring**: Built-in Prometheus ServiceMonitor support
 - **RBAC**: Comprehensive cluster role permissions for operator functionality
 
-## Monitoring
+## Metrics
 
-The operator exposes Prometheus metrics on port 8081. You can scrape these metrics for monitoring operator health and performance.
+The operator exposes a metrics endpoint on port 8081 (path `/metrics`). You can scrape these metrics with your preferred monitoring stack.
