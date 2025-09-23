@@ -12,6 +12,7 @@ icon: https://moodle.org/theme/image.php/moodleorg/theme/1692005413/moodle_logo_
 # a dependency of application charts to inject those utilities and functions into the rendering
 # pipeline. Library charts do not define any templates and therefore cannot be deployed.
 type: application
+kubeVersion: ">=1.28.0-0"
 
 # This is the chart version. This version number should be incremented each time you make changes
 # to the chart and its templates, including the app version.
@@ -38,5 +39,6 @@ maintainers:
 
 dependencies:
   - name: app-template
-    version: 3.5.0
+    version: 4.3.0
     repository: https://bjw-s-labs.github.io/helm-charts
+    alias: operator
