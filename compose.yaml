@@ -22,6 +22,11 @@ services:
       MOODLE_SMTP_PORT: 1025
       BITNAMI_DEBUG: true
       EXTRA_LOCALES: "fr_FR.UTF-8 UTF-8, de_DE.UTF-8 UTF-8"
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      OPENAI_BASE_URL: ${OPENAI_BASE_URL}
+      OPENAI_MODEL: ${OPENAI_MODEL}
+      MAX_TOKENS: ${MAX_TOKENS}
+      SUMMARIZE_THRESHOLD: ${SUMMARIZE_THRESHOLD}
     entrypoint: /bin/bash
     command: # This script was removed from https://github.com/bitnami/containers/blob/main/bitnami/moodle/5.0/debian-12/rootfs/opt/bitnami/scripts/moodle/entrypoint.sh
       - -c
@@ -72,7 +77,11 @@ services:
       - moodle_data:/bitnami/moodle
       - moodledata_data:/bitnami/moodledata
       # Local source‑controlled plugins (read‑only)
-      - ./plugins:/bitnami/moodle/plugins/custom/plugins:ro
+      - ./plugins/plugin:/bitnami/moodle/plugins/custom/plugins:ro
+      # AI assistant plugin (read-only)
+      - ./plugins/local/openai_assistant:/bitnami/moodle/local/openai_assistant:ro
+       # Mount the compiled Rust binary
+      - ./build:/bitnami/moodle/openai-sidecar:ro
       # Plugins downloaded via Moodle UI go here (read‑write)
       - plugins_downloads:/bitnami/moodle/plugins/downloaded:ro
     depends_on:
