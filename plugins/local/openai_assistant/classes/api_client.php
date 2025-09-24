@@ -3,6 +3,8 @@ namespace local_openai_assistant;
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once(__DIR__ . '/stdio_communicator.php');
+
 class api_client {
     private $communicator;
     

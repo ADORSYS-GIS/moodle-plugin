@@ -1,6 +1,7 @@
 <?php
 require_once(__DIR__ . '/../../config.php');
 require_once(__DIR__ . '/classes/api_client.php');
+require_once(__DIR__ . '/classes/stdio_communicator.php');
 
 require_login();
 
@@ -9,24 +10,53 @@ $PAGE->set_url(new moodle_url('/local/openai_assistant/chat.php'));
 $PAGE->set_title(get_string('chat_with_ai', 'local_openai_assistant'));
 $PAGE->set_heading(get_string('chat_with_ai', 'local_openai_assistant'));
 
-// Add some CSS for better styling
-$PAGE->requires->css('/local/openai_assistant/style/styles.css');
-
 echo $OUTPUT->header();
 
 // Display connection status
 echo '<div class="alert alert-info">';
 echo '<h4>🤖 OpenAI Assistant Status</h4>';
-$client = new \local_openai_assistant\api_client();
-echo '<p>Plugin loaded successfully. Binary path: <code>/bitnami/moodle/openai-sidecar/openai-moodle-sidecar</code></p>';
-echo '<p>Environment variables configured: ';
-echo getenv('OPENAI_API_KEY') ? '✅ API Key' : '❌ API Key';
-echo ', ';
-echo getenv('OPENAI_MODEL') ? '✅ Model (' . getenv('OPENAI_MODEL') . ')' : '❌ Model';
-echo '</p>';
+
+// Test class loading
+try {
+    $client = new \local_openai_assistant\api_client();
+    echo '<p>✅ Plugin classes loaded successfully</p>';
+    
+    // Check binary
+    $binary_path = '/bitnami/moodle/openai-sidecar/openai-moodle-sidecar';
+    if (file_exists($binary_path)) {
+        echo '<p>✅ Binary found at: <code>' . htmlspecialchars($binary_path) . '</code></p>';
+        if (is_executable($binary_path)) {
+            echo '<p>✅ Binary is executable</p>';
+        } else {
+            echo '<p>❌ Binary is not executable</p>';
+        }
+    } else {
+        echo '<p>❌ Binary not found at: <code>' . htmlspecialchars($binary_path) . '</code></p>';
+    }
+    
+    // Check environment variables
+    echo '<p>Environment variables: ';
+    echo getenv('OPENAI_API_KEY') ? '✅ API Key' : '❌ API Key';
+    echo ', ';
+    echo getenv('OPENAI_MODEL') ? '✅ Model (' . getenv('OPENAI_MODEL') . ')' : '❌ Model';
+    echo '</p>';
+    
+} catch (Exception $e) {
+    echo '<p>❌ Error loading plugin: ' . htmlspecialchars($e->getMessage()) . '</p>';
+    echo '<p>File path: ' . __DIR__ . '/classes/</p>';
+    echo '<p>Files in classes directory:</p><ul>';
+    $files = scandir(__DIR__ . '/classes/');
+    foreach ($files as $file) {
+        if ($file != '.' && $file != '..') {
+            echo '<li>' . htmlspecialchars($file) . '</li>';
+        }
+    }
+    echo '</ul>';
+}
+
 echo '</div>';
 
-// Handle form submission
+// Handle form submission only if classes loaded successfully
 if ($_POST && confirm_sesskey()) {
     $message = required_param('message', PARAM_TEXT);
     $action = optional_param('action', 'chat', PARAM_ALPHA);
@@ -39,32 +69,39 @@ if ($_POST && confirm_sesskey()) {
     
     $start_time = microtime(true);
     
-    switch ($action) {
-        case 'chat':
-            $response = $client->chat($message, $context ?: null, $USER->id);
-            break;
-        case 'summarize':
-            $response = $client->summarize($message, $USER->id);
-            break;
-        case 'analyze':
-            $response = $client->analyze($message, $USER->id);
-            break;
-        default:
-            $response = ['success' => false, 'error' => 'Invalid action'];
+    try {
+        $client = new \local_openai_assistant\api_client();
+        
+        switch ($action) {
+            case 'chat':
+                $response = $client->chat($message, $context ?: null, $USER->id);
+                break;
+            case 'summarize':
+                $response = $client->summarize($message, $USER->id);
+                break;
+            case 'analyze':
+                $response = $client->analyze($message, $USER->id);
+                break;
+            default:
+                $response = ['success' => false, 'error' => 'Invalid action'];
+        }
+        
+        $end_time = microtime(true);
+        $duration = round(($end_time - $start_time) * 1000, 2);
+        
+        echo '<div class="card mb-3">';
+        if ($response['success']) {
+            echo '<div class="card-header bg-success text-white"><strong>✅ AI Response</strong> <small>(took ' . $duration . 'ms)</small></div>';
+            echo '<div class="card-body">' . nl2br(htmlspecialchars($response['data'])) . '</div>';
+        } else {
+            echo '<div class="card-header bg-danger text-white"><strong>❌ Error</strong> <small>(took ' . $duration . 'ms)</small></div>';
+            echo '<div class="card-body">' . htmlspecialchars($response['error']) . '</div>';
+        }
+        echo '</div>';
+        
+    } catch (Exception $e) {
+        echo '<div class="alert alert-danger">Error: ' . htmlspecialchars($e->getMessage()) . '</div>';
     }
-    
-    $end_time = microtime(true);
-    $duration = round(($end_time - $start_time) * 1000, 2);
-    
-    echo '<div class="card mb-3">';
-    if ($response['success']) {
-        echo '<div class="card-header bg-success text-white"><strong>✅ AI Response</strong> <small>(took ' . $duration . 'ms)</small></div>';
-        echo '<div class="card-body">' . nl2br(htmlspecialchars($response['data'])) . '</div>';
-    } else {
-        echo '<div class="card-header bg-danger text-white"><strong>❌ Error</strong> <small>(took ' . $duration . 'ms)</small></div>';
-        echo '<div class="card-body">' . htmlspecialchars($response['error']) . '</div>';
-    }
-    echo '</div>';
 }
 
 ?>
@@ -111,26 +148,18 @@ if ($_POST && confirm_sesskey()) {
     <div class="col-md-4">
         <div class="card">
             <div class="card-header">
-                <h4>📝 Test Examples</h4>
+                <h4>📝 Debug Info</h4>
             </div>
             <div class="card-body">
-                <h5>Chat Examples:</h5>
-                <ul>
-                    <li>"Explain quantum physics in simple terms"</li>
-                    <li>"Create a quiz about photosynthesis"</li>
-                    <li>"Help me understand calculus derivatives"</li>
-                </ul>
+                <p><strong>Plugin Path:</strong><br><code><?php echo __DIR__; ?></code></p>
+                <p><strong>Classes Path:</strong><br><code><?php echo __DIR__ . '/classes/'; ?></code></p>
+                <p><strong>Binary Path:</strong><br><code>/bitnami/moodle/openai-sidecar/openai-moodle-sidecar</code></p>
                 
-                <h5>Summarize Examples:</h5>
+                <h5>📝 Test Examples:</h5>
                 <ul>
-                    <li>Paste a long article or text</li>
-                    <li>Course content that needs condensing</li>
-                </ul>
-                
-                <h5>Analyze Examples:</h5>
-                <ul>
-                    <li>Educational content for difficulty assessment</li>
-                    <li>Course materials for learning objectives</li>
+                    <li>"Hello, test message"</li>
+                    <li>"Explain photosynthesis"</li>
+                    <li>"Create a simple quiz"</li>
                 </ul>
             </div>
         </div>
