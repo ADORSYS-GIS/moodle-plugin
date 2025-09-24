@@ -8,5 +8,6 @@ $string['themeheading'] = 'Adorsys Theme Settings';
 $string['themedesc'] = 'Customize the Adorsys Theme appearance.';
 $string['customcss'] = 'Custom CSS';
 $string['customcssdesc'] = 'Add custom CSS that will be applied after the main stylesheet.';
-
-
+$string['terms_of_service'] = 'Terms of Service';
+$string['toscontent']       = 'Terms of Service content';
+$string['toscontent_desc']  = 'This content will be shown on the Terms of Service page.';
