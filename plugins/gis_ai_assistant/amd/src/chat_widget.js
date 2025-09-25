@@ -117,7 +117,6 @@ define(['jquery', 'core/ajax', 'core/notification'], function($, Ajax, Notificat
                     background: white;
                     border-radius: 12px;
                     box-shadow: 0 8px 32px rgba(0,0,0,0.15);
-                    z-index: 10000;
                     display: flex;
                     flex-direction: column;
                     overflow: hidden;
@@ -155,12 +154,15 @@ define(['jquery', 'core/ajax', 'core/notification'], function($, Ajax, Notificat
                     flex: 1;
                     display: flex;
                     flex-direction: column;
+                    min-height: 0; /* Allow inner scroller to scroll within flex container */
+                    overflow: hidden; /* Prevent content from pushing footer/input out */
                 }
                 
                 .ai-chat-messages-mini {
-                    flex: 1;
+                    flex: 1 1 auto;
                     overflow-y: auto;
-                    padding: 12px;
+                    min-height: 0; /* Required for scrollable flex child */
+                    padding: 1rem;
                     background: #f8f9fa;
                 }
                 
@@ -304,32 +306,35 @@ define(['jquery', 'core/ajax', 'core/notification'], function($, Ajax, Notificat
             this.addMessage('...', 'ai', true);
 
             // Make API call.
-            var request = {
-                methodname: 'local_gis_ai_assistant_send_message',
-                args: {
-                    message: message,
-                    model: '',
-                    temperature: 0.7,
-                    max_tokens: 150 // Shorter responses for widget
-                }
-            };
+        var request = {
+            methodname: 'local_gis_ai_assistant_send_message',
+            args: {
+                message: message,
+                model: '',
+                temperature: 0.7,
+                max_tokens: 150 // Shorter responses for widget
+            }
+        };
 
-            Ajax.call([request])[0]
-                .done(function(response) {
-                    // Remove loading message.
-                    $('.ai-message-mini.loading').remove();
-                    
-                    if (response.success) {
-                        self.addMessage(response.content, 'ai');
-                    } else {
-                        self.addMessage('Sorry, I encountered an error: ' + (response.error || 'Unknown error'), 'ai');
-                    }
-                })
-                .fail(function(error) {
-                    // Remove loading message.
-                    $('.ai-message-mini.loading').remove();
-                    self.addMessage('Sorry, I could not process your request.', 'ai');
-                });
+        Ajax.call([request])[0]
+            .done(function(response) {
+                // Remove loading message.
+                $('.ai-message-mini.loading').remove();
+                if (response && response.success) {
+                    self.addMessage(response.content, 'ai');
+                } else {
+                    var err = (response && response.error) ? response.error : 'Unknown error';
+                    self.addMessage('Sorry, I encountered an error: ' + err, 'ai');
+                }
+            })
+            .fail(function(error) {
+                // Remove loading message.
+                $('.ai-message-mini.loading').remove();
+                self.addMessage('Sorry, I could not process your request.', 'ai');
+                if (window.console) {
+                    console.error('AI widget send_message AJAX error:', error);
+                }
+            });
         },
 
         /**
@@ -353,12 +358,35 @@ define(['jquery', 'core/ajax', 'core/notification'], function($, Ajax, Notificat
             var div = document.createElement('div');
             div.textContent = text;
             return div.innerHTML;
+        },
+
+        /**
+         * Refresh the Moodle session.
+         */
+        refreshSession: function() {
+            var request = {
+                methodname: 'core_session_time_remaining',
+                args: {}
+            };
+
+            Ajax.call([request])[0]
+                .done(function(response) {
+                    // Session refreshed successfully.
+                })
+                .fail(function(error) {
+                    // Handle session refresh failure (e.g., redirect to login page).
+                    console.error('Failed to refresh session:', error);
+                    // Optionally, display a message to the user.
+                    // alert('Your session has expired. Please refresh the page.');
+                });
         }
     };
 
     return {
         init: function() {
             ChatWidget.init();
+             // Refresh session every 30 minutes.
+            setInterval(ChatWidget.refreshSession, 1800000);
         }
     };
 });

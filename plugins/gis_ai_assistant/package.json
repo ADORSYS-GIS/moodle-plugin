@@ -1,0 +1,13 @@
+{
+  "name": "moodle-local-gis-ai-assistant",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Build tooling for AMD modules of the local_gis_ai_assistant plugin.",
+  "devDependencies": {
+    "grunt": "^1.6.1",
+    "grunt-contrib-uglify": "^5.2.2"
+  },
+  "scripts": {
+    "build": "grunt amd"
+  }
+}

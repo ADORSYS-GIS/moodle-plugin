@@ -21,377 +21,290 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-define(['jquery', 'core/ajax', 'core/notification', 'core/str'], function($, Ajax, Notification, Str) {
+define([
+    'jquery',
+    'core/ajax',
+    'core/notification',
+    'core/str',
+    'local_gis_ai_assistant/ui_helpers'
+], function($, Ajax, Notification, Str, UIHelpers) {
     'use strict';
 
-    var Chat = {
-        
-        /**
-         * Initialize the chat interface.
-         */
+    var ChatUI = {
+        selectors: {
+            form: '#ai-chat-form',
+            input: '#ai-message-input',
+            messages: '#ai-chat-messages',
+            sendBtn: '#ai-send-button',
+            streamBtn: '#ai-send-stream-button',
+            typingIndicator: '#ai-typing-indicator',
+            container: '.ai-chat-container'
+        },
+        eventSource: null,
+        isProcessing: false,
+        themeStorageKey: 'aiChatTheme',
+
         init: function() {
             this.bindEvents();
-            this.autoResizeTextarea();
-            this.focusInput();
+            this.setupKeyboardShortcuts();
+            this.showWelcomeMessage();
+            this.setupInputResize();
+            this.toggleSendButtons();
+            this.applySavedTheme();
         },
 
-        /**
-         * Bind event handlers.
-         */
         bindEvents: function() {
             var self = this;
 
-            // Send message on form submit.
-            $('#ai-chat-form').on('submit', function(e) {
+            $(this.selectors.form).on('submit', function(e) {
                 e.preventDefault();
-                self.sendMessage();
+                self.sendMessage(false);
             });
 
-            // Send message on Ctrl+Enter.
-            $('#ai-message-input').on('keydown', function(e) {
-                if (e.ctrlKey && e.keyCode === 13) {
-                    e.preventDefault();
-                    self.sendMessage();
-                }
+            $(this.selectors.sendBtn).on('click', function(e) {
+                e.preventDefault();
+                self.sendMessage(false);
             });
 
-            // Clear chat.
-            $('#ai-clear-chat').on('click', function() {
-                self.clearChat();
+            $(this.selectors.streamBtn).on('click', function(e) {
+                e.preventDefault();
+                self.sendMessage(true);
             });
 
-            // Send streaming message on stream button click.
-            $('#ai-send-stream-button').on('click', function() {
-                self.sendStreamingMessage();
+            $(this.selectors.input).on('input', function() {
+                self.toggleSendButtons();
             });
 
-            // Auto-resize textarea.
-            $('#ai-message-input').on('input', function() {
-                self.autoResizeTextarea();
+            // Theme toggle button in template header.
+            $(document).on('click', '#ai-toggle-theme', function() {
+                self.toggleTheme();
             });
         },
 
-        /**
-         * Send message to AI.
-         */
-        sendMessage: function() {
+        setupKeyboardShortcuts: function() {
             var self = this;
-            var input = $('#ai-message-input');
-            var message = input.val().trim();
+            $(this.selectors.input).on('keydown', function(e) {
+                if (e.ctrlKey && (e.key === 'Enter' || e.keyCode === 13)) {
+                    e.preventDefault();
+                    self.sendMessage(false);
+                }
+            });
+        },
 
-            if (!message) {
-                return;
+        setupInputResize: function() {
+            var input = $(this.selectors.input);
+            input.on('input', function() {
+                this.style.height = 'auto';
+                this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+            });
+        },
+
+        showWelcomeMessage: function() {
+            var messagesEl = $(this.selectors.messages);
+            if (messagesEl.children().length > 0) {
+                return; // Template already provided welcome message.
             }
+            var self = this;
+            Str.get_string('ai_welcome', 'local_gis_ai_assistant').done(function(welcomeText) {
+                var welcomeBubble = UIHelpers.createMessageBubble(welcomeText, 'system');
+                messagesEl.append(welcomeBubble);
+                self.scrollToBottom();
+            });
+        },
 
-            // Disable input and show loading.
-            this.setLoading(true);
+        toggleSendButtons: function() {
+            var hasContent = $(this.selectors.input).val().trim().length > 0;
+            var isDisabled = this.isProcessing || !hasContent;
+            $(this.selectors.sendBtn).prop('disabled', isDisabled);
+            $(this.selectors.streamBtn).prop('disabled', isDisabled);
+        },
+
+        sendMessage: function(streaming) {
+            if (this.isProcessing) return;
+
+            var message = $(this.selectors.input).val().trim();
+            if (!message) return;
+
+            this.isProcessing = true;
+            this.toggleSendButtons();
+
+            // Add user message bubble
+            var userBubble = UIHelpers.createMessageBubble(message, 'user');
+            $(this.selectors.messages).append(userBubble);
             
-            // Add user message to chat.
-            this.addMessage(message, 'user');
-            
-            // Clear input.
-            input.val('');
-            this.autoResizeTextarea();
+            // Clear input and reset height
+            $(this.selectors.input).val('').trigger('input');
+            this.scrollToBottom();
 
-            // Show typing indicator.
-            this.showTypingIndicator();
+            if (streaming) {
+                this.sendStreamingMessage(message);
+            } else {
+                this.sendRegularMessage(message);
+            }
+        },
 
-            // Make API call.
+        sendRegularMessage: function(message) {
+            var self = this;
+            UIHelpers.showLoadingBubble($(this.selectors.messages));
+            this.scrollToBottom();
+
             var request = {
                 methodname: 'local_gis_ai_assistant_send_message',
-                args: {
-                    message: message,
-                    model: '',
-                    temperature: 0.7,
-                    max_tokens: 0
-                }
+                args: { message: message }
             };
 
             Ajax.call([request])[0]
                 .done(function(response) {
-                    self.hideTypingIndicator();
-                    
-                    if (response.success) {
-                        self.addMessage(response.content, 'ai');
-                        self.logUsage(response.usage);
+                    UIHelpers.removeLoadingBubbles($(self.selectors.messages));
+                    if (response && response.success) {
+                        var aiBubble = UIHelpers.createMessageBubble(response.content, 'ai');
+                        $(self.selectors.messages).append(aiBubble);
+                        self.scrollToBottom();
                     } else {
-                        self.showError(response.error || 'Unknown error occurred');
+                        self.handleError(response || { error: 'Unknown error' });
                     }
                 })
-                .fail(function(error) {
-                    self.hideTypingIndicator();
-                    var msg = (error && (error.message || error.error || error.debuginfo || error.exception)) || 'Unknown error';
-                    console.error('AI send_message AJAX error:', error);
-                    self.showError('Failed to send message: ' + msg);
+                .fail(function() {
+                    UIHelpers.removeLoadingBubbles($(self.selectors.messages));
+                    self.handleError({ error: 'Network error occurred' });
                 })
                 .always(function() {
-                    self.setLoading(false);
+                    self.isProcessing = false;
+                    self.toggleSendButtons();
+                    $(self.selectors.input).focus();
                 });
         },
 
-        /**
-         * Send streaming message to AI.
-         */
-        sendStreamingMessage: function() {
+        sendStreamingMessage: function(message) {
             var self = this;
-            var input = $('#ai-message-input');
-            var message = input.val().trim();
+            UIHelpers.showLoadingBubble($(this.selectors.messages));
+            this.scrollToBottom();
 
-            if (!message) {
-                return;
-            }
-
-            // Disable input and show loading.
-            this.setLoading(true);
-            
-            // Add user message to chat.
-            this.addMessage(message, 'user');
-            
-            // Clear input.
-            input.val('');
-            this.autoResizeTextarea();
-
-            // Show typing indicator.
-            this.showTypingIndicator();
-
-            // Make API call to get stream session.
             var request = {
                 methodname: 'local_gis_ai_assistant_send_message_stream',
-                args: {
-                    message: message,
-                    model: '',
-                    temperature: 0.7,
-                    max_tokens: 0
-                }
+                args: { message: message }
             };
 
             Ajax.call([request])[0]
                 .done(function(response) {
-                    if (response.success) {
-                        self.handleStreamingResponse(response.session_id);
+                    if (response && response.success && response.stream_url) {
+                        self.startStreaming(response.stream_url);
                     } else {
-                        self.hideTypingIndicator();
-                        self.showError(response.error || 'Unknown error occurred');
-                        self.setLoading(false);
+                        UIHelpers.removeLoadingBubbles($(self.selectors.messages));
+                        self.handleError(response || { error: 'Failed to start streaming' });
+                        self.isProcessing = false;
+                        self.toggleSendButtons();
                     }
                 })
-                .fail(function(error) {
-                    self.hideTypingIndicator();
-                    var msg = (error && (error.message || error.error || error.debuginfo || error.exception)) || 'Unknown error';
-                    console.error('AI send_message_stream AJAX error:', error);
-                    self.showError('Failed to start streaming: ' + msg);
-                    self.setLoading(false);
+                .fail(function() {
+                    UIHelpers.removeLoadingBubbles($(self.selectors.messages));
+                    self.handleError({ error: 'Failed to start streaming' });
+                    self.isProcessing = false;
+                    self.toggleSendButtons();
                 });
         },
 
-        /**
-         * Handle streaming response.
-         */
-        handleStreamingResponse: function(sessionId) {
+        startStreaming: function(streamUrl) {
             var self = this;
-            
-            // Hide typing indicator and add AI message container.
-            this.hideTypingIndicator();
-            var messageElement = this.addMessage('', 'ai');
-            var contentElement = messageElement.find('.ai-message-content p');
+            UIHelpers.removeLoadingBubbles($(this.selectors.messages));
+            var aiBubble = UIHelpers.createMessageBubble('', 'ai');
+            $(this.selectors.messages).append(aiBubble);
+            var contentEl = aiBubble.find('.ai-message-content');
+            this.scrollToBottom();
 
-            // Create EventSource for streaming.
-            var streamUrl = M.cfg.wwwroot + '/local/gis_ai_assistant/stream.php?session=' + sessionId;
-            var eventSource = new EventSource(streamUrl);
-
-            eventSource.onmessage = function(event) {
-                var data;
+            this.eventSource = new EventSource(streamUrl);
+            this.eventSource.onmessage = function(event) {
                 try {
-                    data = JSON.parse(event.data);
-                } catch (e) {
-                    console.error('Invalid SSE payload:', event.data);
-                    return;
-                }
-                
-                if (data.type === 'content') {
-                    // Append content to message.
-                    var currentContent = contentElement.text();
-                    contentElement.text(currentContent + data.content);
-                    self.scrollToBottom();
-                } else if (data.type === 'done') {
-                    // Stream finished.
-                    eventSource.close();
-                    self.setLoading(false);
-                    if (data.usage) {
-                        self.logUsage(data.usage);
+                    var data = JSON.parse(event.data);
+                    switch (data.type) {
+                        case 'content':
+                            contentEl.append(document.createTextNode(data.content));
+                            self.scrollToBottom();
+                            break;
+                        case 'done':
+                            self.eventSource.close();
+                            self.eventSource = null;
+                            self.isProcessing = false;
+                            self.toggleSendButtons();
+                            $(self.selectors.input).focus();
+                            break;
+                        case 'error':
+                            self.eventSource.close();
+                            self.eventSource = null;
+                            self.handleError(data);
+                            self.isProcessing = false;
+                            self.toggleSendButtons();
+                            break;
                     }
-                } else if (data.type === 'error') {
-                    // Error occurred.
-                    eventSource.close();
-                    self.showError(data.error);
-                    self.setLoading(false);
+                } catch (e) {
+                    // eslint-disable-next-line no-console
+                    console.error('Error parsing SSE data:', e);
                 }
             };
 
-            eventSource.onerror = function() {
-                eventSource.close();
-                self.showError('Streaming connection failed');
-                self.setLoading(false);
+            this.eventSource.onerror = function() {
+                self.eventSource.close();
+                self.eventSource = null;
+                self.handleError({ error: 'Streaming connection failed' });
+                self.isProcessing = false;
+                self.toggleSendButtons();
             };
 
-            // Close stream after timeout.
             setTimeout(function() {
-                if (eventSource.readyState !== EventSource.CLOSED) {
-                    eventSource.close();
-                    self.setLoading(false);
+                if (self.eventSource) {
+                    self.eventSource.close();
+                    self.eventSource = null;
+                    self.handleError({ error: 'Streaming timeout' });
+                    self.isProcessing = false;
+                    self.toggleSendButtons();
                 }
-            }, 120000); // 2 minutes timeout.
+            }, 120000);
         },
 
-        /**
-         * Add message to chat.
-         */
-        addMessage: function(content, type) {
-            var messagesContainer = $('#ai-chat-messages');
-            var avatar = type === 'user' ? 
-                '<i class="fa fa-user" aria-hidden="true"></i>' : 
-                '<i class="fa fa-robot" aria-hidden="true"></i>';
-
-            var messageHtml = 
-                '<div class="ai-message ai-' + type + '-message">' +
-                    '<div class="ai-message-avatar">' + avatar + '</div>' +
-                    '<div class="ai-message-content">' +
-                        '<p>' + this.escapeHtml(content) + '</p>' +
-                    '</div>' +
-                '</div>';
-
-            var messageElement = $(messageHtml);
-            messagesContainer.append(messageElement);
-            this.scrollToBottom();
-            
-            return messageElement;
-        },
-
-        /**
-         * Show typing indicator.
-         */
-        showTypingIndicator: function() {
-            $('#ai-typing-indicator').show();
-            this.scrollToBottom();
-        },
-
-        /**
-         * Hide typing indicator.
-         */
-        hideTypingIndicator: function() {
-            $('#ai-typing-indicator').hide();
-        },
-
-        /**
-         * Show error message.
-         */
-        showError: function(message) {
-            this.addMessage('Error: ' + message, 'ai');
-            Notification.addNotification({
-                message: message,
-                type: 'error'
-            });
-        },
-
-        /**
-         * Clear chat messages.
-         */
-        clearChat: function() {
-            var self = this;
-            
-            Str.get_string('confirm_clear_chat', 'local_gis_ai_assistant').done(function(confirmText) {
-                if (confirm(confirmText)) {
-                    $('#ai-chat-messages').empty();
-                    
-                    // Add welcome message back.
-                    Str.get_string('ai_welcome', 'local_gis_ai_assistant').done(function(welcomeText) {
-                        var welcomeHtml = 
-                            '<div class="ai-message ai-system-message">' +
-                                '<div class="ai-message-avatar">' +
-                                    '<i class="fa fa-robot" aria-hidden="true"></i>' +
-                                '</div>' +
-                                '<div class="ai-message-content">' +
-                                    '<p>' + welcomeText + '</p>' +
-                                '</div>' +
-                            '</div>';
-                        $('#ai-chat-messages').append(welcomeHtml);
-                    });
-                    
-                    self.focusInput();
-                }
-            });
-        },
-
-        /**
-         * Set loading state.
-         */
-        setLoading: function(loading) {
-            var input = $('#ai-message-input');
-            var button = $('#ai-send-button');
-
-            if (loading) {
-                input.prop('disabled', true);
-                button.prop('disabled', true);
-                button.html('<i class="fa fa-spinner fa-spin" aria-hidden="true"></i>');
-            } else {
-                input.prop('disabled', false);
-                button.prop('disabled', false);
-                button.html('<i class="fa fa-paper-plane" aria-hidden="true"></i>');
-                this.focusInput();
+        applySavedTheme: function() {
+            var pref = null;
+            try { pref = window.localStorage.getItem(this.themeStorageKey); } catch (e) {}
+            var $container = $(this.selectors.container).first();
+            if (!$container.length) { return; }
+            if (pref === 'dark') {
+                $container.addClass('ai-dark');
+            } else if (pref === 'light') {
+                $container.removeClass('ai-dark');
             }
         },
 
-        /**
-         * Auto-resize textarea.
-         */
-        autoResizeTextarea: function() {
-            var textarea = $('#ai-message-input')[0];
-            if (textarea) {
-                textarea.style.height = 'auto';
-                textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px';
+        toggleTheme: function() {
+            var $container = $(this.selectors.container).first();
+            if (!$container.length) { return; }
+            var makingDark = !$container.hasClass('ai-dark');
+            $container.toggleClass('ai-dark', makingDark);
+            try { window.localStorage.setItem(this.themeStorageKey, makingDark ? 'dark' : 'light'); } catch (e) {}
+        },
+
+        handleError: function(error) {
+            // Prefer backend-provided messages for clarity.
+            var message = (error && (error.error || error.message)) || null;
+            if (message) {
+                Notification.addNotification({ message: message, type: 'error' });
+                return;
             }
+            // Fallback to localized string with parameter to avoid showing {$a}.
+            var details = 'Unknown error';
+            try { details = JSON.stringify(error); } catch (e) {}
+            Str.get_string('error_api_request_failed', 'local_gis_ai_assistant', details).done(function(msg) {
+                Notification.addNotification({ message: msg, type: 'error' });
+            }).fail(function() {
+                Notification.addNotification({ message: 'An error occurred', type: 'error' });
+            });
         },
 
-        /**
-         * Focus input field.
-         */
-        focusInput: function() {
-            setTimeout(function() {
-                $('#ai-message-input').focus();
-            }, 100);
-        },
-
-        /**
-         * Scroll to bottom of messages.
-         */
         scrollToBottom: function() {
-            var container = $('#ai-chat-messages');
+            var container = $(this.selectors.messages);
             container.scrollTop(container[0].scrollHeight);
-        },
-
-        /**
-         * Log token usage for analytics.
-         */
-        logUsage: function(usage) {
-            if (usage && usage.total_tokens) {
-                console.log('AI Usage:', usage);
-                // Could send analytics data here if needed.
-            }
-        },
-
-        /**
-         * Escape HTML to prevent XSS.
-         */
-        escapeHtml: function(text) {
-            var div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
         }
     };
 
     return {
-        init: function() {
-            Chat.init();
-        }
+        init: function() { ChatUI.init(); }
     };
 });
