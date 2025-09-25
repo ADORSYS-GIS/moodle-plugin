@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="local/gis_ai_assistant/db" VERSION="20250917" COMMENT="XMLDB file for Moodle local/gis_ai_assistant"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
+    <TABLES>
+      <TABLE NAME="local_gis_ai_assistant_conversations" COMMENT="Stores AI conversation history">
+        <FIELDS>
+          <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+          <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+          <FIELD NAME="message" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+          <FIELD NAME="response" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+          <FIELD NAME="model" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false"/>
+          <FIELD NAME="tokens_used" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+          <FIELD NAME="response_time" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+          <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        </FIELDS>
+        <KEYS>
+          <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+          <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
+        </KEYS>
+        <INDEXES>
+          <INDEX NAME="timecreated" UNIQUE="false" FIELDS="timecreated"/>
+          <INDEX NAME="model" UNIQUE="false" FIELDS="model"/>
+          <INDEX NAME="userid_timecreated" UNIQUE="false" FIELDS="userid, timecreated"/>
+        </INDEXES>
+      </TABLE>    <TABLE NAME="local_gis_ai_assistant_rate_limits" COMMENT="Stores rate limiting data for GIS AI usage">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true"/>
+        <FIELD NAME="ip_address" TYPE="char" LENGTH="45" NOTNULL="true"/>
+        <FIELD NAME="requests_count" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0"/>
+        <FIELD NAME="tokens_count" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0"/>
+        <FIELD NAME="window_start" TYPE="int" LENGTH="10" NOTNULL="true" COMMENT="Start of the current rate limit window"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="window_start" UNIQUE="false" FIELDS="window_start"/>
+        <INDEX NAME="user_window" UNIQUE="true" FIELDS="userid, window_start"/>
+        <INDEX NAME="ip_window" UNIQUE="false" FIELDS="ip_address, window_start"/>
+      </INDEXES>
+    </TABLE>
+  </TABLES>
+</XMLDB>
