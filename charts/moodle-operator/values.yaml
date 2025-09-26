@@ -23,11 +23,6 @@ operator:
             repository: moodle-operator
             tag: "1.16.0"
             pullPolicy: IfNotPresent
-          env:
-            - name: LOG_LEVEL
-              value: "info"
-            - name: WATCH_NAMESPACE
-              value: ""
           resources:
             limits:
               cpu: 500m
@@ -52,8 +47,6 @@ operator:
       ports:
         http:
           port: 8080
-        metrics:
-          port: 8081
 
   serviceAccount:
     default:
