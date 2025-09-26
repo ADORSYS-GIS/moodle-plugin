@@ -1,42 +1,40 @@
-## Moodle CRD (Custom Resource Definition)
+# Moodle Operator — Helm Chart
 
-This project includes a Kubernetes Custom Resource Definition (CRD) that enables the creation and management of **Moodle** instances using custom resources.
+This chart installs the **Moodle Kubernetes Operator** and its **CRD(s)**. The operator manages Moodle instances declaratively via `Moodle` custom resources.
 
-### 📄 Location
-
-The CRD file is located at: moodle-plugin/charts/moodle-operator/crds
-
-
-### 🧩 What This CRD Does
-
-It defines a new resource type: `Moodle`, which lets you configure Moodle deployments declaratively in YAML.
-
-### 🧪 Example Moodle Instance
-
-```yaml
-apiVersion: moodle.adorsys.com/v1
-kind: Moodle
-metadata:
-  name: my-moodle-cr
-  namespace: default
-spec:
-  image: bitnami/moodle:latest
-  replicas: 4
-  serviceType: ClusterIP
-  pvcName: my-moodle-pvc
-  database:
-    host: my-database-postgresql
-    port: 5432
-    user: bn_moodle
-    password: secret
-    type: pgsql
-    name: bitnami_moodle  
-
+## Install
+```bash
+helm install moodle-operator ./charts/moodle-operator
 ```
 
-### Apply with ;
-```
+## Values
+This chart uses the [bjw-s/app-template](https://bjw-s-labs.github.io/helm-charts/docs/app-template/) library as a dependency, aliased as `operator`. Configure all options under the top-level `operator:` key. The parent chart has no local `templates/`; resources are rendered by the dependency using your values.
 
-kubectl apply -f my-moodle.yaml
+## What this chart renders by default
+- ServiceAccount for the operator
+- ClusterRole and ClusterRoleBinding with permissions to manage Kubernetes and Moodle resources
+- Deployment for the operator (1 replica) with secure defaults (non-root user, read-only root filesystem)
+- ClusterIP Service exposing port `8080` (name: `http`)
+- CRDs from `crds/`
 
-``` 
+Note: There is no metrics Service/port rendered by default, and no LOG_LEVEL or WATCH_NAMESPACE env vars are set.
+
+## Customize
+- Override image:
+  ```yaml
+  operator:
+    controllers:
+      main:
+        containers:
+          main:
+            image:
+              repository: your-registry/moodle-operator
+              tag: "<version>"
+  ```
+- Disable the operator Deployment (CRDs only):
+  ```yaml
+  operator:
+    controllers:
+      main:
+        enabled: false
+  ```
