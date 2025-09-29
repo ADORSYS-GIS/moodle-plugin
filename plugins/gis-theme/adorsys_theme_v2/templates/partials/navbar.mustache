@@ -1,0 +1,23 @@
+{{< theme_adorsys_theme_v1/partials_navbar }}
+    {{$navbar_content}}
+        <nav class="navbar navbar-expand-md navbar-dark bg-dark">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="{{{ config.wwwroot }}}">{{{ output.sitename }}}</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Custom Link 1</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Custom Link 2</a>
+                        </li>
+                        {{> core/login_info }}
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    {{/navbar_content}}
+{{/ theme_adorsys_theme_v1/partials_navbar }}

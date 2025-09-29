@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "target": "es2017",
+    "module": "esnext",
+    "lib": ["es2017", "dom"],
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "jsx": "react",
+    "allowJs": true,
+    "checkJs": true,
+    "outDir": "./amd/src",
+    "rootDir": "./src",
+    "baseUrl": ".",
+    "paths": {
+      "theme_adorsys_theme_v2/*": ["./src/*"],
+      "theme_adorsys_theme_v1/*": ["../adorsys_theme_v1/src/*"]
+    }
+  },
+  "include": ["src/**/*.ts", "src/**/*.js"],
+  "exclude": ["node_modules", "amd"]
+}

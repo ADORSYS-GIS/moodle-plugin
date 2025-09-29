@@ -1,0 +1,39 @@
+{
+  "name": "theme_adorsys_theme_v2",
+  "version": "1.0.0",
+  "description": "Adorsys Theme V2 for Moodle",
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": {
+    "build": "NODE_OPTIONS='--loader ts-node/esm' webpack --config webpack.config.ts --mode production",
+    "dev": "NODE_OPTIONS='--loader ts-node/esm' webpack --config webpack.config.ts --mode development --watch"
+  },
+  "keywords": [
+    "moodle",
+    "theme",
+    "adorsys"
+  ],
+  "author": "Adorsys GmbH",
+  "license": "GPL-3.0-or-later",
+  "devDependencies": {
+    "@babel/core": "^7.24.0",
+    "@babel/preset-env": "^7.24.0",
+    "@babel/preset-typescript": "^7.24.0",
+    "autoprefixer": "^10.4.18",
+    "babel-loader": "^9.1.3",
+    "copy-webpack-plugin": "^12.0.2",
+    "css-loader": "^6.10.0",
+    "mini-css-extract-plugin": "^2.8.1",
+    "postcss": "^8.4.35",
+    "postcss-loader": "^8.1.1",
+    "sass": "^1.71.1",
+    "sass-loader": "^14.1.1",
+    "style-loader": "^3.3.4",
+    "tailwindcss": "^3.4.1",
+    "ts-loader": "^9.5.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.2",
+    "webpack": "^5.90.3",
+    "webpack-cli": "^5.1.4"
+  }
+}
