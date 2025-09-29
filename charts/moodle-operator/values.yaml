@@ -56,20 +56,20 @@ operator:
   rbac:
     roles:
       operator:
-        type: ClusterRole
+        type: Role
         rules:
           - apiGroups: [""]
-            resources: ["pods", "services", "endpoints", "persistentvolumeclaims", "events", "configmaps", "secrets"]
-            verbs: ["*"]
+            resources: ["pods", "services", "endpoints", "events", "configmaps", "secrets", "persistentvolumeclaims"]
+            verbs: ["get", "list", "watch"]
           - apiGroups: ["apps"]
-            resources: ["deployments", "daemonsets", "replicasets", "statefulsets"]
-            verbs: ["*"]
+            resources: ["deployments"]
+            verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
           - apiGroups: ["moodle.adorsys.com"]
-            resources: ["*"]
-            verbs: ["*"]
+            resources: ["moodles", "moodles/status", "moodles/finalizers"]
+            verbs: ["get", "list", "watch", "update", "patch"]
     bindings:
       operator:
-        type: ClusterRoleBinding
+        type: RoleBinding
         roleRef:
           identifier: operator
         subjects:
