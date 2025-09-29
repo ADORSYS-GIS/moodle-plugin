@@ -12,12 +12,28 @@ This chart uses the [bjw-s/app-template](https://bjw-s-labs.github.io/helm-chart
 
 ## What this chart renders by default
 - ServiceAccount for the operator
-- ClusterRole and ClusterRoleBinding with permissions to manage Kubernetes and Moodle resources
+- Role and RoleBinding (namespaced) with least-privilege permissions required by the controller
 - Deployment for the operator (1 replica) with secure defaults (non-root user, read-only root filesystem)
 - ClusterIP Service exposing port `8080` (name: `http`)
 - CRDs from `crds/`
 
 Note: There is no metrics Service/port rendered by default, and no LOG_LEVEL or WATCH_NAMESPACE env vars are set.
+
+## RBAC
+
+- Default: namespaced Role/RoleBinding with least-privilege
+  - core: pods, services, endpoints, events, configmaps, secrets, persistentvolumeclaims -> get, list, watch
+  - apps: deployments -> get, list, watch, create, update, patch, delete
+  - moodle.adorsys.com: moodles, moodles/status, moodles/finalizers -> get, list, watch, update, patch
+
+- Cluster-wide (opt-in):
+  If you need cluster-scoped operation, explicitly switch the types:
+  ```bash
+  helm upgrade --install <release> . \
+    --set operator.rbac.roles.operator.type=ClusterRole \
+    --set operator.rbac.bindings.operator.type=ClusterRoleBinding
+  ```
+  And extend the RBAC rules via a values overlay as required by your environment.
 
 ## Customize
 - Override image:
