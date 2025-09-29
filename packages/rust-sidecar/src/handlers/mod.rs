@@ -3,53 +3,30 @@ pub mod summarize;
 pub mod analyze;
 
 use crate::client::OpenAIClient;
-use openai::chat::{ChatCompletion, ChatCompletionMessage, ChatCompletionMessageRole};
+use serde_json::{json, Value};
 
-// Common function to create system messages
-pub fn create_system_message(content: &str) -> ChatCompletionMessage {
-    ChatCompletionMessage {
-        role: ChatCompletionMessageRole::System,
-        content: Some(content.to_string()),
-        name: None,
-        function_call: None,
-        tool_call_id: None,
-        tool_calls: None,
-    }
+/// Create a system message as a JSON object compatible with the reqwest-based client
+pub fn create_system_message(content: &str) -> Value {
+    json!({
+        "role": "system",
+        "content": content,
+    })
 }
 
-// Common function to create user messages
-pub fn create_user_message(content: &str) -> ChatCompletionMessage {
-    ChatCompletionMessage {
-        role: ChatCompletionMessageRole::User,
-        content: Some(content.to_string()),
-        name: None,
-        function_call: None,
-        tool_call_id: None,
-        tool_calls: None,
-
-    }
+/// Create a user message as a JSON object compatible with the reqwest-based client
+pub fn create_user_message(content: &str) -> Value {
+    json!({
+        "role": "user",
+        "content": content,
+    })
 }
 
-// Common function to send chat completion request
+/// Send completion request via the reqwest-based OpenAIClient
 pub async fn send_completion_request(
     client: &OpenAIClient,
-    messages: Vec<ChatCompletionMessage>,
+    messages: Vec<Value>,
     max_tokens: Option<u32>,
 ) -> Result<String, Box<dyn std::error::Error + Send + Sync>> {
-    let tokens = max_tokens.unwrap_or(client.max_tokens);
-    
-    let completion = ChatCompletion::builder(&client.model, messages)
-        .max_tokens(tokens)
-        .create()
-        .await?;
-
-    if let Some(choice) = completion.choices.first() {
-        if let Some(content) = &choice.message.content {
-            Ok(content.clone())
-        } else {
-            Err("No content in response".into())
-        }
-    } else {
-        Err("No choices in response".into())
-    }
+    // Delegate to the client's reqwest-based sender
+    client.send_chat_request(messages, max_tokens).await
 }

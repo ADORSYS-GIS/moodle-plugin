@@ -1,33 +1,26 @@
 use crate::communication::{Request, Response};
 use crate::handlers;
-use reqwest::{Client as ReqwestClient, Error};
-use serde::Serialize;
+use serde_json::json;
 use tracing::info;
 
 pub struct OpenAIClient {
-    pub client: ReqwestClient,
+    pub client: reqwest::Client,
+    pub api_key: String,
+    pub base_url: String,
     pub model: String,
     pub max_tokens: u32,
     pub summarize_threshold: usize,
 }
 
-#[derive(Serialize)]
-struct OpenAIRequest<'a> {
-    model: &'a str,
-    prompt: &'a str,
-    max_tokens: u32,
-}
-
 impl OpenAIClient {
     pub fn new(api_key: String, base_url: Option<String>, model: String, max_tokens: u32, summarize_threshold: usize) -> Self {
-        // Create reqwest client
-        let client = ReqwestClient::builder()
-            .danger_accept_invalid_certs(true)  // Handle invalid certificates (only for development)
-            .build()
-            .expect("Failed to create reqwest client");
-
+        let client = reqwest::Client::new();
+        let base_url = base_url.unwrap_or_else(|| "https://ai.kivoyo.com/api".to_string());
+        
         Self {
             client,
+            api_key,
+            base_url,
             model,
             max_tokens,
             summarize_threshold,
@@ -36,7 +29,7 @@ impl OpenAIClient {
 
     pub async fn process_request(&self, request: Request) -> Response {
         info!("Processing request: {}", request.action);
-
+        
         match request.action.as_str() {
             "chat" => handlers::chat::handle(self, request).await,
             "summarize" => handlers::summarize::handle(self, request).await,
@@ -45,23 +38,45 @@ impl OpenAIClient {
         }
     }
 
-    pub async fn generate_text(&self, prompt: &str) -> Result<String, Error> {
-        let openai_url = "https://ai.kivoyo.com/api"; // Default OpenAI endpoint
-        
-        let request_data = OpenAIRequest {
-            model: &self.model,
-            prompt,
-            max_tokens: self.max_tokens,
+    pub async fn send_chat_request(&self, messages: Vec<serde_json::Value>, max_tokens: Option<u32>) -> Result<String, Box<dyn std::error::Error + Send + Sync>> {
+        // Accept either a full completions endpoint or a base URL and normalize it.
+        let base = self.base_url.trim_end_matches('/');
+        let url = if base.ends_with("/chat/completions") || base.ends_with("chat/completions") {
+            base.to_string()
+        } else {
+            format!("{}/chat/completions", base)
         };
+        let tokens = max_tokens.unwrap_or(self.max_tokens);
+        
+        let payload = json!({
+            "model": self.model,
+            "messages": messages,
+            "max_tokens": tokens
+        });
 
-        let response = self.client.post(openai_url)
-            .header("Authorization", format!("Bearer {}", "YOUR_OPENAI_API_KEY"))
-            .json(&request_data)
+        let response = self.client
+            .post(&url)
+            .header("Authorization", format!("Bearer {}", self.api_key))
+            .header("Content-Type", "application/json")
+            .json(&payload)
             .send()
             .await?;
 
-        let response_text = response.text().await?;
+        if !response.status().is_success() {
+            let error_text = response.text().await?;
+            return Err(format!("API error: {}", error_text).into());
+        }
 
-        Ok(response_text)
+        let response_data: serde_json::Value = response.json().await?;
+        
+        if let Some(choices) = response_data["choices"].as_array() {
+            if let Some(first_choice) = choices.first() {
+                if let Some(content) = first_choice["message"]["content"].as_str() {
+                    return Ok(content.to_string());
+                }
+            }
+        }
+
+        Err("No response content found".into())
     }
 }

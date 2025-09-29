@@ -1,15 +1,17 @@
 use openai_moodle_sidecar::{Args, OpenAIClient, Request};
-use clap::Parser;
 use serde_json;
 use std::io::{self, BufRead, BufReader, Write};
 use tracing::{error, info};
-use tracing_subscriber::fmt::init;  // This line imports the correct function
+use tracing_subscriber::fmt;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    init();  // Initialize tracing subscriber for logging
+    // Initialize tracing subscriber to write logs to stderr so stdout remains clean
+    fmt().with_writer(|| std::io::stderr()).init();
     
-    let args = Args::parse();
+    // Prefer environment variables over CLI parsing so secrets can be provided
+    // via container environment (OPENAI_API_KEY, OPENAI_BASE_URL, OPENAI_MODEL).
+    let args = Args::from_env();
     
     let client = OpenAIClient::new(
         args.api_key,

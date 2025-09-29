@@ -1,5 +1,6 @@
 <?php
 require_once(__DIR__ . '/../../config.php');
+require_once(__DIR__ . '/lib.php');
 require_once(__DIR__ . '/classes/api_client.php');
 require_once(__DIR__ . '/classes/stdio_communicator.php');
 
@@ -92,7 +93,19 @@ if ($_POST && confirm_sesskey()) {
         echo '<div class="card mb-3">';
         if ($response['success']) {
             echo '<div class="card-header bg-success text-white"><strong>✅ AI Response</strong> <small>(took ' . $duration . 'ms)</small></div>';
-            echo '<div class="card-body">' . nl2br(htmlspecialchars($response['data'])) . '</div>';
+            // Normalize clarification-style replies into a concise prompt if the normalizer exists,
+            // otherwise fall back to rendering the full response.
+            $normalized = null;
+            if (function_exists('local_openai_assistant_normalize_response')) {
+                $normalized = local_openai_assistant_normalize_response($response['data'], $message);
+            }
+            if ($normalized !== null) {
+                echo '<div class="card-body">' . $normalized . '</div>';
+            } else {
+                // Render assistant reply as HTML using the built-in lightweight markdown renderer.
+                $html = local_openai_assistant_render_ai_response($response['data']);
+                echo '<div class="card-body">' . $html . '</div>';
+            }
         } else {
             echo '<div class="card-header bg-danger text-white"><strong>❌ Error</strong> <small>(took ' . $duration . 'ms)</small></div>';
             echo '<div class="card-body">' . htmlspecialchars($response['error']) . '</div>';

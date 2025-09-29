@@ -11,7 +11,7 @@ pub struct Args {
     #[arg(long)]
     pub base_url: Option<String>,
 
-    #[arg(long, default_value = "kivoyo")]
+    #[arg(long, default_value = "adorsys")]
     pub model: String,
 
     #[arg(long, default_value = "1000")]
