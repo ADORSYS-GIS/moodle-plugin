@@ -1,184 +1,225 @@
 
 ---
 
-````markdown
-# 🚀 Moodle v3 → v5 Migration Guide (GCP GKE / k3s)
+# 🚀 Moodle v3 ➜ v5 Migration
 
-This guide explains how to migrate an existing **Bitnami Moodle Helm deployment** from **version 3.x** to **version 5.x** while preserving all courses, users, and files. It works for **GKE** or local k3s/Multipass setups.
+**Fresh Helm Install with Manual Database & moodledata Restore**
 
----
+This guide describes how to:
 
-## 📋 Requirements
-
-- `kubectl` and `helm` installed and configured for your cluster.
-- Bitnami Moodle Helm chart ≥ 19.x (for Moodle 5.x).
-- Existing PVCs for:
-  - Moodle application data (`moodledata`)
-  - MariaDB database
-- Ability to pull `bitnami/moodle:5.0.x` image.
-- Maintenance window (site downtime required).
+1. **Back up** the current Moodle v3 site (database + moodledata).
+2. **Deploy a brand-new Moodle v5 (latest) Helm release** with a new MariaDB instance.
+3. **Manually restore** the old database dump and moodledata files into the new deployment.
 
 ---
 
-## 🛡️ Backups (Critical)
+## 0️⃣  Prerequisites
 
-Before starting, back up **everything**.
+| Requirement | Notes                                     |
+| ----------- | ----------------------------------------- |
+| Kubernetes  | GKE or any K8s 1.24+ cluster              |
+| Helm        | v3.x                                      |
+| kubectl     | Configured for target cluster             |
+| Storage     | Enough capacity for new PVCs plus backups |
+| Tools       | `mysqldump`, `kubectl`, `helm`, `tar`     |
+| UI          | Enable maintainance mode on the UI        |
+|             | (optional)                                |
+---
 
-### 1. Database Backup
+## 1️⃣  Back Up the Existing v3 Site
 
-```bash
-kubectl exec -n moodle -it moodle-mariadb-0 -- \
-  mysqldump -u bn_moodle -p bitnami_moodle > moodle-db-backup.sql
-````
-
-Enter the MariaDB password from your Helm `values.yaml`.
-
-### 2. Moodle Files & Data Backup
-
-For large volumes (avoiding `kubectl cp` timeouts):
-
-#### Step A: Archive inside the pod
+### 1.1 Identify Resources
 
 ```bash
-kubectl exec -n moodle -it moodle-5d86c9df5b-hsbhf -- bash
-
-# Archive Moodle code
-tar czf /tmp/moodle-backup-files.tar.gz -C /bitnami moodle
-
-# Archive Moodle data
-tar czf /tmp/moodle-backup-moodledata.tar.gz -C /bitnami moodledata
-
-exit
+kubectl get pods,pvc,svc -n moodle
+# Note current PVCs, e.g.:
+#  data-moodle-mariadb-0   (database)
+#  moodle-moodle           (moodledata)
 ```
 
-#### Step B: Copy archives to host
+### 1.2 Database Dump
 
 ```bash
-kubectl cp -n moodle moodle-5d86c9df5b-hsbhf:/tmp/moodle-backup-files.tar.gz ./moodle-backup-files.tar.gz
-kubectl cp -n moodle moodle-5d86c9df5b-hsbhf:/tmp/moodle-backup-moodledata.tar.gz ./moodle-backup-moodledata.tar.gz
+kubectl exec -n moodle -it <old-mariadb-pod> -- \
+  mysqldump --single-transaction -u root -p bitnami_moodle > /tmp/moodle.sql
+kubectl cp moodle/<old-mariadb-pod>:/tmp/moodle.sql ./moodle.sql
 ```
 
-#### Step C: Extract locally (optional verification)
+### 1.3 moodledata Archive
 
 ```bash
-tar xzf ./moodle-backup-files.tar.gz
-tar xzf ./moodle-backup-moodledata.tar.gz
+kubectl exec -n moodle -it <old-moodle-pod> -- \
+  tar czf /bitnami/moodledata.tar.gz -C /bitnami/moodle .
+kubectl cp moodle/<old-moodle-pod>:/bitnami/moodledata.tar.gz ./moodledata.tar.gz
 ```
 
-> This method avoids streaming each file individually and prevents “connection reset by peer” errors.
-
-### 3. Helm Values & Secrets Backup
-
-```bash
-helm get values moodle -n moodle > current-values.yaml
-```
-
-### 4. TLS / Config Backup
-
-Back up any `ConfigMap` or `Secret` containing custom certificates or settings.
+> 💾 **Store these files safely** (e.g., GCS bucket or off-cluster disk snapshots).
 
 ---
 
-## 🔧 Migration Steps
+## 2️⃣  Deploy a Fresh Moodle v5 + New MariaDB
 
-### 1. Prepare `values-upgrade.yaml`
+Create (or reuse) the namespace:
+
+```bash
+kubectl create namespace moodle
+```
+
+### 2.1 `values.yaml`
+
+Use this complete file—**edit all `CHANGEME_*` placeholders**:
 
 ```yaml
+# ===========================
+# Bitnami Moodle Helm values
+# New Deployment – Manual Restore
+# ===========================
+
 image:
   repository: bitnami/moodle
-  tag: 5.0.2-debian-12-r2
+  tag: 5.0.2-debian-12-r2     # exact 5.x tag
 
-moodleSkipInstall: true    # prevent fresh install
-moodleDebug: true          # optional
+# --- Core Moodle credentials ---
+moodleUsername: admin
+moodlePassword: CHANGEME_ADMIN_PASSWORD
+moodleEmail: admin@example.com
 
-service:
-  type: LoadBalancer
-  port: 80
-
+# --- Database (new Bitnami MariaDB) ---
 mariadb:
   enabled: true
+  architecture: standalone
   auth:
-    rootPassword: <same-root-password>
+    rootPassword: CHANGEME_ROOT_PASS
     username: bn_moodle
-    password: <same-user-password>
+    password: CHANGEME_MOODLE_DB_PASS
     database: bitnami_moodle
   primary:
     persistence:
       enabled: true
-      existingClaim: <database-pvc-name>   # reuse DB PVC
+      storageClass: standard      # match your cluster
+      size: 8Gi                   # adjust to DB size
 
+# --- Moodle persistent storage ---
 persistence:
   enabled: true
-  existingClaim: <moodledata-pvc-name>    # reuse moodledata PVC
+  storageClass: standard
+  accessModes:
+    - ReadWriteOnce
+  size: 10Gi                      # adjust to moodledata size
+
+# --- Service exposure ---
+service:
+  type: LoadBalancer
+  port: 80
+
+# --- PHP & resources ---
+phpConfiguration: |
+  upload_max_filesize = 128M
+  post_max_size = 128M
+resources:
+  requests:
+    cpu: 250m
+    memory: 512Mi
+  limits:
+    cpu: 1
+    memory: 1Gi
+
+# --- Debug helpers ---
+moodleSkipInstall: false
+moodleDebug: true
 ```
 
-> Replace `<database-pvc-name>` and `<moodledata-pvc-name>` with your existing PVC names:
->
-> ```bash
-> kubectl get pvc -n moodle
-> ```
-
-### 2. Enable Maintenance Mode (optional)
-
-In your current site (v3):
-
-```
-Site administration → Server → Maintenance mode → Enable
-```
-
-### 3. Upgrade via Helm
+### 2.2 Install
 
 ```bash
-helm upgrade 
-  -n moodle -f values-upgrade.yaml
-```
-
-* Keeps existing MariaDB and Moodle data PVCs.
-* Uses new Moodle 5.x image.
-* Skips fresh install (`moodleSkipInstall: true`).
-
-### 4. Complete Web-Based Database Upgrade
-
-1. Open the Moodle URL (LoadBalancer or Ingress).
-2. Moodle detects existing database → **Database upgrade required**.
-3. Follow prompts to upgrade the schema.
-
-### 5. Disable Maintenance Mode
-
-```
-Site administration → Server → Maintenance mode → Disable
+helm repo add bitnami https://charts.bitnami.com/bitnami
+helm repo update
+helm install moodle bitnami/moodle -n moodle -f values.yaml
+kubectl get pods -n moodle -w   # wait until Running
 ```
 
 ---
 
-## ⚠️ Caveats & Tips
+## 3️⃣  Restore Old Data
 
-* **Downtime**: Required for upgrade.
-* **Passwords**: Must match existing DB.
-* **PVC names**: Double-check `existingClaim`; a typo creates a new empty PVC.
-* **Chart changes**: Bitnami charts may require new settings in newer versions.
-* **k3s / Multipass**: Use tar-based backup to avoid `kubectl cp` timeouts.
+### 3.1 Database Import
 
----
+```bash
+kubectl cp ./moodle.sql moodle/moodle-mariadb-0:/tmp/moodle.sql
+kubectl exec -n moodle -it moodle-mariadb-0 -- \
+  bash -c "mysql -u root -p'CHANGEME_ROOT_PASS' bitnami_moodle < /tmp/moodle.sql"
+```
 
-## ✅ Verification Checklist
+### 3.2 moodledata Copy
 
-* `kubectl get pods -n moodle` → all `Running`.
-* Open site → version shows **5.x** in *Site administration → Notifications*.
-* Browse courses and files → data integrity confirmed.
-
----
-
-> **Summary**
-> This process upgrades Moodle v3 → v5, reusing existing MariaDB and `moodledata` PVCs. The **critical steps** are:
->
-> * Backup DB, Moodle code, and Moodledata using tar inside pod.
-> * Set `moodleSkipInstall: true`.
-> * Correct `existingClaim` in `values-upgrade.yaml`.
-
+```bash
+kubectl cp ./moodledata.tar.gz moodle/<new-moodle-pod>:/tmp/
+kubectl exec -n moodle -it <new-moodle-pod> -- \
+  bash -c "tar xzf /tmp/moodledata.tar.gz -C /bitnami/moodle && \
+           chown -R bitnami:bitnami /bitnami/moodle"
 ```
 
 ---
 
+## 4️⃣  Upgrade the Database Schema
 
+```bash
+kubectl exec -n moodle -it <new-moodle-pod> -- \
+  php /bitnami/moodle/admin/cli/upgrade.php --non-interactive
 ```
+
+---
+
+## 5️⃣  Post-Migration Tasks
+
+* Verify site via LoadBalancer:
+
+  ```bash
+  kubectl get svc -n moodle moodle
+  ```
+* Log in with **old admin credentials** (from the dump).
+* Check: *Site administration → Notifications* for version **5.x**.
+
+---
+
+## ⚠️ Precautions & Caveats
+
+### Backups
+
+* Keep both the SQL dump and tarball **off-cluster**.
+* Consider GCP disk snapshots for both old PVCs.
+
+### Database
+
+* Verify compatibility between old MariaDB and the new Bitnami version.
+* Use `--single-transaction` to avoid inconsistent backups.
+
+### Storage
+
+* Ensure new PVC sizes ≥ old data sizes.
+* If you change `storageClass`, verify performance/locking behavior.
+
+### Application
+
+* Moodle v5 requires PHP 8.1+.
+  Audit plugins/themes for compatibility before restoring.
+* Maintenance mode (optional) before schema upgrade:
+
+  ```bash
+  php /bitnami/moodle/admin/cli/maintenance.php --enable
+  ```
+
+### Rollback
+
+* Keep old namespace/PVCs until the new site is stable.
+* To revert, delete the new namespace and re-deploy the old Helm release using the saved PVC snapshots and `values.yaml`.
+
+---
+
+### ✅ Summary
+
+* **Fresh Helm install**, not an in-place upgrade.
+* **Manual DB & moodledata restore** from verified backups.
+* **Post-upgrade schema migration** ensures Moodle v5 functionality.
+
+This structured process provides a clean Moodle v5 deployment while preserving all courses, users, and files from your Moodle v3 site.
