@@ -36,7 +36,7 @@ function local_openai_assistant_after_config() {
  * Load the chat widget JavaScript before footer
  */
 function local_openai_assistant_before_footer() {
-    global $PAGE;
+    global $PAGE, $CFG;
     
     // Only load for logged in users
     if (isloggedin() && !isguestuser()) {

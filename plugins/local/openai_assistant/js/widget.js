@@ -72,7 +72,41 @@ class OpenAIChatWidget {
         document.body.appendChild(modal);
     }
 
-
+    getModalHTML() {
+        return `
+            <div class="openai-modal-content">
+                <div class="openai-modal-header">
+                    <h3>🤖 AI Assistant</h3>
+                    <button class="openai-close-btn" onclick="chatWidget.closeModal()">&times;</button>
+                </div>
+                <div class="openai-modal-body">
+                    <div id="openai-chat-messages" class="openai-chat-messages">
+                        <div class="openai-message ai openai-welcome-message">
+                            <div class="openai-welcome-header-small">
+                                <span>🤖</span> <strong>AI Assistant</strong>
+                            </div>
+                            <p>Hello! I'm your AI assistant. I'm here to help you with:</p>
+                            <ul>
+                                <li>💬 <strong>Chat:</strong> Ask me questions about any topic</li>
+                                <li>📄 <strong>Summarize:</strong> I can summarize long texts for you</li>
+                                <li>🔍 <strong>Analyze:</strong> Get insights about educational content</li>
+                            </ul>
+                            <p><em>How can I help you today?</em></p>
+                        </div>
+                    </div>
+                    <div class="openai-chat-input-container">
+                        <select id="openai-action" class="openai-select">
+                            <option value="chat">💬 Chat</option>
+                            <option value="summarize">📄 Summarize</option>
+                            <option value="analyze">🔍 Analyze</option>
+                        </select>
+                        <textarea id="openai-message" placeholder="Type your message..." rows="3"></textarea>
+                        <button id="openai-send-btn" onclick="chatWidget.sendMessage()">Send</button>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
 
     attachEventListeners() {
         document.getElementById('openai-chat-button').addEventListener('click', () => {
@@ -95,16 +129,12 @@ class OpenAIChatWidget {
 
     openModal() {
         document.getElementById('openai-chat-modal').style.display = 'block';
-        // Prevent background scrolling while modal is open
-        try { document.body.style.overflow = 'hidden'; } catch(e) {}
         document.getElementById('openai-message').focus();
         this.isOpen = true;
     }
-    
+
     closeModal() {
         document.getElementById('openai-chat-modal').style.display = 'none';
-        // Restore background scrolling
-        try { document.body.style.overflow = ''; } catch(e) {}
         this.isOpen = false;
     }
 
@@ -112,13 +142,26 @@ class OpenAIChatWidget {
         const messagesContainer = document.getElementById('openai-chat-messages');
         const messageDiv = document.createElement('div');
         messageDiv.className = `openai-message ${type}`;
-        messageDiv.innerHTML = content.replace(/\n/g, '<br>');
+
+        if (type === 'ai') {
+            // Render AI response as sanitized HTML using the lightweight renderer.
+            try {
+                messageDiv.innerHTML = this.renderAIResponse(content);
+            } catch (e) {
+                console.error('[OpenAI Widget] renderAIResponse failed:', e);
+                messageDiv.innerHTML = String(content).replace(/\n/g, '<br>');
+            }
+        } else {
+            // User messages: treat as plain text with newlines -> <br>
+            messageDiv.innerHTML = String(content).replace(/\n/g, '<br>');
+        }
+
         messagesContainer.appendChild(messageDiv);
         
         // Force scroll after adding message
         setTimeout(() => {
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
-        }, 5);
+        }, 10);
     }
 
     removeLastMessage() {
@@ -147,71 +190,39 @@ class OpenAIChatWidget {
         this.addMessage('<span class="openai-typing">AI is thinking...</span>', 'ai');
 
         try {
-            // Use same-origin credentials so the browser sends the Moodle session cookie.
-            // Include sesskey in the JSON body as a fallback for non-cookie scenarios.
             const apiUrl = M.cfg.wwwroot + '/local/openai_assistant/api.php';
-            const payload = {
-                action: action,
-                message: message,
-                sesskey: M.cfg.sesskey
-            };
-            console.debug('[OpenAI Widget] POST', apiUrl, payload);
-
+            
             const response = await fetch(apiUrl, {
                 method: 'POST',
-                credentials: 'same-origin',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(payload)
+                body: JSON.stringify({
+                    action: action,
+                    message: message,
+                    sesskey: M.cfg.sesskey
+                })
             });
 
-            console.debug('[OpenAI Widget] response.status:', response.status, 'ok:', response.ok);
+            const contentType = response.headers.get('content-type');
+            if (!contentType || !contentType.includes('application/json')) {
+                throw new Error('Server returned non-JSON response. Check API endpoint.');
+            }
 
-            // Read raw response text for robust handling and logging
-            const rawText = await response.text();
-            console.debug('[OpenAI Widget] raw response text (truncated 2000 chars):', rawText.slice(0, 2000));
-
-            // Remove typing indicator
+            const data = await response.json();
+            
             this.removeLastMessage();
 
-            if (!response.ok) {
-                // Show server returned status and raw text for debugging
-                this.addMessage(`❌ Error: Server returned status ${response.status}`, 'error');
-                console.error('[OpenAI Widget] Non-2xx response:', response.status, rawText);
-                return;
-            }
-
-            // Try parse JSON; if it fails and the response looks like plain assistant text, show it as AI reply
-            let data = null;
-            try {
-                data = JSON.parse(rawText);
-            } catch (parseErr) {
-                const trimmed = rawText.trim();
-                if (trimmed.length > 0 && !trimmed.startsWith('<') && !trimmed.startsWith('{')) {
-                    // Treat plain text response as AI reply
-                    this.addMessage(trimmed, 'ai');
-                    return;
-                }
-                console.error('[OpenAI Widget] JSON.parse failed:', parseErr, 'raw:', rawText);
-                this.addMessage('❌ Error: Invalid JSON response from server', 'error');
-                return;
-            }
-
-            console.debug('[OpenAI Widget] parsed response:', data);
-
-            if (data && data.success) {
+            if (data.success) {
                 this.addMessage(data.data, 'ai');
             } else {
-                const errMsg = data && data.error ? data.error : 'Unknown error';
-                this.addMessage(`❌ Error: ${errMsg}`, 'error');
+                this.addMessage(`❌ Error: ${data.error}`, 'error');
             }
 
         } catch (error) {
-            console.error('[OpenAI Widget] fetch exception:', error);
-            // Remove typing indicator
             this.removeLastMessage();
-            this.addMessage(`❌ Network Error: ${error.message}`, 'error');
+            console.error('Widget API Error:', error);
+            this.addMessage(`❌ Error: ${error.message}`, 'error');
         } finally {
             sendBtn.disabled = false;
             sendBtn.textContent = 'Send';
@@ -220,11 +231,21 @@ class OpenAIChatWidget {
     }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    try {
-        window.chatWidget = new OpenAIChatWidget();
-    } catch (error) {
-        console.error('Failed to initialize OpenAI Widget:', error);
+(function() {
+    function initOpenAIChatWidget() {
+        if (window.chatWidget) {
+            return;
+        }
+        try {
+            window.chatWidget = new OpenAIChatWidget();
+        } catch (error) {
+            console.error('Failed to initialize OpenAI Widget:', error);
+        }
     }
-});
 
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initOpenAIChatWidget);
+    } else {
+        initOpenAIChatWidget();
+    }
+})();

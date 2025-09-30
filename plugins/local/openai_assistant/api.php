@@ -4,6 +4,7 @@ define('AJAX_SCRIPT', true);
 define('NO_DEBUG_DISPLAY', true);
 
 require_once(__DIR__ . '/../../config.php');
+require_once(__DIR__ . '/lib.php');
 require_once(__DIR__ . '/classes/api_client.php');
 
 // Set JSON header immediately
