@@ -19,6 +19,12 @@ pub struct Args {
 
     #[arg(long, default_value = "2000")]
     pub summarize_threshold: usize,
+
+    #[arg(long, default_value = "false", help = "Force HTTP server mode")]
+    pub http_mode: bool,
+
+    #[arg(long, default_value = "8080", help = "HTTP server port")]
+    pub port: u16,
 }
 
 impl Args {
@@ -44,6 +50,14 @@ impl Args {
 
         if let Ok(summarize_threshold) = env::var("SUMMARIZE_THRESHOLD").and_then(|v| v.parse().map_err(|_| std::env::VarError::NotPresent)) {
             args.summarize_threshold = summarize_threshold;
+        }
+
+        if let Ok(http_mode) = env::var("HTTP_MODE").and_then(|v| v.parse().map_err(|_| std::env::VarError::NotPresent)) {
+            args.http_mode = http_mode;
+        }
+
+        if let Ok(port) = env::var("PORT").and_then(|v| v.parse().map_err(|_| std::env::VarError::NotPresent)) {
+            args.port = port;
         }
 
         args

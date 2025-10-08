@@ -11,6 +11,9 @@ $PAGE->set_url(new moodle_url('/local/openai_assistant/chat.php'));
 $PAGE->set_title(get_string('chat_with_ai', 'local_openai_assistant'));
 $PAGE->set_heading(get_string('chat_with_ai', 'local_openai_assistant'));
 
+// Load our custom CSS for AI response formatting
+$PAGE->requires->css('/local/openai_assistant/style/styles.css');
+
 echo $OUTPUT->header();
 
 // Display connection status
@@ -104,7 +107,7 @@ if ($_POST && confirm_sesskey()) {
             } else {
                 // Render assistant reply as HTML using the built-in lightweight markdown renderer.
                 $html = local_openai_assistant_render_ai_response($response['data']);
-                echo '<div class="card-body">' . $html . '</div>';
+                echo '<div class="card-body ai-response">' . $html . '</div>';
             }
         } else {
             echo '<div class="card-header bg-danger text-white"><strong>❌ Error</strong> <small>(took ' . $duration . 'ms)</small></div>';

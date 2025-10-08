@@ -1,33 +1,100 @@
-.card {
+/* OpenAI Assistant Plugin Styles */
+
+.openai-assistant-widget {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 350px;
+    height: 500px;
+    background: white;
     border: 1px solid #ddd;
     border-radius: 8px;
-    margin-bottom: 1rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    z-index: 9999;
+    display: none;
 }
 
-.card-header {
-    background-color: #f8f9fa;
-    border-bottom: 1px solid #ddd;
-    padding: 1rem;
-    font-weight: bold;
+.openai-assistant-toggle {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #007cba;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    font-size: 24px;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    z-index: 10000;
 }
 
-.card-body {
-    padding: 1rem;
+/* AI Response Formatting */
+.ai-response pre {
+    background-color: #2d3748;
+    color: #e2e8f0;
+    border: 1px solid #4a5568;
+    border-radius: 6px;
+    padding: 16px;
+    margin: 12px 0;
+    overflow-x: auto;
+    font-family: 'Fira Code', 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', monospace;
+    font-size: 14px;
+    line-height: 1.5;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-.bg-success {
-    background-color: #28a745 !important;
+.ai-response code {
+    background-color: #f1f5f9;
+    color: #334155;
+    border: 1px solid #cbd5e1;
+    border-radius: 4px;
+    padding: 2px 6px;
+    font-family: 'Fira Code', 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', monospace;
+    font-size: 13px;
+    font-weight: 500;
 }
 
-.bg-danger {
-    background-color: #dc3545 !important;
+.ai-response pre code {
+    background: none;
+    color: inherit;
+    border: none;
+    padding: 0;
+    font-weight: normal;
 }
 
-.text-white {
-    color: white !important;
+/* Language-specific syntax highlighting */
+.ai-response pre code.language-rust {
+    color: #e2e8f0;
 }
 
-.btn-lg {
-    padding: 0.75rem 1.5rem;
-    font-size: 1.1rem;
+.ai-response pre code.language-javascript,
+.ai-response pre code.language-js {
+    color: #fbbf24;
+}
+
+.ai-response pre code.language-python {
+    color: #60a5fa;
+}
+
+.ai-response pre code.language-php {
+    color: #a78bfa;
+}
+
+.ai-response h1, .ai-response h2, .ai-response h3, 
+.ai-response h4, .ai-response h5, .ai-response h6 {
+    margin-top: 16px;
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+
+.ai-response ul, .ai-response ol {
+    margin: 8px 0;
+    padding-left: 20px;
+}
+
+.ai-response p {
+    margin: 8px 0;
+    line-height: 1.5;
 }

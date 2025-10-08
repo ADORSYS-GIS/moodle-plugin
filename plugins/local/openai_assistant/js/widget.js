@@ -138,13 +138,56 @@ class OpenAIChatWidget {
         this.isOpen = false;
     }
 
+    /**
+     * Render AI response HTML safely for insertion into the widget.
+     *
+     * Trusts the server-side renderer to sanitize output (Parsedown + Moodle format_text).
+     * As a defense-in-depth, perform a light client-side sanitization:
+     *  - If DOMPurify is available, use it.
+     *  - Otherwise strip <script> tags and on* attributes.
+     *
+     * Accepts either a string (HTML) or a JSON object (with 'html' or 'text').
+     */
+    renderAIResponse(raw) {
+        let html = '';
+        if (raw === null || raw === undefined) {
+            return '';
+        }
+        if (typeof raw === 'object') {
+            if (raw.html) {
+                html = String(raw.html);
+            } else if (raw.data) {
+                html = String(raw.data);
+            } else {
+                html = String(JSON.stringify(raw));
+            }
+        } else {
+            html = String(raw);
+        }
+
+        // If DOMPurify is available (recommended), use it.
+        if (window.DOMPurify && typeof window.DOMPurify.sanitize === 'function') {
+            return window.DOMPurify.sanitize(html, { ALLOWED_TAGS: false });
+        }
+
+        // Fallback sanitization: remove <script> tags and on* attributes.
+        // Remove script tags
+        html = html.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
+        // Remove attributes starting with on (onclick, onerror, etc.)
+        html = html.replace(/\son\w+=(["'])(.*?)\1/gi, '');
+        // Disallow javascript: URIs in href/src
+        html = html.replace(/(href|src)\s*=\s*(["'])\s*javascript:[^"']*\2/gi, '$1=$2#' + '$2');
+
+        return html;
+    }
+
     addMessage(content, type = 'ai') {
         const messagesContainer = document.getElementById('openai-chat-messages');
         const messageDiv = document.createElement('div');
         messageDiv.className = `openai-message ${type}`;
 
         if (type === 'ai') {
-            // Render AI response as sanitized HTML using the lightweight renderer.
+            // Render AI response as sanitized HTML using server-side rendering results.
             try {
                 messageDiv.innerHTML = this.renderAIResponse(content);
             } catch (e) {

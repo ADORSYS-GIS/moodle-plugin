@@ -1,7 +1,4 @@
-use crate::communication::{Request, Response};
-use crate::handlers;
 use serde_json::json;
-use tracing::info;
 
 pub struct OpenAIClient {
     pub client: reqwest::Client,
@@ -27,16 +24,6 @@ impl OpenAIClient {
         }
     }
 
-    pub async fn process_request(&self, request: Request) -> Response {
-        info!("Processing request: {}", request.action);
-        
-        match request.action.as_str() {
-            "chat" => handlers::chat::handle(self, request).await,
-            "summarize" => handlers::summarize::handle(self, request).await,
-            "analyze" => handlers::analyze::handle(self, request).await,
-            _ => Response::error("Unknown action"),
-        }
-    }
 
     pub async fn send_chat_request(&self, messages: Vec<serde_json::Value>, max_tokens: Option<u32>) -> Result<String, Box<dyn std::error::Error + Send + Sync>> {
         // Accept either a full completions endpoint or a base URL and normalize it.

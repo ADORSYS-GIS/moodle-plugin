@@ -1,8 +1,9 @@
 use crate::client::OpenAIClient;
 use crate::communication::{Request, Response};
+use actix_web::web::Json;
 use crate::handlers::{create_system_message, create_user_message, send_completion_request};
 
-pub async fn handle(client: &OpenAIClient, request: Request) -> Response {
+pub async fn handle(client: &OpenAIClient, request: Json<Request>) -> Response {
     let prompt = format!(
         "Analyze the following educational content and provide insights about learning objectives, difficulty level, and suggestions for improvement:\n\n{}",
         request.content

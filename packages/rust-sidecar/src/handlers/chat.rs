@@ -1,16 +1,18 @@
 use crate::client::OpenAIClient;
 use crate::communication::{Request, Response};
+use actix_web::web::Json;
+
 use crate::handlers::{create_system_message, create_user_message, send_completion_request};
 use crate::handlers::summarize;
 use tracing::warn;
 
-pub async fn handle(client: &OpenAIClient, request: Request) -> Response {
+pub async fn handle(client: &OpenAIClient, request: Json<Request>) -> Response {
     let mut messages = vec![
         create_system_message("You are a helpful educational assistant integrated with Moodle.")
     ];
 
     // Handle context - summarize if too long
-    if let Some(context) = request.context {
+    if let Some(context) = &request.context {
         if context.len() > client.summarize_threshold {
             match summarize_context(client, &context).await {
                 Ok(summary) => {
@@ -36,7 +38,7 @@ pub async fn handle(client: &OpenAIClient, request: Request) -> Response {
 }
 
 async fn summarize_context(client: &OpenAIClient, context: &str) -> Result<String, Box<dyn std::error::Error + Send + Sync>> {
-    let summarize_request = Request::new("summarize".to_string(), context.to_string());
+    let summarize_request = Json(Request::new("summarize".to_string(), context.to_string()));
     let response = summarize::handle(client, summarize_request).await;
     
     if response.success {
