@@ -28,12 +28,17 @@ require_login();
 
 // Load plugin library functions used below.
 require_once($CFG->dirroot . '/local/gis_ai_assistant/lib.php');
+// Defensive include in case $CFG path mapping differs in runtime/container.
+if (!function_exists('local_gis_ai_assistant_is_configured')) {
+    require_once(__DIR__ . '/lib.php');
+}
 
 $context = context_system::instance();
 require_capability('local/gis_ai_assistant:use', $context);
 
-// Check if AI is enabled.
-if (!get_config('local_gis_ai_assistant', 'enabled')) {
+// Check if AI is enabled via plugin configuration.
+$cfg = local_gis_ai_assistant_get_config();
+if (empty($cfg['enabled'])) {
     throw new moodle_exception('ai_disabled', 'local_gis_ai_assistant');
 }
 
@@ -50,6 +55,9 @@ $PAGE->set_pagelayout('standard');
 
 // Add CSS and JS.
 $PAGE->requires->css('/local/gis_ai_assistant/styles.css');
+// Highlight.js theme (if highlight.js is present on page, this ensures styled code blocks).
+$PAGE->requires->css('/local/gis_ai_assistant/styles/highlight.css');
+
 $PAGE->requires->js_call_amd('local_gis_ai_assistant/chat', 'init');
 
 echo $OUTPUT->header();
