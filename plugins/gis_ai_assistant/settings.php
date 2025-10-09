@@ -27,6 +27,16 @@ defined('MOODLE_INTERNAL') || die();
 if ($hassiteconfig) {
     $settings = new admin_settingpage('local_gis_ai_assistant', get_string('pluginname', 'local_gis_ai_assistant'));
 
+    // Credentials notice: API key, base URL and model from ENV only.
+    $settings->add(new admin_setting_heading(
+        'local_gis_ai_assistant/creds_notice',
+        get_string('pluginname', 'local_gis_ai_assistant'),
+        html_writer::div(html_writer::tag('p',
+            'Only credentials are configured via environment variables: OPENAI_API_KEY, OPENAI_BASE_URL, OPENAI_MODEL. ' .
+            'These do not appear in this UI and cannot be changed here. All other settings are configured here and stored in Moodle.'
+        ))
+    ));
+
     // Enable/disable AI functionality.
     $settings->add(new admin_setting_configcheckbox(
         'local_gis_ai_assistant/enabled',
@@ -35,14 +45,7 @@ if ($hassiteconfig) {
         1
     ));
 
-    // Default model name.
-    $settings->add(new admin_setting_configtext(
-        'local_gis_ai_assistant/default_model',
-        get_string('default_model', 'local_gis_ai_assistant'),
-        get_string('default_model_desc', 'local_gis_ai_assistant'),
-        'gpt-4o-mini',
-        PARAM_TEXT
-    ));
+    // Base URL and default model are environment-only (OPENAI_BASE_URL, OPENAI_MODEL) and are not exposed in the UI.
 
     // Maximum tokens per request.
     $settings->add(new admin_setting_configtext(
@@ -110,7 +113,7 @@ if ($hassiteconfig) {
         'local_gis_ai_assistant/system_prompt',
         get_string('system_prompt', 'local_gis_ai_assistant'),
         get_string('system_prompt_desc', 'local_gis_ai_assistant'),
-        'You are a helpful AI assistant integrated into a Moodle learning management system. Provide accurate, educational, and appropriate responses to help users with their learning and teaching activities.',
+        '',
         PARAM_TEXT
     ));
 
