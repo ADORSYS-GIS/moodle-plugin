@@ -26,7 +26,7 @@ defined('MOODLE_INTERNAL') || die();
 
 $functions = [
     'local_gis_ai_assistant_send_message' => [
-        'classname' => 'local_gis_ai_assistant_external',
+        'classname' => '\\local_gis_ai_assistant\\external\\chat_api',
         'methodname' => 'send_message',
         'description' => 'Send message to AI and get response',
         'type' => 'write',
@@ -35,7 +35,7 @@ $functions = [
         'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
     ],
     'local_gis_ai_assistant_send_message_stream' => [
-        'classname' => 'local_gis_ai_assistant_external',
+        'classname' => '\\local_gis_ai_assistant\\external\\chat_api',
         'methodname' => 'send_message_stream',
         'description' => 'Send message to AI and get streaming response',
         'type' => 'write',
@@ -44,12 +44,21 @@ $functions = [
         'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
     ],
     'local_gis_ai_assistant_get_analytics' => [
-        'classname' => 'local_gis_ai_assistant_external',
+        'classname' => '\\local_gis_ai_assistant\\external\\chat_api',
         'methodname' => 'get_analytics',
         'description' => 'Get AI usage analytics',
         'type' => 'read',
         'ajax' => true,
         'capabilities' => 'local/gis_ai_assistant:viewanalytics',
+        'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
+    ],
+    'local_gis_ai_assistant_get_history' => [
+        'classname' => '\\local_gis_ai_assistant\\external\\chat_api',
+        'methodname' => 'get_history',
+        'description' => 'Get recent conversation history for current user',
+        'type' => 'read',
+        'ajax' => true,
+        'capabilities' => 'local/gis_ai_assistant:use',
         'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
     ],
 ];
@@ -60,6 +69,7 @@ $services = [
             'local_gis_ai_assistant_send_message',
             'local_gis_ai_assistant_send_message_stream',
             'local_gis_ai_assistant_get_analytics',
+            'local_gis_ai_assistant_get_history',
         ],
         'restrictedusers' => 0,
         'enabled' => 1,
