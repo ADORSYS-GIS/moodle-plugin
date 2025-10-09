@@ -23,6 +23,7 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
+require_once(__DIR__ . '/lib.php');
 
 /**
  * Hook to inject AI chat widget into course pages.
@@ -72,10 +73,9 @@ function local_gis_ai_assistant_extend_settings_navigation(settings_navigation $
 function local_gis_ai_assistant_should_show_widget() {
     global $PAGE, $USER;
     
-    // Check if AI is enabled
-    if (!get_config('local_gis_ai_assistant', 'enabled')) {
-        return false;
-    }
+    // Check if AI is enabled via plugin configuration
+    $cfg = local_gis_ai_assistant_get_config();
+    if (empty($cfg['enabled'])) { return false; }
     
     // Check user capability
     $context = context_system::instance();
