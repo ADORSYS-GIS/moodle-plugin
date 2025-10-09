@@ -21,17 +21,24 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-define(['jquery', 'core/ajax', 'core/notification'], function($, Ajax, Notification) {
+define(['jquery', 'core/ajax', 'core/notification', 'local_gis_ai_assistant/ui_helpers', 'local_gis_ai_assistant/markdown', 'local_gis_ai_assistant/highlight_loader', 'local_gis_ai_assistant/mermaid_loader'], function($, Ajax, Notification, UIHelpers, Markdown, HL, Mermaid) {
     'use strict';
 
     var ChatWidget = {
-        
+
         /**
          * Initialize the chat widget.
          */
         init: function() {
-            this.createWidget();
-            this.bindEvents();
+            // Preload Markdown parser and Mermaid for better rendering.
+            try { if (Markdown && Markdown.ensure) { Markdown.ensure(); } } catch (e) {}
+            try { if (Mermaid && Mermaid.ensure) { Mermaid.ensure(); } } catch (e) {}
+            // Explicitly call on ChatWidget to avoid context issues.
+            ChatWidget.createWidget();
+            ChatWidget.loadHistory();
+            ChatWidget.bindEvents();
+            // Try upgrade pass shortly after init in case libraries load async.
+            setTimeout(function(){ ChatWidget.upgradeMarkdownRender(); }, 500);
         },
 
         /**
@@ -217,8 +224,48 @@ define(['jquery', 'core/ajax', 'core/notification'], function($, Ajax, Notificat
         },
 
         /**
-         * Bind event handlers.
+         * Load persisted history into the mini chat window.
          */
+        loadHistory: function() {
+            var container = $('#ai-chat-messages-mini');
+            if (!container.length) { return; }
+            if (container.children().length > 0) { return; } // Avoid duplicates
+
+            var self = this;
+            var request = {
+                methodname: 'local_gis_ai_assistant_get_history',
+                args: { limit: 50 }
+            };
+            Ajax.call([request])[0]
+                .done(function(response) {
+                    if (!response || !response.success || !response.history) { return; }
+                    response.history.forEach(function(entry) {
+                        if (entry.message) {
+                            self.addMessage(entry.message, 'user');
+                        }
+                        // Always render from raw response via Markdown for consistency across reloads.
+                        var raw = (entry && entry.response) || '';
+                        var htmlClient = Markdown.toHtml(raw);
+                        var html = (htmlClient && htmlClient.trim()) ? htmlClient : ((entry && entry.response_html) || '');
+                        var el = self.addMessageHtml(html, 'ai');
+                        try { $(el).attr('data-md-raw', raw); } catch (e) {}
+                        try {
+                            Mermaid.renderIn(el)
+                                .then(function(){ try { HL.highlightIn(el); } catch (e2) {} })
+                                .catch(function(){ try { HL.highlightIn(el); } catch (e3) {} });
+                        } catch (e) { try { HL.highlightIn(el); } catch (e4) {} }
+                    });
+                    // Upgrade pass after initial render.
+                    setTimeout(function(){ self.upgradeMarkdownRender(); }, 700);
+                })
+                .fail(function() {
+                    // Silent failure; mini chat remains empty if history can't load.
+                });
+        },
+
+        /**
+         * Bind event handlers.
+        */
         bindEvents: function() {
             var self = this;
 
@@ -275,6 +322,22 @@ define(['jquery', 'core/ajax', 'core/notification'], function($, Ajax, Notificat
         showPopup: function() {
             $('#ai-chat-popup').fadeIn(200);
             $('#ai-message-input-mini').focus();
+            // Render any pending Mermaid/code now that container is visible.
+            try {
+                var container = document.getElementById('ai-chat-messages-mini');
+                if (container) {
+                    setTimeout(function(){
+                        try {
+                            // First render any previously deferred diagrams (hidden while popup closed),
+                            // then render remaining/visible ones, then highlight code.
+                            var p = (Mermaid.renderDeferred ? Mermaid.renderDeferred(container) : Promise.resolve());
+                            p.then(function(){ return Mermaid.renderIn(container); })
+                             .then(function(){ try { HL.highlightIn(container); } catch (e2) {} })
+                             .catch(function(){ try { HL.highlightIn(container); } catch (e3) {} });
+                        } catch (e) { try { HL.highlightIn(container); } catch (e4) {} }
+                    }, 60);
+                }
+            } catch (e) {}
         },
 
         /**
@@ -306,35 +369,46 @@ define(['jquery', 'core/ajax', 'core/notification'], function($, Ajax, Notificat
             this.addMessage('...', 'ai', true);
 
             // Make API call.
-        var request = {
-            methodname: 'local_gis_ai_assistant_send_message',
-            args: {
-                message: message,
-                model: '',
-                temperature: 0.7,
-                max_tokens: 150 // Shorter responses for widget
-            }
-        };
+            var request = {
+                methodname: 'local_gis_ai_assistant_send_message',
+                args: {
+                    message: message,
+                    model: '',
+                    temperature: 0.7,
+                    max_tokens: 150
+                }
+            };
 
-        Ajax.call([request])[0]
-            .done(function(response) {
-                // Remove loading message.
-                $('.ai-message-mini.loading').remove();
-                if (response && response.success) {
-                    self.addMessage(response.content, 'ai');
-                } else {
-                    var err = (response && response.error) ? response.error : 'Unknown error';
-                    self.addMessage('Sorry, I encountered an error: ' + err, 'ai');
-                }
-            })
-            .fail(function(error) {
-                // Remove loading message.
-                $('.ai-message-mini.loading').remove();
-                self.addMessage('Sorry, I could not process your request.', 'ai');
-                if (window.console) {
-                    console.error('AI widget send_message AJAX error:', error);
-                }
-            });
+            Ajax.call([request])[0]
+                .done(function(response) {
+                    // Remove loading message.
+                    $('.ai-message-mini.loading').remove();
+                    if (response && response.success) {
+                        // Render from raw model content via Markdown.
+                        var raw = response.content || '';
+                        var htmlClient = Markdown.toHtml(raw);
+                        var html = (htmlClient && htmlClient.trim()) ? htmlClient : (response.content_html || '');
+                        var el = self.addMessageHtml(html, 'ai');
+                        try { $(el).attr('data-md-raw', raw); } catch (e) {}
+                        try {
+                            Mermaid.renderIn(el)
+                                .then(function(){ try { HL.highlightIn(el); } catch (e2) {} })
+                                .catch(function(){ try { HL.highlightIn(el); } catch (e3) {} });
+                        } catch (e) { try { HL.highlightIn(el); } catch (e4) {} }
+                        setTimeout(function(){ self.upgradeMarkdownRender(el); }, 500);
+                    } else {
+                        var err = (response && response.error) ? response.error : 'Unknown error';
+                        self.addMessage('Sorry, I encountered an error: ' + err, 'ai');
+                    }
+                })
+                .fail(function(error) {
+                    // Remove loading message.
+                    $('.ai-message-mini.loading').remove();
+                    self.addMessage('Sorry, I could not process your request.', 'ai');
+                    if (window.console) {
+                        console.error('AI widget send_message AJAX error:', error);
+                    }
+                });
         },
 
         /**
@@ -349,6 +423,48 @@ define(['jquery', 'core/ajax', 'core/notification'], function($, Ajax, Notificat
             
             container.append(messageHtml);
             container.scrollTop(container[0].scrollHeight);
+        },
+
+        /**
+         * Add message as already formatted/safe HTML.
+         */
+        addMessageHtml: function(contentHtml, type) {
+            var container = $('#ai-chat-messages-mini');
+            var messageHtml = '<div class="ai-message-mini ' + type + '">' + contentHtml + '</div>';
+            container.append(messageHtml);
+            var $last = container.children().last();
+            container.scrollTop(container[0].scrollHeight);
+            return $last[0] || $last;
+        },
+
+        // Upgrade any mini messages once Marked/DOMPurify are available.
+        upgradeMarkdownRender: function(scope) {
+            try {
+                if (!window.marked) { return; }
+                var root = scope && scope.jquery ? scope : $('#ai-chat-messages-mini');
+                var nodes = root.find('[data-md-raw]');
+                nodes.each(function(){
+                    var $el = $(this);
+                    // data-md-raw may be on container or .ai-message-content; find the correct node
+                    var raw = $el.attr('data-md-raw') || $el.find('[data-md-raw]').attr('data-md-raw') || '';
+                    if (!raw) {
+                        var txt = $el.text();
+                        // Skip if looks already formatted
+                        if (/<(ul|ol|pre|code|blockquote)/i.test($el.html())) return;
+                        raw = txt;
+                    }
+                    try {
+                        var html = Markdown.toHtml(raw);
+                        $el.html(html);
+                    } catch (e) {}
+                    try {
+                        var target = $el[0] || $el;
+                        Mermaid.renderIn(target)
+                            .then(function(){ try { HL.highlightIn(target); } catch (e2) {} })
+                            .catch(function(){ try { HL.highlightIn(target); } catch (e3) {} });
+                    } catch (e4) { try { HL.highlightIn($el); } catch (e5) {} }
+                });
+            } catch (e) {}
         },
 
         /**
