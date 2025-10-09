@@ -25,7 +25,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'local_gis_ai_assistant';
-$plugin->version = 2025092500;   // Updated version for security and performance improvements
+$plugin->version = 2025100901;   // Bumped to register updated external services and fixes
 $plugin->requires = 2024042200;  // Moodle 4.5+
 $plugin->maturity = MATURITY_STABLE;
 $plugin->release = '1.0.0';
