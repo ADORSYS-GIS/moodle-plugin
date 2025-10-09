@@ -1,0 +1,218 @@
+/* ==========================================================================
+   AI Assistant Code Highlighting Theme
+   Inspired by VSCode, GitHub, and ChatGPT aesthetics
+   ========================================================================== */
+
+/* -------- Base container -------- */
+.hljs {
+  display: block;
+  overflow-x: auto;
+  padding: 1rem 1.25rem;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  line-height: 1.55;
+  white-space: inherit;
+  word-break: normal;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+/* -------- Light theme -------- */
+body:not(.dark-mode) .hljs {
+  background: #fafafa;
+  color: #24292e;
+  border: 1px solid #eaeaea;
+}
+
+body:not(.dark-mode) .hljs-comment,
+body:not(.dark-mode) .hljs-quote {
+  color: #6a737d;
+  font-style: italic;
+}
+
+body:not(.dark-mode) .hljs-keyword,
+body:not(.dark-mode) .hljs-selector-tag,
+body:not(.dark-mode) .hljs-subst {
+  color: #005cc5;
+}
+
+body:not(.dark-mode) .hljs-string,
+body:not(.dark-mode) .hljs-title,
+body:not(.dark-mode) .hljs-name,
+body:not(.dark-mode) .hljs-type {
+  color: #22863a;
+}
+
+body:not(.dark-mode) .hljs-number,
+body:not(.dark-mode) .hljs-literal,
+body:not(.dark-mode) .hljs-symbol {
+  color: #b31d28;
+}
+
+body:not(.dark-mode) .hljs-attribute,
+body:not(.dark-mode) .hljs-variable {
+  color: #e36209;
+}
+
+body:not(.dark-mode) .hljs-built_in,
+body:not(.dark-mode) .hljs-builtin-name {
+  color: #6f42c1;
+}
+
+/* -------- Dark theme -------- */
+body.dark-mode .hljs {
+  background: #1e1e1e;
+  color: #d4d4d4;
+  border: 1px solid rgba(255,255,255,0.05);
+  box-shadow: 0 0 12px rgba(0,0,0,0.4);
+}
+
+body.dark-mode .hljs-comment,
+body.dark-mode .hljs-quote {
+  color: #6A9955;
+  font-style: italic;
+}
+
+body.dark-mode .hljs-keyword,
+body.dark-mode .hljs-selector-tag,
+body.dark-mode .hljs-literal {
+  color: #569CD6;
+}
+
+body.dark-mode .hljs-title,
+body.dark-mode .hljs-name {
+  color: #DCDCAA;
+}
+
+body.dark-mode .hljs-attr,
+body.dark-mode .hljs-attribute,
+body.dark-mode .hljs-property {
+  color: #9CDCFE;
+}
+
+body.dark-mode .hljs-string,
+body.dark-mode .hljs-symbol,
+body.dark-mode .hljs-addition {
+  color: #CE9178;
+}
+
+body.dark-mode .hljs-number,
+body.dark-mode .hljs-boolean {
+  color: #B5CEA8;
+}
+
+body.dark-mode .hljs-type,
+body.dark-mode .hljs-class .hljs-title {
+  color: #4EC9B0;
+}
+
+body.dark-mode .hljs-meta,
+body.dark-mode .hljs-meta .hljs-keyword {
+  color: #C586C0;
+}
+
+/* -------- Code block wrapper hover effect -------- */
+.hljs:hover {
+  box-shadow: 0 0 0 2px rgba(100, 149, 237, 0.3);
+  transform: scale(1.002);
+  transition: all 0.25s ease;
+}
+
+/* -------- Inline code styling -------- */
+.ai-message-content code,
+.ai-message-mini code {
+  background: rgba(0, 0, 0, 0.05);
+  padding: 0.15rem 0.35rem;
+  border-radius: 5px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+  color: #c7254e;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+body.dark-mode .ai-message-content code,
+body.dark-mode .ai-message-mini code {
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffcc66;
+}
+
+/* -------- Scrollbar refinement -------- */
+.hljs::-webkit-scrollbar {
+  height: 6px;
+  background: transparent;
+}
+.hljs::-webkit-scrollbar-thumb {
+  background: rgba(100, 149, 237, 0.4);
+  border-radius: 3px;
+}
+.hljs::-webkit-scrollbar-thumb:hover {
+  background: rgba(100, 149, 237, 0.7);
+}
+
+/* -------- Code language label (optional) -------- */
+.hljs::before {
+  content: attr(data-lang);
+  display: block;
+  text-transform: uppercase;
+  font-size: 0.7rem;
+  letter-spacing: 0.05em;
+  color: rgba(255,255,255,0.5);
+  text-align: right;
+  margin-bottom: 0.25rem;
+  font-weight: 600;
+  opacity: 0.7;
+}
+
+/* -------- Plugin container overrides -------- */
+/* Full chat dark mode via container class (independent of body class) */
+.ai-chat-container.ai-dark .hljs {
+  background: #1e1e1e;
+  color: #d4d4d4;
+  border: 1px solid rgba(255,255,255,0.05);
+}
+.ai-chat-container.ai-dark .hljs-comment,
+.ai-chat-container.ai-dark .hljs-quote { color: #6A9955; font-style: italic; }
+.ai-chat-container.ai-dark .hljs-keyword,
+.ai-chat-container.ai-dark .hljs-selector-tag,
+.ai-chat-container.ai-dark .hljs-literal { color: #569CD6; }
+.ai-chat-container.ai-dark .hljs-title,
+.ai-chat-container.ai-dark .hljs-name { color: #DCDCAA; }
+.ai-chat-container.ai-dark .hljs-attr,
+.ai-chat-container.ai-dark .hljs-attribute,
+.ai-chat-container.ai-dark .hljs-property { color: #9CDCFE; }
+.ai-chat-container.ai-dark .hljs-string,
+.ai-chat-container.ai-dark .hljs-symbol,
+.ai-chat-container.ai-dark .hljs-addition { color: #CE9178; }
+.ai-chat-container.ai-dark .hljs-number,
+.ai-chat-container.ai-dark .hljs-boolean { color: #B5CEA8; }
+.ai-chat-container.ai-dark .hljs-type,
+.ai-chat-container.ai-dark .hljs-class .hljs-title { color: #4EC9B0; }
+.ai-chat-container.ai-dark .hljs-meta,
+.ai-chat-container.ai-dark .hljs-meta .hljs-keyword { color: #C586C0; }
+
+/* Mini widget defaults to light theme even if body is dark */
+.ai-chat-widget .hljs {
+  background: #fafafa;
+  color: #24292e;
+  border: 1px solid #eaeaea;
+}
+.ai-chat-widget .hljs-comment,
+.ai-chat-widget .hljs-quote { color: #6a737d; font-style: italic; }
+.ai-chat-widget .hljs-keyword,
+.ai-chat-widget .hljs-selector-tag,
+.ai-chat-widget .hljs-subst { color: #005cc5; }
+.ai-chat-widget .hljs-string,
+.ai-chat-widget .hljs-title,
+.ai-chat-widget .hljs-name,
+.ai-chat-widget .hljs-type { color: #22863a; }
+.ai-chat-widget .hljs-number,
+.ai-chat-widget .hljs-literal,
+.ai-chat-widget .hljs-symbol { color: #b31d28; }
+.ai-chat-widget .hljs-attribute,
+.ai-chat-widget .hljs-variable { color: #e36209; }
+.ai-chat-widget .hljs-built_in,
+.ai-chat-widget .hljs-builtin-name { color: #6f42c1; }
+
+/* Avoid duplicate language labels; we already show a header label in .ai-codeblock */
+.ai-codeblock .hljs::before { content: none !important; margin: 0; }
