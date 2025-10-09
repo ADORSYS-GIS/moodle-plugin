@@ -34,6 +34,7 @@ use local_gis_ai_assistant\api\inference_service;
 use local_gis_ai_assistant\exceptions\ai_exception;
 use local_gis_ai_assistant\exceptions\rate_limit_exception;
 use local_gis_ai_assistant\exceptions\configuration_exception;
+use local_gis_ai_assistant\middleware\request_validator;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -41,6 +42,8 @@ global $CFG;
 require_once($CFG->libdir . '/externallib.php');
 // Defensive include in case the autoloader cache is stale after a fresh stack.
 require_once(__DIR__ . '/../api/inference_service.php');
+require_once(__DIR__ . '/../middleware/request_validator.php');
+require_once(__DIR__ . '/../../lib.php');
 
 /**
  * External API for AI chat.
@@ -54,7 +57,7 @@ class chat_api extends external_api {
      */
     public static function send_message_parameters() {
         return new external_function_parameters([
-            'message' => new external_value(PARAM_TEXT, 'User message'),
+            'message' => new external_value(PARAM_RAW, 'User message (multiline allowed)'),
             'model' => new external_value(PARAM_TEXT, 'AI model to use', VALUE_DEFAULT, ''),
             'temperature' => new external_value(PARAM_FLOAT, 'Temperature setting', VALUE_DEFAULT, 0.7),
             'max_tokens' => new external_value(PARAM_INT, 'Maximum tokens', VALUE_DEFAULT, 0),
@@ -73,6 +76,7 @@ class chat_api extends external_api {
     public static function send_message($message, $model = '', $temperature = 0.7, $max_tokens = 0) {
         global $USER;
 
+        $stage = 'init';
         // Validate parameters.
         $params = self::validate_parameters(self::send_message_parameters(), [
             'message' => $message,
@@ -80,18 +84,33 @@ class chat_api extends external_api {
             'temperature' => $temperature,
             'max_tokens' => $max_tokens,
         ]);
+        $stage = 'params_ok';
+
+        // Enforce middleware validations.
+        $params['message'] = request_validator::validate_message($params['message']);
+        if (!empty($params['model'])) {
+            $params['model'] = request_validator::validate_model($params['model']);
+        }
+        $params['temperature'] = request_validator::validate_temperature($params['temperature']);
+        if (!empty($params['max_tokens'])) {
+            $params['max_tokens'] = request_validator::validate_max_tokens($params['max_tokens']);
+        }
+        $stage = 'validated';
 
         // Check capabilities.
         $context = context_system::instance();
         self::validate_context($context);
         require_capability('local/gis_ai_assistant:use', $context);
+        $stage = 'caps_ok';
 
         try {
-            // Check if AI is enabled.
-            if (!get_config('local_gis_ai_assistant', 'enabled')) {
+            // Check if AI is enabled via plugin configuration.
+            $cfg = \local_gis_ai_assistant_get_config();
+            if (empty($cfg['enabled'])) {
                 throw new ai_exception('ai_disabled', 'local_gis_ai_assistant');
             }
             $service = new inference_service();
+            $stage = 'service_ok';
             
             $options = [];
             if (!empty($params['model'])) {
@@ -105,10 +124,26 @@ class chat_api extends external_api {
             }
 
             $result = $service->chat_completion($params['message'], $options);
+            $stage = 'api_ok';
+
+            // Format content as HTML using Markdown for richer display, with sanitization.
+            $context = \context_system::instance();
+            $contenthtml = '';
+            try {
+                $contenthtml = format_text($result['content'], FORMAT_MARKDOWN, ['noclean' => false, 'filter' => true], $context);
+            } catch (\Throwable $fmtEx) {
+                // Fallback to escaped plain text if formatting fails (e.g., filters misconfigured or unavailable).
+                $contenthtml = s((string)$result['content']);
+            }
+            // If Markdown filter didn't convert (still plain text), apply minimal fallback for readability.
+            if ($contenthtml === '' || strip_tags($contenthtml) === (string)$result['content']) {
+                $contenthtml = nl2br(s((string)$result['content']));
+            }
 
             return [
                 'success' => true,
                 'content' => $result['content'],
+                'content_html' => $contenthtml,
                 'model' => $result['model'],
                 'usage' => $result['usage'],
                 'finish_reason' => $result['finish_reason'],
@@ -119,24 +154,36 @@ class chat_api extends external_api {
                 'success' => false,
                 'error' => get_string('no_api_key', 'local_gis_ai_assistant'),
                 'error_code' => 'configuration_error',
+                'error_stage' => $stage,
             ];
         } catch (rate_limit_exception $e) {
             return [
                 'success' => false,
                 'error' => $e->getMessage(),
                 'error_code' => 'rate_limit',
+                'error_stage' => $stage,
             ];
         } catch (ai_exception $e) {
             return [
                 'success' => false,
                 'error' => $e->getMessage(),
                 'error_code' => 'api_error',
+                'error_stage' => $stage,
+            ];
+        } catch (\moodle_exception $e) {
+            // Surface Moodle-level validation/permission errors to the UI.
+            return [
+                'success' => false,
+                'error' => $e->getMessage(),
+                'error_code' => property_exists($e, 'errorcode') ? $e->errorcode : 'moodle_exception',
+                'error_stage' => $stage,
             ];
         } catch (\Exception $e) {
             return [
                 'success' => false,
                 'error' => get_string('error_occurred', 'local_gis_ai_assistant'),
                 'error_code' => 'unknown_error',
+                'error_stage' => $stage,
             ];
         }
     }
@@ -150,6 +197,7 @@ class chat_api extends external_api {
         return new external_single_structure([
             'success' => new external_value(PARAM_BOOL, 'Success status'),
             'content' => new external_value(PARAM_RAW, 'AI response content', VALUE_OPTIONAL),
+            'content_html' => new external_value(PARAM_RAW, 'AI response content formatted as HTML', VALUE_OPTIONAL),
             'model' => new external_value(PARAM_TEXT, 'Model used', VALUE_OPTIONAL),
             'usage' => new external_single_structure([
                 'prompt_tokens' => new external_value(PARAM_INT, 'Prompt tokens', VALUE_OPTIONAL),
@@ -169,7 +217,7 @@ class chat_api extends external_api {
      */
     public static function send_message_stream_parameters() {
         return new external_function_parameters([
-            'message' => new external_value(PARAM_TEXT, 'User message'),
+            'message' => new external_value(PARAM_RAW, 'User message (multiline allowed)'),
             'model' => new external_value(PARAM_TEXT, 'AI model to use', VALUE_DEFAULT, ''),
             'temperature' => new external_value(PARAM_FLOAT, 'Temperature setting', VALUE_DEFAULT, 0.7),
             'max_tokens' => new external_value(PARAM_INT, 'Maximum tokens', VALUE_DEFAULT, 0),
@@ -196,14 +244,25 @@ class chat_api extends external_api {
             'max_tokens' => $max_tokens,
         ]);
 
+        // Enforce middleware validations.
+        $params['message'] = request_validator::validate_message($params['message']);
+        if (!empty($params['model'])) {
+            $params['model'] = request_validator::validate_model($params['model']);
+        }
+        $params['temperature'] = request_validator::validate_temperature($params['temperature']);
+        if (!empty($params['max_tokens'])) {
+            $params['max_tokens'] = request_validator::validate_max_tokens($params['max_tokens']);
+        }
+
         // Check capabilities.
         $context = context_system::instance();
         self::validate_context($context);
         require_capability('local/gis_ai_assistant:use', $context);
 
         try {
-            // Check if AI is enabled.
-            if (!get_config('local_gis_ai_assistant', 'enabled')) {
+            // Check if AI is enabled via plugin configuration.
+            $cfg = \local_gis_ai_assistant_get_config();
+            if (empty($cfg['enabled'])) {
                 throw new ai_exception('ai_disabled', 'local_gis_ai_assistant');
             }
             $service = new inference_service();
@@ -400,6 +459,103 @@ class chat_api extends external_api {
                     'token_count' => new external_value(PARAM_INT, 'Token count'),
                 ]), 'Model usage', VALUE_OPTIONAL
             ),
+            'error' => new external_value(PARAM_TEXT, 'Error message', VALUE_OPTIONAL),
+        ]);
+    }
+
+    /**
+     * Parameters for get_history.
+     *
+     * @return external_function_parameters
+     */
+    public static function get_history_parameters() {
+        return new external_function_parameters([
+            'limit' => new external_value(PARAM_INT, 'Maximum number of entries to return', VALUE_DEFAULT, 50),
+        ]);
+    }
+
+    /**
+     * Return recent conversation history for the current user.
+     * Each entry represents one user message and the corresponding AI response.
+     *
+     * @param int $limit
+     * @return array
+     */
+    public static function get_history($limit = 50) {
+        global $DB, $USER;
+
+        // Validate parameters.
+        $params = self::validate_parameters(self::get_history_parameters(), [ 'limit' => $limit ]);
+        $limit = max(1, min((int)$params['limit'], 200));
+
+        // Check capabilities.
+        $context = context_system::instance();
+        self::validate_context($context);
+        require_capability('local/gis_ai_assistant:use', $context);
+
+        try {
+            $records = $DB->get_records(
+                'local_gis_ai_assistant_conversations',
+                ['userid' => $USER->id],
+                'timecreated DESC',
+                'id, message, response, timecreated',
+                0,
+                $limit
+            );
+
+            // Return in ascending order so UI can display chronologically.
+            $entries = array_values($records);
+            $entries = array_reverse($entries);
+
+            $context = \context_system::instance();
+            $history = [];
+            foreach ($entries as $r) {
+                $message = (string)($r->message ?? '');
+                $response = (string)($r->response ?? '');
+                try {
+                    $responsehtml = format_text($response, FORMAT_MARKDOWN, ['noclean' => false, 'filter' => true], $context);
+                } catch (\Throwable $fmtEx) {
+                    $responsehtml = s($response);
+                }
+                if ($responsehtml === '' || strip_tags($responsehtml) === $response) {
+                    $responsehtml = nl2br(s($response));
+                }
+                $history[] = [
+                    'message' => $message,
+                    'response' => $response,
+                    'response_html' => $responsehtml,
+                    'timecreated' => (int)($r->timecreated ?? 0),
+                ];
+            }
+
+            return [
+                'success' => true,
+                'history' => $history,
+            ];
+        } catch (\Exception $e) {
+            return [
+                'success' => false,
+                'error' => 'Failed to load history',
+            ];
+        }
+    }
+
+    /**
+     * Returns structure for get_history.
+     *
+     * @return external_single_structure
+     */
+    public static function get_history_returns() {
+        return new external_single_structure([
+            'success' => new external_value(PARAM_BOOL, 'Success status'),
+            'history' => new external_multiple_structure(
+                new external_single_structure([
+                    'message' => new external_value(PARAM_RAW, 'User message'),
+                    'response' => new external_value(PARAM_RAW, 'AI response'),
+                    'response_html' => new external_value(PARAM_RAW, 'AI response formatted as HTML'),
+                    'timecreated' => new external_value(PARAM_INT, 'Unix timestamp'),
+                ])
+            , VALUE_OPTIONAL),
             'error' => new external_value(PARAM_TEXT, 'Error message', VALUE_OPTIONAL),
         ]);
     }
