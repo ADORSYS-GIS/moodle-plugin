@@ -85,7 +85,7 @@ try {
     // Verify user.
     if ($sessiondata['userid'] != $USER->id) {
         send_sse_data(['type' => 'error', 'error' => 'Unauthorized']);
-        exit;
+       exit;
     }
     
     // Check if session is too old (TTL in seconds from plugin configuration).
