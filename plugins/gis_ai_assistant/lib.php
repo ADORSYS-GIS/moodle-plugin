@@ -30,16 +30,17 @@ defined('MOODLE_INTERNAL') || die();
  * @param global_navigation $navigation
  */
 function local_gis_ai_assistant_extend_navigation(global_navigation $navigation) {
-    global $USER, $PAGE;
-    
-    if (!get_config('local_gis_ai_assistant', 'enabled')) {
+    global $PAGE;
+
+    $cfg = local_gis_ai_assistant_get_config();
+    if (empty($cfg['enabled'])) {
         return;
     }
-    
+
     if (!has_capability('local/gis_ai_assistant:use', context_system::instance())) {
         return;
     }
-    
+
     $node = $navigation->add(
         get_string('pluginname', 'local_gis_ai_assistant'),
         new moodle_url('/local/gis_ai_assistant/index.php'),
@@ -50,11 +51,14 @@ function local_gis_ai_assistant_extend_navigation(global_navigation $navigation)
     );
     $node->showinflatnavigation = true;
 
-    // Also ensure the floating widget is loaded for allowed page types.
+    // Load floating widget on allowed page types.
     $allowedpagetypes = ['course-view', 'mod-', 'my-index', 'site-'];
     $pagetype = $PAGE->pagetype;
-    foreach ($allowedpagetypes as $allowed) {
-        if (strpos($pagetype, $allowed) === 0) {
+    foreach ($allowedpagetypes as $p) {
+        if (strpos($pagetype, $p) === 0) {
+            // Ensure code highlighting styles are available.
+            $PAGE->requires->css('/local/gis_ai_assistant/styles/highlight.css');
+            
             $PAGE->requires->js_call_amd('local_gis_ai_assistant/chat_widget', 'init');
             break;
         }
@@ -62,64 +66,48 @@ function local_gis_ai_assistant_extend_navigation(global_navigation $navigation)
 }
 
 /**
- * Adds AI assistant to the user menu.
+ * Get plugin configuration: ENV for credentials and endpoint/model, DB for the rest.
  *
- * @param renderer_base $renderer
- * @return string
- */
-function local_gis_ai_assistant_render_navbar_output(renderer_base $renderer) {
-    global $USER, $PAGE;
-    
-    if (!get_config('local_gis_ai_assistant', 'enabled')) {
-        return '';
-    }
-    
-    if (!isloggedin() || isguestuser()) {
-        return '';
-    }
-    
-    if (!has_capability('local/gis_ai_assistant:use', context_system::instance())) {
-        return '';
-    }
-    
-    // Add AI chat button to pages where it makes sense.
-    $allowedpagetypes = ['course-view', 'mod-', 'my-index', 'site-'];
-    $pagetype = $PAGE->pagetype;
-    
-    foreach ($allowedpagetypes as $allowed) {
-        if (strpos($pagetype, $allowed) === 0) {
-            $PAGE->requires->js_call_amd('local_gis_ai_assistant/chat_widget', 'init');
-            break;
-        }
-    }
-    
-    return '';
-}
-
-/**
- * Get AI configuration from environment variables.
- *
- * @return array Configuration array
+ * @return array
  */
 function local_gis_ai_assistant_get_config() {
-    // Always compute fresh values to reflect runtime changes during tests.
+    // Credentials from ENV only.
+    $getenvn = function(string $name) {
+        return getenv($name) !== false ? getenv($name) : ($_SERVER[$name] ?? null);
+    };
+
+    $apiKey = $getenvn('OPENAI_API_KEY');
+    // Environment-only endpoint and model (treat as credentials). Fallback to safe defaults.
+    $envBaseUrl = $getenvn('OPENAI_BASE_URL');
+    $envModel = $getenvn('OPENAI_MODEL');
+    $baseUrl = ($envBaseUrl !== null && $envBaseUrl !== '') ? $envBaseUrl : 'https://api.openai.com/v1';
+    $model = ($envModel !== null && $envModel !== '') ? $envModel : 'gpt-4o-mini';
+
     $enabled = (int) get_config('local_gis_ai_assistant', 'enabled');
-    $enablecache = (int) get_config('local_gis_ai_assistant', 'enable_cache');
-    $enableanalytics = (int) get_config('local_gis_ai_assistant', 'enable_analytics');
+    $maxTokens = (int) get_config('local_gis_ai_assistant', 'max_tokens');
+    $temperature = (float) get_config('local_gis_ai_assistant', 'temperature');
+    $systemPrompt = (string) get_config('local_gis_ai_assistant', 'system_prompt');
+    $rateReq = (int) get_config('local_gis_ai_assistant', 'rate_limit_requests');
+    $rateTok = (int) get_config('local_gis_ai_assistant', 'rate_limit_tokens');
+    $cacheTtl = (int) get_config('local_gis_ai_assistant', 'cache_ttl');
+    $enableCache = (int) get_config('local_gis_ai_assistant', 'enable_cache');
+    $enableAnalytics = (int) get_config('local_gis_ai_assistant', 'enable_analytics');
+    $streamTtl = (int) get_config('local_gis_ai_assistant', 'stream_session_ttl');
 
     return [
-        'api_key' => getenv('OPENAI_API_KEY') ?: ($_SERVER['OPENAI_API_KEY'] ?? null),
-        'base_url' => getenv('OPENAI_BASE_URL') ?: ($_SERVER['OPENAI_BASE_URL'] ?? 'https://api.openai.com/v1'),
-        'model' => getenv('OPENAI_MODEL') ?: ($_SERVER['OPENAI_MODEL'] ?? (string) get_config('local_gis_ai_assistant', 'default_model')),
+        'api_key' => $apiKey,
+        'base_url' => $baseUrl,
+        'model' => $model,
         'enabled' => (bool) $enabled,
-        'max_tokens' => (int) get_config('local_gis_ai_assistant', 'max_tokens'),
-        'temperature' => (float) get_config('local_gis_ai_assistant', 'temperature'),
-        'system_prompt' => (string) get_config('local_gis_ai_assistant', 'system_prompt'),
-        'rate_limit_requests' => (int) get_config('local_gis_ai_assistant', 'rate_limit_requests'),
-        'rate_limit_tokens' => (int) get_config('local_gis_ai_assistant', 'rate_limit_tokens'),
-        'cache_ttl' => (int) get_config('local_gis_ai_assistant', 'cache_ttl'),
-        'enable_cache' => (bool) $enablecache,
-        'enable_analytics' => (bool) $enableanalytics,
+        'max_tokens' => $maxTokens ?: 2048,
+        'temperature' => $temperature ?: 0.7,
+        'system_prompt' => $systemPrompt ?: '',
+        'rate_limit_requests' => $rateReq ?: 100,
+        'rate_limit_tokens' => $rateTok ?: 50000,
+        'cache_ttl' => $cacheTtl ?: 3600,
+        'enable_cache' => (bool) $enableCache,
+        'enable_analytics' => (bool) $enableAnalytics,
+        'stream_session_ttl' => $streamTtl ?: 300,
     ];
 }
 
@@ -130,7 +118,8 @@ function local_gis_ai_assistant_get_config() {
  */
 function local_gis_ai_assistant_is_configured() {
     $config = local_gis_ai_assistant_get_config();
-    return !empty($config['api_key']) && !empty($config['base_url']) && $config['enabled'];
+    // Require credentials (ENV) and enabled flag (DB).
+    return !empty($config['api_key']) && !empty($config['base_url']) && !empty($config['model']) && !empty($config['enabled']);
 }
 
 /**
@@ -149,8 +138,15 @@ function local_gis_ai_assistant_sanitize_input($input) {
         $input = substr($input, 0, $maxlength);
     }
     
-    // Remove excessive whitespace.
-    $input = preg_replace('/\s+/', ' ', trim($input));
+    // Normalize line endings and preserve newlines while trimming excessive spaces/tabs.
+    $input = str_replace(["\r\n", "\r"], "\n", $input);
+    // Collapse runs of spaces/tabs but keep newlines as-is.
+    $input = preg_replace('/[ \t\x0B\f]+/', ' ', $input);
+    // Trim trailing spaces at end of lines.
+    $input = preg_replace('/[ \t]+\n/', "\n", $input);
+    // Reduce 3+ blank lines to max 2 in a row.
+    $input = preg_replace("/\n{3,}/", "\n\n", $input);
+    $input = trim($input);
     
     return $input;
 }
@@ -187,19 +183,18 @@ function local_gis_ai_assistant_generate_cache_key($prompt, $params = []) {
 function local_gis_ai_assistant_log_request($userid, $model, $usage = [], $responsetime = 0, $status = 'success', $error = null, $message = '', $response = '') {
     global $DB;
     
-    if (!get_config('local_gis_ai_assistant', 'enable_analytics')) {
-        return;
-    }
+    // Always persist conversations so history is available across views and reloads.
     
     $record = new stdClass();
-    $record->userid = $userid;
-    $record->model = $model;
+    $record->userid = (int)$userid;
+    // Ensure model is a string and fits char(50).
+    $record->model = substr((string)$model, 0, 50);
     // Store required fields according to install.xml schema.
     $record->message = (string)$message;
     $record->response = (string)$response;
-    $record->tokens_used = $usage['total_tokens'] ?? 0;
-    $record->response_time = $responsetime;
-    $record->timecreated = time();
+    $record->tokens_used = isset($usage['total_tokens']) ? (int)$usage['total_tokens'] : 0;
+    $record->response_time = (int)round((float)$responsetime);
+    $record->timecreated = (int)time();
     
     $DB->insert_record('local_gis_ai_assistant_conversations', $record);
 }
@@ -218,42 +213,50 @@ function local_gis_ai_assistant_check_rate_limit($userid, $tokens = 0) {
     $maxrequests = $config['rate_limit_requests'];
     $maxtokens = $config['rate_limit_tokens'];
     
-    $windowstart = floor(time() / 3600) * 3600; // Start of current hour.
+    $windowstart = (int)(floor(time() / 3600) * 3600); // Start of current hour.
+    
+    // Determine caller IP (fits char(45), supports IPv6). Fallback to placeholder.
+    $ip = function_exists('getremoteaddr') ? (string)getremoteaddr() : '';
+    if ($ip === '' || $ip === false) { $ip = '0.0.0.0'; }
     
     // Get or create rate limit record.
     $record = $DB->get_record('local_gis_ai_assistant_rate_limits', [
-        'userid' => $userid,
-        'window_start' => $windowstart
+        'userid' => (int)$userid,
+        'window_start' => (int)$windowstart
     ]);
     
     if (!$record) {
-        $record = new stdClass();
-        $record->userid = $userid;
-        $record->requests_count = 0;
-        $record->tokens_count = 0;
-        $record->window_start = $windowstart;
-        $record->timemodified = time();
-        $record->id = $DB->insert_record('local_gis_ai_assistant_rate_limits', $record);
+        // Build insert record using existing columns only (handles older schemas gracefully).
+        $columns = $DB->get_columns('local_gis_ai_assistant_rate_limits');
+        $newrec = new stdClass();
+        if (isset($columns['userid']))        { $newrec->userid = (int)$userid; }
+        if (isset($columns['ip_address']))    { $newrec->ip_address = substr($ip, 0, 45); }
+        if (isset($columns['requests_count'])){ $newrec->requests_count = (int)0; }
+        if (isset($columns['tokens_count']))  { $newrec->tokens_count = (int)0; }
+        if (isset($columns['window_start']))  { $newrec->window_start = (int)$windowstart; }
+        if (isset($columns['timemodified']))  { $newrec->timemodified = (int)time(); }
+        $newrec->id = $DB->insert_record('local_gis_ai_assistant_rate_limits', $newrec);
+        $record = $newrec;
     }
     
     // Check limits.
-    $newrequests = $record->requests_count + 1;
-    $newtokens = $record->tokens_count + $tokens;
+    $newrequests = (int)$record->requests_count + 1;
+    $newtokens = (int)$record->tokens_count + (int)$tokens;
     
     if ($newrequests > $maxrequests || $newtokens > $maxtokens) {
         return [
             'allowed' => false,
-            'reset_time' => $windowstart + 3600,
-            'requests_remaining' => max(0, $maxrequests - $record->requests_count),
-            'tokens_remaining' => max(0, $maxtokens - $record->tokens_count)
+            'reset_time' => (int)($windowstart + 3600),
+            'requests_remaining' => (int)max(0, (int)$maxrequests - (int)$record->requests_count),
+            'tokens_remaining' => (int)max(0, (int)$maxtokens - (int)$record->tokens_count)
         ];
     }
     
     return [
         'allowed' => true,
-        'reset_time' => $windowstart + 3600,
-        'requests_remaining' => $maxrequests - $newrequests,
-        'tokens_remaining' => $maxtokens - $newtokens
+        'reset_time' => (int)($windowstart + 3600),
+        'requests_remaining' => (int)((int)$maxrequests - (int)$newrequests),
+        'tokens_remaining' => (int)((int)$maxtokens - (int)$newtokens)
     ];
 }
 
@@ -266,17 +269,37 @@ function local_gis_ai_assistant_check_rate_limit($userid, $tokens = 0) {
 function local_gis_ai_assistant_update_rate_limit($userid, $tokens = 0) {
     global $DB;
     
-    $windowstart = floor(time() / 3600) * 3600;
+    $windowstart = (int)(floor(time() / 3600) * 3600);
     
     $record = $DB->get_record('local_gis_ai_assistant_rate_limits', [
-        'userid' => $userid,
-        'window_start' => $windowstart
+        'userid' => (int)$userid,
+        'window_start' => (int)$windowstart
     ]);
     
     if ($record) {
-        $record->requests_count++;
-        $record->tokens_count += $tokens;
-        $record->timemodified = time();
+        $columns = $DB->get_columns('local_gis_ai_assistant_rate_limits');
+        if (isset($columns['requests_count'])) {
+            $record->requests_count = (int)$record->requests_count + 1;
+        }
+        if (isset($columns['tokens_count'])) {
+            $record->tokens_count = (int)$record->tokens_count + (int)$tokens;
+        }
+        if (isset($columns['timemodified'])) {
+            $record->timemodified = (int)time();
+        }
         $DB->update_record('local_gis_ai_assistant_rate_limits', $record);
+    } else {
+        // Create if missing (e.g., first call in this window via alternate path).
+        $ip = function_exists('getremoteaddr') ? (string)getremoteaddr() : '';
+        if ($ip === '' || $ip === false) { $ip = '0.0.0.0'; }
+        $columns = $DB->get_columns('local_gis_ai_assistant_rate_limits');
+        $new = new stdClass();
+        if (isset($columns['userid']))         { $new->userid = (int)$userid; }
+        if (isset($columns['ip_address']))     { $new->ip_address = substr($ip, 0, 45); }
+        if (isset($columns['requests_count'])) { $new->requests_count = 1; }
+        if (isset($columns['tokens_count']))   { $new->tokens_count = (int)$tokens; }
+        if (isset($columns['window_start']))   { $new->window_start = (int)$windowstart; }
+        if (isset($columns['timemodified']))   { $new->timemodified = (int)time(); }
+        $DB->insert_record('local_gis_ai_assistant_rate_limits', $new);
     }
 }
