@@ -23,6 +23,7 @@
  */
 
 require_once(__DIR__ . '/../../config.php');
+require_once($CFG->dirroot . '/local/gis_ai_assistant/lib.php');
 
 use local_gis_ai_assistant\api\inference_service;
 use local_gis_ai_assistant\exceptions\ai_exception;
@@ -34,16 +35,33 @@ require_capability('local/gis_ai_assistant:use', $context);
 
 $sessionid = required_param('session', PARAM_ALPHANUMEXT);
 
+// Allow long-running streaming and do not block other requests.
+\core\session\manager::write_close();
+ignore_user_abort(true);
+@set_time_limit(0);
+
 // Set headers for Server-Sent Events.
 header('Content-Type: text/event-stream');
 header('Cache-Control: no-cache');
 header('Connection: keep-alive');
+// Hint to proxies/servers (e.g., Nginx) not to buffer SSE.
+header('X-Accel-Buffering: no');
+// Prevent proxies from modifying the event stream content.
+header('Cache-Control: no-transform');
 // CORS headers are not required for same-origin SSE and can be risky for authenticated endpoints.
 
-// Disable output buffering.
-if (ob_get_level()) {
-    ob_end_clean();
-}
+// Disable output buffering and compression; enable immediate flushing.
+@ini_set('zlib.output_compression', '0');
+@ini_set('output_buffering', '0');
+@ini_set('implicit_flush', '1');
+if (function_exists('apache_setenv')) { @apache_setenv('no-gzip', '1'); }
+while (ob_get_level() > 0) { @ob_end_flush(); }
+ob_implicit_flush(true);
+flush();
+
+// Send an initial SSE comment to open the stream immediately.
+echo ": stream-start\n\n";
+flush();
 
 // Function to send SSE data.
 function send_sse_data($data) {
@@ -70,11 +88,10 @@ try {
         exit;
     }
     
-    // Check if session is too old (configured TTL in seconds).
-    $ttl = (int) get_config('local_gis_ai_assistant', 'stream_session_ttl');
-    if ($ttl <= 0) {
-        $ttl = 300; // Fallback default.
-    }
+    // Check if session is too old (TTL in seconds from plugin configuration).
+    $cfg = local_gis_ai_assistant_get_config();
+    $ttl = (int)($cfg['stream_session_ttl'] ?? 300);
+    if ($ttl <= 0) { $ttl = 300; }
     if (time() - $sessiondata['created'] > $ttl) {
         send_sse_data(['type' => 'error', 'error' => 'Session expired']);
         exit;
@@ -95,11 +112,32 @@ try {
         $sessiondata['options']
     );
     
-    // Send completion data.
+    // Format final assembled content as HTML (Markdown -> HTML, sanitized) with fallbacks.
+    $context = context_system::instance();
+    $assembled = (string)($result['assembled_content'] ?? '');
+    $contenthtml = '';
+    if ($assembled !== '') {
+        // Normalize line endings and decode common escaped sequences (\\n, \\r, \\t).
+        $assembled = str_replace(["\r\n", "\r"], "\n", $assembled);
+        $assembled = preg_replace('/\\\r\\\n|\\\r|\\\n/', "\n", $assembled);
+        $assembled = preg_replace('/\\\t/', "\t", $assembled);
+        $assembled = preg_replace("/\n{3,}/", "\n\n", $assembled);
+        try {
+            $contenthtml = format_text($assembled, FORMAT_MARKDOWN, ['noclean' => false, 'filter' => true], $context);
+        } catch (\Throwable $fmtEx) {
+            $contenthtml = s($assembled);
+        }
+        if ($contenthtml === '' || strip_tags($contenthtml) === $assembled) {
+            $contenthtml = nl2br(s($assembled));
+        }
+    }
+    
+    // Send completion data (includes content_html for rich display).
     send_sse_data([
         'type' => 'done',
         'usage' => $result['usage'] ?? [],
-        'finish_reason' => $result['finish_reason'] ?? ''
+        'finish_reason' => $result['finish_reason'] ?? '',
+        'content_html' => $contenthtml
     ]);
     
     // Clean up session data.
