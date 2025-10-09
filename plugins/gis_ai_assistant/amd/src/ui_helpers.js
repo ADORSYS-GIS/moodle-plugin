@@ -55,6 +55,32 @@ define(['jquery'], function($) {
         },
 
         /**
+         * Create a message bubble from already formatted/safe HTML
+         * The provided HTML is expected to be sanitized on the server (format_text with noclean=false)
+         * @param {string} contentHtml HTML content
+         * @param {string} type Message type (user|ai|system)
+         * @returns {jQuery} Message bubble element
+         */
+        createMessageBubbleHtml: function(contentHtml, type) {
+            var avatarClass = type === 'user' ? 'user-avatar' : 'ai-avatar';
+            var bubbleClass = 'ai-message ai-message-bubble ai-' + type + '-message';
+
+            var bubble = $('<div class="' + bubbleClass + '">' +
+                          '<div class="ai-message-avatar ' + avatarClass + '"></div>' +
+                          '<div class="ai-message-content"></div>' +
+                          '</div>');
+
+            bubble.find('.ai-message-content').html(contentHtml);
+
+            var timestamp = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            bubble.find('.ai-message-content').append(
+                '<div class="ai-message-timestamp">' + timestamp + '</div>'
+            );
+
+            return bubble;
+        },
+
+        /**
          * Format number with proper separators
          * @param {number} num Number to format
          * @returns {string} Formatted number
@@ -209,6 +235,8 @@ define(['jquery'], function($) {
             var div = document.createElement('div');
             div.textContent = text;
             return div.innerHTML;
-        }
+        },
+
+        
     };
 });
