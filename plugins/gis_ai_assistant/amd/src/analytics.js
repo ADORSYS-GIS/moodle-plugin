@@ -45,8 +45,9 @@ define([
          * Initialize the analytics dashboard
          */
         init: function() {
-            this.bindEvents();
-            this.loadAnalytics();
+            // Explicitly reference AnalyticsUI to avoid context issues.
+            AnalyticsUI.bindEvents();
+            AnalyticsUI.loadAnalytics();
         },
 
         /**
