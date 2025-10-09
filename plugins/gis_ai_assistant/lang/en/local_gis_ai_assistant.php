@@ -28,6 +28,10 @@ $string['gis_ai_assistant:viewanalytics'] = 'View GIS AI Analytics';
 $string['gis_ai_assistant:manageplugin'] = 'Manage GIS AI Plugin';
 
 // Settings strings.
+$string['base_url'] = 'AI API Base URL';
+$string['base_url_desc'] = 'The base URL for the AI API (e.g., https://api.openai.com/v1). For OpenAI, if you omit /v1, it will be added automatically.';
+$string['api_key'] = 'AI API Key';
+$string['api_key_desc'] = 'The API key for authentication with the AI service.';
 $string['enabled'] = 'Enable AI functionality';
 $string['enabled_desc'] = 'Enable or disable AI features across the site.';
 $string['default_model'] = 'Default AI model';
@@ -60,6 +64,7 @@ $string['clear'] = 'Clear chat';
 $string['thinking'] = 'AI is thinking...';
 $string['ai_welcome'] = 'Hello! I am your AI assistant. How can I help you today?';
 $string['ai_disclaimer'] = 'AI responses are generated and may contain inaccuracies. Please verify important information.';
+$string['toggle_theme'] = 'Toggle theme';
 $string['confirm_clear_chat'] = 'Are you sure you want to clear the chat history?';
 $string['error_occurred'] = 'An error occurred while processing your request.';
 $string['rate_limit_exceeded'] = 'Rate limit exceeded. Please try again later.';
