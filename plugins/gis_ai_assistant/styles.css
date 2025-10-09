@@ -20,6 +20,44 @@
     overflow: hidden;
 }
 
+/* Preserve user/AI text line breaks for fallback render; reset for block elements */
+.ai-message-content,
+.ai-message-mini {
+    white-space: pre-wrap;
+}
+.ai-message-content > *,
+.ai-message-mini > * {
+    white-space: normal;
+}
+
+/* Better list formatting (supports nested lists) */
+.ai-message-content ul,
+.ai-message-content ol {
+    margin: 0.5rem 0 0.75rem 0;
+    padding-left: 1.25rem;
+    list-style-position: outside;
+}
+.ai-message-content ul { list-style-type: disc; }
+.ai-message-content ol { list-style-type: decimal; }
+.ai-message-content li {
+    margin: 0.2rem 0;
+}
+.ai-message-content li > p {
+    margin: 0.1rem 0;
+}
+
+/* Mini widget lists */
+.ai-message-mini ul,
+.ai-message-mini ol {
+    margin: 0.5rem 0 0.75rem 0;
+    padding-left: 1.25rem;
+    list-style-position: outside;
+}
+.ai-message-mini ul { list-style-type: disc; }
+.ai-message-mini ol { list-style-type: decimal; }
+.ai-message-mini li { margin: 0.2rem 0; }
+.ai-message-mini li > p { margin: 0.1rem 0; }
+
 .ai-chat-header {
     display: flex;
     justify-content: space-between;
@@ -93,6 +131,8 @@
     box-shadow: 0 2px 12px rgba(0,0,0,0.08);
     position: relative;
     max-width: 75%;
+    /* Preserve newlines in plain text nodes (e.g., during streaming before Markdown conversion) */
+    white-space: pre-wrap;
 }
 
 .ai-message.ai-user-message .ai-message-content {
@@ -140,10 +180,50 @@
     overflow-x: auto;
     margin: 0.75rem 0;
     font-size: 0.9rem;
+    /* Preserve newlines and allow wrapping for long lines */
+    white-space: pre-wrap;
+}
+
+/* Ensure code inside pre inherits preservation */
+.ai-message-content pre code {
+    white-space: inherit;
+}
+
+/* Unify monospace fonts across block and inline code */
+.ai-message-content pre,
+.ai-message-content code,
+.ai-message-mini pre,
+.ai-message-mini code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+/* Optional: keep code blocks from growing too tall */
+.ai-codeblock .ai-codeblock-code {
+    max-height: 65vh;
+    overflow: auto;
 }
 
 .ai-message.ai-user-message .ai-message-content pre {
     background: rgba(255,255,255,0.2);
+}
+
+/* Mermaid diagrams container */
+.ai-message-content .mermaid,
+.ai-message-mini .mermaid {
+    display: block;
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 0.75rem;
+    margin: 0.75rem 0;
+    overflow: auto;
+}
+
+/* Dark mode Mermaid container */
+.ai-chat-container.ai-dark .mermaid {
+    background: #2d3748;
+    border-color: #4a5568;
+    color: #e2e8f0;
 }
 
 .ai-typing-indicator {
@@ -233,6 +313,91 @@
     padding: 2rem;
     max-width: 1400px;
     margin: 0 auto;
+}
+
+/* ==========================================================================
+   ChatGPT-like Code Block Wrapper
+   ========================================================================== */
+
+/* Wrapper adds a header with language label and Copy button, plus consistent dark theme */
+.ai-codeblock {
+    border-radius: 10px;
+    border: 1px solid #e5e7eb;
+    overflow: hidden;
+    margin: 0.75rem 0;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+.ai-codeblock-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding: 0.4rem 0.6rem;
+    background: #111827; /* slate-900 */
+    color: #e5e7eb;      /* zinc-200 */
+    font-size: 0.8rem;
+    line-height: 1.2;
+}
+
+.ai-codeblock-lang {
+    opacity: 0.85;
+    text-transform: lowercase;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+.ai-codeblock-copy {
+    appearance: none;
+    border: 1px solid #374151; /* slate-700 */
+    background: transparent;
+    color: #e5e7eb;
+    border-radius: 6px;
+    padding: 2px 8px;
+    font-size: 0.75rem;
+    cursor: pointer;
+}
+
+.ai-codeblock-copy:hover {
+    background: #1f2937; /* slate-800 */
+}
+
+.ai-codeblock-code {
+    background: #1e1e1e; /* match highlight theme */
+}
+
+/* Remove default pre background/padding when inside wrapper so theme is consistent */
+.ai-codeblock pre {
+    margin: 0;
+    padding: 0.75rem;
+    background: transparent !important;
+    white-space: pre;   /* horizontal scroll like ChatGPT */
+    overflow: auto;
+}
+
+/* Avoid double background: let wrapper own the background */
+.ai-codeblock .hljs {
+    background: transparent !important;
+    color: #e5e7eb; /* ensure good contrast on dark bg */
+    line-height: 1.45;
+}
+
+/* Dark mode adjustments */
+.ai-chat-container.ai-dark .ai-codeblock {
+    border-color: #374151;
+}
+
+.ai-chat-container.ai-dark .ai-codeblock-header {
+    background: #0b1220;
+    color: #cbd5e1;
+}
+
+.ai-chat-container.ai-dark .ai-codeblock-copy {
+    border-color: #334155;
+    color: #cbd5e1;
+}
+
+.ai-chat-container.ai-dark .ai-codeblock-copy:hover {
+    background: #111827;
 }
 
 .ai-analytics-header {
@@ -567,6 +732,12 @@
     background: #f8f9fa;
 }
 
+/* Preserve code formatting inside widget messages as well */
+.ai-message-mini pre {
+    white-space: pre-wrap;
+    overflow-x: auto;
+}
+
 .ai-message-mini {
     margin-bottom: 0.75rem;
     padding: 0.75rem 1rem;
@@ -574,6 +745,8 @@
     font-size: 0.9rem;
     line-height: 1.4;
     animation: messageSlideIn 0.3s ease-out;
+    /* Preserve newlines in widget messages */
+    white-space: pre-wrap;
 }
 
 .ai-message-mini.user {
@@ -774,4 +947,49 @@
         background: #4a5568;
         color: #a0aec0;
     }
+}
+
+/* Manual Dark Theme Toggle (via .ai-dark class) */
+.ai-chat-container.ai-dark {
+    background: #2d3748;
+    border-color: #4a5568;
+}
+
+.ai-chat-container.ai-dark .ai-chat-header {
+    background: linear-gradient(135deg, #4a5568 0%, #2d3748 100%);
+    color: #e2e8f0;
+}
+
+.ai-chat-container.ai-dark .ai-chat-messages {
+    background: #1a202c;
+}
+
+.ai-chat-container.ai-dark .ai-message-content {
+    background: #2d3748;
+    color: #e2e8f0;
+}
+
+.ai-chat-container.ai-dark .ai-message.ai-ai-message .ai-message-content::before,
+.ai-chat-container.ai-dark .ai-message.ai-system-message .ai-message-content::before {
+    border-right-color: #2d3748;
+}
+
+.ai-chat-container.ai-dark .ai-chat-input-container {
+    background: #2d3748;
+    border-color: #4a5568;
+}
+
+.ai-chat-container.ai-dark .ai-message-input {
+    background: #1a202c;
+    border-color: #4a5568;
+    color: #e2e8f0;
+}
+
+.ai-chat-container.ai-dark .ai-typing-dots span {
+    background: #cbd5e0;
+}
+
+.ai-chat-container.ai-dark .ai-chat-footer {
+    background: #4a5568;
+    color: #a0aec0;
 }
