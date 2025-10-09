@@ -45,8 +45,8 @@ class request_validator {
         // Basic XSS prevention
         $message = htmlspecialchars($message, ENT_QUOTES | ENT_HTML5, 'UTF-8');
         
-        // Length validation
-        if (empty($message) || strlen($message) > 2000) {
+        // Length validation (align with UI textarea maxlength = 10000)
+        if (empty($message) || strlen($message) > 10000) {
             throw new \moodle_exception('invalid_message_length', 'local_gis_ai_assistant');
         }
         
@@ -91,7 +91,7 @@ class request_validator {
      * @throws \moodle_exception If validation fails
      */
     public static function validate_model($model) {
-        $allowedModels = ['gpt-4', 'gpt-4-turbo', 'gpt-3.5-turbo'];
+        $allowedModels = ['kivoyo', 'gpt-4-turbo', 'gpt-3.5-turbo', 'gpt-4o-mini', 'adorsys'];
         if (!in_array($model, $allowedModels)) {
             throw new \moodle_exception('invalid_model', 'local_gis_ai_assistant');
         }
