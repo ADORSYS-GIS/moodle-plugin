@@ -366,6 +366,11 @@ define([
             var makingDark = !$container.hasClass('ai-dark');
             $container.toggleClass('ai-dark', makingDark);
             try { window.localStorage.setItem(this.themeStorageKey, makingDark ? 'dark' : 'light'); } catch (e) {}
+            // Sync Mermaid theme and re-render any deferred diagrams.
+            try { if (Mermaid && Mermaid.setTheme) { Mermaid.setTheme(makingDark ? 'dark' : 'default'); } } catch (e2) {}
+            try { if (Mermaid && Mermaid.renderDeferred) { Mermaid.renderDeferred($container[0]); } } catch (e3) {}
+            // Re-highlight code blocks to adjust colors under new theme.
+            try { if (HL && HL.highlightIn) { HL.highlightIn($container); } } catch (e4) {}
         },
 
         loadHistory: function() {

@@ -76,7 +76,7 @@ define([], function() {
                 if (noiseline.test(ln)) { continue; }
                 if (versionline.test(ln)) { continue; }
                 if (syntaxerrorline.test(ln)) { continue; }
-                if (/^\s*```\s*$/.test(ln)) { continue; } // drop isolated fences
+                // Do NOT drop isolated ``` lines; they may close a fenced block we created.
                 out.push(ln);
             }
             return out.join('\n');
@@ -301,10 +301,29 @@ define([], function() {
             for (var i = 0; i < codes.length; i++) {
                 var code = codes[i];
                 var cls = (code.className || '').toLowerCase();
-                if (cls.indexOf('mermaid') === -1) { continue; }
                 var pre = code.parentNode && code.parentNode.tagName === 'PRE' ? code.parentNode : null;
                 if (!pre || !pre.parentNode) { continue; }
                 var raw = code.textContent || code.innerText || '';
+                // Decide whether this block is Mermaid by class or content.
+                var looksMermaid = (cls.indexOf('mermaid') !== -1) || /^(\s*)(graph|flowchart|sequenceDiagram|classDiagram|stateDiagram(?:-v2)?|erDiagram|journey)\b/m.test(raw) || /^\s*subgraph\b/m.test(raw);
+                if (!looksMermaid) { continue; }
+                // Lightweight normalization (similar to mermaid_loader normalization).
+                try {
+                    var lines = String(raw || '').split(/\r?\n/);
+                    var cleaned = [];
+                    var drop1 = /^\s*[A-Za-z][A-Za-z0-9_-]*Copy\s*$/i;
+                    var drop2 = /^\s*(?:text)?mermaid(?:\s+version.*)?\s*$/i;
+                    var dropFence = /^\s*```/;
+                    for (var j = 0; j < lines.length; j++) {
+                        var ln = lines[j];
+                        if (drop1.test(ln) || drop2.test(ln) || dropFence.test(ln)) { continue; }
+                        cleaned.push(ln);
+                    }
+                    raw = cleaned.join('\n').replace(/^\s+|\s+$/g, '');
+                    if (!/^(\s*)(graph|flowchart|sequenceDiagram|classDiagram|stateDiagram(?:-v2)?|erDiagram|journey)\b/.test(raw) && /^\s*subgraph\b/.test(raw)) {
+                        raw = 'graph TD\n' + raw;
+                    }
+                } catch (e) {}
                 var divMer = document.createElement('div');
                 divMer.className = 'mermaid';
                 divMer.textContent = raw;

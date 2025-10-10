@@ -969,6 +969,28 @@
     color: #e2e8f0;
 }
 
+/* Improve readability of inline code and pre blocks in dark theme even before HL wrapper loads */
+.ai-chat-container.ai-dark .ai-message-content code,
+.ai-chat-container.ai-dark .ai-message-mini code {
+    background: rgba(255,255,255,0.10);
+    color: #ffcc66;
+}
+
+.ai-chat-container.ai-dark .ai-message-content pre {
+    background: #111827; /* slate-900 */
+    color: #e5e7eb;
+    border: 1px solid #374151;
+}
+
+/* Links readability inside bubbles */
+.ai-message-content a {
+    color: #2563eb;
+    text-decoration: underline;
+}
+.ai-chat-container.ai-dark .ai-message-content a {
+    color: #93c5fd;
+}
+
 .ai-chat-container.ai-dark .ai-message.ai-ai-message .ai-message-content::before,
 .ai-chat-container.ai-dark .ai-message.ai-system-message .ai-message-content::before {
     border-right-color: #2d3748;

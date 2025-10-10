@@ -126,17 +126,21 @@ define([], function() {
             var codes = base.querySelectorAll ? base.querySelectorAll('pre code') : [];
             for (var i = 0; i < codes.length; i++) {
                 var code = codes[i];
-                if (!hasMermaidClass(code)) { continue; }
                 var pre = code.parentNode && code.parentNode.tagName === 'PRE' ? code.parentNode : null;
                 if (!pre) { continue; }
                 // If a neighboring .mermaid already exists (from previous pass), drop the pre to avoid duplicates.
                 var next = pre.nextSibling;
                 if (next && next.classList && next.classList.contains('mermaid')) { pre.parentNode.removeChild(pre); continue; }
                 var raw = code.textContent || code.innerText || '';
-                raw = normalizeMermaidText(raw);
+                var normalized = normalizeMermaidText(raw);
+                var clsMermaid = hasMermaidClass(code);
+                // Detect Mermaid content even if mis-labeled (e.g., language-css) by checking for directives.
+                var hasDirective = /^(\s*)(graph|flowchart|sequenceDiagram|classDiagram|stateDiagram(?:-v2)?|erDiagram|journey)\b/m.test(normalized);
+                var startsWithSub = /^\s*subgraph\b/m.test(normalized);
+                if (!(clsMermaid || hasDirective || startsWithSub)) { continue; }
                 var div = document.createElement('div');
                 div.className = 'mermaid';
-                div.textContent = raw;
+                div.textContent = normalized;
                 pre.parentNode.replaceChild(div, pre);
             }
         } catch (e) {}
@@ -168,17 +172,33 @@ define([], function() {
                     }
                 }
                 if (!mermaid || !targets.length) { return { rendered: 0, available: !!mermaid }; }
+                // Prefer modern mermaid.run which returns a Promise
                 if (mermaid.run) {
                     try {
-                        mermaid.run({ nodes: targets });
-                        return { rendered: targets.length, available: true };
-                    } catch (e) {}
+                        return Promise.resolve(mermaid.run({ nodes: targets }))
+                            .then(function(){ return { rendered: targets.length, available: true }; })
+                            .catch(function(err){
+                                try { console.warn('Mermaid.run failed', err); } catch (_) {}
+                                return { rendered: 0, available: true, error: err };
+                            });
+                    } catch (e) {
+                        return Promise.resolve({ rendered: 0, available: true, error: e });
+                    }
                 }
+                // Fallback to older API
                 if (mermaid.init) {
                     try {
-                        mermaid.init(undefined, base);
-                        return { rendered: targets.length, available: true };
-                    } catch (e2) { return { rendered: 0, available: true, error: e2 }; }
+                        var res = mermaid.init(undefined, base);
+                        // Some versions throw async; wrap in resolved Promise to unify API
+                        return Promise.resolve(res).then(function(){
+                            return { rendered: targets.length, available: true };
+                        }).catch(function(err){
+                            try { console.warn('Mermaid.init failed', err); } catch(_) {}
+                            return { rendered: 0, available: true, error: err };
+                        });
+                    } catch (e2) {
+                        return Promise.resolve({ rendered: 0, available: true, error: e2 });
+                    }
                 }
                 return { rendered: 0, available: true };
             } catch (e3) {
