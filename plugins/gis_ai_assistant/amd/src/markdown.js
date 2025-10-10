@@ -63,6 +63,26 @@ define([], function() {
         return s;
     }
 
+    // Remove common noise lines produced by LLM exports (e.g., "cssCopy", version banners, stray ``` lines).
+    function stripNoiseLines(md) {
+        try {
+            var lines = String(md || '').split(/\r?\n/);
+            var noiseline = /^\s*[A-Za-z][A-Za-z0-9_-]*Copy\s*$/i; // cssCopy, markdownCopy, luaCopy, lessCopy
+            var versionline = /^\s*(?:text)?mermaid(?:\s+version.*)?\s*$/i; // mermaid version 10.x
+            var syntaxerrorline = /^\s*syntax\s+error\s+in\b/i; // Syntax error in textmermaid ...
+            var out = [];
+            for (var i = 0; i < lines.length; i++) {
+                var ln = lines[i];
+                if (noiseline.test(ln)) { continue; }
+                if (versionline.test(ln)) { continue; }
+                if (syntaxerrorline.test(ln)) { continue; }
+                if (/^\s*```\s*$/.test(ln)) { continue; } // drop isolated fences
+                out.push(ln);
+            }
+            return out.join('\n');
+        } catch (e) { return md; }
+    }
+
     // Heuristic: wrap likely Mermaid blocks that aren't fenced so they can render.
     function fenceMermaidHeuristic(s) {
         try {
@@ -176,7 +196,7 @@ define([], function() {
     // Minimal safe fallback Markdown renderer (headings, bold, italics, code, lists, hr, line breaks).
     function fallbackMarkdownToHtml(md) {
         if (!md) { return ''; }
-        md = fenceMermaidHeuristic(maybeNormalizeSingleLineCode(md));
+        md = stripNoiseLines(fenceMermaidHeuristic(maybeNormalizeSingleLineCode(md)));
         // Normalize common malformed fences like "` ``" -> "```".
         var src = String(md).replace(/`\s*`\s*`/g, '```');
         var html = escapeHTML(src);
@@ -273,6 +293,27 @@ define([], function() {
         }
     }
 
+    function convertMermaidBlocksInHtml(html) {
+        try {
+            var div = document.createElement('div');
+            div.innerHTML = String(html || '');
+            var codes = div.querySelectorAll ? div.querySelectorAll('pre code') : [];
+            for (var i = 0; i < codes.length; i++) {
+                var code = codes[i];
+                var cls = (code.className || '').toLowerCase();
+                if (cls.indexOf('mermaid') === -1) { continue; }
+                var pre = code.parentNode && code.parentNode.tagName === 'PRE' ? code.parentNode : null;
+                if (!pre || !pre.parentNode) { continue; }
+                var raw = code.textContent || code.innerText || '';
+                var divMer = document.createElement('div');
+                divMer.className = 'mermaid';
+                divMer.textContent = raw;
+                pre.parentNode.replaceChild(divMer, pre);
+            }
+            return div.innerHTML;
+        } catch (e) { return html; }
+    }
+
     function renderWithMarked(md) {
         try {
             if (!window.marked) { return null; }
@@ -285,7 +326,8 @@ define([], function() {
                     mangle: false
                 });
             } catch (e) {}
-            var html = window.marked.parse(String(fenceMermaidHeuristic(maybeNormalizeSingleLineCode(md)) || ''));
+            var prepped = stripNoiseLines(fenceMermaidHeuristic(maybeNormalizeSingleLineCode(md)));
+            var html = window.marked.parse(String(prepped || ''));
             html = convertMermaidBlocksInHtml(html);
             // Prefer DOMPurify if available, else use internal sanitizer.
             if (window.DOMPurify && window.DOMPurify.sanitize) {

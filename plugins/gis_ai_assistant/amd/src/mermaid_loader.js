@@ -72,19 +72,42 @@ define([], function() {
     function normalizeMermaidText(text) {
         try {
             var s = String(text || '');
-            var t = s.replace(/^\s+/, '').replace(/\s+$/, '');
-            // Remove a leading language hint line sometimes emitted by LLMs (e.g., "textmermaid" or "mermaid").
-            if (/^\s*(?:text)?mermaid\b/i.test(t)) {
-                // Drop the first line only
-                s = t.replace(/^.*\n?/, '');
-                t = s.replace(/^\s+/, '');
+            // Split into lines for aggressive cleanup.
+            var lines = s.split(/\r?\n/);
+
+            // 1) Drop common noise lines that LLMs sometimes include (e.g., "cssCopy", "markdownCopy").
+            var noiseline = /^\s*[A-Za-z][A-Za-z0-9_-]*Copy\s*$/i;
+            var versionline = /^\s*(?:text)?mermaid(?:\s+version.*)?\s*$/i;
+            var syntaxerrorline = /^\s*syntax\s+error\s+in\b/i;
+            var cleaned = [];
+            for (var i = 0; i < lines.length; i++) {
+                var ln = lines[i];
+                if (noiseline.test(ln)) { continue; }
+                if (versionline.test(ln)) { continue; }
+                if (syntaxerrorline.test(ln)) { continue; }
+                // Ignore stray Markdown fences if present inside captured code.
+                if (/^\s*```/.test(ln)) { continue; }
+                cleaned.push(ln);
             }
+            lines = cleaned;
+
+            // 2) Trim leading non-directive lines before the first Mermaid directive.
+            var directive = /^(\s*)(graph|flowchart|sequenceDiagram|classDiagram|stateDiagram(?:-v2)?|erDiagram|journey)\b/;
+            var firstIdx = -1;
+            for (var j = 0; j < lines.length; j++) {
+                if (directive.test(lines[j])) { firstIdx = j; break; }
+            }
+            if (firstIdx > 0) { lines = lines.slice(firstIdx); }
+
+            var t = lines.join('\n').replace(/^\s+/, '').replace(/\s+$/, '');
+
+            // 3) If the block starts with a subgraph without a leading graph directive, prepend a default.
             var hasDirective = /^\s*(graph|flowchart|sequenceDiagram|classDiagram|stateDiagram(?:-v2)?|erDiagram|journey)\b/.test(t);
             var startsWithSub = /^\s*subgraph\b/.test(t);
             if (!hasDirective && startsWithSub) {
-                s = 'graph TD\n' + s;
+                t = 'graph TD\n' + t;
             }
-            return s;
+            return t;
         } catch (_) { return text; }
     }
 
