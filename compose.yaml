@@ -29,10 +29,10 @@ services:
     volumes:
       # --- Volume Mounts Explained ---
       # 1. Mount your Rust source code into the container.
-      #    - Host Path: ./packages/rust_processor
+      #    - Host Path: ./packages/ai_bridge
       #    - Container Path: /app/src
       #    - Why: This gives the 'cargo' command inside the container access to your code.
-      - ./packages/rust_processor:/app/src
+      - ./packages/ai_bridge:/app/src
 
       # 2. Mount the Cargo registry and cache directories.
       #    - Why (CRITICAL OPTIMIZATION): The first time you build, Cargo downloads gigabytes of
@@ -75,31 +75,36 @@ services:
       EXTRA_LOCALES: "fr_FR.UTF-8 UTF-8, de_DE.UTF-8 UTF-8"
     env_file:
       - .env # Loads the OPENAI_API_KEY for the Moodle environment.
+    # Custom initialization command that exits after setup
     entrypoint: /bin/bash
-    command: # This script was removed from https://github.com/bitnami/containers/blob/main/bitnami/moodle/5.0/debian-12/rootfs/opt/bitnami/scripts/moodle/entrypoint.sh
+    command:
       - -c
       - |
-        set -ex
-
-        # Load Moodle environment
+        set -e
+        
+        # Load Moodle environment and libraries
         . /opt/bitnami/scripts/moodle-env.sh
-
-        # Load libraries
         . /opt/bitnami/scripts/libbitnami.sh
         . /opt/bitnami/scripts/liblog.sh
         . /opt/bitnami/scripts/libwebserver.sh
-
+        
         print_welcome_page
-
-        info "** Starting Moodle setup **"
+        info "** Starting Moodle initialization **"
+        
+        # Run setup scripts without starting services
         . /opt/bitnami/scripts/"$(web_server_type)"/setup.sh
         . /opt/bitnami/scripts/php/setup.sh
         . /opt/bitnami/scripts/mysql-client/setup.sh
         . /opt/bitnami/scripts/postgresql-client/setup.sh
         . /opt/bitnami/scripts/moodle/setup.sh
-        . /post-init.sh
-        info "** Moodle setup finished! **"
-
+        
+        # Run post-init if it exists
+        if [ -f "/post-init.sh" ]; then
+          . /post-init.sh
+        fi
+        
+        # Exit successfully without starting Apache/cron
+        exit 0
     volumes:
       # Persistent volumes for Moodle's code and data directories.
       - moodle_data:/bitnami/moodle
@@ -122,24 +127,44 @@ services:
       - "8080:8080"
       - "8443:8443"
     environment: *moodle_environment
+    env_file:
+      - .env
+    entrypoint: /bin/bash
+    command:
+      - -c
+      - |
+        # Fix permissions for bind-mounted plugin directories
+        if [ -d "/bitnami/moodle/local/gis_aiassistant" ]; then
+          chmod -R 755 /bitnami/moodle/local/gis_aiassistant
+        fi
+        if [ -d "/bitnami/moodle/local/ai_rust_chat" ]; then
+          chmod -R 755 /bitnami/moodle/local/ai_rust_chat
+        fi
+        if [ -d "/bitnami/moodle/local/gis_ai_assistant1" ]; then
+          chmod -R 755 /bitnami/moodle/local/gis_ai_assistant1
+        fi
+        
+        # Start the original Moodle entrypoint
+        exec /opt/bitnami/scripts/moodle/entrypoint.sh /opt/bitnami/scripts/moodle/run.sh
     volumes:
       - moodle_data:/bitnami/moodle
       - moodledata_data:/bitnami/moodledata
       # Local source‑controlled plugins (read‑only)
-      - ./plugins:/bitnami/moodle/plugins/custom/plugins:ro
+      - ./plugins/mew:/bitnami/moodle/plugins/custom/plugins:ro
       # Plugins downloaded via Moodle UI go here (read‑write)
       - plugins_downloads:/bitnami/moodle/plugins/downloaded:ro
       # 2. Mount your custom PHP plugin source code.
-      - ./plugins/local_aiassistant:/bitnami/moodle/local/aiassistant:ro
-
+      - ./plugins/local_gis_aiassistant:/bitnami/moodle/local/gis_aiassistant
+      - ./plugins/local/gis_ai_assistant1:/bitnami/moodle/local/gis_ai_assistant1
+      
       # 3. Mount the **RESULT** of your manual build directly into the container's "toolbox".
-      #    - Host Path: ./packages/rust_processor/target/release/moodle-ai-processor
+      #    - Host Path: ./packages/ai_bridge/target/release/moodle-ai-processor
       #    - Container Path: /app/moodle-ai-processor
       #    - Why: This takes the specific binary file you created and places it at the
       #      exact path ('/app/moodle-ai-processor') that your PHP code expects to find it.
       #      The ':ro' (read-only) flag is a security best practice, as Moodle
       #      should never need to modify its own executable.
-      - ./packages/rust_processor/target/release/moodle-ai-processor:/app/moodle-ai-processor:ro
+      - ./packages/ai_bridge/target/release/moodle-ai-processor:/app/moodle-ai-processor:ro
     depends_on:
       <<: *moodle_depends_on
       moodle-init:

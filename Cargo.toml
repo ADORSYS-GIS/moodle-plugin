@@ -2,7 +2,7 @@
 members = [
     "packages/moodle-wasm-example",
     "packages/operator",
-    "packages/rust_processor",
+    "packages/ai_bridge",
 ]
 
 [profile.prod]
