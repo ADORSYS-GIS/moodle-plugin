@@ -22,6 +22,11 @@ services:
       MOODLE_SMTP_PORT: 1025
       BITNAMI_DEBUG: true
       EXTRA_LOCALES: "fr_FR.UTF-8 UTF-8, de_DE.UTF-8 UTF-8"
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      OPENAI_BASE_URL: ${OPENAI_BASE_URL}
+      OPENAI_MODEL: ${OPENAI_MODEL}
+      MAX_TOKENS: ${MAX_TOKENS}
+      SUMMARIZE_THRESHOLD: ${SUMMARIZE_THRESHOLD}
     entrypoint: /bin/bash
     command: # This script was removed from https://github.com/bitnami/containers/blob/main/bitnami/moodle/5.0/debian-12/rootfs/opt/bitnami/scripts/moodle/entrypoint.sh
       - -c
@@ -44,12 +49,13 @@ services:
         . /opt/bitnami/scripts/mysql-client/setup.sh
         . /opt/bitnami/scripts/postgresql-client/setup.sh
         . /opt/bitnami/scripts/moodle/setup.sh
-        . /post-init.sh
         info "** Moodle setup finished! **"
 
     volumes:
       - moodle_data:/bitnami/moodle
       - moodledata_data:/bitnami/moodledata
+      # Mount the compiled Rust binary
+      - ./build:/bitnami/moodle/openai-sidecar:ro
     depends_on: &moodle_depends_on
       mariadb:
         condition: service_started
@@ -68,11 +74,32 @@ services:
       - "8080:8080"
       - "8443:8443"
     environment: *moodle_environment
+    entrypoint: /bin/bash
+    command:
+      - -c
+      - |
+        # Start OpenAI Sidecar in background first
+        echo "Starting OpenAI Moodle Sidecar..."
+        nohup /bitnami/moodle/openai-sidecar/openai-moodle-sidecar \
+          --api-key="${OPENAI_API_KEY}" \
+          --base-url="${OPENAI_BASE_URL}" \
+          --model="${OPENAI_MODEL}" \
+          --max-tokens="${MAX_TOKENS}" \
+          --summarize-threshold="${SUMMARIZE_THRESHOLD}" \
+          --http-mode --port=8081 > /var/log/sidecar.log 2>&1 &
+        echo "Sidecar started in background"
+        
+        # Start Moodle normally with proper arguments
+        exec /opt/bitnami/scripts/moodle/entrypoint.sh /opt/bitnami/scripts/moodle/run.sh
     volumes:
       - moodle_data:/bitnami/moodle
       - moodledata_data:/bitnami/moodledata
       # Local source‑controlled plugins (read‑only)
-      - ./plugins:/bitnami/moodle/plugins/custom/plugins:ro
+      - ./plugins/plugin:/bitnami/moodle/plugins/custom/plugins:ro
+      # AI assistant plugin (read-only)
+      - ./plugins/local/openai_assistant:/bitnami/moodle/local/openai_assistant:ro
+      # Mount the compiled Rust binary
+      - ./build:/bitnami/moodle/openai-sidecar:ro
       # Plugins downloaded via Moodle UI go here (read‑write)
       - plugins_downloads:/bitnami/moodle/plugins/downloaded:ro
     depends_on:

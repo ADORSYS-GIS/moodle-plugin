@@ -1,0 +1,329 @@
+/* Floating Chat Button */
+#openai-chat-button {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    font-size: 24px;
+    z-index: 9998;
+    transition: all 0.3s ease;
+    user-select: none;
+}
+
+#openai-chat-button:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+}
+
+/* Welcome Popup */
+#openai-welcome-popup {
+    position: fixed;
+    bottom: 100px;
+    right: 20px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    z-index: 9999;
+    max-width: 320px;
+    animation: slideInUp 0.5s ease;
+}
+
+.openai-welcome-content {
+    padding: 20px;
+}
+
+.openai-welcome-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.openai-welcome-icon {
+    font-size: 24px;
+}
+
+.openai-welcome-header h4 {
+    margin: 0;
+    color: #333;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.openai-welcome-content p {
+    margin: 0 0 10px 0;
+    color: #666;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.openai-welcome-content ul {
+    margin: 0 0 20px 0;
+    padding-left: 20px;
+    font-size: 14px;
+    color: #666;
+}
+
+.openai-welcome-content li {
+    margin-bottom: 5px;
+}
+
+.openai-welcome-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.openai-welcome-btn-primary,
+.openai-welcome-btn-secondary {
+    padding: 10px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    flex: 1;
+    border: none;
+    font-weight: 500;
+}
+
+.openai-welcome-btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.openai-welcome-btn-secondary {
+    background: transparent;
+    color: #666;
+    border: 1px solid #ddd;
+}
+
+/* Chat Modal Overlay */
+#openai-chat-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    /* Force overlay above page UI */
+    z-index: 2147483640 !important;
+    animation: fadeIn 0.3s ease;
+    pointer-events: auto !important;
+}
+
+/* Modal Content Container */
+.openai-modal-content {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    border-radius: 12px;
+    width: 500px;
+    max-width: 90vw;
+    height: 600px;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    /* Force content above overlay and other UI */
+    z-index: 2147483647 !important;
+}
+
+.openai-modal-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 15px 20px;
+    border-radius: 12px 12px 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.openai-modal-header h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.openai-close-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.openai-close-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.openai-modal-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    overflow: hidden;
+}
+
+/* Chat Messages */
+.openai-chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    margin-bottom: 15px;
+    padding: 10px;
+    background: #f8f9fa;
+    border-radius: 8px;
+}
+
+.openai-message {
+    margin-bottom: 15px;
+    padding: 12px;
+    border-radius: 8px;
+    max-width: 85%;
+    word-wrap: break-word;
+    clear: both;
+}
+
+.openai-message.user {
+    background: #007bff;
+    color: white;
+    margin-left: auto;
+    float: right;
+    clear: both;
+}
+
+.openai-message.ai {
+    background: white;
+    border: 1px solid #e9ecef;
+    margin-right: auto;
+    float: left;
+    clear: both;
+}
+
+.openai-message.error {
+    background: #f8d7da;
+    border: 1px solid #f5c6cb;
+    color: #721c24;
+    max-width: 100%;
+    clear: both;
+}
+
+.openai-welcome-message {
+    max-width: 100% !important;
+    background: linear-gradient(135deg, #f8f9ff 0%, #f0f4ff 100%) !important;
+    border: 1px solid #e1e8ff !important;
+}
+
+.openai-welcome-header-small {
+    margin-bottom: 10px;
+    font-size: 16px;
+    color: #4a5568;
+}
+
+.openai-welcome-message ul {
+    margin: 10px 0;
+    padding-left: 20px;
+}
+
+.openai-welcome-message li {
+    margin-bottom: 5px;
+}
+
+/* Input Container */
+.openai-chat-input-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex-shrink: 0;
+}
+
+.openai-select {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 14px;
+    background: white;
+}
+
+#openai-message {
+    resize: vertical;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 14px;
+}
+
+#openai-send-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+#openai-send-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Typing indicator */
+.openai-typing {
+    display: inline-block;
+    animation: pulse 1.5s infinite;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideInUp {
+    from {
+        transform: translateY(100px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .openai-modal-content {
+        width: 95vw;
+        height: 90vh;
+    }
+    
+    #openai-welcome-popup {
+        right: 10px;
+        left: 10px;
+        max-width: none;
+    }
+}
