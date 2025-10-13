@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="{{ output.get_lang() }}">
+<head>
+    {{{ output.standard_head_html }}}
+</head>
+<body {{{ bodyattributes }}} class="bg-gray-50 flex items-center justify-center min-h-screen">
+
+    <main class="w-full max-w-md p-8 bg-white shadow rounded">
+        <h1 class="text-2xl font-bold text-center mb-6">{{ pageheading }}</h1>
+        {{{ maincontent }}}
+    </main>
+
+    {{{ output.standard_end_of_body_html }}}
+</body>
+</html>

@@ -1,0 +1,76 @@
+# Default values for moodle-operator chart
+global:
+  nameOverride: ""
+  fullnameOverride: ""
+
+operator:
+  defaultPodOptionsStrategy: overwrite
+
+  controllers:
+    main:
+      enabled: true
+      type: deployment  # Explicitly set the controller type
+      strategy: Recreate
+      pod:
+        securityContext:
+          fsGroup: 65534
+          runAsGroup: 65534
+          runAsNonRoot: true
+          runAsUser: 65534
+      containers:
+        main:
+          image:
+            repository: moodle-operator
+            tag: "1.16.0"
+            pullPolicy: IfNotPresent
+          resources:
+            limits:
+              cpu: 500m
+              memory: 512Mi
+            requests:
+              cpu: 100m
+              memory: 128Mi
+          securityContext:  # Container-specific security context
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 65534
+            capabilities:
+              drop:
+                - ALL
+      serviceAccount:
+        identifier: default
+
+  service:
+    main:
+      controller: main
+      ports:
+        http:
+          port: 8080
+
+  serviceAccount:
+    default:
+      enabled: true
+      annotations: {}
+
+  rbac:
+    roles:
+      operator:
+        type: Role
+        rules:
+          - apiGroups: [""]
+            resources: ["pods", "services", "endpoints", "events", "configmaps", "secrets", "persistentvolumeclaims"]
+            verbs: ["get", "list", "watch"]
+          - apiGroups: ["apps"]
+            resources: ["deployments"]
+            verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+          - apiGroups: ["moodle.adorsys.com"]
+            resources: ["moodles", "moodles/status", "moodles/finalizers"]
+            verbs: ["get", "list", "watch", "update", "patch"]
+    bindings:
+      operator:
+        type: RoleBinding
+        roleRef:
+          identifier: operator
+        subjects:
+          - identifier: default

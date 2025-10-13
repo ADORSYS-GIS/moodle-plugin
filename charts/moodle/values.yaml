@@ -3,26 +3,17 @@ moodle:
   moodleUsername: admin
   moodlePassword: adorsys-gis
   moodleEmail: gis-udm@adorsys.com
-  moodleDatabaseType: pgsql
   service:
     type: LoadBalancer
-
   mariadb:
     enabled: false
-
-  postgresql:
-    enabled: false
-
   persistence:
     enabled: true
     existingClaim: "" #create an external PVC and set this to its name
     size: 10Gi
-
   externalDatabase:
     enabled: false
-
 postgresql:
-  enabled: false
-
+  enabled: false    
 cnpg:
   enabled: false
