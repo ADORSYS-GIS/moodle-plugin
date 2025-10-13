@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="{{ output.get_lang() }}">
+<head>
+    <meta charset="utf-8" />
+    <title>{{ sitename }}</title>
+    {{{ output.standard_head_html }}}
+</head>
+<body {{{ bodyattributes }}} class="bg-yellow-50 text-yellow-900">
+
+    <main class="min-h-screen flex flex-col items-center justify-center px-4 text-center">
+        <div class="max-w-xl">
+            <h1 class="text-3xl font-bold mb-4">{{ sitename }}</h1>
+            {{{ maincontent }}}
+        </div>
+    </main>
+
+    {{{ output.standard_end_of_body_html }}}
+</body>
+</html>

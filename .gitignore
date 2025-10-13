@@ -29,5 +29,7 @@ config.json
 target
 *.tgz
 
+frontend-example
 
-frontend-example 
+# Ignore generated theme build
+outputs/  
