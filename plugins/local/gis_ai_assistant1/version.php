@@ -5,7 +5,7 @@ declare(strict_types=1);
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'local_gis_ai_assistant1';
-$plugin->version   = 2025101400; // YYYYMMDDXX
+$plugin->version   = 2025101401; // YYYYMMDDXX
 $plugin->requires  = 2025040100; // Moodle 5.0+
 $plugin->maturity  = MATURITY_ALPHA;
 $plugin->release   = '0.1.0';
