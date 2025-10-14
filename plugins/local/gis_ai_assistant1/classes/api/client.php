@@ -37,7 +37,6 @@ class client {
 
         $json = json_encode($payload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 
-        $ch = curl_init($endpoint);
         $headers = [
             'Content-Type: application/json',
             'Authorization: Bearer ' . $apikey,
@@ -45,39 +44,47 @@ class client {
         ];
 
         if ($stream) {
+            // Streaming mode: keep raw cURL to support write callback.
+            // Caller should set response headers appropriately (e.g.,
+            // Content-Type: text/event-stream, Cache-Control: no-cache).
+            $ch = curl_init($endpoint);
             curl_setopt($ch, CURLOPT_WRITEFUNCTION, function($ch, $data) {
                 echo $data;
                 flush();
                 return strlen($data);
             });
             curl_setopt($ch, CURLOPT_TIMEOUT, 0);
-        } else {
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
-        }
-
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $json);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-
-        $resp = curl_exec($ch);
-        $errno = curl_errno($ch);
-        $err = curl_error($ch);
-        $http = (int)curl_getinfo($ch, CURLINFO_HTTP_CODE);
-
-        if ($stream) {
+            curl_setopt($ch, CURLOPT_POST, true);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $json);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+            $resp = curl_exec($ch);
+            // In streaming, we don't validate $resp; we streamed it already.
             curl_close($ch);
             return ['streaming' => true];
         }
 
-        curl_close($ch);
+        // Non-streaming: use Moodle's curl wrapper for proxy/cert compliance.
+        global $CFG; // ensure core libs are available
+        if (!class_exists('curl')) {
+            // Fallback to include if needed.
+            require_once($CFG->libdir . '/filelib.php');
+        }
+        $curl = new \curl();
+        $options = [
+            'timeout' => $timeout,
+            'CURLOPT_HTTPHEADER' => $headers,
+            'RETURNTRANSFER' => true,
+        ];
+        $resp = $curl->post($endpoint, $json, $options);
+        $info = method_exists($curl, 'get_info') ? $curl->get_info() : [];
+        $http = (int)($info['http_code'] ?? 0);
 
-        if ($errno || $http >= 400) {
-            logger::error('AI endpoint call failed', ['errno' => $errno, 'error' => $err, 'http' => $http, 'endpoint' => $endpoint]);
-            throw new \RuntimeException('AI endpoint call failed: ' . ($err ?: 'HTTP ' . $http));
+        if ($resp === false || $http >= 400) {
+            logger::error('AI endpoint call failed', ['http' => $http, 'endpoint' => $endpoint]);
+            throw new \RuntimeException('AI endpoint call failed' . ($http ? ': HTTP ' . $http : ''));
         }
 
-        $data = json_decode($resp, true);
+        $data = json_decode((string)$resp, true);
         if (json_last_error() !== JSON_ERROR_NONE) {
             logger::error('Invalid JSON from AI endpoint: ' . json_last_error_msg());
             throw new \RuntimeException('Invalid JSON from AI endpoint');
