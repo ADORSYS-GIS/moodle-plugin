@@ -21,3 +21,8 @@ $string['invalidemail'] = 'Invalid email address provided';
 $string['apiresponseerror'] = 'AI API returned an error: {$a}';
 $string['emptyresponse'] = 'The AI response was empty.';
 $string['invalidmode'] = 'Invalid AI_RUST_MODE: {$a}';
+
+// High-priority backend error strings
+$string['ffierror'] = 'Rust FFI error: {$a}';
+$string['apierror'] = 'Rust API request failed: {$a}';
+$string['invalidjson'] = 'Invalid JSON received from backend.';
