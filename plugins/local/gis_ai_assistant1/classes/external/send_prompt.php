@@ -8,6 +8,7 @@ defined('MOODLE_INTERNAL') || die();
 use local_gis_ai_assistant1\api\rust_bridge;
 use local_gis_ai_assistant1\api\response_handler;
 use local_gis_ai_assistant1\helpers\logger;
+use local_gis_ai_assistant1\analytics\usage_tracker;
 // External API base definitions are in global namespace; use fully-qualified names below.
 
 require_once($CFG->libdir . '/externallib.php');
@@ -59,11 +60,15 @@ class send_prompt extends base_external {
 
             $raw = rust_bridge::send_prompt($params['prompt'], $USER->email, $opts);
             $processed = response_handler::process($raw);
+            // Log successful interaction (anonymised prompt).
+            usage_tracker::log_interaction((int)$USER->id, (string)$params['prompt'], $processed, true, (int)$context->id, 0);
             return self::success([
                 'content' => $processed['content'],
                 'tokens'  => $processed['tokens'] ?? 0,
             ]);
         } catch (\Throwable $e) {
+            // Log failed interaction.
+            try { usage_tracker::log_interaction((int)$USER->id, (string)$params['prompt'], ['tokens' => 0], false, (int)$context->id, 0); } catch (\Throwable $ignored) {}
             self::handle_exception($e, 'sendpromptfailed');
         }
     }
