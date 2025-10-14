@@ -13,4 +13,9 @@ $capabilities = [
         'contextlevel' => CONTEXT_SYSTEM,
         'archetypes' => [ 'manager' => CAP_ALLOW ],
     ],
+    'local/gis_ai_assistant1:viewownanalytics' => [
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_USER,
+        'archetypes' => [ 'user' => CAP_ALLOW ],
+    ],
 ];
