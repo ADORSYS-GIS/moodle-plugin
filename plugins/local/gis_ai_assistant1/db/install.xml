@@ -15,5 +15,26 @@
         <KEY NAME="userid_fk" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
       </KEYS>
     </TABLE>
+    <TABLE NAME="gis_ai_logs" COMMENT="AI Assistant usage logs">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true"/>
+        <FIELD NAME="timestamp" TYPE="int" LENGTH="10" NOTNULL="true"/>
+        <FIELD NAME="prompt_hash" TYPE="char" LENGTH="64" NOTNULL="true"/>
+        <FIELD NAME="response_hash" TYPE="char" LENGTH="64" NOTNULL="false"/>
+        <FIELD NAME="tokens" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="0"/>
+        <FIELD NAME="status" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1"/>
+        <FIELD NAME="contextid" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="0"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="0"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="userid_fk" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="userid_idx" UNIQUE="false" FIELDS="userid"/>
+        <INDEX NAME="timestamp_idx" UNIQUE="false" FIELDS="timestamp"/>
+      </INDEXES>
+    </TABLE>
   </TABLES>
 </XMLDB>
