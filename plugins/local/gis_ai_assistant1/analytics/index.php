@@ -14,8 +14,20 @@ $PAGE->set_pagelayout('report');
 $PAGE->set_title(get_string('analytics', 'local_gis_ai_assistant1'));
 $PAGE->set_heading(get_string('analytics', 'local_gis_ai_assistant1'));
 
+// Optional filters from query string.
+$datefrom = optional_param('date_from', 0, PARAM_INT);
+$dateto   = optional_param('date_to', 0, PARAM_INT);
+$userid   = optional_param('user_id', 0, PARAM_INT);
+
+$filters = [];
+if ($datefrom) { $filters['date_from'] = $datefrom; }
+if ($dateto) { $filters['date_to'] = $dateto; }
+if ($userid) { $filters['user_id'] = $userid; }
+
+// Generate analytics rows.
+$rows = \local_gis_ai_assistant1\analytics\report_generator::generate($filters);
+
 // Render analytics using renderable + mustache template.
-$rows = [];
 $renderable = new \local_gis_ai_assistant1\output\analytics($rows);
 
 echo $OUTPUT->header();
