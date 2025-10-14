@@ -16,6 +16,14 @@ use moodle_exception;
 
 class env_loader {
     /**
+     * Per-request cache of resolved env values (env or defaults).
+     * Note: do not cache per-call fallback values to avoid cross-call contamination.
+     *
+     * @var array<string,string>
+     */
+    private static array $cache = [];
+
+    /**
      * Defaults and required markers:
      *  - null = required (no default)
      *  - string = default value
@@ -46,17 +54,22 @@ class env_loader {
      * @throws moodle_exception
      */
     public static function get(string $key, $fallback = null): string {
+        if (array_key_exists($key, self::$cache)) {
+            return self::$cache[$key];
+        }
+
         $env = getenv($key);
         if ($env !== false) {
-            return (string)$env;
+            return self::$cache[$key] = (string)$env;
         }
 
         if ($fallback !== null) {
+            // Do not cache runtime fallback.
             return (string)$fallback;
         }
 
         if (array_key_exists($key, self::$defaults) && self::$defaults[$key] !== null) {
-            return (string)self::$defaults[$key];
+            return self::$cache[$key] = (string)self::$defaults[$key];
         }
 
         // Required and missing.
@@ -78,6 +91,23 @@ class env_loader {
     public static function get_int(string $key, int $fallback = 0): int {
         $val = self::get($key, (string)$fallback);
         return (int)$val;
+    }
+
+    /**
+     * Get CSV env as array (trimmed, unique, non-empty).
+     *
+     * @param string $key
+     * @param string $sep
+     * @return string[]
+     */
+    public static function get_array(string $key, string $sep = ','): array {
+        $raw = self::get($key, '');
+        if ($raw === '') {
+            return [];
+        }
+        $items = array_map('trim', explode($sep, $raw));
+        $items = array_filter($items, static fn($v) => $v !== '');
+        return array_values(array_unique($items));
     }
 
     /**
