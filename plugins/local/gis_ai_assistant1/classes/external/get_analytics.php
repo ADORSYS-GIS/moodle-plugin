@@ -33,18 +33,35 @@ class get_analytics extends base_external {
      * @return array
      */
     public static function execute(string $filters): array {
+        global $USER;
         $params = self::validate_parameters(self::execute_parameters(), [
             'filters' => $filters,
         ]);
-
-        $context = context_system::instance();
-        self::validate_context($context);
-        require_capability('local/gis_ai_assistant1:viewanalytics', $context);
 
         try {
             $decoded = json_decode($params['filters'], true) ?? [];
             if (json_last_error() !== JSON_ERROR_NONE) {
                 throw new moodle_exception('invalidjson', 'local_gis_ai_assistant1');
+            }
+
+            $context = context_system::instance();
+            self::validate_context($context);
+
+            $isadmin = has_capability('local/gis_ai_assistant1:viewanalytics', $context);
+            if (!$isadmin) {
+                $canown = has_capability('local/gis_ai_assistant1:viewownanalytics', $context);
+                if ($canown) {
+                    if (empty($decoded['user_id'])) {
+                        $decoded['user_id'] = (int)$USER->id; // default to self when not provided
+                    }
+                    if ((int)$decoded['user_id'] !== (int)$USER->id) {
+                        // Not self; require full analytics capability (throws exception)
+                        require_capability('local/gis_ai_assistant1:viewanalytics', $context);
+                    }
+                } else {
+                    // No permission for analytics
+                    require_capability('local/gis_ai_assistant1:viewanalytics', $context);
+                }
             }
 
             $data = [];
@@ -55,7 +72,7 @@ class get_analytics extends base_external {
             }
 
             return self::success(['data' => $data]);
-        } catch (\Throwable $e) {
+        } catch (\\Throwable $e) {
             self::handle_exception($e, 'getanalyticsfailed');
         }
     }
