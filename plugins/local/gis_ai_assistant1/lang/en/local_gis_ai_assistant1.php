@@ -12,3 +12,12 @@ $string['envstatus'] = 'Environment variables status';
 
 // Optional future strings.
 $string['enabled'] = 'Enabled';
+
+// Exceptions and validation messages.
+$string['envmissing'] = 'Required environment variable missing: {$a}';
+$string['invalidemail'] = 'Invalid email address provided';
+
+// API/bridge exception messages.
+$string['apiresponseerror'] = 'AI API returned an error: {$a}';
+$string['emptyresponse'] = 'The AI response was empty.';
+$string['invalidmode'] = 'Invalid AI_RUST_MODE: {$a}';
