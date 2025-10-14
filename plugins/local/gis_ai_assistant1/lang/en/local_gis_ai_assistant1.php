@@ -33,6 +33,12 @@ $string['sendpromptfailed'] = 'Failed to send prompt to the AI assistant.';
 $string['getresponsefailed'] = 'Failed to retrieve response from the AI assistant.';
 $string['getanalyticsfailed'] = 'Failed to retrieve analytics data.';
 $string['unexpectederror'] = 'An unexpected error occurred: {$a}';
+$string['aggregationfailed'] = 'Failed to aggregate analytics data.';
+$string['loginteractionfailed'] = 'Could not record AI interaction.';
+$string['purgeoldfailed'] = 'Unable to purge outdated logs.';
+
+// Events
+$string['eventinteractionlogged'] = 'AI interaction logged';
 
 // Capability names (shown in permissions UI)
 $string['gis_ai_assistant1:use'] = 'Use GIS AI Assistant';
@@ -40,3 +46,5 @@ $string['gis_ai_assistant1:viewanalytics'] = 'View GIS AI Assistant analytics';
 // Also include full keys with 'local/' prefix used by the capability identifiers.
 $string['local/gis_ai_assistant1:use'] = 'Use GIS AI Assistant';
 $string['local/gis_ai_assistant1:viewanalytics'] = 'View GIS AI Assistant analytics';
+$string['gis_ai_assistant1:viewownanalytics'] = 'View own AI analytics';
+$string['local/gis_ai_assistant1:viewownanalytics'] = 'View own AI analytics';
