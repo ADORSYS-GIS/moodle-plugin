@@ -95,15 +95,21 @@ class rust_bridge {
         ];
         $json = json_encode($payload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 
+        $headers = [
+            'Content-Type: application/json',
+            'x-user-email: ' . $useremail,
+        ];
+        $apikey = env_loader::get('AI_RUST_API_KEY', '');
+        if ($apikey !== '') {
+            $headers[] = 'Authorization: Bearer ' . $apikey;
+        }
+
         $ch = curl_init($endpoint);
         curl_setopt_array($ch, [
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_POST => true,
             CURLOPT_POSTFIELDS => $json,
-            CURLOPT_HTTPHEADER => [
-                'Content-Type: application/json',
-                'x-user-email: ' . $useremail,
-            ],
+            CURLOPT_HTTPHEADER => $headers,
             CURLOPT_TIMEOUT => env_loader::get_int('AI_TIMEOUT', 30),
         ]);
 
