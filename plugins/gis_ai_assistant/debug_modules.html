@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug AMD Modules</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-result { margin: 10px 0; padding: 10px; border-radius: 4px; }
+        .success { background: #d4edda; border: 1px solid #c3e6cb; color: #155724; }
+        .error { background: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; }
+        .test-content { margin: 20px 0; padding: 20px; background: #f8f9fa; border-radius: 8px; }
+    </style>
+</head>
+<body>
+    <h1>AMD Modules Debug Test</h1>
+    
+    <div id="results"></div>
+    
+    <div class="test-content">
+        <h2>Test Content</h2>
+        <div id="testOutput"></div>
+    </div>
+
+    <!-- Simulate Moodle's RequireJS setup -->
+    <script>
+        // Simple RequireJS-like define function for testing
+        window.define = function(deps, factory) {
+            console.log('Define called with deps:', deps);
+            if (typeof deps === 'function') {
+                factory = deps;
+                deps = [];
+            }
+            
+            // Simulate module loading
+            setTimeout(function() {
+                try {
+                    var module = factory();
+                    console.log('Module created:', module);
+                    
+                    // Test markdown processing
+                    if (module && module.toHtml) {
+                        var testMarkdown = `# Test Heading
+
+Here's some **bold** text and *italic* text.
+
+\`\`\`mermaid
+graph TD
+    A[Start] --> B[Process]
+    B --> C[End]
+\`\`\`
+
+\`\`\`javascript
+function test() {
+    console.log("Hello World");
+}
+\`\`\`
+
+- List item 1
+- List item 2
+  - Nested item
+`;
+                        
+                        console.log('Testing markdown conversion...');
+                        var result = module.toHtml(testMarkdown);
+                        console.log('Markdown result:', result);
+                        
+                        document.getElementById('testOutput').innerHTML = result || 'No output';
+                        
+                        addResult('Markdown module loaded and working', 'success');
+                    } else {
+                        addResult('Module loaded but toHtml not found', 'error');
+                    }
+                } catch (e) {
+                    console.error('Module error:', e);
+                    addResult('Module error: ' + e.message, 'error');
+                }
+            }, 100);
+        };
+        
+        function addResult(message, type) {
+            var div = document.createElement('div');
+            div.className = 'test-result ' + type;
+            div.textContent = message;
+            document.getElementById('results').appendChild(div);
+        }
+        
+        // Test if basic functions work
+        addResult('RequireJS simulation loaded', 'success');
+    </script>
+    
+    <!-- Load the actual AMD modules -->
+    <script src="amd/build/markdown_engine.min.js"></script>
+    
+    <script>
+        // Additional tests
+        setTimeout(function() {
+            console.log('Window.DOMPurify available:', !!window.DOMPurify);
+            // Markdown-it is loaded by markdown_engine internally; just report DOMPurify presence here.
+        }, 1000);
+    </script>
+</body>
+</html>
