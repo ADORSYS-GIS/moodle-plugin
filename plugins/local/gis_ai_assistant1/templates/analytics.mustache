@@ -1,0 +1,12 @@
+<div class="gis-ai-analytics">
+  <h3>{{#str}} analytics, local_gis_ai_assistant1 {{/str}}</h3>
+  {{#rows}}
+    <div class="row my-2">
+      <div class="col-6 font-weight-bold">{{metric}}</div>
+      <div class="col-6">{{value}}</div>
+    </div>
+  {{/rows}}
+  {{^rows}}
+    <div class="alert alert-info">No analytics available yet.</div>
+  {{/rows}}
+</div>

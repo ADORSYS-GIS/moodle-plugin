@@ -1,0 +1,10 @@
+{
+  "name": "local/gis_ai_assistant1",
+  "type": "moodle-local",
+  "require": {},
+  "autoload": {
+    "psr-4": {
+      "local_gis_ai_assistant1\\": "classes/"
+    }
+  }
+}
