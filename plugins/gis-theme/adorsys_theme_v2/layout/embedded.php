@@ -1,8 +1,6 @@
 <?php
 defined('MOODLE_INTERNAL') || die();
 
-global $PAGE, $OUTPUT;
-
 $templatecontext = [
     'output' => $OUTPUT,
     'bodyattributes' => $OUTPUT->body_attributes(),

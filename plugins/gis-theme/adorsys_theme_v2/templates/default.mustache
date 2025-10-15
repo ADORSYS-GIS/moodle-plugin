@@ -1,47 +1,27 @@
-{{< theme_adorsys_theme_v1/default }}
-    {{$body}}
-        {{{ output.doctype }}}
-        <html {{{ output.htmlattributes }}}>
-        <head>
-            <title>{{ page.title }}</title>
-            <link rel="shortcut icon" href="{{ output.favicon }}" />
-            {{{ output.standard_head_html }}}
-        </head>
-        <body {{{ output.body_attributes }}}>
-            {{{ output.standard_top_of_body_html }}}
+<!DOCTYPE html>
+<html lang="{{ output.get_lang() }}">
+<head>
+    {{{ output.standard_head_html }}}
+</head>
+<body {{{ bodyattributes }}} class="bg-gray-100 min-h-screen">
 
-            <div id="page-wrapper" class="d-flex flex-column min-vh-100">
-                {{> theme_adorsys_theme_v2/partials_navbar }}
+    {{> theme_adorsys_theme_v2/navbar }}
 
-                <div id="page" class="container-fluid d-flex flex-grow-1">
-                    <div id="page-content" class="row flex-grow-1">
-                        {{#hassidepre}}
-                            <div id="region-main-box" class="col-md-9">
-                                <div class="region-main-wrap">
-                                    {{{ main_content }}}
-                                </div>
-                            </div>
-                            <div id="region-pre" class="col-md-3">
-                                <div class="region-pre-wrap">
-                                    {{{ sidepre_blocks }}}
-                                </div>
-                            </div>
-                        {{/hassidepre}}
-                        {{^hassidepre}}
-                            <div id="region-main-box" class="col-md-12">
-                                <div class="region-main-wrap">
-                                    {{{ main_content }}}
-                                </div>
-                            </div>
-                        {{/hassidepre}}
-                    </div>
-                </div>
+    <main id="page" class="max-w-7xl mx-auto p-4 grid grid-cols-12 gap-4">
 
-                {{> theme_adorsys_theme_v2/partials_footer }}
+        {{> theme_adorsys_theme_v2/sideblocks }}
+
+        <section id="region-main" class="{{#hasblocks}}col-span-9{{/hasblocks}}{{^hasblocks}}col-span-12{{/hasblocks}}">
+            <div class="card bg-white p-6 shadow">
+                <h1 class="text-2xl font-bold mb-4">{{ pageheading }}</h1>
+                {{{ maincontent }}}
             </div>
+        </section>
 
-            {{{ output.standard_end_of_body_html }}}
-        </body>
-        </html>
-    {{/body}}
-{{/ theme_adorsys_theme_v1/default }}
+    </main>
+
+    {{> theme_adorsys_theme_v2/footer }}
+
+    {{{ standardendhtml }}}
+</body>
+</html>

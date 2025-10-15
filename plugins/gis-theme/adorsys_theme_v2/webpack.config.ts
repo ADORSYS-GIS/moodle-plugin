@@ -1,65 +1,69 @@
+import { fileURLToPath } from 'url';
 import path from 'path';
+import { Configuration } from 'webpack';
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import CopyPlugin from 'copy-webpack-plugin';
-import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const OUTPUT_PATH = path.resolve(__dirname, '../../../outputs/plugins/gis-theme/adorsys_theme_v2');
+// 👇 Set the final build destination
+const OUTPUT_PATH = path.resolve(__dirname, '../../../../moodle-plugin/outputs/plugins/gis-theme/adorsys_theme_v2');
+console.log("Output Path:", OUTPUT_PATH);
 
-export default {
+const config: Configuration = {
   mode: 'production',
   devtool: 'source-map',
+
+  //  Entry points for JS and CSS
   entry: {
     bundle: './src/index.ts',
   },
+
   output: {
     path: OUTPUT_PATH,
     filename: 'js/[name].js',
-    clean: true,
-    libraryTarget: 'amd',
+    clean: true
   },
+
   resolve: {
-    extensions: ['.ts', '.js', '.scss'],
-    alias: {
-      'theme_adorsys_theme_v2': path.resolve(__dirname, 'src/'),
-      'theme_adorsys_theme_v1': path.resolve(__dirname, '../adorsys_theme_v1/src/'),
-    },
+    extensions: ['.ts', '.js']
   },
+
   module: {
     rules: [
-      {
-        test: /\.(ts|js)$/,
-        exclude: /node_modules/,
-        use: {
-          loader: 'babel-loader',
-          options: {
-            presets: ['@babel/preset-env', '@babel/preset-typescript'],
-          },
-        },
-      },
       {
         test: /\.(s[ac]ss|css)$/,
         use: [
           MiniCssExtractPlugin.loader,
           'css-loader',
           'postcss-loader',
-          'sass-loader',
-        ],
+          'sass-loader'
+        ]
       },
-    ],
+      {
+        test: /\.ts$/,
+        use: 'ts-loader',
+        exclude: /node_modules/
+      }
+    ]
   },
+
   plugins: [
     new MiniCssExtractPlugin({
-      filename: 'style/[name].css',
+      filename: 'dist/[name].css'
     }),
+
+    //  Copy only Moodle plugin-relevant files
     new CopyPlugin({
       patterns: [
         { from: 'templates', to: 'templates' },
         { from: 'layout', to: 'layout' },
         { from: 'pix', to: 'pix' },
         { from: 'lang', to: 'lang' },
+        { from: 'style', to: 'style' }, // 👈 Added line to copy your existing style dir
+
+        // Copy PHP root files like version.php, lib.php etc.
         {
           from: '**/*.php',
           globOptions: {
@@ -69,9 +73,7 @@ export default {
         }
       ]
     })
-  ],
-  externals: {
-    'core/ajax': 'core/ajax',
-    'core/notification': 'core/notification',
-  },
+  ]
 };
+
+export default config;

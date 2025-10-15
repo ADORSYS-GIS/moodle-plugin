@@ -1,5 +1,4 @@
-import './styles/main.scss';
+import "./styles/main.scss";
+import './styles/login.scss';
 
-export const init = () => {
-    console.log('Adorsys Theme V2 initialized!');
-};
+console.log("Adorsys Moodle theme initialized.");

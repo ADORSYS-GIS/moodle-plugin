@@ -1,0 +1,132 @@
+{{#sidepreblocks}}
+<!-- Sidebar toggle button -->
+<button id="sidebar-toggle" aria-label="Toggle sidebar" aria-expanded="false">
+    ☰
+</button>
+
+<!-- Sidebar -->
+<aside id="sidebar" class="sidebar">
+    <div class="sidebar-header">
+        <h2 class="sidebar-title">Blocks</h2>
+        <button id="sidebar-close" aria-label="Close sidebar">✕</button>
+    </div>
+    <div class="sidebar-content">
+        {{{ sidepreblocks }}}
+    </div>
+</aside>
+
+<style>
+/* === Unified sidebar CSS === */
+
+/* Reset */
+#sidebar, #sidebar-toggle, #sidebar-close {
+    box-sizing: border-box;
+}
+
+/* Toggle button (always visible on small screens) */
+#sidebar-toggle {
+    position: fixed;
+    top: 1rem;
+    left: 1rem;
+    background: #1e40af; /* blue-800 */
+    color: white;
+    border: none;
+    border-radius: 6px;
+    width: 42px;
+    height: 42px;
+    cursor: pointer;
+    z-index: 1100;
+    font-size: 1.25rem;
+}
+
+/* Sidebar base */
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 260px;
+    height: 100vh;
+    background: #ffffff;
+    border-right: 1px solid #e5e7eb; /* gray-200 */
+    box-shadow: 2px 0 8px rgba(0,0,0,0.05);
+    transform: translateX(-100%);
+    transition: transform 0.25s ease;
+    z-index: 1050;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Open state */
+.sidebar.open {
+    transform: translateX(0);
+}
+
+/* Header */
+.sidebar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid #e5e7eb;
+    background: #f9fafb;
+}
+
+.sidebar-title {
+    margin: 0;
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #111827;
+}
+
+#sidebar-close {
+    background: none;
+    border: none;
+    color: #6b7280;
+    font-size: 1.25rem;
+    cursor: pointer;
+}
+
+/* Content area */
+.sidebar-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1rem;
+}
+
+/* Show sidebar by default on large screens */
+@media (min-width: 1024px) {
+    #sidebar {
+        transform: translateX(0);
+        position: relative;
+        height: auto;
+        box-shadow: none;
+        width: 300px;
+    }
+    #sidebar-toggle, #sidebar-close {
+        display: none;
+    }
+}
+</style>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const sidebar = document.getElementById("sidebar");
+    const toggle = document.getElementById("sidebar-toggle");
+    const closeBtn = document.getElementById("sidebar-close");
+
+    if (toggle && sidebar) {
+        toggle.addEventListener("click", () => {
+            sidebar.classList.toggle("open");
+            const isOpen = sidebar.classList.contains("open");
+            toggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
+        });
+    }
+    if (closeBtn) {
+        closeBtn.addEventListener("click", () => {
+            sidebar.classList.remove("open");
+            toggle.setAttribute("aria-expanded", "false");
+        });
+    }
+});
+</script>
+{{/sidepreblocks}}

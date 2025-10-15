@@ -1,14 +1,11 @@
-import path from 'path';
-import { fileURLToPath } from 'url';
-import tailwindcss from 'tailwindcss';
-import autoprefixer from 'autoprefixer';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+import tailwindcssPostcss from "@tailwindcss/postcss";
+import autoprefixer from "autoprefixer";
+import cssnano from "cssnano";
 
 export default {
   plugins: [
-    tailwindcss(path.resolve(__dirname, './tailwind.config.js')),
-    autoprefixer,
-  ],
+    tailwindcssPostcss(),
+    autoprefixer(),
+    cssnano({ preset: "default" })
+  ]
 };

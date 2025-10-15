@@ -1,0 +1,86 @@
+/* -------------------------------------------------------
+   Login Page Styles for theme_adorsys_theme_v2
+   ------------------------------------------------------- */
+
+/* Page background */
+.pagelayout-login #page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+/* Headings */
+.login-container h1.login-heading,
+.login-container h2.login-heading {
+  text-align: center;
+  width: 100%;
+  margin-bottom: 1.5rem;
+}
+
+.login-container h1.login-heading {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.login-container h2.login-heading {
+  font-size: 1.125rem;
+  font-weight: 400;
+  color: #666;
+}
+
+/* Form fields */
+.login-form-username,
+.login-form-password {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.login-form-username label,
+.login-form-password label {
+  display: none; /* visually hidden */
+}
+
+.login-form-username input,
+.login-form-password input {
+  width: 100%;
+  max-width: 320px;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+/* Divider */
+.login-divider {
+  margin: 1.5rem 0;
+  border-top: 1px solid #ddd;
+  width: 100%;
+}
+
+/* Language menu and identity providers */
+.login-languagemenu,
+.login-identityproviders {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.login-languagemenu .dropdown-menu,
+.login-identityproviders .login-identityprovider-btn {
+  width: 100%;
+  max-width: 320px;
+}
+
+/* Responsive tweaks */
+@media (min-width: 768px) {
+  .login-container {
+    padding: 3rem;
+  }
+}

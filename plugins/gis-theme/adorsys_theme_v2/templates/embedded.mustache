@@ -1,29 +1,15 @@
-{{< theme_adorsys_theme_v1/embedded }}
-    {{$body}}
-        {{{ output.doctype }}}
-        <html {{{ output.htmlattributes }}}>
-        <head>
-            <title>{{ page.title }}</title>
-            <link rel="shortcut icon" href="{{ output.favicon }}" />
-            {{{ output.standard_head_html }}}
-        </head>
-        <body {{{ output.body_attributes }}}>
-            {{{ output.standard_top_of_body_html }}}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {{{ output.standard_head_html }}}
+</head>
+<body {{{ bodyattributes }}} class="bg-white text-gray-900 font-sans">
+    {{{ output.standard_top_of_body_html }}}
 
-            <div id="page-wrapper" class="d-flex flex-column min-vh-100">
-                <div id="page" class="container-fluid d-flex flex-grow-1 justify-content-center align-items-center">
-                    <div id="page-content" class="row">
-                        <div id="region-main-box" class="col-md-12">
-                            <div class="region-main-wrap">
-                                {{{ main_content }}}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+    <main class="p-4">
+        {{{ maincontent }}}
+    </main>
 
-            {{{ output.standard_end_of_body_html }}}
-        </body>
-        </html>
-    {{/body}}
-{{/ theme_adorsys_theme_v1/embedded }}
+    {{{ standardendhtml }}}
+</body>
+</html>

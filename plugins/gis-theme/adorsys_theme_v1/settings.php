@@ -1,30 +1,34 @@
 <?php
-// This file defines settings for the Adorsys theme.
+// This file defines settings for the Adorsys theme v2.
 
 defined('MOODLE_INTERNAL') || die();
 
 if ($ADMIN->fulltree) {
-    // Theme heading.
-    $settings->add(new admin_setting_heading(
-        'theme_adorsys_theme_v1/generalsettings',
-        get_string('themeheading', 'theme_adorsys_theme_v1'),
-        format_text(get_string('themedesc', 'theme_adorsys_theme_v1'), FORMAT_MARKDOWN)
-    ));
+    // Create tabbed settings container.
+    $settings = new theme_boost_admin_settingspage_tabs(
+        'themesettingadorsys_theme_v2',
+        get_string('configtitle', 'theme_adorsys_theme_v2')
+    );
+
+    $page = new admin_settingpage(
+        'theme_adorsys_theme_v2_general',
+        get_string('generalsettings', 'theme_adorsys_theme_v2')
+    );
 
     // Logo file setting.
-    $settings->add(new admin_setting_configstoredfile(
-        'theme_adorsys_theme_v1/logo',
-        get_string('logo', 'admin'),
-        get_string('logodesc', 'admin'),
-        'logo'
-    ));
+    $name = 'theme_adorsys_theme_v2/logo';
+    $title = get_string('logo', 'admin');
+    $description = get_string('logodesc', 'admin');
+    $setting = new admin_setting_configstoredfile($name, $title, $description, 'logo');
+    $page->add($setting);
 
     // Custom CSS.
-    $settings->add(new admin_setting_configtextarea(
-        'theme_adorsys_theme_v1/customcss',
-        get_string('customcss', 'theme_adorsys_theme_v1'),
-        get_string('customcssdesc', 'theme_adorsys_theme_v1'),
-        '',
-        PARAM_RAW
-    ));
+    $name = 'theme_adorsys_theme_v2/customcss';
+    $title = get_string('customcss', 'theme_adorsys_theme_v2');
+    $description = get_string('customcssdesc', 'theme_adorsys_theme_v2');
+    $setting = new admin_setting_configtextarea($name, $title, $description, '', PARAM_RAW);
+    $page->add($setting);
+
+    // Add the page to the tabbed settings container.
+    $settings->add($page);
 }

@@ -1,7 +1,7 @@
 <?php
 defined('MOODLE_INTERNAL') || die();
 
-$string['pluginname'] = 'Adorsys Theme V2';
-$string['choosereadme'] = 'Adorsys Theme V2 - A child theme of Adorsys Theme V1.';
-$string['customscss'] = 'Custom SCSS';
-$string['customscssdesc'] = 'Any SCSS code entered here will be added to the theme.';
+$string['pluginname'] = 'Adorsys Theme v2';
+$string['choosereadme'] = 'A child Moodle theme based on Adorsys Theme v1, using TailwindCSS and Webpack.';
+$string['configtitle'] = 'Adorsys Theme v2 Settings';
+$string['themeheading'] = 'Adorsys Theme v2 Settings';

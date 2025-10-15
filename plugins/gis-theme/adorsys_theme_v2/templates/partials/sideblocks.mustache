@@ -1,7 +1,7 @@
-{{< theme_adorsys_theme_v1/partials_sideblocks }}
-    {{$sideblocks_content}}
-        <div class="d-flex flex-column">
-            {{{ sidepre_blocks }}}
-        </div>
-    {{/sideblocks_content}}
-{{/ theme_adorsys_theme_v1/partials_sideblocks }}
+{{#hasblocks}}
+<aside id="block-region-side-pre" class="w-full md:w-1/4 space-y-4">
+    <div class="bg-white rounded shadow p-4">
+        {{{ sidepreblocks }}}
+    </div>
+</aside>
+{{/hasblocks}}

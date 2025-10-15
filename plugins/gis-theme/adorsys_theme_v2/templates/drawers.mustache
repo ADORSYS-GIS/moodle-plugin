@@ -1,0 +1,62 @@
+{{> theme_adorsys_theme_v2/head }}
+<style>
+/* Hide only the Moodle main content blocks region header & skip link */
+#block-region-content > h2,
+#block-region-content > a.visually-hidden-focusable {
+    display: none !important;
+}
+
+</style>
+
+
+<body {{{ bodyattributes }}} class="bg-gray-50 min-h-screen flex flex-col">
+
+    {{{ output.standard_top_of_body_html }}}
+
+    {{{ output.navbar }}}
+
+
+    <div id="page-wrapper" class="flex flex-col flex-1">
+
+        {{#hasnavbar}}
+        <nav id="navbar" class="bg-white shadow px-6 py-3">
+            {{{ navbar }}}
+        </nav>
+        {{/hasnavbar}}
+
+        <header class="text-center my-6">
+            <h1 class="text-2xl font-bold text-gray-800">{{ pageheading }}</h1>
+        </header>
+
+        <div id="page" class="flex-1 container mx-auto flex flex-row gap-6 px-4">
+
+            {{#sidepreblocks}}
+            <aside id="block-region-side-pre" class="w-1/4 hidden lg:block">
+                {{{ sidepreblocks }}}
+            </aside>
+            {{/sidepreblocks}}
+
+            <main id="region-main" class="flex-1 bg-white shadow p-6 rounded">
+                {{{ maincontent }}}
+            </main>
+
+            {{#sidepostblocks}}
+            <aside id="block-region-side-post" class="w-1/4 hidden lg:block">
+                {{{ sidepostblocks }}}
+            </aside>
+            {{/sidepostblocks}}
+
+        </div>
+
+        {{#hasfooter}}
+        <footer id="page-footer" class="mt-auto bg-gray-100 text-center py-4">
+            {{{ footer }}}
+        </footer>
+        {{/hasfooter}}
+
+    </div>
+
+    {{{ standardendhtml }}}
+
+</body>
+</html>
