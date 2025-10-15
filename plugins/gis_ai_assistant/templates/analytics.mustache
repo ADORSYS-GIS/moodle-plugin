@@ -1,406 +1,65 @@
-{{!
-    This file is part of Moodle - http://moodle.org/
-
-    Moodle is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Moodle is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-}}
-{{!
-    @template local_gis_ai_assistant/analytics
-
-    AI Analytics dashboard template.
-
-    Context variables required for this template:
-    * has_analytics_capability - Whether user can view analytics
-}}
-
-<div class="ai-analytics-container">
-    <!-- Minimal structure for new analytics AMD module -->
-    <div id="ai-analytics-root">
-        <div class="analytics-controls-bar" style="margin-bottom: 1rem; display: flex; gap: 0.5rem; align-items: center;">
-            <label for="analytics-period-selector" class="mb-0">{{#str}}analytics_period, local_gis_ai_assistant{{/str}}</label>
-            <select id="analytics-period-selector" class="custom-select custom-select-sm" style="max-width: 200px;">
-                <option value="day">{{#str}}analytics_day, local_gis_ai_assistant{{/str}}</option>
-                <option value="week" selected>{{#str}}analytics_week, local_gis_ai_assistant{{/str}}</option>
-                <option value="month">{{#str}}analytics_month, local_gis_ai_assistant{{/str}}</option>
+<div id="ai-analytics-root" class="analytics-dashboard" role="main" aria-label="AI Usage Analytics">
+    <header class="dashboard-header">
+        <h1>{{#str}}analytics_title, local_gis_ai_assistant{{/str}}</h1>
+        <div class="controls" role="toolbar">
+            <label for="analytics-period-selector">{{#str}}analytics_period, local_gis_ai_assistant{{/str}}</label>
+            <select id="analytics-period-selector">
+                {{#periods}}
+                    <option value="{{value}}">{{label}}</option>
+                {{/periods}}
             </select>
-            <button id="analytics-retry-btn" type="button" class="btn btn-secondary btn-sm" style="display:none;">
-                {{#str}}retry, local_gis_ai_assistant{{/str}}
-            </button>
+            <select id="analytics-export-format">
+                {{#export_formats}}
+                    <option value="{{.}}">{{.}}</option>
+                {{/export_formats}}
+            </select>
+            <button id="analytics-export-btn">{{#str}}export, local_gis_ai_assistant{{/str}}</button>
+            <button id="analytics-retry-btn" style="display:none;">{{#str}}retry, local_gis_ai_assistant{{/str}}</button>
         </div>
+    </header>
 
-        <div class="analytics-skeleton" style="display:none;">
-            <div class="alert alert-info mb-2">{{#str}}loading, core{{/str}}</div>
-            <div class="analytics-kpi-cards" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.75rem;">
-                <div class="analytics-kpi-card">&nbsp;</div>
-                <div class="analytics-kpi-card">&nbsp;</div>
-                <div class="analytics-kpi-card">&nbsp;</div>
-            </div>
+    <!-- Skeleton for loading -->
+    <div class="skeleton-loading" aria-hidden="true">
+        <div class="kpi-grid">
+            <div class="kpi-card skeleton-pulse"></div>
+            <div class="kpi-card skeleton-pulse"></div>
+            <div class="kpi-card skeleton-pulse"></div>
+            <div class="kpi-card skeleton-pulse"></div>
         </div>
-
-        <div class="analytics-content" style="display:none;">
-            <div class="analytics-kpi-cards" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
-                <div class="kpi-requests"></div>
-                <div class="kpi-tokens"></div>
-                <div class="kpi-response-time"></div>
-            </div>
-
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="card-title mb-0">{{#str}}top_users, local_gis_ai_assistant{{/str}}</h5>
-                </div>
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-striped" id="top-users-table">
-                            <thead>
-                                <tr>
-                                    <th>{{#str}}user, core{{/str}}</th>
-                                    <th>{{#str}}request_count, local_gis_ai_assistant{{/str}}</th>
-                                </tr>
-                            </thead>
-                            <tbody></tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="card-title mb-0">{{#str}}usage_by_model, local_gis_ai_assistant{{/str}}</h5>
-                </div>
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-striped" id="model-usage-table">
-                            <thead>
-                                <tr>
-                                    <th>{{#str}}model, local_gis_ai_assistant{{/str}}</th>
-                                    <th>{{#str}}request_count, local_gis_ai_assistant{{/str}}</th>
-                                    <th>{{#str}}token_count, local_gis_ai_assistant{{/str}}</th>
-                                </tr>
-                            </thead>
-                            <tbody></tbody>
-                        </table>
-                    </div>
-                    <div class="ai-chart-container" style="margin-top: 1rem;">
-                        <canvas id="model-usage-chart" height="260"></canvas>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Time Range Selector -->
-    <div class="ai-analytics-header">
-        <h2 class="ai-analytics-page-title">
-            <i class="fa fa-chart-bar" aria-hidden="true"></i>
-            {{#str}}analytics_title, local_gis_ai_assistant{{/str}}
-        </h2>
-        <div class="ai-analytics-controls">
-            <div class="ai-date-range-picker">
-                <button type="button" class="btn" id="ai-date-range-btn">
-                    <i class="fa fa-calendar" aria-hidden="true"></i>
-                    <span id="ai-date-range-text">{{#str}}last_week, local_gis_ai_assistant{{/str}}</span>
-                    <i class="fa fa-chevron-down" aria-hidden="true"></i>
-                </button>
-            </div>
-            <button type="button" class="btn" id="ai-refresh-analytics">
-                <i class="fa fa-sync" aria-hidden="true"></i>
-            </button>
-            <button type="button" class="btn" id="ai-export-analytics">
-                <i class="fa fa-download" aria-hidden="true"></i>
-            </button>
+        <div class="charts-grid">
+            <div class="chart-card chart-skeleton skeleton-pulse"></div>
+            <div class="chart-card chart-skeleton skeleton-pulse"></div>
         </div>
     </div>
 
-    <!-- Quick Stats Cards -->
-    <div class="ai-analytics-quick-stats">
-        <div class="ai-analytics-card">
-            <div class="ai-analytics-stat">
-                <i class="fa fa-comments" aria-hidden="true"></i>
-                <div class="ai-stat-details">
-                    <h4>{{#str}}total_conversations, local_gis_ai_assistant{{/str}}</h4>
-                    <div class="ai-stat-value" id="total-conversations">-</div>
-                    <div class="ai-stat-change positive" id="conversations-change">
-                        <i class="fa fa-arrow-up" aria-hidden="true"></i>
-                        <span>0%</span>
-                    </div>
+    <div class="dashboard-content" style="display:none;">
+        <section class="kpi-section">
+            <div class="kpi-grid"><!-- JS will populate --></div>
+        </section>
+
+        <section class="charts-section">
+            <div class="charts-grid">
+                <div class="chart-card">
+                    <canvas id="usage-over-time"></canvas>
+                </div>
+                <div class="chart-card">
+                    <canvas id="model-distribution"></canvas>
                 </div>
             </div>
-        </div>
+        </section>
 
-        <div class="ai-analytics-card">
-            <div class="ai-analytics-stat">
-                <i class="fa fa-stopwatch" aria-hidden="true"></i>
-                <div class="ai-stat-details">
-                    <h4>{{#str}}avg_response_time, local_gis_ai_assistant{{/str}}</h4>
-                    <div class="ai-stat-value" id="avg-response-time">-</div>
-                    <div class="ai-stat-change negative" id="response-time-change">
-                        <i class="fa fa-arrow-down" aria-hidden="true"></i>
-                        <span>0%</span>
-                    </div>
-                </div>
+        <section class="tables-section">
+            <div class="tables-grid">
+                <table id="top-users-table" class="table" aria-label="Top Users">
+                    <thead>
+                        <tr>
+                            <th>{{#str}}users, local_gis_ai_assistant{{/str}}</th>
+                            <th>{{#str}}request_count, local_gis_ai_assistant{{/str}}</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
             </div>
-        </div>
-
-        <div class="ai-analytics-card">
-            <div class="ai-analytics-stat">
-                <i class="fa fa-microchip" aria-hidden="true"></i>
-                <div class="ai-stat-details">
-                    <h4>{{#str}}tokens_used, local_gis_ai_assistant{{/str}}</h4>
-                    <div class="ai-stat-value" id="total-tokens">-</div>
-                    <div class="ai-stat-change" id="tokens-change">
-                        <i class="fa fa-arrow-right" aria-hidden="true"></i>
-                        <span>0%</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="ai-analytics-card">
-            <div class="ai-analytics-stat">
-                <i class="fa fa-users" aria-hidden="true"></i>
-                <div class="ai-stat-details">
-                    <h4>{{#str}}active_users, local_gis_ai_assistant{{/str}}</h4>
-                    <div class="ai-stat-value" id="active-users">-</div>
-                    <div class="ai-stat-change positive" id="users-change">
-                        <i class="fa fa-arrow-up" aria-hidden="true"></i>
-                        <span>0%</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Charts Grid -->
-    <div class="ai-analytics-charts-grid">
-        <!-- Usage Over Time Chart -->
-        <div class="ai-analytics-card ai-chart-card">
-            <h3>{{#str}}usage_over_time, local_gis_ai_assistant{{/str}}</h3>
-            <div class="ai-chart-container">
-                <canvas id="usage-chart"></canvas>
-            </div>
-        </div>
-
-        <!-- Model Usage Distribution -->
-        <div class="ai-analytics-card ai-chart-card">
-            <h3>{{#str}}model_distribution, local_gis_ai_assistant{{/str}}</h3>
-            <div class="ai-chart-container">
-                <canvas id="model-distribution-chart"></canvas>
-            </div>
-        </div>
-
-        <!-- Response Time Distribution -->
-        <div class="ai-analytics-card ai-chart-card">
-            <h3>{{#str}}response_time_distribution, local_gis_ai_assistant{{/str}}</h3>
-            <div class="ai-chart-container">
-                <canvas id="response-time-chart"></canvas>
-            </div>
-        </div>
-
-        <!-- User Activity Heatmap -->
-        <div class="ai-analytics-card ai-chart-card">
-            <h3>{{#str}}user_activity_heatmap, local_gis_ai_assistant{{/str}}</h3>
-            <div class="ai-chart-container">
-                <div id="activity-heatmap"></div>
-            </div>
-        </div>
-    </div>
-                        <div class="row mb-4">
-                            <div class="col-md-3">
-                                <div class="card bg-primary text-white">
-                                    <div class="card-body">
-                                        <div class="d-flex justify-content-between">
-                                            <div>
-                                                <h4 id="total-requests">0</h4>
-                                                <p class="mb-0">{{#str}}total_requests, local_gis_ai_assistant{{/str}}</p>
-                                            </div>
-                                            <div class="align-self-center">
-                                                <i class="fa fa-comments fa-2x"></i>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="card bg-success text-white">
-                                    <div class="card-body">
-                                        <div class="d-flex justify-content-between">
-                                            <div>
-                                                <h4 id="total-tokens">0</h4>
-                                                <p class="mb-0">{{#str}}total_tokens, local_gis_ai_assistant{{/str}}</p>
-                                            </div>
-                                            <div class="align-self-center">
-                                                <i class="fa fa-coins fa-2x"></i>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="card bg-info text-white">
-                                    <div class="card-body">
-                                        <div class="d-flex justify-content-between">
-                                            <div>
-                                                <h4 id="avg-response-time">0ms</h4>
-                                                <p class="mb-0">{{#str}}average_response_time, local_gis_ai_assistant{{/str}}</p>
-                                            </div>
-                                            <div class="align-self-center">
-                                                <i class="fa fa-clock fa-2x"></i>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="card bg-warning text-white">
-                                    <div class="card-body">
-                                        <div class="d-flex justify-content-between">
-                                            <div>
-                                                <h4 id="active-users">0</h4>
-                                                <p class="mb-0">{{#str}}active_users, local_gis_ai_assistant{{/str}}</p>
-                                            </div>
-                                            <div class="align-self-center">
-                                                <i class="fa fa-users fa-2x"></i>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Charts Row -->
-                        <div class="row">
-                            <div class="col-md-8">
-                                <div class="card">
-                                    <div class="card-header">
-                                        <h5 class="card-title">{{#str}}requests_over_time, local_gis_ai_assistant{{/str}}</h5>
-                                    </div>
-                                    <div class="card-body">
-                                        <canvas id="requests-chart" height="100"></canvas>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="card">
-                                    <div class="card-header">
-                                        <h5 class="card-title">{{#str}}usage_by_model, local_gis_ai_assistant{{/str}}</h5>
-                                    </div>
-                                    <div class="card-body">
-                                        <canvas id="models-chart" height="200"></canvas>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Top Users Table -->
-                        <div class="row mt-4">
-                            <div class="col-md-12">
-                                <div class="card">
-                                    <div class="card-header">
-                                        <h5 class="card-title">{{#str}}top_users, local_gis_ai_assistant{{/str}}</h5>
-                                    </div>
-                                    <div class="card-body">
-                                        <div class="table-responsive">
-                                            <table class="table table-striped" id="top-users-table-legacy">
-                                                <thead>
-                                                    <tr>
-                                                        <th>{{#str}}user, core{{/str}}</th>
-                                                        <th>{{#str}}requests, local_gis_ai_assistant{{/str}}</th>
-                                                        <th>{{#str}}tokens_used, local_gis_ai_assistant{{/str}}</th>
-                                                        <th>{{#str}}avg_response_time, local_gis_ai_assistant{{/str}}</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <!-- Data will be populated by JavaScript -->
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div id="analytics-error" style="display: none;" class="alert alert-danger">
-                        <h5>{{#str}}error, core{{/str}}</h5>
-                        <p id="error-message"></p>
-                    </div>
-                </div>
-            </div>
-        </div>
+        </section>
     </div>
 </div>
-
-<style>
-.ai-analytics-container {
-    padding: 20px 0;
-}
-
-.card {
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    margin-bottom: 20px;
-}
-
-.card-header {
-    background: #f8f9fa;
-    border-bottom: 1px solid #dee2e6;
-    border-radius: 8px 8px 0 0;
-}
-
-.card-title {
-    margin: 0;
-    font-size: 1.1rem;
-    font-weight: 600;
-}
-
-.card-tools {
-    margin-left: auto;
-}
-
-.bg-primary { background-color: #007bff !important; }
-.bg-success { background-color: #28a745 !important; }
-.bg-info { background-color: #17a2b8 !important; }
-.bg-warning { background-color: #ffc107 !important; color: #212529 !important; }
-
-.table th {
-    border-top: none;
-    font-weight: 600;
-    color: #495057;
-}
-
-.table-striped tbody tr:nth-of-type(odd) {
-    background-color: rgba(0,0,0,.02);
-}
-
-#analytics-loading {
-    color: #6c757d;
-}
-
-.fa-spin {
-    animation: fa-spin 2s infinite linear;
-}
-
-@keyframes fa-spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
-@media (max-width: 768px) {
-    .ai-analytics-container {
-        padding: 10px;
-    }
-    
-    .row .col-md-3 {
-        margin-bottom: 15px;
-    }
-}
-</style>
