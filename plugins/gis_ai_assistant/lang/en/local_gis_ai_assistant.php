@@ -127,6 +127,7 @@ $string['response_time_distribution'] = 'Response time distribution';
 $string['user_activity_heatmap'] = 'User activity heatmap';
 $string['last_week'] = 'Last 7 days';
 $string['requests'] = 'Requests';
+$string['export'] = 'Export';
 
 // Errors.
 $string['error_api_key_missing'] = 'API key not configured in environment variables.';
