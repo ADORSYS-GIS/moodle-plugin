@@ -91,6 +91,20 @@ define(['jquery'], function($) {
         },
 
         /**
+         * Format milliseconds to human readable string.
+         * Examples: 850 -> "850 ms", 2250 -> "2.25 s"
+         * @param {number} ms
+         * @returns {string}
+         */
+        formatTime: function(ms) {
+            if (typeof ms !== 'number' || isNaN(ms)) return '0 ms';
+            if (ms < 1000) {
+                return Math.round(ms) + ' ms';
+            }
+            return (ms / 1000).toFixed(2) + ' s';
+        },
+
+        /**
          * Draw a simple bar chart on canvas
          * @param {HTMLCanvasElement} canvas Canvas element
          * @param {Array} labels Chart labels
