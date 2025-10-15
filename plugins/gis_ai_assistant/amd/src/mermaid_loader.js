@@ -1,240 +1,134 @@
+// mermaid_loader.js
 // AMD module to load Mermaid and render mermaid diagrams inside a root element.
 // Converts <pre><code class="language-mermaid">...</code></pre> into <div class="mermaid">...</div> and renders them.
 
 define([], function() {
     'use strict';
 
-    var CDN_PATH = 'https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.1/mermaid.min';
-    var state = { promise: null };
-
-    function getRequire() {
-        return (typeof requirejs !== 'undefined') ? requirejs : ((typeof require !== 'undefined') ? require : null);
-    }
+    const LOCAL_PATH = '/local/gis_ai_assistant/assets/mermaid.min.js';
+    const CDN_PATHS = [
+        'https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js',
+        'https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.1/mermaid.min.js'
+    ];
+    const state = { promise: null };
 
     function detectTheme(preferFromDom) {
         try {
             if (preferFromDom) {
-                if (document.querySelector('.ai-chat-container.ai-dark') || document.querySelector('.ai-dark')) { return 'dark'; }
-                if (document.querySelector('.ai-chat-container.ai-light') || document.querySelector('.ai-light')) { return 'default'; }
+                if (document.querySelector('.ai-dark')) return 'dark';
+                if (document.querySelector('.ai-light')) return 'default';
             }
-            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) { return 'dark'; }
-        } catch (e) {}
+            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)
+                return 'dark';
+        } catch (_) {}
         return 'default';
     }
 
     function initMermaidIfNeeded() {
         try {
-            if (!window.mermaid) { return; }
-            if (window.mermaid.__ai_inited) { return; }
-            var theme = detectTheme(true);
-            if (window.mermaid.initialize) {
-                try {
-                    window.mermaid.initialize({ startOnLoad: false, theme: (theme === 'dark' ? 'dark' : 'default') });
-                } catch (e) {
-                    try { window.mermaid.initialize({ startOnLoad: false }); } catch (e2) {}
-                }
-            }
+            if (!window.mermaid || window.mermaid.__ai_inited) return;
+            const theme = detectTheme(true);
+            window.mermaid.initialize({
+                startOnLoad: false,
+                theme: theme === 'dark' ? 'dark' : 'default'
+            });
             window.mermaid.__ai_inited = true;
-        } catch (e) {}
+        } catch (e) {
+            console.warn('Mermaid initialization failed', e);
+        }
     }
 
     function loadMermaid() {
-        if (state.promise) { return state.promise; }
-        state.promise = new Promise(function(resolve) {
-            if (window.mermaid) { resolve(window.mermaid); return; }
-            var rq = getRequire();
-            if (!rq) {
-                try {
-                    var s = document.createElement('script');
-                    s.src = CDN_PATH;
-                    s.onload = function() { resolve(window.mermaid || null); };
-                    s.onerror = function() { resolve(null); };
-                    document.head.appendChild(s);
-                } catch (e) { resolve(null); }
+        if (state.promise) return state.promise;
+
+        state.promise = new Promise((resolve) => {
+            if (window.mermaid) {
+                initMermaidIfNeeded();
+                resolve(window.mermaid);
                 return;
             }
-            try {
-                rq.config({ paths: { 'mermaid_cdn': CDN_PATH }, shim: { 'mermaid_cdn': { exports: 'mermaid' } } });
-                rq(['mermaid_cdn'], function(mod) {
-                    try {
-                        var m = (mod && mod.default) ? mod.default : (mod || window.mermaid);
-                        if (m && !window.mermaid) { window.mermaid = m; }
-                    } catch (e) {}
+
+            const tryUrls = (urls) => {
+                if (!urls.length) return resolve(null);
+                const url = urls.shift();
+                const script = document.createElement('script');
+                script.async = true;
+                script.src = url;
+
+                script.onload = () => {
+                    initMermaidIfNeeded();
                     resolve(window.mermaid || null);
-                }, function(){ resolve(window.mermaid || null); });
-            } catch (e) { resolve(window.mermaid || null); }
-        }).then(function(){ initMermaidIfNeeded(); return window.mermaid || null; });
+                };
+                script.onerror = () => {
+                    console.warn('Failed to load Mermaid from', url);
+                    script.remove();
+                    tryUrls(urls);
+                };
+                document.head.appendChild(script);
+            };
+
+            tryUrls([LOCAL_PATH, ...CDN_PATHS]);
+        });
+
         return state.promise;
     }
 
-    // (removed obsolete ensure(callback) implementation)
-
     function normalizeMermaidText(text) {
         try {
-            var s = String(text || '');
-            // Split into lines for aggressive cleanup.
-            var lines = s.split(/\r?\n/);
+            let s = String(text || '');
+            const lines = s.split(/\r?\n/);
+            const cleaned = lines.filter((ln) => {
+                if (/^\s*[A-Za-z][A-Za-z0-9_-]*Copy\s*$/.test(ln)) return false;
+                if (/^\s*(?:text)?mermaid(?:\s+version.*)?\s*$/i.test(ln)) return false;
+                if (/^\s*syntax\s+error\s+in\b/i.test(ln)) return false;
+                if (/^\s*```/.test(ln)) return false;
+                return true;
+            });
 
-            // 1) Drop common noise lines that LLMs sometimes include (e.g., "cssCopy", "markdownCopy").
-            var noiseline = /^\s*[A-Za-z][A-Za-z0-9_-]*Copy\s*$/i;
-            var versionline = /^\s*(?:text)?mermaid(?:\s+version.*)?\s*$/i;
-            var syntaxerrorline = /^\s*syntax\s+error\s+in\b/i;
-            var cleaned = [];
-            for (var i = 0; i < lines.length; i++) {
-                var ln = lines[i];
-                if (noiseline.test(ln)) { continue; }
-                if (versionline.test(ln)) { continue; }
-                if (syntaxerrorline.test(ln)) { continue; }
-                // Ignore stray Markdown fences if present inside captured code.
-                if (/^\s*```/.test(ln)) { continue; }
-                cleaned.push(ln);
+            let joined = cleaned.join('\n').trim();
+            if (!/^(\s*)(graph|flowchart|sequenceDiagram|classDiagram|stateDiagram(?:-v2)?|erDiagram|journey)\b/m.test(joined)) {
+                if (/^\s*subgraph\b/m.test(joined) || /-->|==>|-\.-\>|==/m.test(joined))
+                    joined = 'graph TD\n' + joined;
             }
-            lines = cleaned;
 
-            // 2) Trim leading non-directive lines before the first Mermaid directive.
-            var directive = /^(\s*)(graph|flowchart|sequenceDiagram|classDiagram|stateDiagram(?:-v2)?|erDiagram|journey)\b/;
-            var firstIdx = -1;
-            for (var j = 0; j < lines.length; j++) {
-                if (directive.test(lines[j])) { firstIdx = j; break; }
-            }
-            if (firstIdx > 0) { lines = lines.slice(firstIdx); }
-
-            var t = lines.join('\n').replace(/^\s+/, '').replace(/\s+$/, '');
-
-            // 3) If the block starts with a subgraph without a leading graph directive, prepend a default.
-            var hasDirective = /^\s*(graph|flowchart|sequenceDiagram|classDiagram|stateDiagram(?:-v2)?|erDiagram|journey)\b/.test(t);
-            var startsWithSub = /^\s*subgraph\b/.test(t);
-            if (!hasDirective && startsWithSub) {
-                t = 'graph TD\n' + t;
-            }
-            return t;
-        } catch (_) { return text; }
+            return joined;
+        } catch (_) {
+            return text;
+        }
     }
 
-    function hasMermaidClass(codeEl) {
-        try {
-            var cls = (codeEl && codeEl.className) ? String(codeEl.className).toLowerCase() : '';
-            // Match language-mermaid, lang-mermaid, textmermaid, mermaid, etc.
-            return cls.indexOf('mermaid') !== -1;
-        } catch (_) { return false; }
-    }
-
-    // Convert <pre><code class="language-mermaid">...</code></pre> into <div class="mermaid">...</div>
-    function convertMermaidFences(root) {
-        var base = root && root.jquery ? root[0] : (root || document);
-        try {
-            var codes = base.querySelectorAll ? base.querySelectorAll('pre code') : [];
-            for (var i = 0; i < codes.length; i++) {
-                var code = codes[i];
-                var pre = code.parentNode && code.parentNode.tagName === 'PRE' ? code.parentNode : null;
-                if (!pre) { continue; }
-                // If a neighboring .mermaid already exists (from previous pass), drop the pre to avoid duplicates.
-                var next = pre.nextSibling;
-                if (next && next.classList && next.classList.contains('mermaid')) { pre.parentNode.removeChild(pre); continue; }
-                var raw = code.textContent || code.innerText || '';
-                var normalized = normalizeMermaidText(raw);
-                var clsMermaid = hasMermaidClass(code);
-                // Detect Mermaid content even if mis-labeled (e.g., language-css) by checking for directives.
-                var hasDirective = /^(\s*)(graph|flowchart|sequenceDiagram|classDiagram|stateDiagram(?:-v2)?|erDiagram|journey)\b/m.test(normalized);
-                var startsWithSub = /^\s*subgraph\b/m.test(normalized);
-                if (!(clsMermaid || hasDirective || startsWithSub)) { continue; }
-                var div = document.createElement('div');
-                div.className = 'mermaid';
-                div.textContent = normalized;
-                pre.parentNode.replaceChild(div, pre);
+    function render(root) {
+        return loadMermaid().then((mermaid) => {
+            if (!mermaid) {
+                console.warn('Mermaid unavailable');
+                return;
             }
-        } catch (e) {}
-    }
 
-    function renderIn(root) {
-        var base = root && root.jquery ? root[0] : (root || document);
-        convertMermaidFences(base);
-        return loadMermaid().then(function(mermaid) {
+            const nodes = (root || document).querySelectorAll('.mermaid, pre code.language-mermaid');
+            nodes.forEach((node) => {
+                let text = node.textContent || '';
+                text = normalizeMermaidText(text);
+
+                // Replace <pre><code> with <div class="mermaid">
+                if (node.tagName === 'CODE' && node.parentNode.tagName === 'PRE') {
+                    const div = document.createElement('div');
+                    div.className = 'mermaid';
+                    div.textContent = text;
+                    node.parentNode.replaceWith(div);
+                    node = div;
+                } else {
+                    node.textContent = text;
+                    node.classList.add('mermaid');
+                }
+            });
+
             try {
-                function isVisible(el) {
-                    try {
-                        if (!el) { return false; }
-                        if (el.offsetParent === null) { return false; }
-                        var style = window.getComputedStyle ? getComputedStyle(el) : null;
-                        if (style && (style.display === 'none' || style.visibility === 'hidden' || style.opacity === '0')) { return false; }
-                        return true;
-                    } catch (_) { return true; }
-                }
-                var targets = [];
-                if (base && base.querySelectorAll) {
-                    var nodes = base.querySelectorAll('.mermaid');
-                    for (var j = 0; j < nodes.length; j++) {
-                        var n = nodes[j];
-                        if (n.getAttribute('data-mermaid-processed')) { continue; }
-                        if (!isVisible(n)) { n.setAttribute('data-mermaid-deferred', '1'); continue; }
-                        targets.push(n);
-                        n.setAttribute('data-mermaid-processed', '1');
-                    }
-                }
-                if (!mermaid || !targets.length) { return { rendered: 0, available: !!mermaid }; }
-                // Prefer modern mermaid.run which returns a Promise
-                if (mermaid.run) {
-                    try {
-                        return Promise.resolve(mermaid.run({ nodes: targets }))
-                            .then(function(){ return { rendered: targets.length, available: true }; })
-                            .catch(function(err){
-                                try { console.warn('Mermaid.run failed', err); } catch (_) {}
-                                return { rendered: 0, available: true, error: err };
-                            });
-                    } catch (e) {
-                        return Promise.resolve({ rendered: 0, available: true, error: e });
-                    }
-                }
-                // Fallback to older API
-                if (mermaid.init) {
-                    try {
-                        var res = mermaid.init(undefined, base);
-                        // Some versions throw async; wrap in resolved Promise to unify API
-                        return Promise.resolve(res).then(function(){
-                            return { rendered: targets.length, available: true };
-                        }).catch(function(err){
-                            try { console.warn('Mermaid.init failed', err); } catch(_) {}
-                            return { rendered: 0, available: true, error: err };
-                        });
-                    } catch (e2) {
-                        return Promise.resolve({ rendered: 0, available: true, error: e2 });
-                    }
-                }
-                return { rendered: 0, available: true };
-            } catch (e3) {
-                return { rendered: 0, available: !!window.mermaid, error: e3 };
+                mermaid.init(undefined, document.querySelectorAll('.mermaid'));
+            } catch (e) {
+                console.warn('Mermaid render error:', e);
             }
         });
     }
 
-    function renderDeferred(root) {
-        var base = root && root.jquery ? root[0] : (root || document);
-        var nodes = base.querySelectorAll ? base.querySelectorAll('.mermaid[data-mermaid-deferred]') : [];
-        var any = false;
-        for (var i = 0; i < nodes.length; i++) {
-            var n = nodes[i];
-            if (n.getAttribute('data-mermaid-processed')) { n.removeAttribute('data-mermaid-deferred'); continue; }
-            try {
-                var style = window.getComputedStyle ? getComputedStyle(n) : null;
-                var visible = !(n.offsetParent === null || (style && (style.display === 'none' || style.visibility === 'hidden' || style.opacity === '0')));
-                if (visible) { n.removeAttribute('data-mermaid-deferred'); any = true; }
-            } catch (e) {}
-        }
-        if (any) { return renderIn(base); }
-        return Promise.resolve({ rendered: 0 });
-    }
-
-    function setTheme(theme) {
-        try {
-            if (!window.mermaid || !window.mermaid.initialize) { return; }
-            window.mermaid.initialize({ startOnLoad: false, theme: theme === 'dark' ? 'dark' : 'default' });
-        } catch (e) {}
-    }
-
-    return {
-        ensure: function(cb) { var p = loadMermaid(); if (typeof cb === 'function') { p.then(function(){ try { cb(); } catch(e) {} }).catch(function(){ try { cb(); } catch(e2) {} }); } return p; },
-        renderIn: renderIn,
-        renderDeferred: renderDeferred,
-        setTheme: setTheme
-    };
+    return { load: loadMermaid, render, normalizeText: normalizeMermaidText };
 });
