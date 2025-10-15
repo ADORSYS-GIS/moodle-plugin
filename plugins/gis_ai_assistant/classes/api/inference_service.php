@@ -258,10 +258,10 @@ class inference_service {
      * @return array Request data
      */
     private function prepare_request_data($message, $options = []) {
-        global $USER;
-        
+        global $USER, $CFG;
+
         $messages = [];
-        
+
         // Add system prompt if configured.
         if (!empty($this->config['system_prompt'])) {
             $messages[] = [
@@ -269,20 +269,43 @@ class inference_service {
                 'content' => $this->config['system_prompt']
             ];
         }
-        
+
         // Add user message.
         $messages[] = [
             'role' => 'user',
             'content' => $message
         ];
-        
-        return [
+
+        $user_email = $USER->email ?? ''; // Get email or default to empty string
+
+        // Validate email format
+        if (!empty($user_email) && !filter_var($user_email, FILTER_VALIDATE_EMAIL)) {
+            // Log the invalid email or handle it as needed
+            debugging('Invalid email format: ' . $user_email, DEBUG_DEVELOPER);
+            $user_email = ''; // Set to empty string to avoid sending invalid data
+        }
+
+        $request_data = [
             'model' => $options['model'] ?? $this->config['model'],
             'messages' => $messages,
             'max_tokens' => $options['max_tokens'] ?? $this->config['max_tokens'],
             'temperature' => $options['temperature'] ?? $this->config['temperature'],
-            'user' => $USER->email, // For tracking/analytics on API side
         ];
+
+        if (!empty($user_email)) {
+            $request_data['user'] = $user_email; // For tracking/analytics on API side
+        }
+
+        // Developer-only diagnostic log for local verification (safe/sanitized; no secrets).
+        if (isset($CFG->debug) && (int)$CFG->debug >= DEBUG_DEVELOPER) {
+            $dbg = [
+                'phase' => 'prepare_request_data',
+                'body_user' => isset($request_data['user']) ? (string)$request_data['user'] : null,
+            ];
+            @error_log('[AI tracking debug] ' . json_encode($dbg));
+        }
+
+        return $request_data;
     }
     
     /**
@@ -293,7 +316,7 @@ class inference_service {
      * @throws \Exception
      */
     private function make_api_request($data) {
-        global $USER;
+        global $USER, $CFG;
         
         // Build base URL candidates. Many OpenAI-compatible providers require /v1.
         $base = rtrim($this->config['base_url'], '/');
@@ -324,14 +347,39 @@ class inference_service {
             $url = preg_replace('#/chat/chat/#', '/chat/', $url);
             $url = preg_replace('#/responses/responses#', '/responses', $url);
 
+            $user_email = $USER->email ?? '';
+
+            // Validate email format
+            if (!empty($user_email) && !filter_var($user_email, FILTER_VALIDATE_EMAIL)) {
+                // Log the invalid email or handle it as needed
+                debugging('Invalid email format: ' . $user_email, DEBUG_DEVELOPER);
+                $user_email = ''; // Set to empty string to avoid sending invalid data
+            }
+
             $headers = [
                 'Content-Type: application/json',
                 'Authorization: Bearer ' . $this->config['api_key'],
-                'x-user-email: ' . $USER->email,
                 'Accept: application/json',
             ];
 
+            if (!empty($user_email)) {
+                $headers[] = 'x-user-email: ' . $user_email;
+            }
+
             $payload = $useresponses ? $this->build_responses_payload($data) : $data;
+
+            // Developer-only diagnostic log for local verification (safe/sanitized; no secrets).
+            if (isset($CFG->debug) && (int)$CFG->debug >= DEBUG_DEVELOPER) {
+                $dbg = [
+                    'phase' => 'make_api_request',
+                    'endpoint' => $url,
+                    'stream' => false,
+                    'x-user-email' => $user_email !== '' ? (string)$user_email : null,
+                    'body_user' => isset($payload['user']) ? (string)$payload['user'] : null,
+                    'responses_api' => (bool)$useresponses,
+                ];
+                @error_log('[AI outbound (sanitized)] ' . json_encode($dbg));
+            }
 
             $ch = curl_init();
             curl_setopt_array($ch, [
@@ -387,7 +435,7 @@ class inference_service {
      * @throws \Exception
      */
     private function make_streaming_api_request($data, $callback) {
-        global $USER;
+        global $USER, $CFG;
         
         // Build base URL candidates. Many OpenAI-compatible providers require /v1.
         $base = rtrim($this->config['base_url'], '/');
@@ -412,17 +460,42 @@ class inference_service {
             [$b, $endpoint, $useresponses] = $attempt;
             $url = $b . $endpoint;
 
+            $user_email = $USER->email ?? '';
+
+            // Validate email format
+            if (!empty($user_email) && !filter_var($user_email, FILTER_VALIDATE_EMAIL)) {
+                // Log the invalid email or handle it as needed
+                debugging('Invalid email format: ' . $user_email, DEBUG_DEVELOPER);
+                $user_email = ''; // Set to empty string to avoid sending invalid data
+            }
+
             $headers = [
                 'Content-Type: application/json',
                 'Authorization: Bearer ' . $this->config['api_key'],
-                'x-user-email: ' . $USER->email,
                 'Accept: text/event-stream',
             ];
+
+            if (!empty($user_email)) {
+                $headers[] = 'x-user-email: ' . $user_email;
+            }
 
             // Reset any previous final response before attempting.
             unset($this->final_response);
 
             $payload = $useresponses ? $this->build_responses_payload($data, true) : $data;
+
+            // Developer-only diagnostic log for local verification (safe/sanitized; no secrets).
+            if (isset($CFG->debug) && (int)$CFG->debug >= DEBUG_DEVELOPER) {
+                $dbg = [
+                    'phase' => 'make_streaming_api_request',
+                    'endpoint' => $url,
+                    'stream' => true,
+                    'x-user-email' => $user_email !== '' ? (string)$user_email : null,
+                    'body_user' => isset($payload['user']) ? (string)$payload['user'] : null,
+                    'responses_api' => (bool)$useresponses,
+                ];
+                @error_log('[AI outbound (sanitized)] ' . json_encode($dbg));
+            }
 
             $ch = curl_init();
             curl_setopt_array($ch, [
