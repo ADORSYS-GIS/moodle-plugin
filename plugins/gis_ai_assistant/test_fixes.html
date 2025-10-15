@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Assistant Fixes Test</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 20px;
+            background: #f5f5f5;
+        }
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .theme-toggle {
+            margin-bottom: 20px;
+            padding: 10px 20px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .ai-chat-container {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>AI Assistant Fixes Test</h1>
+        <button class="theme-toggle" onclick="toggleTheme()">Toggle Dark Mode</button>
+        
+        <div class="ai-chat-container" id="chatContainer">
+            <div class="ai-message ai-message-assistant">
+                <div class="ai-message-content">
+                    <h2>Test 1: Code Block with Syntax Highlighting</h2>
+                    <div class="ai-codeblock">
+                        <div class="ai-codeblock-header">
+                            <span class="ai-codeblock-lang">javascript</span>
+                            <button class="ai-codeblock-copy">Copy</button>
+                        </div>
+                        <div class="ai-codeblock-code">
+                            <pre><code class="language-javascript">function renderMermaid(element) {
+    if (!window.mermaid) {
+        console.warn('Mermaid not available');
+        return;
+    }
+    
+    try {
+        mermaid.init(undefined, element);
+    } catch (error) {
+        console.error('Mermaid rendering failed:', error);
+    }
+}</code></pre>
+                        </div>
+                    </div>
+                    
+                    <h2>Test 2: CSS Code Block</h2>
+                    <div class="ai-codeblock">
+                        <div class="ai-codeblock-header">
+                            <span class="ai-codeblock-lang">css</span>
+                            <button class="ai-codeblock-copy">Copy</button>
+                        </div>
+                        <div class="ai-codeblock-code">
+                            <pre><code class="language-css">.ai-codeblock {
+    margin: 1rem 0;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid #e5e7eb;
+    background: #f9fafb;
+}
+
+.ai-dark .ai-codeblock {
+    border-color: #4b5563;
+    background: #111827;
+}</code></pre>
+                        </div>
+                    </div>
+                    
+                    <h2>Test 4: Inline Code</h2>
+                    <p>This paragraph contains <code>inline code</code> that should be properly styled in both light and dark themes.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleTheme() {
+            const container = document.getElementById('chatContainer');
+            container.classList.toggle('ai-dark');
+            document.body.style.background = container.classList.contains('ai-dark') ? '#1a1a1a' : '#f5f5f5';
+            document.body.style.color = container.classList.contains('ai-dark') ? '#fff' : '#000';
+        }
+        
+        // Add copy functionality
+        document.querySelectorAll('.ai-codeblock-copy').forEach(button => {
+            button.addEventListener('click', function() {
+                const codeBlock = this.closest('.ai-codeblock').querySelector('code');
+                navigator.clipboard.writeText(codeBlock.textContent).then(() => {
+                    this.textContent = 'Copied!';
+                    setTimeout(() => this.textContent = 'Copy', 2000);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
