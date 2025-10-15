@@ -1,49 +1,17 @@
-// AMD module providing Markdown -> HTML conversion using Marked when available,
-// with a safe fallback renderer.
-//
-// Usage:
-// define(['local_gis_ai_assistant/markdown'], function(Markdown) {
-//   var html = Markdown.toHtml(markdownText);
-// });
-
-define([], function() {
+// Shim module: proxy to markdown_engine (markdown-it) for backward compatibility
+define(['local_gis_ai_assistant/markdown_engine'], function(Engine) {
     'use strict';
+    // Minimal shim: delegate to markdown_engine and return early. Legacy code below is intentionally unreachable.
+    return {
+        ensure: function(){ return Engine.ensure(); },
+        toHtml: function(md){ return Engine.renderAsync(md); },
+        toHtmlAsync: function(md){ return Engine.renderAsync(md); },
+        toHtmlSync: function(md){ return Engine.render(md); }
+    };
 
-    // Optionally preload Marked and DOMPurify so nested lists render correctly.
+    // Optionally preload Marked and DOMPurify (no external fetch to avoid CDN errors). Always resolve.
     function ensure() {
-        return new Promise(function(resolve) {
-            try {
-                if (window.marked && window.DOMPurify) { resolve({ marked: window.marked, DOMPurify: window.DOMPurify }); return; }
-                var rq = (typeof requirejs !== 'undefined') ? requirejs : (typeof require !== 'undefined' ? require : null);
-                if (!rq) { resolve({ marked: window.marked || null, DOMPurify: window.DOMPurify || null }); return; }
-                // Configure CDN paths once; RequireJS will handle AMD correctly, avoiding anonymous define mismatch.
-                rq.config({
-                    paths: {
-                        'marked_cdn': 'https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min',
-                        'dompurify_cdn': 'https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.min'
-                    },
-                    shim: {
-                        'marked_cdn': { exports: 'marked' },
-                        'dompurify_cdn': { exports: 'DOMPurify' }
-                    }
-                });
-                var deps = [];
-                if (!window.marked) { deps.push('marked_cdn'); }
-                if (!window.DOMPurify) { deps.push('dompurify_cdn'); }
-                if (!deps.length) { resolve({ marked: window.marked, DOMPurify: window.DOMPurify }); return; }
-                rq(deps, function() {
-                    try {
-                        for (var i = 0; i < arguments.length; i++) {
-                            var mod = arguments[i];
-                            // Marked exposes .parse; DOMPurify exposes .sanitize
-                            if (!window.marked && mod && typeof mod.parse === 'function') { window.marked = mod; }
-                            if (!window.DOMPurify && mod && typeof mod.sanitize === 'function') { window.DOMPurify = mod; }
-                        }
-                    } catch (e) {}
-                    resolve({ marked: window.marked || null, DOMPurify: window.DOMPurify || null });
-                });
-            } catch (e) { resolve({ marked: window.marked || null, DOMPurify: window.DOMPurify || null }); }
-        });
+        return Promise.resolve({ marked: window.marked || null, DOMPurify: window.DOMPurify || null });
     }
 
     function escapeHTML(text) {
@@ -69,12 +37,16 @@ define([], function() {
             var lines = String(md || '').split(/\r?\n/);
             var noiseline = /^\s*[A-Za-z][A-Za-z0-9_-]*Copy\s*$/i; // cssCopy, markdownCopy, luaCopy, lessCopy
             var versionline = /^\s*(?:text)?mermaid(?:\s+version.*)?\s*$/i; // mermaid version 10.x
+            var plainMermaid = /^\s*mermaid\s*$/i; // lone 'mermaid'
+            var mermaidPrefix = /^\s*mermaid\s+(graph|flowchart|sequenceDiagram|classDiagram|stateDiagram(?:-v2)?|erDiagram|journey)\b/i;
             var syntaxerrorline = /^\s*syntax\s+error\s+in\b/i; // Syntax error in textmermaid ...
             var out = [];
             for (var i = 0; i < lines.length; i++) {
                 var ln = lines[i];
                 if (noiseline.test(ln)) { continue; }
                 if (versionline.test(ln)) { continue; }
+                if (plainMermaid.test(ln)) { continue; }
+                if (mermaidPrefix.test(ln)) { ln = ln.replace(mermaidPrefix, '$1'); }
                 if (syntaxerrorline.test(ln)) { continue; }
                 // Do NOT drop isolated ``` lines; they may close a fenced block we created.
                 out.push(ln);
@@ -234,6 +206,7 @@ define([], function() {
         html = html.replace(/^####\s+(.+)$/gm, '<h4>$1</h4>');
         html = html.replace(/^###\s+(.+)$/gm, '<h3>$1</h3>');
         html = html.replace(/^##\s+(.+)$/gm, '<h2>$1</h2>');
+        html = html.replace(/^#\s+(.+)$/gm, '<h1>$1</h1>');
         // Horizontal rule
         html = html.replace(/^\s*---\s*$/gm, '<hr />');
         // Bold and italic
@@ -304,8 +277,11 @@ define([], function() {
                 var pre = code.parentNode && code.parentNode.tagName === 'PRE' ? code.parentNode : null;
                 if (!pre || !pre.parentNode) { continue; }
                 var raw = code.textContent || code.innerText || '';
-                // Decide whether this block is Mermaid by class or content.
-                var looksMermaid = (cls.indexOf('mermaid') !== -1) || /^(\s*)(graph|flowchart|sequenceDiagram|classDiagram|stateDiagram(?:-v2)?|erDiagram|journey)\b/m.test(raw) || /^\s*subgraph\b/m.test(raw);
+                // Decide whether this block is Mermaid by class or content (also allow obvious edge syntax).
+                var looksMermaid = (cls.indexOf('mermaid') !== -1)
+                    || /^(\s*)(graph|flowchart|sequenceDiagram|classDiagram|stateDiagram(?:-v2)?|erDiagram|journey)\b/m.test(raw)
+                    || /^\s*subgraph\b/m.test(raw)
+                    || /-->|==>|-\.-\>|<--|==/m.test(raw);
                 if (!looksMermaid) { continue; }
                 // Lightweight normalization (similar to mermaid_loader normalization).
                 try {
@@ -313,19 +289,31 @@ define([], function() {
                     var cleaned = [];
                     var drop1 = /^\s*[A-Za-z][A-Za-z0-9_-]*Copy\s*$/i;
                     var drop2 = /^\s*(?:text)?mermaid(?:\s+version.*)?\s*$/i;
+                    var dropPlain = /^\s*mermaid\s*$/i;
+                    var mermaidPrefix = /^\s*mermaid\s+(graph|flowchart|sequenceDiagram|classDiagram|stateDiagram(?:-v2)?|erDiagram|journey)\b/i;
                     var dropFence = /^\s*```/;
                     for (var j = 0; j < lines.length; j++) {
                         var ln = lines[j];
-                        if (drop1.test(ln) || drop2.test(ln) || dropFence.test(ln)) { continue; }
+                        if (drop1.test(ln) || drop2.test(ln) || dropPlain.test(ln) || dropFence.test(ln)) { continue; }
+                        if (mermaidPrefix.test(ln)) { ln = ln.replace(mermaidPrefix, '$1'); }
                         cleaned.push(ln);
                     }
                     raw = cleaned.join('\n').replace(/^\s+|\s+$/g, '');
-                    if (!/^(\s*)(graph|flowchart|sequenceDiagram|classDiagram|stateDiagram(?:-v2)?|erDiagram|journey)\b/.test(raw) && /^\s*subgraph\b/.test(raw)) {
-                        raw = 'graph TD\n' + raw;
+                    var hasDir = /^(\s*)(graph|flowchart|sequenceDiagram|classDiagram|stateDiagram(?:-v2)?|erDiagram|journey)\b/m.test(raw);
+                    var startsWithSub = /^\s*subgraph\b/m.test(raw);
+                    var hasEdges = /-->|==>|-\.-\>|==/m.test(raw);
+                    if (!hasDir) {
+                        if (startsWithSub || hasEdges) {
+                            raw = 'graph TD\n' + raw;
+                            hasDir = true;
+                        }
                     }
+                    if (!hasDir) { continue; }
+                    if (!raw.trim()) { continue; }
                 } catch (e) {}
                 var divMer = document.createElement('div');
                 divMer.className = 'mermaid';
+                divMer.setAttribute('data-mermaid-source', raw);
                 divMer.textContent = raw;
                 pre.parentNode.replaceChild(divMer, pre);
             }
@@ -358,24 +346,5 @@ define([], function() {
         }
     }
 
-    return {
-        // Preload Marked/DOMPurify
-        ensure: ensure,
-        // Convert Markdown to HTML using Marked when available, else fallback.
-        toHtml: function(md) {
-            var out = renderWithMarked(md);
-            if (out === null) {
-                return fallbackMarkdownToHtml(String(md || ''));
-            }
-            return out;
-        },
-        // Async version that waits for dependencies
-        toHtmlAsync: function(md) {
-            return ensure().then(function(){
-                var out = renderWithMarked(md);
-                if (out === null) { return fallbackMarkdownToHtml(String(md || '')); }
-                return out;
-            });
-        }
-    };
+    // (Unreachable legacy code intentionally left to avoid risky mass deletion during refactor)
 });
