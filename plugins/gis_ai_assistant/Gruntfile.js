@@ -45,7 +45,7 @@ module.exports = function(grunt) {
                 files: [{
                     expand: true,
                     cwd: 'amd/src',
-                    src: ['*.js'],
+                    src: ['*.js', '!mermaid_loader.js'],
                     dest: 'amd/build',
                     ext: '.min.js'
                 }]
