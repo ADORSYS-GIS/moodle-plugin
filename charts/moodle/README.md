@@ -176,11 +176,11 @@ e.g., http://10.81.206.74:30897
 
 This chart includes the following dependencies, which are managed in `Chart.yaml`:
 
-* [bitnami/moodle](https://artifacthub.io/packages/helm/bitnamilegacy/moodle) – core Moodle deployment
-* [bitnami/postgresql](https://artifacthub.io/packages/helm/bitnamilegacy/postgresql) – optional internal PostgreSQL database
-* [bitnami/mariadb](https://artifacthub.io/packages/helm/bitnamilegacy/mariadb) – optional internal MariaDB database
-* [bitnami/common](https://artifacthub.io/packages/helm/bitnamilegacy/common) – common Bitnami utilities
-* [bitnami/cloudnative-pg](https://artifacthub.io/packages/helm/bitnamilegacy/cloudnative-pg) (conditionally enabled)
+* [bitnami/moodle](https://artifacthub.io/packages/helm/bitnami/moodle) – core Moodle deployment
+* [bitnami/postgresql](https://artifacthub.io/packages/helm/bitnami/postgresql) – optional internal PostgreSQL database
+* [bitnami/mariadb](https://artifacthub.io/packages/helm/bitnami/mariadb) – optional internal MariaDB database
+* [bitnami/common](https://artifacthub.io/packages/helm/bitnami/common) – common Bitnami utilities
+* [bitnami/cloudnative-pg](https://artifacthub.io/packages/helm/bitnami/cloudnative-pg) (conditionally enabled)
 
 **Note**: CloudNativePG resources are deployed directly by this chart when `cnpg.enabled: true`.
 
