@@ -61,6 +61,10 @@ helm install my-moodle . \
   -f values-postgres.yaml
 ```
 
+***Note***: add the flag ``` --set global.security.allowInsecureImages=true ```  if you trust the custom image and understand the security/performance risks.
+
+
+
 ### Option 4: CNPG Cluster + External Database
 
 Deploy Moodle with a CloudNativePG cluster managed by this chart:

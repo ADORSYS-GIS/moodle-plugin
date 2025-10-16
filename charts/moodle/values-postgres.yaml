@@ -10,6 +10,11 @@ moodle:
     database: moodledb
 postgresql: 
   enabled: true
+  image:
+    registry: docker.io
+    repository: bitnamilegacy/postgresql
+    tag: 15.2.0-debian-12-r0
+    pullPolicy: IfNotPresent
   auth:
     postgresPassword: rootPass
     username: bn_moodle_adorsys
