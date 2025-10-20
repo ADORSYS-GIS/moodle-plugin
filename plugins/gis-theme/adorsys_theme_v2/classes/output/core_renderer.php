@@ -4,25 +4,27 @@ namespace theme_adorsys_theme_v2\output;
 
 defined('MOODLE_INTERNAL') || die();
 
-use theme_adorsys_theme_v1\output\core_renderer as  parent_renderer;
+// Use Moodle's core renderer as the base
+use \core_renderer;
 
 /**
-* Renderer for adorsys_theme_v2 child theme.
-*/
-class theme_adorsys_theme_v2 extends parent_renderer {
+ * Renderer for adorsys_theme_v2 child theme.
+ */
+class theme_adorsys_theme_v2 extends \core_renderer {
     /**
-    * Renders the navbar template.
-    */
-     public function navbar(): string {
-        global $USER, $PAGE;
+     * Renders the navbar template.
+     */
+    public function navbar(): string {
+        global $USER, $PAGE, $CFG;
         
+        $sitename = $PAGE->heading ?? 'Moodle';
         $context = [
-            'sitename' => format_string($PAGE->heading ?? 'Moodle'),
+            'sitename' => format_string($sitename),
             'config' => [
                 'wwwroot' => $CFG->wwwroot ?? '/',
             ],
             'navitems' => [
-                ['title' => 'Dashboard', 'url' => new moodle_url('/my/')],
+                ['title' => 'Dashboard', 'url' => new moodle_url('/my/')], 
                 ['title' => 'Courses', 'url' => new moodle_url('/course/index.php')],
             ],
             'isloggedin' => isloggedin(),
@@ -35,7 +37,5 @@ class theme_adorsys_theme_v2 extends parent_renderer {
         }
         
         return $this->render_from_template('core/navbar', $context);
-    
     }
-    
 }

@@ -1,62 +1,98 @@
 {{> theme_adorsys_theme_v2/head }}
-<style>
-/* Hide only the Moodle main content blocks region header & skip link */
-#block-region-content > h2,
-#block-region-content > a.visually-hidden-focusable {
-    display: none !important;
-}
 
-</style>
-
-
-<body {{{ bodyattributes }}} class="bg-gray-50 min-h-screen flex flex-col">
+<body {{{ bodyattributes }}}>
+{{> core/local/toast/wrapper}}
+<div id="page-wrapper" class="d-print-block">
 
     {{{ output.standard_top_of_body_html }}}
 
-    {{{ output.navbar }}}
 
+    {{> theme_adorsys_theme_v2/partials/sidebar }}
+    {{> theme_adorsys_theme_v2/navbar }}
+    {{#courseindex}}
+        {{< theme_adorsys_theme_v2/drawer }}
+            {{$id}}theme_adorsys_theme_v2-drawers-courseindex{{/id}}
+            {{$drawerheadercontent}}
+            {{/drawerheadercontent}}
+            {{$drawerclasses}}drawer drawer-left {{#courseindexopen}}show{{/courseindexopen}}{{/drawerclasses}}
+            {{$drawercontent}}
+                {{{courseindex}}}
+            {{/drawercontent}}
+            {{$drawerpreferencename}}drawer-open-index{{/drawerpreferencename}}
+            {{$drawerstate}}show-drawer-left{{/drawerstate}}
+            {{$tooltipplacement}}right{{/tooltipplacement}}
+            {{$closebuttontext}}{{#str}}closecourseindex, core{{/str}}{{/closebuttontext}}
+        {{/ theme_adorsys_theme_v2/drawer}}
+    {{/courseindex}}
+    {{#hasblocks}}
+        {{< theme_adorsys_theme_v2/drawer }}
+            {{$id}}theme_adorsys_theme_v2-drawers-blocks{{/id}}
+            {{$drawerclasses}}drawer drawer-right{{#blockdraweropen}} show{{/blockdraweropen}}{{/drawerclasses}}
+            {{$drawercontent}}
+                <div class="d-print-none">
+                    {{{ addblockbutton }}}
+                    {{{ sidepreblocks }}}
+                </div>
+            {{/drawercontent}}
+            {{$drawerpreferencename}}drawer-open-block{{/drawerpreferencename}}
+            {{$forceopen}}{{#forceblockdraweropen}}1{{/forceblockdraweropen}}{{/forceopen}}
+            {{$drawerstate}}show-drawer-right{{/drawerstate}}
+            {{$tooltipplacement}}left{{/tooltipplacement}}
+            {{$drawercloseonresize}}1{{/drawercloseonresize}}
+            {{$closebuttontext}}{{#str}}closeblockdrawer, core{{/str}}{{/closebuttontext}}
+        {{/ theme_adorsys_theme_v2/drawer}}
+    {{/hasblocks}}
+    <div id="page" data-region="mainpage" data-usertour="scroller" class="drawers {{#courseindexopen}}show-drawer-left{{/courseindexopen}} {{#blockdraweropen}}show-drawer-right{{/blockdraweropen}} drag-container">
+        <div id="topofscroll" class="main-inner">
+          
+            {{{ output.full_header }}}
+            {{#secondarymoremenu}}
+                <div class="secondary-navigation d-print-none">
+                    {{> core/moremenu}}
+                </div>
+            {{/secondarymoremenu}}
+            <div id="page-content" class="pb-3 d-print-block">
+                <div id="region-main-box">
+                    {{#hasregionmainsettingsmenu}}
+                    <div id="region-main-settings-menu" class="d-print-none">
+                        <div> {{{ regionmainsettingsmenu }}} </div>
+                    </div>
+                    {{/hasregionmainsettingsmenu}}
+                    <div id="region-main">
 
-    <div id="page-wrapper" class="flex flex-col flex-1">
+                        {{#hasregionmainsettingsmenu}}
+                            <div class="region_main_settings_menu_proxy"></div>
+                        {{/hasregionmainsettingsmenu}}
+                        {{{ output.course_content_header }}}
+                        {{#headercontent}}
+                            {{> core/activity_header }}
+                        {{/headercontent}}
+                        {{#overflow}}
+                            <div class="container-fluid tertiary-navigation">
+                                <div class="navitem">
+                                    {{> core/url_select}}
+                                </div>
+                            </div>
+                        {{/overflow}}
+                        {{{ output.main_content }}}
+                        {{{ output.activity_navigation }}}
+                        {{{ output.course_content_footer }}}
 
-        {{#hasnavbar}}
-        <nav id="navbar" class="bg-white shadow px-6 py-3">
-            {{{ navbar }}}
-        </nav>
-        {{/hasnavbar}}
-
-        <header class="text-center my-6">
-            <h1 class="text-2xl font-bold text-gray-800">{{ pageheading }}</h1>
-        </header>
-
-        <div id="page" class="flex-1 container mx-auto flex flex-row gap-6 px-4">
-
-            {{#sidepreblocks}}
-            <aside id="block-region-side-pre" class="w-1/4 hidden lg:block">
-                {{{ sidepreblocks }}}
-            </aside>
-            {{/sidepreblocks}}
-
-            <main id="region-main" class="flex-1 bg-white shadow p-6 rounded">
-                {{{ maincontent }}}
-            </main>
-
-            {{#sidepostblocks}}
-            <aside id="block-region-side-post" class="w-1/4 hidden lg:block">
-                {{{ sidepostblocks }}}
-            </aside>
-            {{/sidepostblocks}}
-
+                    </div>
+                </div>
+            </div>
         </div>
-
-        {{#hasfooter}}
-        <footer id="page-footer" class="mt-auto bg-gray-100 text-center py-4">
-            {{{ footer }}}
-        </footer>
-        {{/hasfooter}}
-
     </div>
-
-    {{{ standardendhtml }}}
+    {{{ output.standard_after_main_region_html }}}
+</div>
 
 </body>
 </html>
+
+{{#js}}
+M.util.js_pending('theme_adorsys_theme_v2/loader');
+require(['theme_adorsys_theme_v2/loader', 'theme_adorsys_theme_v2/drawer'], function(Loader, Drawer) {
+    Drawer.init();
+    M.util.js_complete('theme_adorsys_theme_v2/loader');
+});
+{{/js}}

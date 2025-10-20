@@ -3,37 +3,45 @@
 <head>
     {{{ output.standard_head_html }}}
 </head>
-<body {{{ bodyattributes }}} class="bg-gray-50 text-gray-800">
+<body {{{ bodyattributes }}} class="bg-gray-50 text-gray-800 min-h-screen flex flex-col">
 
     {{#hasnavbar}}
-    <header class="bg-white shadow">
-        <div class="container mx-auto px-4 py-3">
-            {{{ navbar }}}
+    <header class="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-40">
+        <div class="container mx-auto px-4">
+            {{> theme_adorsys_theme_v2/navbar }}
         </div>
     </header>
     {{/hasnavbar}}
 
-    <main class="container mx-auto px-4 py-6 grid grid-cols-12 gap-4">
+    <div class="flex flex-1 overflow-hidden">
         {{#sidepreblocks}}
-        <aside id="region-side-pre" class="col-span-3">
-            {{{ sidepreblocks }}}
+        <!-- Sidebar (using your existing sidebar template) -->
+        <aside id="region-side-pre"
+               class="w-64 bg-white border-r border-gray-200 p-4 hidden md:block overflow-y-auto shadow-sm">
+            {{> theme_adorsys_theme_v2/partials/sidebar }}
         </aside>
         {{/sidepreblocks}}
 
-        <section id="region-main" class="col-span-6">
-            {{{ maincontent }}}
-        </section>
+        <!-- Main Content -->
+        <main id="region-main"
+              class="flex-1 overflow-y-auto p-6 bg-gray-50">
+            <div class="max-w-7xl mx-auto">
+                {{{ maincontent }}}
+            </div>
+        </main>
 
         {{#sidepostblocks}}
-        <aside id="region-side-post" class="col-span-3">
+        <!-- Right Sidebar -->
+        <aside id="region-side-post"
+               class="w-64 bg-white border-l border-gray-200 p-4 hidden lg:block overflow-y-auto shadow-sm">
             {{{ sidepostblocks }}}
         </aside>
         {{/sidepostblocks}}
-    </main>
+    </div>
 
     {{#hasfooter}}
-    <footer class="bg-gray-900 text-white py-6">
-        <div class="container mx-auto px-4">
+    <footer class="bg-gray-900 text-gray-200 mt-auto">
+        <div class="container mx-auto px-4 py-6">
             {{{ footer }}}
         </div>
     </footer>

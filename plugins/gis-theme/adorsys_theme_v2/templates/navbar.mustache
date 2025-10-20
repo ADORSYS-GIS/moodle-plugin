@@ -1,59 +1,49 @@
-<nav class="navbar bg-base-100 shadow-md px-4">
-  <div class="navbar-start">
-    <!-- Mobile hamburger -->
-    <div class="dropdown">
-      <div tabindex="0" role="button" class="btn btn-ghost lg:hidden">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
-             viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round"
-             stroke-linejoin="round" stroke-width="2"
-             d="M4 6h16M4 12h16M4 18h16"/></svg>
-      </div>
-      <ul tabindex="0"
-          class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
-        {{#menuitems}}
-          <li><a href="{{url}}" class="hover:bg-base-200">{{text}}</a></li>
-        {{/menuitems}}
-      </ul>
-    </div>
+<nav class="navbar fixed-top bg-body navbar-expand" aria-label="{{#str}}sitemenubar, admin{{/str}}">
+    <div class="container-fluid">
+        <button class="navbar-toggler aabtn d-block d-md-none px-1 my-1 border-0" data-toggler="drawers" data-action="toggle" data-target="theme_boost-drawers-primary">
+            <span class="navbar-toggler-icon"></span>
+            <span class="visually-hidden">{{#str}}sidepanel, core{{/str}}</span>
+        </button>
 
-    <!-- Brand -->
-    <a href="{{siteurl}}" class="btn btn-ghost normal-case text-xl">{{sitename}}</a>
-  </div>
+        <a href="{{{ config.homeurl }}}" class="navbar-brand d-none d-md-flex align-items-center m-0 me-4 p-0 aabtn">
 
-  <!-- Desktop menu -->
-  <div class="navbar-center hidden lg:flex">
-    <ul class="menu menu-horizontal px-1">
-      {{#menuitems}}
-        <li><a href="{{url}}" class="hover:bg-base-200">{{text}}</a></li>
-      {{/menuitems}}
-    </ul>
-  </div>
+            {{# output.should_display_navbar_logo }}
+                <img src="{{output.get_compact_logo_url}}" class="logo me-1" alt="{{sitename}}">
+            {{/ output.should_display_navbar_logo }}
+            {{^ output.should_display_navbar_logo }}
+                {{{ sitename }}}
+            {{/ output.should_display_navbar_logo }}
+        </a>
+        {{#primarymoremenu}}
+            <div class="primary-navigation">
+                {{> core/moremenu}}
+            </div>
+        {{/primarymoremenu}}
 
-  <div class="navbar-end">
-    {{#isloggedin}}
-      <div class="dropdown dropdown-end">
-        <label tabindex="0" class="btn btn-ghost btn-circle avatar">
-          <div class="w-10 rounded-full">
-            <img src="{{userpictureurl}}" alt="{{username}}">
-          </div>
-        </label>
-        <ul tabindex="0"
-            class="mt-3 p-2 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52">
-          <li><a href="{{profileurl}}">Profile</a></li>
-          <li><a href="{{logouturl}}">Logout</a></li>
+        <ul class="navbar-nav d-none d-md-flex my-1 px-1">
+            <!-- page_heading_menu -->
+            {{{ output.page_heading_menu }}}
         </ul>
-      </div>
-    {{/isloggedin}}
-    {{^isloggedin}}
-      <a href="{{loginurl}}" class="btn btn-primary">Login</a>
-    {{/isloggedin}}
-  </div>
+
+        <div id="usernavigation" class="navbar-nav ms-auto h-100">
+            {{# output.search_box }}
+                {{{ output.search_box }}}
+                <div class="divider border-start h-75 align-self-center mx-1"></div>
+            {{/output.search_box}}
+            {{#langmenu}}
+                {{> theme_boost/language_menu }}
+                <div class="divider border-start h-75 align-self-center mx-1"></div>
+            {{/langmenu}}
+            {{{ output.navbar_plugin_output }}}
+            <div class="d-flex align-items-stretch usermenu-container" data-region="usermenu">
+                {{#usermenu}}
+                    {{> core/user_menu }}
+                {{/usermenu}}
+            </div>
+            {{{ output.edit_switch }}}
+        </div>
+    </div>
 </nav>
 
-{{#js}}
-M.util.js_pending('theme_adorsys_theme_v2/sidebar');
-require(['theme_adorsys_theme_v2/sidebar'], function(sidebar) {
-  sidebar.init('#sidebar', '#sidebarToggle');
-  M.util.js_complete('theme_adorsys_theme_v2/sidebar');
-});
-{{/js}}
+
+{{> theme_boost/primary-drawer-mobile }}

@@ -1,13 +1,52 @@
-<nav class="bg-white border-b shadow-sm">
-    <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
-        <div class="flex items-center gap-4">
-            <a href="{{config.wwwroot}}" class="text-xl font-semibold text-gray-900">
-                {{sitename}}
-            </a>
-            {{{navbar}}}
-        </div>
-        <div class="flex items-center">
-            {{{ output.user_menu }}}
-        </div>
+<nav class="navbar navbar-expand navbar-light bg-white shadow-sm">
+  <div class="container-fluid">
+
+    <!-- Left: Logo / Brand -->
+    <a class="navbar-brand fw-bold" href="{{config.wwwroot}}">{{ sitename }}</a>
+
+    <div class="d-flex align-items-center ms-auto">
+
+      <!-- Existing Moodle navbar content (notifications, messages, etc.) -->
+      {{{ output.navbar_plugin_output }}}
+
+      <!-- USER DROPDOWN -->
+      <div class="dropdown ms-3">
+        <a href="#" tabindex="0"
+           class="nav-link dropdown-toggle icon-no-margin d-flex align-items-center"
+           id="action-menu-toggle-0"
+           data-bs-toggle="dropdown"
+           role="button"
+           aria-haspopup="true"
+           aria-expanded="false"
+           aria-controls="action-menu-0-menu">
+
+          <!-- Moodle-style avatar and name -->
+          <span class="userbutton d-flex align-items-center">
+            <span class="usertext me-2">{{{ user.fullname }}}</span>
+            <span class="avatars">
+              <span class="avatar current">
+                <span class="userinitials size-35"
+                      title="{{{ user.fullname }}}"
+                      aria-label="{{{ user.fullname }}}"
+                      role="img">
+                  {{ user.initials }}
+                </span>
+              </span>
+            </span>
+          </span>
+          <b class="caret"></b>
+        </a>
+
+        <!-- Dropdown menu -->
+        <ul class="dropdown-menu dropdown-menu-end shadow-sm mt-2" id="action-menu-0-menu" aria-labelledby="action-menu-toggle-0">
+          <li><a class="dropdown-item" href="{{config.wwwroot}}/user/profile.php">Profile</a></li>
+          <li><a class="dropdown-item" href="{{config.wwwroot}}/message/index.php">Messages</a></li>
+          <li><a class="dropdown-item" href="{{config.wwwroot}}/calendar/view.php">Calendar</a></li>
+          <li><hr class="dropdown-divider"></li>
+          <li><a class="dropdown-item text-danger" href="{{config.wwwroot}}/login/logout.php">Log out</a></li>
+        </ul>
+      </div>
+
     </div>
+  </div>
 </nav>

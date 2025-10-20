@@ -1,89 +1,116 @@
 {{#sidepreblocks}}
-<!-- Sidebar toggle button -->
-<button id="sidebar-toggle" aria-label="Toggle sidebar" aria-expanded="false">
-    ☰
+<!-- Sidebar toggle button (hamburger icon) -->
+<button
+    id="sidebar-toggle"
+    aria-label="Toggle sidebar"
+    aria-expanded="false"
+    class="sidebar-toggle"
+>
+    {{#pix}} menu, theme_adorsys_theme_v2 {{/pix}}
 </button>
 
 <!-- Sidebar -->
 <aside id="sidebar" class="sidebar">
     <div class="sidebar-header">
-        <h2 class="sidebar-title">Blocks</h2>
-        <button id="sidebar-close" aria-label="Close sidebar">✕</button>
+        <button
+            id="sidebar-close"
+            aria-label="Close sidebar"
+            class="sidebar-close"
+        >
+            {{#pix}} close, theme_adorsys_theme_v2 {{/pix}}
+        </button>
+        <h2 class="sidebar-title">Menu</h2>
     </div>
     <div class="sidebar-content">
         {{{ sidepreblocks }}}
     </div>
 </aside>
 
-<style>
-/* === Unified sidebar CSS === */
+<!-- Overlay -->
+<div id="sidebar-overlay" class="sidebar-overlay"></div>
 
-/* Reset */
-#sidebar, #sidebar-toggle, #sidebar-close {
-    box-sizing: border-box;
+<style>
+/* === Sidebar + Overlay Styling === */
+
+/* Sidebar toggle (hamburger) button */
+.sidebar-toggle {
+    position: fixed;
+    top: 4rem; /* below navbar position visually, but navbar will be covered when open */
+    left: 1rem;
+    z-index: 1040;
+    background: rgba(255, 255, 255, 0.85);
+    color: #374151; /* gray-700 */
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    border-radius: 0.5rem;
+    padding: 0.5rem;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(4px);
+    transition: all 0.2s ease;
+    cursor: pointer;
 }
 
-/* Toggle button (always visible on small screens) */
-#sidebar-toggle {
-    position: fixed;
-    top: 1rem;
-    left: 1rem;
-    background: #1e40af; /* blue-800 */
-    color: white;
-    border: none;
-    border-radius: 6px;
-    width: 42px;
-    height: 42px;
-    cursor: pointer;
-    z-index: 1100;
-    font-size: 1.25rem;
+.sidebar-toggle:hover {
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
 }
 
 /* Sidebar base */
 .sidebar {
     position: fixed;
-    top: 0;
+    top: 0; /* cover the navbar */
     left: 0;
-    width: 260px;
-    height: 100vh;
-    background: #ffffff;
-    border-right: 1px solid #e5e7eb; /* gray-200 */
-    box-shadow: 2px 0 8px rgba(0,0,0,0.05);
+    width: 21rem; /* 336px */
+    height: 100vh; /* cover full viewport */
+    background: var(--b1, #ffffff);
+    border-right: 1px solid var(--b2, #e5e7eb);
+    box-shadow: 2px 0 12px rgba(0, 0, 0, 0.1);
     transform: translateX(-100%);
-    transition: transform 0.25s ease;
-    z-index: 1050;
+    transition: transform 0.3s ease-in-out;
+    z-index: 1100; /* over navbar */
     display: flex;
     flex-direction: column;
 }
 
-/* Open state */
+/* Sidebar visible */
 .sidebar.open {
     transform: translateX(0);
 }
 
-/* Header */
+/* Sidebar header */
 .sidebar-header {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    padding: 0.75rem 1rem;
-    border-bottom: 1px solid #e5e7eb;
-    background: #f9fafb;
+    justify-content: flex-start;
+    gap: 0.5rem;
+    padding: 1rem;
+    border-bottom: 1px solid var(--b2, #e5e7eb);
+    background: var(--b2, #f9fafb);
+    position: sticky;
+    top: 0;
+    z-index: 10;
 }
 
-.sidebar-title {
-    margin: 0;
-    font-size: 1.125rem;
-    font-weight: 600;
-    color: #111827;
-}
-
-#sidebar-close {
+/* Close button */
+.sidebar-close {
     background: none;
     border: none;
     color: #6b7280;
-    font-size: 1.25rem;
+    font-size: 1.5rem;
+    line-height: 1;
     cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.sidebar-close:hover {
+    color: #111827;
+}
+
+/* Title */
+.sidebar-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #111827;
+    margin-left: 0.25rem;
 }
 
 /* Content area */
@@ -93,40 +120,74 @@
     padding: 1rem;
 }
 
-/* Show sidebar by default on large screens */
+/* Overlay (background dim when sidebar is open) */
+.sidebar-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.35);
+    backdrop-filter: blur(2px);
+    z-index: 1090; /* below sidebar but above page */
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.sidebar-overlay.active {
+    display: block;
+    opacity: 1;
+}
+
+/* Large screen behavior */
 @media (min-width: 1024px) {
-    #sidebar {
-        transform: translateX(0);
+    .sidebar {
         position: relative;
+        transform: translateX(0);
         height: auto;
         box-shadow: none;
-        width: 300px;
+        border-right: none;
+        width: 18rem;
+        z-index: auto;
     }
-    #sidebar-toggle, #sidebar-close {
-        display: none;
+    .sidebar-toggle,
+    .sidebar-close,
+    .sidebar-overlay {
+        display: none !important;
     }
 }
 </style>
 
 <script>
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", () => {
     const sidebar = document.getElementById("sidebar");
     const toggle = document.getElementById("sidebar-toggle");
     const closeBtn = document.getElementById("sidebar-close");
+    const overlay = document.getElementById("sidebar-overlay");
 
-    if (toggle && sidebar) {
-        toggle.addEventListener("click", () => {
-            sidebar.classList.toggle("open");
-            const isOpen = sidebar.classList.contains("open");
-            toggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
-        });
-    }
-    if (closeBtn) {
-        closeBtn.addEventListener("click", () => {
-            sidebar.classList.remove("open");
-            toggle.setAttribute("aria-expanded", "false");
-        });
-    }
+    const openSidebar = () => {
+        sidebar.classList.add("open");
+        overlay.classList.add("active");
+        toggle.classList.add("hidden");
+        toggle.setAttribute("aria-expanded", "true");
+    };
+
+    const closeSidebar = () => {
+        sidebar.classList.remove("open");
+        overlay.classList.remove("active");
+        toggle.classList.remove("hidden");
+        toggle.setAttribute("aria-expanded", "false");
+    };
+
+    // Click handlers
+    if (toggle) toggle.addEventListener("click", openSidebar);
+    if (closeBtn) closeBtn.addEventListener("click", closeSidebar);
+    if (overlay) overlay.addEventListener("click", closeSidebar);
+
+    // Keyboard (Escape)
+    document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && sidebar.classList.contains("open")) {
+            closeSidebar();
+        }
+    });
 });
 </script>
 {{/sidepreblocks}}
