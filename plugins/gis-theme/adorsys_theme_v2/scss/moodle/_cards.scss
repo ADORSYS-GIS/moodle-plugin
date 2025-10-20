@@ -1,0 +1,13 @@
+@import 'variables';
+
+.card-compact {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 1rem;
+  box-shadow: $shadow-sm;
+}
+
+.card-title {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}

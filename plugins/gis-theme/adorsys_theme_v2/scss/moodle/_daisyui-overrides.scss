@@ -1,0 +1,39 @@
+// Tailwind + DaisyUI custom theme overrides for Adorsys V2
+:root {
+  --p: 240 94% 67%;     // primary - indigo
+  --s: 267 84% 75%;     // secondary - purple
+  --a: 188 93% 54%;     // accent - cyan
+  --b1: 0 0% 100%;      // background (white)
+  --b2: 220 14% 96%;    // surface
+  --bc: 222 47% 11%;    // text color
+  --rounded-box: 0.75rem;
+  --rounded-btn: 0.5rem;
+  --animation-btn: 0.25s;
+  --btn-text-case: none;
+}
+
+// Re-style Moodle buttons to match DaisyUI palette
+.btn {
+  @apply font-medium transition rounded-md;
+}
+
+.btn-primary {
+  @apply bg-indigo-600 text-white hover:bg-indigo-700;
+}
+
+.btn-secondary {
+  @apply bg-purple-500 text-white hover:bg-purple-600;
+}
+
+.btn-outline {
+  @apply border border-gray-300 text-gray-700 hover:bg-gray-100;
+}
+
+// Modal and card enhancement
+.card {
+  @apply shadow-sm border border-gray-200 rounded-lg bg-white transition hover:shadow-md;
+}
+
+.modal-box {
+  @apply bg-white rounded-lg border border-gray-200 shadow-lg;
+}

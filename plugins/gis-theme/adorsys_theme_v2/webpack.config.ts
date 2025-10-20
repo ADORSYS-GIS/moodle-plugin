@@ -51,7 +51,7 @@ const config: Configuration = {
 
   plugins: [
     new MiniCssExtractPlugin({
-      filename: 'dist/[name].css'
+      filename: 'style/[name].css'
     }),
 
     //  Copy only Moodle plugin-relevant files
@@ -61,7 +61,6 @@ const config: Configuration = {
         { from: 'layout', to: 'layout' },
         { from: 'pix', to: 'pix' },
         { from: 'lang', to: 'lang' },
-        { from: 'style', to: 'style' }, // 👈 Added line to copy your existing style dir
 
         // Copy PHP root files like version.php, lib.php etc.
         {

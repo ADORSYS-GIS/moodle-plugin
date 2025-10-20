@@ -1,0 +1,9 @@
+.course-card {
+  @apply bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden hover:shadow-md transition;
+  .course-title {
+    @apply text-lg font-semibold text-gray-800 p-4;
+  }
+  .course-summary {
+    @apply text-sm text-gray-600 px-4 pb-4;
+  }
+}

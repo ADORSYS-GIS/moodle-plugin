@@ -1,0 +1,7 @@
+.toast {
+  @apply bg-white shadow-md border-l-4 rounded-md px-4 py-3 flex items-center gap-2 transition-all;
+  &.info { border-color: $color-primary; }
+  &.success { border-color: #22c55e; }
+  &.warning { border-color: #f59e0b; }
+  &.error { border-color: #ef4444; }
+}

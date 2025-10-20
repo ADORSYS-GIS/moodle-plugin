@@ -1,0 +1,17 @@
+@import 'variables';
+
+input[type="text"], input[type="password"], select, textarea {
+  border: 1px solid var(--border);
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.5rem;
+  background: #fff;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+label {
+  display: block;
+  margin-bottom: 0.25rem;
+  font-weight: 500;
+  color: $color-muted;
+}
