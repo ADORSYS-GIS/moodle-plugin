@@ -58,7 +58,6 @@ if (!$courseindex) {
 }
 
 $bodyattributes = $OUTPUT->body_attributes($extraclasses);
-$forceblockdraweropen = $OUTPUT->firstview_fakeblocks();
 
 $secondarynavigation = false;
 $overflow = '';
@@ -96,7 +95,6 @@ $templatecontext = [
     'mobileprimarynav' => $primarymenu['mobileprimarynav'],
     'usermenu' => $primarymenu['user'],
     'langmenu' => $primarymenu['lang'],
-    'forceblockdraweropen' => $forceblockdraweropen,
     'regionmainsettingsmenu' => $regionmainsettingsmenu,
     'hasregionmainsettingsmenu' => !empty($regionmainsettingsmenu),
     'overflow' => $overflow,
