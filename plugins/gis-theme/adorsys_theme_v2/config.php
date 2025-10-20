@@ -15,12 +15,12 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Theme config file for adorsys_theme_v2
- *
- * @package    theme_adorsys_theme_v2
- * @copyright  2025 Adorsys
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+* Theme config file for adorsys_theme_v2
+*
+* @package    theme_adorsys_theme_v2
+* @copyright  2025 Adorsys
+* @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+*/
 
 
 defined('MOODLE_INTERNAL') || die();
@@ -29,129 +29,163 @@ $THEME->name = 'adorsys_theme_v2';
 
 $THEME->parents = ['adorsys_theme_v1'];
 
-$THEME->sheets = ['login'];
+$THEME->sheets = ['main'];
 
-
-$THEME->layouts = [
-
-    'standard' => [
-        'file' => 'drawers.php', 
-        'regions' => ['side-pre', 'side-post'],
-        'defaultregion' => 'side-pre',
-    ],
-    // Used by default for most pages.
-    'default' => [
-        'file' => 'default.php',
-        'regions' => ['side-pre', 'side-post'],
-        'defaultregion' => 'side-pre',
-    ],
-
-    // Used for course main page.
-    'course' => [
-        'file' => 'columns.php',
-        'regions' => ['side-pre', 'side-post'],
-        'defaultregion' => 'side-pre',
-    ],
-
-    // Used for course modules (like assignments, quizzes).
-    'incourse' => [
-        'file' => 'columns.php',
-        'regions' => ['side-pre', 'side-post'],
-        'defaultregion' => 'side-pre',
-    ],
-
-    // Site home page.
-    'frontpage' => [
-        'file' => 'drawers.php',
-        'regions' => ['side-pre', 'side-post'],
-        'defaultregion' => 'side-pre',
-    ],
-
-    // User dashboard.
-    'mydashboard' => [
-        'file' => 'drawers.php',
-        'regions' => ['side-pre', 'side-post'],
-        'defaultregion' => 'side-pre',
-    ],
-
-    // My courses page.
-    'mycourses' => [
-        'file' => 'drawers.php',
-        'regions' => ['side-pre', 'side-post'],
-        'defaultregion' => 'side-pre',
-    ],
-
-    // Login page.
-    'login' => [
-        'file' => 'login.php',
-        'regions' => [],
-        'options' => ['langmenu' => true, 'nonavbar' => true, 'nofooter' => true],
-    ],
-
-    // Admin pages.
-    'admin' => [
-        'file' => 'columns.php',
-        'regions' => ['side-pre'],
-        'defaultregion' => 'side-pre',
-    ],
-
-    // Category pages.
-    'coursecategory' => [
-        'file' => 'columns.php',
-        'regions' => ['side-pre'],
-        'defaultregion' => 'side-pre',
-    ],
-
-    // Embedded pages.
-    'embedded' => [
-        'file' => 'embedded.php',
-        'regions' => [],
-    ],
-
-    // Secure layout.
-    'secure' => [
-        'file' => 'secure.php',
-        'regions' => [],
-    ],
-
-    // Maintenance page.
-    'maintenance' => [
-        'file' => 'maintenance.php',
-        'regions' => [],
-    ],
-
-    // Popup windows.
-    'popup' => [
-        'file' => 'embedded.php',
-        'regions' => [],
-    ],
-
-    // Redirection pages.
-    'redirect' => [
-        'file' => 'embedded.php',
-        'regions' => [],
-    ],
-
-    // Report layout.
-    'report' => [
-        'file' => 'columns.php',
-        'regions' => ['side-pre'],
-        'defaultregion' => 'side-pre',
-    ],
-
-];
-
-$THEME->page_init = 'theme_adorsys_theme_v2_page_init';
-
-$THEME->rendererfactory = 'theme_overridden_renderer_factory';
-
-$THEME->settings = true;
+$THEME->usefallback = true;
 
 $THEME->scss = function($theme) {
     return theme_adorsys_theme_v2_get_main_scss_content($theme);
 };
 
+$THEME->extrascsscallback = 'theme_adorsys_theme_v2_get_extra_scss';
+$THEME->prescsscallback = 'theme_adorsys_theme_v2_get_pre_scss';
+$THEME->precompiledcsscallback = 'theme_adorsys_theme_v2_get_precompiled_css';
 
 
+$THEME->layouts = [
+    // Most backwards compatible layout without the blocks.
+    'base' => array(
+        'file' => 'drawers.php',
+        'regions' => array(),
+    ),
+    // Standard layout with blocks.
+    'standard' => array(
+        'file' => 'drawers.php',
+        'regions' => array('side-pre'),
+        'defaultregion' => 'side-pre',
+    ),
+    // Main course page.
+    'course' => array(
+        'file' => 'drawers.php',
+        'regions' => array('side-pre'),
+        'defaultregion' => 'side-pre',
+        'options' => array('langmenu' => true),
+    ),
+    'coursecategory' => array(
+        'file' => 'drawers.php',
+        'regions' => array('side-pre'),
+        'defaultregion' => 'side-pre',
+    ),
+    // Part of course, typical for modules - default page layout if $cm specified in require_login().
+    'incourse' => array(
+        'file' => 'drawers.php',
+        'regions' => array('side-pre'),
+        'defaultregion' => 'side-pre',
+    ),
+    // The site home page.
+    'frontpage' => array(
+        'file' => 'drawers.php',
+        'regions' => array('side-pre'),
+        'defaultregion' => 'side-pre',
+        'options' => array('nonavbar' => true),
+    ),
+    // Server administration scripts.
+    'admin' => array(
+        'file' => 'drawers.php',
+        'regions' => array('side-pre'),
+        'defaultregion' => 'side-pre',
+    ),
+    // My courses page.
+    'mycourses' => array(
+        'file' => 'drawers.php',
+        'regions' => ['side-pre'],
+        'defaultregion' => 'side-pre',
+        'options' => array('nonavbar' => true),
+    ),
+    // My dashboard page.
+    'mydashboard' => array(
+        'file' => 'drawers.php',
+        'regions' => array('side-pre'),
+        'defaultregion' => 'side-pre',
+        'options' => array('nonavbar' => true, 'langmenu' => true),
+    ),
+    // My public page.
+    'mypublic' => array(
+        'file' => 'drawers.php',
+        'regions' => array('side-pre'),
+        'defaultregion' => 'side-pre',
+    ),
+    'login' => array(
+        'file' => 'login.php',
+        'regions' => array(),
+        'options' => array('langmenu' => true),
+    ),
+    
+    // Pages that appear in pop-up windows - no navigation, no blocks, no header and bare activity header.
+    'popup' => array(
+        'file' => 'columns1.php',
+        'regions' => array(),
+        'options' => array(
+            'nofooter' => true,
+            'nonavbar' => true,
+            'activityheader' => [
+                'notitle' => true,
+                'nocompletion' => true,
+                'nodescription' => true
+                ]
+                )
+            ),
+            // No blocks and minimal footer - used for legacy frame layouts only!
+            'frametop' => array(
+                'file' => 'columns1.php',
+                'regions' => array(),
+                'options' => array(
+                    'nofooter' => true,
+                    'nocoursefooter' => true,
+                    'activityheader' => [
+                        'nocompletion' => true
+                        ]
+                    ),
+                ),
+                // Embeded pages, like iframe/object embeded in moodleform - it needs as much space as possible.
+                'embedded' => array(
+                    'file' => 'embedded.php',
+                    'regions' => array('side-pre'),
+                    'defaultregion' => 'side-pre',
+                ),
+                // Used during upgrade and install, and for the 'This site is undergoing maintenance' message.
+                // This must not have any blocks, links, or API calls that would lead to database or cache interaction.
+                // Please be extremely careful if you are modifying this layout.
+                'maintenance' => array(
+                    'file' => 'maintenance.php',
+                    'regions' => array(),
+                ),
+                // Should display the content and basic headers only.
+                'print' => array(
+                    'file' => 'columns1.php',
+                    'regions' => array(),
+                    'options' => array('nofooter' => true, 'nonavbar' => false, 'noactivityheader' => true),
+                ),
+                // The pagelayout used when a redirection is occuring.
+                'redirect' => array(
+                    'file' => 'embedded.php',
+                    'regions' => array(),
+                ),
+                // The pagelayout used for reports.
+                'report' => array(
+                    'file' => 'drawers.php',
+                    'regions' => array('side-pre'),
+                    'defaultregion' => 'side-pre',
+                ),
+                // The pagelayout used for safebrowser and securewindow.
+                'secure' => array(
+                    'file' => 'secure.php',
+                    'regions' => array('side-pre'),
+                    'defaultregion' => 'side-pre',
+                    'options' => [
+                        'activityheader' => [
+                            'notitle' => false,
+                        ],
+                    ],
+                    )
+                ];
+                
+                
+$THEME->page_init = 'theme_adorsys_theme_v2_page_init';           
 
-
+$THEME->rendererfactory = 'theme_overridden_renderer_factory';
+                
+$THEME->settings = true;              
+           
+                
+            
