@@ -9,12 +9,20 @@ use core_ai\admin\admin_settingspage_provider;
 
 if ($hassiteconfig) {
     // Provider-specific settings page. Secrets prefer ENV but UI fallback is provided.
-    $settings = new admin_settingspage_provider(
-        'aiprovider_gis_ai',
-        new lang_string('pluginname', 'aiprovider_gis_ai'),
-        'moodle/site:config',
-        true
-    );
+    if (class_exists('core_ai\\admin\\admin_settingspage_provider')) {
+        $settings = new admin_settingspage_provider(
+            'aiprovider_gis_ai',
+            new lang_string('pluginname', 'aiprovider_gis_ai'),
+            'moodle/site:config',
+            true
+        );
+    } else {
+        // Fallback for older builds without the AI admin class.
+        $settings = new \admin_settingpage(
+            'aiprovider_gis_ai',
+            new lang_string('pluginname', 'aiprovider_gis_ai')
+        );
+    }
 
     $settings->add(new \admin_setting_heading(
         'aiprovider_gis_ai/intro',
@@ -31,13 +39,7 @@ if ($hassiteconfig) {
         PARAM_URL
     ));
 
-    // API key (prefer ENV OPENAI_API_KEY; UI value masked).
-    $settings->add(new \admin_setting_configpasswordunmask(
-        'aiprovider_gis_ai/apikey',
-        get_string('apikey', 'aiprovider_gis_ai'),
-        get_string('apikey_desc', 'aiprovider_gis_ai'),
-        ''
-    ));
+    // API key is env-only (OPENAI_API_KEY). No UI storage to avoid accidental persistence.
 
     // Default model.
     $settings->add(new \admin_setting_configtext(

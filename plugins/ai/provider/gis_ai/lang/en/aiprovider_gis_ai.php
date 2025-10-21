@@ -5,11 +5,9 @@ $string['pluginname'] = 'GIS AI Provider';
 
 // Settings UI.
 $string['settingsheading'] = 'GIS AI Provider settings';
-$string['settingsdesc'] = 'Configure the provider. Secrets are best supplied via environment variables (e.g., OPENAI_API_KEY). UI values are fallbacks.';
+$string['settingsdesc'] = 'Configure the provider. Credentials are environment-only (e.g., OPENAI_API_KEY). Non-credential settings may be set here or via environment variables.';
 $string['baseurl'] = 'Base API URL';
 $string['baseurl_desc'] = 'Base URL for the OpenAI-compatible API. If not set here, OPENAI_BASE_URL will be used.';
-$string['apikey'] = 'API key';
-$string['apikey_desc'] = 'API key for the upstream AI service. Prefer OPENAI_API_KEY in the environment.';
 $string['model'] = 'Default model';
 $string['model_desc'] = 'Default model used for text/chat generation (e.g., gpt-4o).';
 
