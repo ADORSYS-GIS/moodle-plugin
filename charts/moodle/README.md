@@ -19,7 +19,44 @@ This Helm chart wraps the [Bitnami Moodle chart](https://github.com/bitnami/char
 
 ---
 
-## 📦 Installing the Chart
+## 🔧 Installation Options
+
+### Option 1: External Database (default)
+
+This is the default approach using `values.yaml`, assuming an external database:
+
+```bash
+cd charts/moodle
+helm dependency build
+helm install my-moodle . --values values.yaml
+```
+
+### Option 2: Internal MariaDB (Bitnami dependency)
+
+```bash
+helm dependency build
+helm install my-moodle . \
+  -n moodle \
+  --create-namespace \
+  -f values.yaml \
+  -f values-mariadb.yaml
+```
+### Option 3: Internal PostgreSQL (Bitnami dependency)
+
+```bash
+helm dependency build
+helm install my-moodle . \
+  -n moodle \
+  --create-namespace \
+  -f values.yaml \
+  -f values-postgres.yaml
+```
+
+***Note***: add the flag ``` --set global.security.allowInsecureImages=true ```  if you trust the custom image and understand the security/performance risks.
+
+
+
+### Option 4: CNPG Cluster + External Database
 
 1. **Build dependencies:**
 
