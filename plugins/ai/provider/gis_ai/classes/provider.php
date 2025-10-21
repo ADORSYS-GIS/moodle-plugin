@@ -20,8 +20,11 @@ class provider extends \core_ai\provider {
      * @return array<int, class-string>
      */
     public function get_action_list(): array {
-        // TODO: Add supported actions once corresponding process_* classes are implemented.
-        return [];
+        $actions = [];
+        if (class_exists(\aiprovider_gis_ai\process_generate_text::class)) {
+            $actions[] = \core_ai\aiactions\generate_text::class;
+        }
+        return $actions;
     }
 
     /**
@@ -29,14 +32,42 @@ class provider extends \core_ai\provider {
      * Checks ENV first, then plugin config fallback.
      */
     public function is_provider_configured(): bool {
-        $envkey = getenv('OPENAI_API_KEY');
-        if ($envkey !== false && $envkey !== '') {
-            return true;
+        $apikey = \aiprovider_gis_ai\helpers\env_loader::get('OPENAI_API_KEY', '');
+        return $apikey !== '';
+    }
+
+    /**
+     * Optional provider healthcheck for admin UI.
+     * Non-fatal readiness check for FFI lib or HTTP endpoint reachability.
+     *
+     * @return array{ok:bool, message:string}
+     */
+    public function healthcheck(): array {
+        $result = ['ok' => false, 'message' => 'Unknown'];
+        try {
+            $mode = \aiprovider_gis_ai\helpers\env_loader::get('AI_RUST_MODE', 'ffi');
+            if ($mode === 'ffi') {
+                $libpath = \aiprovider_gis_ai\helpers\env_loader::get('AI_RUST_LIB_PATH', '/usr/local/lib/libai_rust.so');
+                if (file_exists($libpath)) {
+                    $result = ['ok' => true, 'message' => 'FFI library found'];
+                } else {
+                    $result = ['ok' => false, 'message' => 'FFI library not found: ' . $libpath];
+                }
+            } else {
+                $endpoint = rtrim(\aiprovider_gis_ai\helpers\env_loader::get('AI_RUST_ENDPOINT', 'http://127.0.0.1:8080'), '/') . '/health';
+                global $CFG;
+                if (!class_exists('curl')) {
+                    require_once($CFG->libdir . '/filelib.php');
+                }
+                $curl = new \curl();
+                $resp = $curl->get($endpoint);
+                $info = method_exists($curl, 'get_info') ? $curl->get_info() : [];
+                $http = (int)($info['http_code'] ?? 0);
+                $result = ['ok' => ($http >= 200 && $http < 300), 'message' => 'HTTP ' . $http];
+            }
+        } catch (\Throwable $e) {
+            $result = ['ok' => false, 'message' => $e->getMessage()];
         }
-        $config = get_config('aiprovider_gis_ai');
-        if (!empty($config->apikey)) {
-            return true;
-        }
-        return false;
+        return $result;
     }
 }
