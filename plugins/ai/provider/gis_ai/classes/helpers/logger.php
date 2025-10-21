@@ -22,7 +22,7 @@ class logger {
             // ignore
         }
 
-        $logfile = getenv('AI_LOG_FILE') ?: '';
+        $logfile = env_loader::get('AI_LOG_FILE', '');
         if (!empty($logfile)) {
             @error_log($line . PHP_EOL, 3, $logfile);
         }

@@ -12,12 +12,8 @@ defined('MOODLE_INTERNAL') || die();
  * Supports non-streaming and streaming (SSE-like) responses.
  */
 final class http_client {
-    /** Resolve config value from ENV or plugin config. */
+    /** Resolve config value from plugin config only. Environment is handled by callers. */
     private static function cfg(string $envkey, string $cfgkey, ?string $default = null): string {
-        $env = getenv($envkey);
-        if ($env !== false && $env !== '') {
-            return (string)$env;
-        }
         $cfg = get_config('aiprovider_gis_ai');
         if (isset($cfg->{$cfgkey}) && $cfg->{$cfgkey} !== '') {
             return (string)$cfg->{$cfgkey};
@@ -27,10 +23,13 @@ final class http_client {
 
     /** Send prompt to /responses. */
     public static function send_prompt(string $prompt, string $useremail, array $options = [], bool $stream = false): array {
-        $baseurl = rtrim(self::cfg('OPENAI_BASE_URL', 'baseurl', 'https://api.openai.com/v1'), '/');
-        $apikey  = self::cfg('OPENAI_API_KEY', 'apikey', '');
-        $model   = self::cfg('OPENAI_MODEL', 'model', 'gpt-4o');
-        $timeout = (int)(self::cfg('OPENAI_TIMEOUT', 'timeout', '30'));
+        // Prefer ENV via env_loader; keep plugin config fallback for non-credential settings.
+        $envbase = \aiprovider_gis_ai\helpers\env_loader::get('OPENAI_BASE_URL', '');
+        $baseurl = rtrim($envbase !== '' ? $envbase : self::cfg('OPENAI_BASE_URL', 'baseurl', 'https://api.openai.com/v1'), '/');
+        $apikey  = \aiprovider_gis_ai\helpers\env_loader::get('OPENAI_API_KEY', ''); // ENV only
+        $envmodel = \aiprovider_gis_ai\helpers\env_loader::get('OPENAI_MODEL', '');
+        $model   = $envmodel !== '' ? $envmodel : self::cfg('OPENAI_MODEL', 'model', 'gpt-4o');
+        $timeout = (int)(\aiprovider_gis_ai\helpers\env_loader::get('AI_TIMEOUT', self::cfg('OPENAI_TIMEOUT', 'timeout', '30')));
 
         $endpoint = $baseurl . '/responses';
         $payload = ['model' => $model, 'input' => (string)$prompt] + $options;
@@ -38,9 +37,11 @@ final class http_client {
 
         $headers = [
             'Content-Type: application/json',
-            'Authorization: Bearer ' . $apikey,
             'x-user-email: ' . $useremail,
         ];
+        if ($apikey !== '') {
+            $headers[] = 'Authorization: Bearer ' . $apikey;
+        }
 
         if ($stream) {
             // Raw cURL for streaming.

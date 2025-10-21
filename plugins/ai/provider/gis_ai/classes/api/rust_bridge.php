@@ -13,7 +13,7 @@ defined('MOODLE_INTERNAL') || die();
 final class rust_bridge {
     /** Public entry to send a prompt via the chosen Rust mode. */
     public static function send_prompt(string $prompt, string $useremail, array $options = []): array {
-        $mode = strtolower(self::cfg('AI_RUST_MODE', 'rustmode', 'ffi'));
+        $mode = strtolower(\aiprovider_gis_ai\helpers\env_loader::get('AI_RUST_MODE', 'ffi'));
         if ($mode === 'ffi') {
             try {
                 return self::send_via_ffi($prompt, $useremail, $options);
@@ -28,25 +28,12 @@ final class rust_bridge {
         throw new \moodle_exception('invalidmode', 'aiprovider_gis_ai', '', $mode);
     }
 
-    /** Resolve config from ENV or plugin config. */
-    private static function cfg(string $envkey, string $cfgkey, ?string $default = null): string {
-        $env = getenv($envkey);
-        if ($env !== false && $env !== '') {
-            return (string)$env;
-        }
-        $cfg = get_config('aiprovider_gis_ai');
-        if (isset($cfg->{$cfgkey}) && $cfg->{$cfgkey} !== '') {
-            return (string)$cfg->{$cfgkey};
-        }
-        return (string)($default ?? '');
-    }
-
     /** Call into Rust shared lib via FFI. */
     private static function send_via_ffi(string $prompt, string $useremail, array $options): array {
         if (!extension_loaded('ffi')) {
             throw new \RuntimeException('PHP FFI extension not available');
         }
-        $libpath = self::cfg('AI_RUST_LIB_PATH', 'rustlib', '/usr/local/lib/libai_rust.so');
+        $libpath = \aiprovider_gis_ai\helpers\env_loader::get('AI_RUST_LIB_PATH', '/usr/local/lib/libai_rust.so');
         $cdefs = <<<CDEF
             char* ai_send_prompt(const char* prompt, const char* user_email, const char* json_options);
             void  ai_free_string(char* s);
@@ -72,11 +59,11 @@ final class rust_bridge {
 
     /** Call Rust microservice over HTTP. */
     private static function send_via_api(string $prompt, string $useremail, array $options): array {
-        $endpoint = rtrim(self::cfg('AI_RUST_ENDPOINT', 'rustendpoint', 'http://127.0.0.1:8080'), '/') . '/send_prompt';
+        $endpoint = rtrim(\aiprovider_gis_ai\helpers\env_loader::get('AI_RUST_ENDPOINT', 'http://127.0.0.1:8080'), '/') . '/send_prompt';
         $payload = ['prompt' => $prompt, 'options' => $options];
         $json = json_encode($payload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
         $headers = ['Content-Type: application/json', 'x-user-email: ' . $useremail];
-        $apikey = self::cfg('AI_RUST_API_KEY', 'rustapikey', '');
+        $apikey = \aiprovider_gis_ai\helpers\env_loader::get('AI_RUST_API_KEY', '');
         if ($apikey !== '') {
             $headers[] = 'Authorization: Bearer ' . $apikey;
         }
@@ -86,7 +73,7 @@ final class rust_bridge {
             CURLOPT_POST => true,
             CURLOPT_POSTFIELDS => $json,
             CURLOPT_HTTPHEADER => $headers,
-            CURLOPT_TIMEOUT => (int)self::cfg('AI_TIMEOUT', 'timeout', '30'),
+            CURLOPT_TIMEOUT => (int)\aiprovider_gis_ai\helpers\env_loader::get('AI_TIMEOUT', '30'),
         ]);
         $resp = curl_exec($ch);
         $errno = curl_errno($ch);

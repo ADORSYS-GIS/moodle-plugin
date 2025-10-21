@@ -16,11 +16,12 @@ class sanitizer {
         if (mb_strlen($s) > $maxlen) {
             $s = mb_substr($s, 0, $maxlen);
         }
-        $bad = getenv('BAD_WORDS_LIST') ?: '';
+        $bad = env_loader::get('BAD_WORDS_LIST', '');
         if (!empty($bad)) {
             $words = array_filter(array_map('trim', explode(',', $bad)));
             if (!empty($words)) {
-                $pattern = '/\b(' . implode('|', array_map('preg_quote', $words)) . ')\b/iu';
+                $quoted = array_map(static fn($w) => preg_quote($w, '/'), $words);
+                $pattern = '/\b(' . implode('|', $quoted) . ')\b/iu';
                 $s = preg_replace($pattern, '***', $s);
             }
         }
