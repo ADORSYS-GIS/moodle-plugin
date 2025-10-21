@@ -1,0 +1,11 @@
+{
+  "name": "local-gis-ai-assistant1",
+  "private": true,
+  "devDependencies": {
+    "grunt": "^1.6.1",
+    "grunt-contrib-requirejs": "^1.0.0"
+  },
+  "scripts": {
+    "build": "grunt amd"
+  }
+}

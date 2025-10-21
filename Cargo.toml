@@ -2,9 +2,8 @@
 members = [
     "packages/moodle-wasm-example",
     "packages/operator",
+    "packages/ai_bridge",
 ]
-
-resolver = "3"
 
 [profile.prod]
 inherits = "release"
