@@ -7,6 +7,7 @@ namespace aiplacement_gis_ai_chat\forms;
 
 defined('MOODLE_INTERNAL') || die();
 
+global $CFG;
 require_once($CFG->libdir . '/formslib.php');
 
 class feedback_form extends \moodleform {

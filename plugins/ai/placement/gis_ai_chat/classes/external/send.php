@@ -7,6 +7,7 @@ namespace aiplacement_gis_ai_chat\external;
 
 defined('MOODLE_INTERNAL') || die();
 
+global $CFG;
 require_once($CFG->libdir . '/externallib.php');
 
 use external_api;

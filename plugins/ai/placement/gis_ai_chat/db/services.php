@@ -10,6 +10,7 @@ $functions = [
         'description' => 'Send prompt to AI via core_ai manager and return response',
         'type'        => 'write',
         'capabilities'=> 'aiplacement/gis_ai_chat:generate_text',
+        'loginrequired' => true,
         'ajax'        => true,
     ],
 ];
