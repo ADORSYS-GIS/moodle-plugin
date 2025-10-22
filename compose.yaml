@@ -65,6 +65,8 @@ services:
       - moodledata_data:/bitnami/moodledata
       - ./plugins:/bitnami/moodle/plugins/custom/plugins:ro
       - plugins_downloads:/bitnami/moodle/plugins/downloaded:ro
+      - ./plugins/ai/provider/gis_ai:/bitnami/moodle/ai/provider/gis_ai:ro
+      - ./plugins/ai/placement/gis_ai_chat:/bitnami/moodle/ai/placement/gis_ai_chat:ro
     depends_on:
       <<: *moodle_depends_on
       moodle-init:
