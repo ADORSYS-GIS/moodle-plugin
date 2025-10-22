@@ -11,6 +11,10 @@ $string['baseurl_desc'] = 'Base URL for the OpenAI-compatible API. If not set he
 $string['model'] = 'Default model';
 $string['model_desc'] = 'Default model used for text/chat generation (e.g., gpt-4o).';
 
+// Capabilities.
+$string['gis_ai:viewanalytics'] = 'View provider analytics';
+$string['analytics'] = 'Provider analytics';
+
 // Privacy.
 $string['privacy:metadata'] = 'The GIS AI Provider does not store any personal data itself.';
 
