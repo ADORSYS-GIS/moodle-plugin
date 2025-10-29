@@ -53,4 +53,13 @@ if ($hassiteconfig) {
     // Attempt to place under AI category; fallback to localplugins if category does not exist.
     $category = $ADMIN->locate('ai') ? 'ai' : 'localplugins';
     $ADMIN->add($category, $settings);
+
+    // External admin page linking to the analytics dashboard.
+    $page = new \admin_externalpage(
+        'aiprovider_gis_ai_analytics',
+        get_string('analytics', 'aiprovider_gis_ai'),
+        new \moodle_url('/ai/provider/gis_ai/analytics.php'),
+        'aiprovider/gis_ai:viewanalytics'
+    );
+    $ADMIN->add($category, $page);
 }
