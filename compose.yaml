@@ -22,6 +22,8 @@ services:
       MOODLE_SMTP_PORT: 1025
       BITNAMI_DEBUG: true
       EXTRA_LOCALES: "fr_FR.UTF-8 UTF-8, de_DE.UTF-8 UTF-8"
+    env_file:
+      - .env.moodle
     entrypoint: /bin/bash
     command:
       - -c
@@ -60,6 +62,8 @@ services:
       - "8080:8080"
       - "8443:8443"
     environment: *moodle_environment
+    env_file:
+      - .env.moodle
     volumes:
       - moodle_data:/bitnami/moodle
       - moodledata_data:/bitnami/moodledata
