@@ -1,0 +1,97 @@
+// ============================================================================
+// SECONDARY NAVIGATION - MODERN TAB STYLING
+// ============================================================================
+
+.secondary-navigation {
+    padding-bottom: theme('spacing.4');
+    background-color: theme('colors.gray.50');
+    
+    .navigation {
+        border-bottom: 1px solid theme('colors.gray.300');
+        background-color: theme('colors.white');
+        margin: 0 -0.5rem;
+        padding: 0 0.5rem;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+        
+        .nav-tabs {
+            @apply flex items-center;
+            border: none;
+            max-width: $course-content-maxwidth;
+            margin: 0 auto;
+            gap: theme('spacing.1');
+            
+            .nav-link {
+                @apply px-6 py-3;
+                border-radius: 0;
+                border: none;
+                border-bottom: 3px solid transparent;
+                color: theme('colors.gray.600');
+                font-weight: 500;
+                font-size: theme('fontSize.sm');
+                position: relative;
+                transition: all 0.2s ease;
+                
+                // Hover effect
+                &:hover {
+                    color: theme('colors.blue.600');
+                    background-color: theme('colors.blue.50');
+                    border-bottom-color: theme('colors.blue.400');
+                }
+                
+                // Active state - modern tab look
+                &.active,
+                &.show {
+                    color: theme('colors.blue.700');
+                    font-weight: 600;
+                    background-color: transparent;
+                    border-bottom-color: theme('colors.blue.600');
+                    
+                    &::after {
+                        content: '';
+                        position: absolute;
+                        bottom: -1px;
+                        left: 0;
+                        right: 0;
+                        height: 3px;
+                        background: linear-gradient(90deg, 
+                            theme('colors.blue.600'), 
+                            theme('colors.blue.400')
+                        );
+                    }
+                }
+                
+                // Icon in tabs
+                .icon {
+                    @apply mr-2;
+                    transition: transform 0.2s ease;
+                }
+                
+                &:hover .icon {
+                    transform: translateY(-1px);
+                }
+            }
+        }
+    }
+}
+
+// Responsive padding
+@include media-breakpoint-up(md) {
+    .secondary-navigation .navigation {
+        padding: 0 calc(0.5rem + theme('spacing.4'));
+    }
+}
+
+// Admin and site format specific widths
+.path-admin .header-maxwidth,
+.path-admin .secondary-navigation .navigation .nav-tabs,
+.format-site .header-maxwidth,
+.format-site .secondary-navigation .navigation .nav-tabs {
+    max-width: none;
+}
+
+.path-admin.path-admin-roles:not(.format-site) .header-maxwidth,
+.path-admin.path-admin-roles:not(.format-site) .secondary-navigation .navigation .nav-tabs,
+.path-admin.path-admin-tool-lp .header-maxwidth,
+.path-admin.path-admin-tool-lp .secondary-navigation .navigation .nav-tabs {
+    max-width: $course-content-maxwidth;
+}

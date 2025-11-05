@@ -54,6 +54,9 @@
     box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
 }
 
+/* Ensure JS 'hidden' class actually hides the toggle */
+.sidebar-toggle.hidden { display: none; }
+
 /* Sidebar base */
 .sidebar {
     position: fixed;
@@ -137,22 +140,12 @@
     opacity: 1;
 }
 
-/* Large screen behavior */
+/* Large screen behavior: hide entirely */
 @media (min-width: 1024px) {
-    .sidebar {
-        position: relative;
-        transform: translateX(0);
-        height: auto;
-        box-shadow: none;
-        border-right: none;
-        width: 18rem;
-        z-index: auto;
-    }
+    .sidebar { display: none !important; }
     .sidebar-toggle,
     .sidebar-close,
-    .sidebar-overlay {
-        display: none !important;
-    }
+    .sidebar-overlay { display: none !important; }
 }
 </style>
 

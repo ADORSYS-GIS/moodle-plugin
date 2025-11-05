@@ -1,0 +1,19 @@
+/* Editor styles now use Tailwind CSS */
+/* Bootstrap has been removed and replaced with Tailwind/DaisyUI */
+
+/**
+ * Reset the Bootstrap _reboot.scss styles for tables.
+ * That reboot is breaking non-BS tables in the editor.
+ */
+table:not(.table) {
+    thead,
+    tbody,
+    tfoot,
+    tr,
+    td,
+    th {
+        border-color: $table-border-color;
+        border-style: solid;
+        border-width: $table-border-width;
+    }
+}

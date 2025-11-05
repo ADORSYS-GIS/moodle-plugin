@@ -1,0 +1,115 @@
+.modal {
+    .modal-body {
+        & > .loading-icon {
+            display: block;
+    position: relative;
+    width: 100%;
+    height: 100%;
+
+            .icon {
+                @apply absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2;
+            }
+        }
+    }
+
+    // DaisyUI's modal close button (modal-action button) handles styling.
+    // If a custom close button is used, apply btn-ghost and focus styles.
+    .btn-close {
+        // Adjust the margins so the focus outline does not look clipped.
+        @apply -mt-1.5 -mr-1.5 -mb-1.5 ml-auto; // 0.4rem is roughly 1.5 units
+
+        // Inherit the opacity when focus is received for better focus outline contrast.
+        &:not(:disabled):not(.disabled) {
+            &:hover,
+            &:focus {
+                opacity: 1; // DaisyUI buttons typically handle this, but explicitly setting for clarity.
+            }
+        }
+    }
+}
+
+/* Change the modal-dialog-scrollable class to position: static to fix the issue with popper.js and autocomplete. */
+.modal-dialog-scrollable:has(.form-autocomplete-suggestions) {
+    @apply static;
+    .modal-content {
+        @apply static;
+        .modal-body {
+            @apply static;
+        }
+    }
+}
+
+/* Bug fix for TinyMCE menu when in fullscreen mode. */
+body.tox-fullscreen .modal-dialog {
+    width: 100%;
+    max-width: 100%;
+    height: 100%;
+
+    .modal-header {
+        @apply h-0 p-0;
+    }
+
+    .tox-tinymce-aux {
+        position: relative;
+    }
+}
+
+/* Bug fix TinyMCE menu width dropdowns when in fullscreen mode. */
+body.tox-fullscreen .tox.tox-tinymce-aux {
+    @apply relative !important; // stylelint-disable-line declaration-no-important
+}
+
+/* Modal visual polish to align with Boost */
+.modal {
+    --bs-modal-width: 540px;
+    --bs-modal-padding: 1rem;
+    --bs-modal-bg: #fff;
+    --bs-modal-border-color: rgba(0, 0, 0, 0.125);
+    --bs-modal-border-width: 1px;
+    --bs-modal-border-radius: .5rem;
+    --bs-modal-inner-border-radius: .5rem;
+    --bs-modal-header-border-color: rgba(0, 0, 0, 0.08);
+    --bs-modal-footer-border-color: rgba(0, 0, 0, 0.08);
+    --bs-modal-box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
+}
+
+/* Ensure centered dialog at all widths */
+.modal-dialog {
+    margin-right: auto;
+    margin-left: auto;
+}
+
+/* Content surface and shadow */
+.modal-content {
+    background-color: var(--bs-modal-bg);
+    border: var(--bs-modal-border-width) solid var(--bs-modal-border-color);
+    border-radius: var(--bs-modal-border-radius);
+    box-shadow: var(--bs-modal-box-shadow);
+}
+
+/* Header and footer separators */
+.modal-header {
+    border-bottom-color: var(--bs-modal-header-border-color);
+}
+.modal-footer {
+    border-top-color: var(--bs-modal-footer-border-color);
+}
+
+/* Backdrop styling similar to Boost */
+.modal-backdrop {
+    --bs-backdrop-bg: #000;
+    --bs-backdrop-opacity: 0.5;
+    background-color: var(--bs-backdrop-bg);
+}
+.modal-backdrop.fade { opacity: 0; }
+.modal-backdrop.show { opacity: var(--bs-backdrop-opacity); }
+
+/* Calendar: New event modal typically needs more horizontal space */
+.path-calendar .modal {
+    --bs-modal-width: 680px;
+}
+@media (min-width: 992px) {
+    .path-calendar .modal {
+        --bs-modal-width: 800px;
+    }
+}

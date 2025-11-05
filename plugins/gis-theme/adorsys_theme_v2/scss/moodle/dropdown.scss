@@ -1,0 +1,50 @@
+/**
+ * Dropdown menu Moodle specific styles.
+ */
+
+// Make links in a menu clickable anywhere in the row.
+.dropdown-item {
+    a {
+        @apply block w-full text-base-content;
+    }
+    // DaisyUI's .dropdown-item handles active/hover/focus styles.
+    // If specific Moodle active styles are needed, they can be added here.
+    &.active,
+    &:active,
+    &:hover,
+    &:focus,
+    &:focus-within {
+        a {
+            @apply text-primary; // Using primary color for active/hover links
+        }
+    }
+    &[aria-current="true"],
+    &[aria-selected="true"] {
+        position: relative;
+    display: flex;
+    align-items: center;
+        &:before {
+            // Replaced FontAwesome with a simple checkmark SVG or character
+            content: '✓'; // Or use a custom SVG icon via background-image
+            @apply absolute left-1.5 text-xs; // 0.4rem is roughly 1.5 units, 0.7rem is roughly text-xs
+        }
+    }
+}
+
+.dropdown-menu {
+    @apply w-fit;
+    &:has(.dropdown-item-active) {
+        .dropdown-item {
+            // Make space for active item indicator.
+            @apply pl-4; // Equivalent to map-get($spacers, 4)
+        }
+    }
+}
+
+// DaisyUI handles hover colors for dropdown items.
+// If specific color overrides are needed, they should be defined explicitly.
+// For example, if a dropdown item has a specific text color, DaisyUI's hover
+// will usually adjust it for contrast.
+// If a specific text color needs to maintain its color on hover,
+// it should be handled with a utility class or a custom component.
+// Removed the @each loop as DaisyUI's default behavior is preferred.

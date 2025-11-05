@@ -1,0 +1,586 @@
+/**
+ * Moodle variables
+ *
+ * Variables written for Moodle specific components
+ * Mapped from Bootstrap to Tailwind CSS / DaisyUI
+ */
+
+// Import Sass built-in modules
+@use 'sass:color';
+@use 'sass:map';
+@use 'sass:math';
+
+// ========================================
+// BOOTSTRAP TO TAILWIND VARIABLE MAPPINGS
+// ========================================
+
+// Prefix for CSS custom properties
+$prefix: bs- !default;
+
+// Enable/disable features (Bootstrap feature flags)
+$enable-rounded: true !default;
+$enable-shadows: false !default;
+$enable-gradients: false !default;
+$enable-transitions: true !default;
+
+// Spacing variables (Bootstrap spacing system)
+$spacer: 1rem !default; // 16px base spacing unit
+$spacers: (
+  0: 0,
+  1: ($spacer * 0.25),  // 0.25rem = 4px
+  2: ($spacer * 0.5),   // 0.5rem = 8px
+  3: $spacer,           // 1rem = 16px
+  4: ($spacer * 1.5),   // 1.5rem = 24px
+  5: ($spacer * 3),     // 3rem = 48px
+) !default;
+
+// Color variables mapped to Tailwind (using actual hex values for Sass color manipulation)
+$white: #ffffff !default;
+$black: #000000 !default;
+$gray-50: #f9fafb !default;
+$gray-100: #f3f4f6 !default;
+$gray-200: #e5e7eb !default;
+$gray-300: #d1d5db !default;
+$gray-400: #9ca3af !default;
+$gray-500: #6b7280 !default;
+$gray-600: #4b5563 !default;
+$gray-700: #374151 !default;
+$gray-800: #1f2937 !default;
+$gray-900: #111827 !default;
+
+$blue-100: #dbeafe !default;
+$blue-200: #bfdbfe !default;
+$blue-400: #60a5fa !default;
+$blue-500: #3b82f6 !default;
+$blue-600: #2563eb !default;
+$blue-700: #1d4ed8 !default;
+
+$red-500: #ef4444 !default;
+$red-600: #dc2626 !default;
+$yellow-100: #fef3c7 !default;
+$yellow-200: #fde68a !default;
+$yellow-400: #fbbf24 !default;
+$yellow-500: #eab308 !default;
+$yellow-600: #ca8a04 !default;
+$green-100: #dcfce7 !default;
+$green-200: #bbf7d0 !default;
+$green-600: #16a34a !default;
+
+// Additional colors for activity icons
+$purple-500: #a855f7 !default;
+$pink-500: #ec4899 !default;
+$indigo-500: #6366f1 !default;
+$orange-500: #f97316 !default;
+$teal-500: #14b8a6 !default;
+$amber-700: #b45309 !default;
+
+// Theme colors from DaisyUI (using hex values for Sass color manipulation)
+$primary: #4f46e5 !default;    // Indigo 600
+$secondary: #6b7280 !default;   // Gray 500
+$success: #16a34a !default;     // Green 600
+$info: #2563eb !default;        // Blue 600
+$warning: #eab308 !default;     // Yellow 500
+$danger: #dc2626 !default;      // Red 600
+$error: #dc2626 !default;       // Red 600
+
+// Individual colors (for direct use)
+$green: #16a34a !default;    // green-600
+$blue: #3b82f6 !default;     // blue-500
+$yellow: #f59e0b !default;   // amber-500
+$red: #dc2626 !default;      // red-600
+
+// Body
+$body-bg: $white !default;
+$body-color: $gray-900 !default;
+
+// Text colors
+$text-muted: $gray-500 !default;
+
+// Border
+$border-width: 1px !default;
+$border-style: solid !default;
+$border-color: $gray-300 !default;
+
+// Border radius
+$border-radius: 0.375rem !default;        // Tailwind DEFAULT = rounded
+$border-radius-sm: 0.25rem !default;      // Small = rounded-sm
+$border-radius-lg: 0.5rem !default;       // Large = rounded-lg
+$border-radius-pill: 50rem !default;      // Fully rounded (pill shape)
+$activity-border-radius: 0.5rem !default; // Tailwind lg = rounded-lg
+
+// Card
+$card-bg: $white !default;
+$card-border-width: $border-width !default;
+$card-border-color: $gray-300 !default;
+$card-border-radius: $border-radius !default;
+$card-spacer-x: 1.25rem !default;  // 20px
+$card-spacer-y: 0.75rem !default;  // 12px
+
+// Button
+$btn-padding-y-sm: 0.25rem !default;   // 4px
+$btn-padding-x-sm: 0.5rem !default;    // 8px
+$btn-font-size-sm: 0.875rem !default;  // 14px
+$btn-border-radius: $border-radius !default;
+$btn-transition: all 0.15s ease-in-out !default;
+$btn-disabled-opacity: 0.65 !default;
+
+// List group
+$list-group-action-color: $gray-700 !default;
+$list-group-bg: $white !default;
+$list-group-border-color: $gray-300 !default;
+$list-group-border-width: 1px !default;
+$list-group-item-padding-x: 1.25rem !default;  // 20px
+$list-group-item-padding-y: 0.75rem !default;  // 12px
+
+// Dropdown
+$dropdown-link-color: $gray-900 !default;
+$dropdown-link-hover-color: $primary !default;
+$dropdown-link-active-color: $white !default;
+$dropdown-link-active-bg: $primary !default;
+$dropdown-border-color: $gray-300 !default;
+$dropdown-bg: $white !default;
+
+// Input
+$input-color: $gray-900 !default;
+$input-bg: $white !default;
+$input-disabled-bg: $gray-100 !default;
+$input-border-width: 1px !default;
+$input-border-color: $gray-300 !default;
+$input-placeholder-color: $gray-500 !default;
+$input-box-shadow: none !default;
+$input-focus-border-color: $primary !default;
+$input-btn-focus-width: 0.2rem !default;  // Focus ring width for inputs and buttons
+$custom-control-indicator-bg: $white !default;
+$custom-control-indicator-bg-size: 1rem !default;
+$custom-control-indicator-box-shadow: none !default;
+$custom-control-indicator-disabled-bg: $gray-200 !default;
+
+// Form feedback
+$form-feedback-valid-color: $success !default;
+$form-feedback-invalid-color: $danger !default;
+$form-feedback-icon-valid: "" !default;  // Can be set to icon URL if needed
+$form-feedback-icon-invalid: "" !default;  // Can be set to icon URL if needed
+
+// Table
+$table-bg: $white !default;  // Default table background
+$table-hover-bg: $gray-100 !default;  // Light gray for hover state
+$table-hover-color: $body-color !default;  // Text color on hover
+$table-accent-bg: $gray-50 !default;  // Very light gray for striped/accent rows
+$table-striped-bg: $gray-50 !default;  // Background for striped table rows
+$table-border-width: $border-width !default;  // Border width for tables
+$table-border-color: $gray-300 !default;  // Border color for tables
+
+// Modal
+$modal-xl: 1140px !default;
+$modal-content-bg: $white !default;
+$modal-backdrop-bg: rgba(0, 0, 0, 0.5) !default;  // Semi-transparent black backdrop
+$modal-backdrop-opacity: 0.5 !default;
+
+// Popover
+$popover-bg: $white !default;
+$popover-border-color: $gray-300 !default;
+$popover-border-width: $border-width !default;
+$popover-arrow-width: 0.5rem !default;  // 8px
+$popover-arrow-height: 0.25rem !default;  // 4px
+$popover-arrow-color: $popover-bg !default;
+$popover-arrow-outer-color: $popover-border-color !default;
+
+// Toast
+$toast-bg: $white !default;
+$toast-border-color: $gray-300 !default;
+$toast-border-radius: $border-radius !default;
+$toast-box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !default;
+
+// Z-index
+$zindex-dropdown: 1000 !default;
+$zindex-sticky: 1020 !default;
+$zindex-fixed: 1030 !default;
+$zindex-modal-backdrop: 1040 !default;
+$zindex-modal: 1050 !default;
+$zindex-popover: 1060 !default;
+$zindex-tooltip: 1070 !default;
+
+// Typography
+$font-size-base: 1rem !default;
+$font-size-xs: 0.75rem !default;    // 12px
+$font-size-sm: 0.875rem !default;
+$line-height-base: 1.5 !default;  // 1.5 line height
+$h2-font-size: 1.5rem !default;    // 24px
+$h4-font-size: 1.25rem !default;   // 20px
+$h5-font-size: 1.125rem !default;  // 18px
+$font-weight-lighter: 200 !default;
+$font-weight-light: 300 !default;
+$font-weight-normal: 400 !default;
+$font-weight-medium: 500 !default;
+$font-weight-bold: 700 !default;
+$font-weight-bolder: 900 !default;
+
+// Links
+$link-color: $primary !default;
+$link-hover-color: darken($primary, 15%) !default;
+
+// Pagination
+$pagination-bg: $white !default;
+$pagination-border-width: $border-width !default;
+$pagination-border-color: $gray-300 !default;
+
+// Navigation tabs
+$nav-tabs-border-color: $gray-300 !default;
+$nav-tabs-link-active-color: $primary !default;
+$nav-tabs-link-active-bg: $white !default;
+
+// Icon sizes (Tailwind-compatible)
+$iconsizes: (
+  4: 1rem,      // 16px
+  5: 1.25rem,   // 20px
+  6: 1.5rem,    // 24px
+) !default;
+
+// Picker (emoji, etc.)
+$picker-emoji-button-size: 2rem !default;  // 32px
+$picker-row-height: 2.5rem !default;       // 40px
+
+// Grading
+$grading-drawer-width: 400px !default;
+$grading-icon-button-size: 2.5rem !default;  // 40px
+$grading-animation-duration: 0.3s !default;
+$grading-search-input-padding-left: 2.5rem !default;  // 40px
+$grading-search-input-padding-right: 2.5rem !default;  // 40px
+
+$iconwidthsizes: (
+  4: 1rem,      // 16px
+  5: 1.25rem,   // 20px
+) !default;
+
+// Grid breakpoints (Tailwind-compatible)
+$grid-breakpoints: (
+  xs: 0,
+  sm: 640px,
+  md: 768px,
+  lg: 1024px,
+  xl: 1280px,
+  xxl: 1536px
+) !default;
+
+// Grid gutter (Bootstrap grid system)
+$grid-gutter-width: 1.5rem !default;  // 24px
+
+// Theme colors map (Bootstrap-compatible)
+$theme-colors: (
+  primary: $primary,
+  secondary: $secondary,
+  success: $success,
+  info: $info,
+  warning: $warning,
+  danger: $danger,
+  error: $error,
+) !default;
+
+// Alert variables
+$alert-padding-y: 0.75rem !default;
+$alert-padding-x: 1.25rem !default;
+$alert-margin-bottom: 1rem !default;
+$alert-border-radius: $border-radius !default;
+$alert-border-width: 1px !default;
+$alert-color-scale: 40% !default;  // Color scaling for alert variants
+$alert-border-scale: -9% !default;  // Border color scaling for alert variants
+$alert-bg-scale: -80% !default;     // Background color scaling for alert variants
+
+// Navbar variables
+$navbar-dark-color: $gray-300 !default;
+$navbar-dark-hover-color: $white !default;
+$navbar-dark-active-color: $white !default;
+$navbar-light-color: $gray-700 !default;
+$navbar-light-hover-color: $gray-900 !default;
+$navbar-light-active-color: $gray-900 !default;
+
+// ========================================
+// MOODLE-SPECIFIC VARIABLES
+// ========================================
+
+$state-success-bg: #dcfce7 !default;  // green-100
+$state-success-border: #bbf7d0 !default;  // green-200
+
+$state-info-bg: #dbeafe !default;  // blue-100
+$state-info-border: #bfdbfe !default;  // blue-200
+
+$state-warning-bg: #fef3c7 !default;  // yellow-100
+$state-warning-border: #fef3c7 !default;  // yellow-100
+
+$state-danger-bg: #fee2e2 !default;  // red-100
+$state-danger-border: #fecaca !default;  // red-200
+
+$primary-nav-padding-y: 0.25rem !default;  // 4px
+$primary-nav-padding-x: 0.5rem !default;   // 8px
+
+$navbar-height: 4rem !default;  // 64px
+$stickyfooter-height: calc(max(80px, 3rem)) !default;
+$course-content-maxwidth: 830px !default;
+$h5p-content-maxwidth: 960px !default;
+
+$box-shadow-drawer-left: -0.25rem .25rem .8rem rgba(var(--tw-colors-black-rgb), .025) !default;
+$box-shadow-drawer-right: 0 .25rem .8rem rgba(var(--tw-colors-black-rgb), .025) !default;
+
+$moremenu-height: 3.75rem !default;  // 60px
+
+$btn-icon-border-radius: 0.75rem !default;  // 12px (rounded-xl)
+
+$primary-light-background: #eef2ff !default;  // indigo-50
+$primary-light-border: #6366f1 !default;  // indigo-500
+$primary-light-color: #111827 !default;  // gray-900
+$primary-light-hover: #e0e7ff !default;  // indigo-100
+$activity-iconcontainer-height: 52px;
+$activity-iconcontainer-width: 52px;
+
+$activity-icon-administration-bg:     $purple-500 !default;
+$activity-icon-assessment-bg:         $pink-500 !default;
+$activity-icon-collaboration-bg:      $indigo-500 !default;
+$activity-icon-communication-bg:      $orange-500 !default;
+$activity-icon-content-bg:            $teal-500 !default;
+$activity-icon-interactivecontent-bg: $amber-700 !default;
+
+// This is just to make it easier to iterate the colors.
+$activity-icon-colors: () !default;
+$activity-icon-colors: map.merge(
+    (
+        "administration": $activity-icon-administration-bg,
+        "assessment": $activity-icon-assessment-bg,
+        "collaboration": $activity-icon-collaboration-bg,
+        "communication": $activity-icon-communication-bg,
+        "content": $activity-icon-content-bg,
+        "interactivecontent": $activity-icon-interactivecontent-bg,
+    ),
+    $activity-icon-colors
+);
+
+// Atto
+$atto-content-wrap-bg:                   theme('colors.white') !default;
+$atto-content-wrap-color:                theme('colors.gray.800') !default;
+$atto-toolbar-bg:                        theme('colors.gray.100') !default;
+$atto-toolbar-border-color:              theme('colors.gray.300') !default;
+$atto-toolbar-group-bg:                  theme('colors.white') !default;
+$atto-toolbar-group-border-bottom-color: theme('colors.gray.400') !default;
+$atto-toolbar-button-color:              theme('colors.gray.700') !default;
+$atto-toolbar-button-hover-bg:           theme('colors.gray.200') !default;
+$atto-toolbar-button-active-bg:          theme('colors.gray.300') !default;
+$atto-toolbar-button-gradient-inner:     theme('colors.white') !default;
+$atto-toolbar-button-gradient-outer:     theme('colors.gray.300') !default;
+$atto-control-icon-bg:                   theme('colors.white') !default;
+$atto-notif-info:                        theme('colors.blue.100') !default;
+$atto-notif-warning:                     theme('colors.yellow.100') !default;
+
+
+// Backup restore
+$backup-restore-wibbler-border-color:   theme('colors.black') !default;
+$backup-restore-state0-bg:              theme('colors.gray.100') !default;
+$backup-restore-state1-bg:              theme('colors.gray.200') !default;
+$backup-restore-state2-bg:              theme('colors.gray.300') !default;
+$backup-restore-state3-bg:              theme('colors.gray.400') !default;
+$backup-restore-state4-bg:              theme('colors.gray.500') !default;
+$backup-restore-state5-bg:              theme('colors.gray.600') !default;
+$backup-restore-state6-bg:              theme('colors.gray.700') !default;
+$backup-restore-state7-bg:              theme('colors.gray.800') !default;
+$backup-restore-state8-bg:              theme('colors.gray.900') !default;
+$backup-restore-state9-bg:              theme('colors.gray.900') !default; // No direct equivalent, using darkest gray
+$backup-restore-state10-bg:             theme('colors.gray.900') !default; // No direct equivalent, using darkest gray
+$backup-restore-state11-bg:             theme('colors.gray.900') !default; // No direct equivalent, using darkest gray
+$backup-restore-state12-bg:             theme('colors.gray.900') !default; // No direct equivalent, using darkest gray
+
+
+// Calendar
+$calendar-month-clickable-bg:   theme('colors.gray.100') !default;
+
+// Core
+$yui-overlay-bg:               theme('colors.yellow.200') !default;
+$yui-overlay-color:            theme('colors.black') !default;
+$yui-overlay-border-color:     theme('colors.yellow.600') !default;
+$yui-overlay-border-top-color: theme('colors.yellow.400') !default;
+
+$comment-meta-color: theme('colors.gray.500') !default;
+$comment-paging-current-border-color: theme('colors.gray.300') !default;
+
+$tags-tagarea-border-color:             theme('colors.gray.200') !default;
+$tags-tagarea-title-color:              theme('colors.gray.500') !default;
+$tags-tagarea-title-border-color:       theme('colors.gray.200') !default;
+$tags-tagarea-title-text-shadow-color:  rgba(var(--tw-colors-white-rgb), .5) !default;
+
+$webservice-doc-td-border-color: theme('colors.black') !default;
+
+$userenrolment-link-hover-border-color: theme('colors.gray.600') !default;
+
+$corelightbox-bg: theme('colors.gray.300') !default;
+
+$dialogue-base-bg:              theme('colors.white') !default;
+$dialogue-base-border-color:    theme('colors.gray.300') !default;
+$dialogue-base-hd-border-color: theme('colors.gray.200') !default;
+
+$dialogue-exception-label-bg:           theme('colors.gray.100') !default;
+$dialogue-exception-label-border-color: theme('colors.gray.300') !default;
+$dialogue-exception-pre-bg:             theme('colors.white') !default;
+$dialogue-exception-pre-border-color:   theme('colors.gray.300') !default;
+$dialogue-exception-file-color:         theme('colors.blue.700') !default;
+$dialogue-exception-call-color:         theme('colors.gray.800') !default;
+$dialogue-exception-call-border-color:  theme('colors.gray.100') !default;
+
+$dialogue-lightbox-bg: theme('colors.white') !default;
+
+$chooserdialogue-bg:                    theme('colors.gray.100') !default;
+$chooserdialogue-options-border-color:  theme('colors.gray.400') !default;
+
+$choosercontainer-label-border-color:       theme('colors.white') !default;
+$choosercontainer-instruction-bg:           theme('colors.white') !default;
+$choosercontainer-chooseform-selected-bg:   theme('colors.white') !default;
+
+$formlisting-bg:            theme('colors.white') !default;
+$formlisting-border-color:  theme('colors.gray.300') !default;
+
+$formlistingmore-bg:            theme('colors.gray.50') !default;
+$formlistingmore-border-color:  theme('colors.gray.200') !default;
+$formlistingmore-color:         theme('colors.gray.500') !default;
+
+$formlistingrow-bg:             theme('colors.gray.100') !default;
+$formlistingrow-border-color:   theme('colors.gray.200') !default;
+
+$criteria-desc-bg:              theme('colors.gray.50') !default;
+$criteria-desc-border-color:    theme('colors.gray.100') !default;
+
+$hover-tooltip-bg:               theme('colors.white') !default;
+$hover-tooltip-border-color:     rgba(var(--tw-colors-black-rgb), .2) !default;
+$hover-tooltip-border-top-color: theme('colors.white') !default;
+
+$visually-hidden-active-bg: theme('colors.white') !default;
+
+$overlay-icon-bg:    rgba(var(--tw-colors-white-rgb), .6) !default;
+$overlay-preview-bg: rgba(var(--tw-colors-white-rgb), .8) !default;
+
+
+// Course
+$course-cat-without-actions-color: theme('colors.gray.800') !default;
+$course-listing-color:             theme('colors.gray.500') !default;
+
+
+// Debug
+$phpinfo-color:        theme('colors.black') !default;
+$phpinfo-bg:           theme('colors.gray.300') !default;
+$phpinfo-border-color: theme('colors.black') !default;
+$phpinfo-e-bg:         theme('colors.blue.200') !default;
+$phpinfo-h-bg:         theme('colors.blue.400') !default;
+
+
+// Filemanager
+$filemanager-panel-button-bg:               theme('colors.white') !default;
+$filemanager-panel-button-shadow:           theme('colors.gray.400') !default;
+$filemanager-picker-bg:                     theme('colors.white') !default;
+$filemanager-picker-active-bg:              theme('colors.gray.100') !default;
+$filemanager-thumbnail-border-color:        theme('colors.white') !default;
+$filemanager-thumbnail-img-border-color:    theme('colors.gray.300') !default;
+$filemanager-thumbnail-shadow:              theme('colors.gray.300') !default;
+$filemanager-thumbnail-over-bg:             theme('colors.white') !default;
+$filemanager-thumbnail-hover-border-color:  theme('colors.gray.300') !default;
+$filemanager-thumbnail-hover-shadow:        theme('colors.gray.300') !default;
+$filemanager-filename-bg:                   theme('colors.white') !default;
+$filemanager-picker-table-border-color:     theme('colors.gray.400') !default;
+$filemanager-ygtvfocus-bg:                  theme('colors.gray.100') !default;
+$filemanager-picker-thumbnail-bg:           theme('colors.white') !default;
+$filemanager-picker-thumbnail-border-color: theme('colors.gray.300') !default;
+$filemanager-item-disabled-bg:              theme('colors.gray.100') !default;
+
+$filemanager-yui-table-border-color:               theme('colors.gray.400') !default;
+$filemanager-yui-table-header-bg:                  theme('colors.white') !default;
+$filemanager-yui-table-header-border-bottom-color: theme('colors.gray.300') !default;
+$filemanager-yui-table-header-border-left-color:   theme('colors.white') !default;
+$filemanager-yui-table-header-color:               theme('colors.gray.700') !default;
+$filemanager-yui-table-cell-odd-bg:                theme('colors.gray.50') !default;
+$filemanager-yui-table-cell-odd-border-color:      theme('colors.gray.50') !default;
+$filemanager-yui-table-cell-even-bg:               theme('colors.white') !default;
+$filemanager-yui-table-cell-even-border-color:     theme('colors.white') !default;
+
+$filemanager-dnd-border-color:               theme('colors.gray.400') !default;
+$filemanager-dnd-upload-target-bg:           theme('colors.white') !default;
+$filemanager-dnd-upload-target-border-color: theme('colors.red.500') !default;
+$filemanager-dnd-upload-target-shadow:       theme('colors.white') !default;
+$filemanager-dnd-upload-over-bg:             theme('colors.white') !default;
+$filemanager-dnd-upload-over-border-color:   theme('colors.blue.500') !default;
+
+$filemanager-select-bg:           theme('colors.gray.50') !default;
+$filemanager-select-border-color: theme('colors.gray.400') !default;
+
+
+// Forms
+$forms-autocomplete-bg:                   theme('colors.white') !default;
+$forms-adminsettings-border-bottom-color: theme('colors.gray.200') !default;
+
+
+// Grade
+$grade-manage-action-border-color:           theme('colors.gray.400') !default;
+$grade-criterion-level-hover-bg:             theme('colors.green.100') !default;
+$grade-criterion-level-currentchecked-bg:    theme('colors.red.100') !default;
+$grade-criterion-level-checked-bg:           theme('colors.green.200') !default;
+$grade-criterion-level-checked-border-color: theme('colors.gray.700') !default;
+$grade-criterion-level-delete-bg:            theme('colors.gray.300') !default;
+$grade-table-td-bg:                          theme('colors.white') !default;
+$grade-table-toggle-icon-color:              theme('colors.gray.900') !default;
+$grade-badge-bg:                             theme('colors.gray.200') !default;
+$grade-badge-color:                          theme('colors.gray.900') !default;
+$grade-search-hover-color:                   theme('colors.white') !default;
+$grade-search-container-border-color:        theme('colors.gray.200') !default;
+
+
+// Message
+$message-selected-bg:                   theme('colors.blue.500') !default;
+$message-selected-color:                theme('colors.white') !default;
+$message-preference-table-border-color: theme('colors.gray.300') !default;
+$message-notif-area-border-color:       theme('colors.gray.200') !default;
+$message-notif-area-timestamp-color:    theme('colors.gray.600') !default;
+$message-clickable-hover-shadow:        rgba(var(--tw-colors-black-rgb), .3) !default;
+$message-loading-bg:                    rgba(var(--tw-colors-white-rgb), 0.5) !default;
+$message-drawer-shadow:                 rgba(var(--tw-colors-black-rgb), .08) !default;
+
+
+// Modules
+$modules-badge-bg:                theme('colors.gray.50') !default;
+$modules-badge-color:             theme('colors.gray.700') !default;
+$modules-rating-aggregate-bg:     theme('colors.gray.50') !default;
+$modules-rating-aggregate-color:  theme('colors.gray.700') !default;
+$modules-forum-muted-color:       theme('colors.gray.600') !default;
+$modules-forum-post-border-color: theme('colors.gray.200') !default;
+$modules-highlight-bg:            rgba(var(--tw-colors-blue-500-rgb), 0.5) !default;
+
+
+// Moodlenet
+$moodlenet-share-notice-bg: theme('colors.gray.50') !default;
+
+
+// Popover
+$popover-standard-border-color:             theme('colors.gray.300') !default;
+$popover-region-toggle-border-bottom-color: theme('colors.white') !default;
+$popover-count-color:                       theme('colors.white') !default;
+$popover-region-container-bg:               theme('colors.white') !default;
+
+
+// Question
+$question-choice-bg:                 theme('colors.gray.100') !default;
+$question-choice-color:              theme('colors.gray.800') !default;
+$question-choice-text-shadow:        theme('colors.white') !default;
+$question-choice-shadow:             theme('colors.gray.600') !default;
+$question-border-color:              theme('colors.gray.300') !default;
+$question-border-bottom-color:       theme('colors.gray.400') !default;
+$question-gradient-start-color:      theme('colors.white') !default;
+$question-gradient-end-color:        theme('colors.gray.300') !default;
+$question-type-bg:                   theme('colors.white') !default;
+$question-type-shadow:               theme('colors.gray.300') !default;
+$question-import-error-border-color: theme('colors.gray.700') !default;
+$question-bank-header-color:         theme('colors.gray.800') !default;
+$question-quiz-edit-border-color:    theme('colors.gray.300') !default;
+
+
+// Report builder
+$report-audience-border-color: rgba(var(--tw-colors-black-rgb), .125) !default;
+
+
+// User
+$user-loading-icon-bg: rgba(var(--tw-colors-white-rgb), 0.7) !default;
+
+// Collapse list items
+$collapse-list-item-hover-bg: theme('colors.gray.100') !default;
+$collapse-list-item-hover-border: theme('colors.gray.300') !default;

@@ -1,0 +1,202 @@
+// Converted to Tailwind/DaisyUI classes directly in the CSS.
+// Variables are no longer needed as they are replaced by Tailwind's theme() or direct classes.
+
+.pagelayout-login #region-main {
+    @apply border-0 bg-inherit;
+}
+
+.pagelayout-login #page {
+    background-color: #ffffff;
+    div[role="main"] {
+        height: 100%;
+    }
+}
+
+.login-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+}
+
+.login-container {
+    @apply bg-white p-12 shadow-lg mb-8 rounded-lg; // 3rem = 12 units, 2rem = 8 units
+    width: 100%;
+    max-width: 560px;
+    min-height: 520px;
+    .login-languagemenu {
+        @apply flex justify-start;
+        .dropdown-menu {
+            @apply max-h-75 overflow-y-auto; // 300px is roughly 75 units
+        }
+    }
+    .login-logo {
+        display: flex;
+    justify-content: center;
+    margin-bottom: 1rem; // 1rem = 4 units
+    }
+    .login-divider {
+        @apply mt-6 mb-6 border-t border-gray-300; // 1.5rem = 6 units
+    }
+
+    h1.login-heading {
+        @apply text-2xl; // Equivalent to $h2-font-size
+    }
+
+    h2.login-heading {
+        @apply text-xl; // Equivalent to $h4-font-size
+    }
+    .login-identityproviders {
+        .login-identityprovider-btn {
+            border: 1px solid;
+    border-color: #d1d5db;
+        }
+    }
+    .divider {
+        @apply w-px bg-gray-300 h-8; // $border-width is usually 1px, $font-size-base * 2 is 2rem = 32px = 8 units
+    }
+    .action-menu-trigger {
+        a {
+            @apply my-2; // 0.5rem = 2 units
+        }
+    }
+}
+
+.pagelayout-login .form-control {
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+    padding: 0.625rem 0.75rem;
+    min-height: 3rem; /* ~48px for better tap targets */
+    transition: box-shadow 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+}
+.pagelayout-login .form-control:focus {
+    outline: none;
+    border-color: #6366f1;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25);
+    background-color: #ffffff;
+}
+.pagelayout-login label {
+    color: #374151;
+    font-weight: 600;
+}
+.pagelayout-login .form-check-input {
+    border-color: #cbd5e1;
+}
+.pagelayout-login .form-check-input:checked {
+    background-color: #4f46e5;
+    border-color: #4f46e5;
+}
+
+.pagelayout-login .btn-primary,
+.pagelayout-login .btn.btn-primary {
+    background-color: #4f46e5;
+    border-color: #4f46e5;
+    color: #ffffff;
+    font-weight: 600;
+    border-radius: 0.5rem;
+    padding: 0.75rem 1rem;
+    transition: background-color 0.2s ease, box-shadow 0.2s ease, transform 0.06s ease;
+}
+.pagelayout-login .btn-primary:hover,
+.pagelayout-login .btn.btn-primary:hover {
+    background-color: #4338ca;
+    border-color: #4338ca;
+}
+.pagelayout-login .btn-primary:active,
+.pagelayout-login .btn.btn-primary:active {
+    background-color: #3730a3;
+    border-color: #3730a3;
+    transform: translateY(1px);
+}
+.pagelayout-login .btn-primary:focus,
+.pagelayout-login .btn.btn-primary:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.35);
+}
+
+.pagelayout-login a {
+    color: #4f46e5;
+    text-decoration: none;
+    transition: color 0.15s ease, text-decoration-color 0.15s ease;
+}
+.pagelayout-login a:hover {
+    color: #4338ca;
+    text-decoration: underline;
+}
+
+/* Template-based heading styles */
+.login-container h1.login-heading,
+.login-container h2.login-heading {
+    text-align: center;
+    width: 100%;
+    margin-bottom: 1.5rem;
+}
+.login-container h1.login-heading {
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: #333;
+}
+.login-container h2.login-heading {
+    font-size: 1.125rem;
+    font-weight: 400;
+    color: #666;
+}
+
+/* Template-based form field grouping */
+.login-form-username,
+.login-form-password {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+.login-form-username label,
+.login-form-password label {
+    display: none;
+}
+.login-form-username input,
+.login-form-password input {
+    width: 100%;
+    max-width: 320px;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+}
+
+/* Template-based divider */
+.login-divider {
+    margin: 1.5rem 0;
+    border-top: 1px solid #ddd;
+    width: 100%;
+}
+
+/* Template-based language menu and identity providers */
+.login-languagemenu,
+.login-identityproviders {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.login-languagemenu .dropdown-menu,
+.login-identityproviders .login-identityprovider-btn {
+    width: 100%;
+    max-width: 320px;
+}
+
+/* Make login submit button full width */
+.pagelayout-login .login-form-submit .btn,
+.pagelayout-login .login-form-submit .btn-lg {
+    width: 100%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+@media (min-width: theme('screens.md')) {
+    .login-container {
+        @apply w-[560px] !important; /* stylelint-disable-line declaration-no-important */
+    }
+}

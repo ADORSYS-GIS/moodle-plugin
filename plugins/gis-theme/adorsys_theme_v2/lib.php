@@ -90,5 +90,5 @@ function theme_adorsys_theme_v2_get_pre_scss($theme) {
  */
 function theme_adorsys_theme_v2_get_precompiled_css() {
     global $CFG;
-    return file_get_contents($CFG->dirroot . '/theme/adorsys_theme_v2/style/main.css');
+    return file_get_contents($CFG->dirroot . '/theme/adorsys_theme_v2/style/bundle.css');
 }

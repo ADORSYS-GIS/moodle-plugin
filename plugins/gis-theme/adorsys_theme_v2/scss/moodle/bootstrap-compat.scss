@@ -1,0 +1,410 @@
+/**
+ * Bootstrap compatibility mixins and functions
+ * 
+ * These are Bootstrap mixins and functions reimplemented for Tailwind/DaisyUI
+ * to maintain compatibility with existing Moodle SCSS code.
+ */
+
+// Import Sass modules
+@use 'sass:color';
+@use 'sass:map';
+@use 'sass:math';
+
+// ========================================
+// SASS FUNCTIONS
+// ========================================
+
+// Map-get wrapper for easier access
+@function map-get($map-data, $key) {
+  @return map.get($map-data, $key);
+}
+
+// Color manipulation functions
+@function darken($color, $amount) {
+  @return color.adjust($color, $lightness: -$amount);
+}
+
+@function lighten($color, $amount) {
+  @return color.adjust($color, $lightness: $amount);
+}
+
+@function shift-color($color, $weight) {
+  @return color.mix(if($weight > 0, #fff, #000), $color, math.abs($weight));
+}
+
+// Color contrast function (simplified for DaisyUI)
+@function color-contrast($background, $color-light: #ffffff, $color-dark: #000000) {
+  // Simple luminance check
+  @return if(color.lightness($background) > 50%, $color-dark, $color-light);
+}
+
+// Breakpoint name function
+@function breakpoint-infix($name, $breakpoints: $grid-breakpoints) {
+  @return if($name == "xs", "", "-#{$name}");
+}
+
+// Theme function for Tailwind CSS compatibility
+// This function mimics Tailwind's theme() function for use in SCSS
+@function theme($path) {
+  // Map of Tailwind theme paths to actual values
+  $theme-map: (
+    // Colors
+    'colors.white': $white,
+    'colors.black': $black,
+    'colors.gray.50': $gray-50,
+    'colors.gray.100': $gray-100,
+    'colors.gray.200': $gray-200,
+    'colors.gray.300': $gray-300,
+    'colors.gray.400': $gray-400,
+    'colors.gray.500': $gray-500,
+    'colors.gray.600': $gray-600,
+    'colors.gray.700': $gray-700,
+    'colors.gray.800': $gray-800,
+    'colors.gray.900': $gray-900,
+    'colors.blue.100': $blue-100,
+    'colors.blue.200': $blue-200,
+    'colors.blue.400': $blue-400,
+    'colors.blue.500': $blue-500,
+    'colors.blue.600': $blue-600,
+    'colors.blue.700': $blue-700,
+    'colors.red.100': #fee2e2,
+    'colors.red.200': #fecaca,
+    'colors.red.500': $red-500,
+    'colors.red.600': $red-600,
+    'colors.red.700': #b91c1c,
+    'colors.yellow.100': $yellow-100,
+    'colors.yellow.200': $yellow-200,
+    'colors.yellow.400': $yellow-400,
+    'colors.yellow.500': $yellow-500,
+    'colors.yellow.600': $yellow-600,
+    'colors.yellow.700': #a16207,
+    'colors.green.100': $green-100,
+    'colors.green.200': $green-200,
+    'colors.green.600': $green-600,
+    'colors.primary.DEFAULT': $primary,
+    'colors.primary.200': lighten($primary, 30%),
+    
+    // Spacing
+    'spacing.0': 0,
+    'spacing.0.5': 0.125rem,
+    'spacing.1': 0.25rem,
+    'spacing.1.25': 0.3125rem,
+    'spacing.1.5': 0.375rem,
+    'spacing.2': 0.5rem,
+    'spacing.2.5': 0.625rem,
+    'spacing.3': 0.75rem,
+    'spacing.3.5': 0.875rem,
+    'spacing.4': 1rem,
+    'spacing.4.5': 1.125rem,
+    'spacing.5': 1.25rem,
+    'spacing.6': 1.5rem,
+    'spacing.7': 1.75rem,
+    'spacing.8': 2rem,
+    'spacing.9': 2.25rem,
+    'spacing.10': 2.5rem,
+    'spacing.11': 2.75rem,
+    'spacing.12': 3rem,
+    'spacing.14': 3.5rem,
+    'spacing.16': 4rem,
+    'spacing.20': 5rem,
+    'spacing.24': 6rem,
+    'spacing.32': 8rem,
+    
+    // Custom Moodle-specific spacing
+    'spacing.modalSm': 300px,
+    'spacing.stickyFooterHeight': $stickyfooter-height,
+    'spacing.navbar-height': $navbar-height,
+    'spacing.navbarHeight': $navbar-height,
+    'spacing.courseContentMaxwidth': $course-content-maxwidth,
+    'spacing.authorImageWidth': 45px,
+    'spacing.authorImageMargin': 0.75rem,
+    'spacing.authorImageWidthSm': 30px,
+    'spacing.authorImageMarginSm': 0.5rem,
+    'spacing.graderDrawerWidth': 400px,
+    'spacing.drawerLeftWidth': 250px,
+    'spacing.drawerRightWidth': 350px,
+    
+    // Border widths
+    'borderWidth.DEFAULT': $border-width,
+    'borderWidth.0': 0,
+    'borderWidth.2': 2px,
+    'borderWidth.4': 4px,
+    
+    // Border radius
+    'borderRadius.DEFAULT': $border-radius,
+    'borderRadius.sm': $border-radius-sm,
+    'borderRadius.md': $border-radius,
+    'borderRadius.lg': $border-radius-lg,
+    'borderRadius.full': 9999px,
+    
+    // Font sizes
+    'fontSize.xs': $font-size-xs,
+    'fontSize.sm': $font-size-sm,
+    'fontSize.base': $font-size-base,
+    'fontSize.lg': 1.125rem,
+    'fontSize.xl': 1.25rem,
+    'fontSize.2xl': 1.5rem,
+    
+    // Line height
+    'lineHeight.none': 1,
+    'lineHeight.tight': 1.25,
+    'lineHeight.normal': 1.5,
+    'lineHeight.relaxed': 1.625,
+    
+    // Screens/Breakpoints
+    'screens.sm': 640px,
+    'screens.md': 768px,
+    'screens.lg': 1024px,
+    'screens.xl': 1280px,
+  );
+  
+  @if map.has-key($theme-map, $path) {
+    @return map.get($theme-map, $path);
+  } @else {
+    @warn "Unknown theme path: #{$path} - returning 0px as fallback";
+    @return 0px;  // Return 0px instead of null to prevent calc() errors
+  }
+}
+
+// ========================================
+// MIXINS
+// ========================================
+
+// Border radius mixin
+@mixin border-radius($radius: $border-radius) {
+  @if $radius == null or $radius == 0 {
+    border-radius: 0;
+  } @else {
+    border-radius: $radius;
+  }
+}
+
+// Gradient background mixin (simplified for Tailwind)
+@mixin gradient-bg($color) {
+  background-color: $color;
+  // Tailwind doesn't use gradients by default in the same way
+  // You can extend this if needed
+}
+
+// Media breakpoint mixins
+@mixin media-breakpoint-up($name, $breakpoints: $grid-breakpoints) {
+  $min: map-get($breakpoints, $name);
+  @if $min and $min > 0 {
+    @media (min-width: $min) {
+      @content;
+    }
+  } @else {
+    @content;
+  }
+}
+
+@mixin media-breakpoint-down($name, $breakpoints: $grid-breakpoints) {
+  $max: map-get($breakpoints, $name);
+  @if $max {
+    $adjusted-max: $max - 0.02px;
+    @media (max-width: $adjusted-max) {
+      @content;
+    }
+  } @else {
+    @content;
+  }
+}
+
+@mixin media-breakpoint-between($lower, $upper, $breakpoints: $grid-breakpoints) {
+  $min: map-get($breakpoints, $lower);
+  $max: map-get($breakpoints, $upper);
+
+  @if $min != null and $max != null {
+    $adjusted-max: $max - 0.02px;
+    @media (min-width: $min) and (max-width: $adjusted-max) {
+      @content;
+    }
+  } @else if $max == null {
+    @include media-breakpoint-up($lower, $breakpoints) {
+      @content;
+    }
+  } @else if $min == null {
+    @include media-breakpoint-down($upper, $breakpoints) {
+      @content;
+    }
+  }
+}
+
+// Thin scrollbars mixin (custom)
+@mixin thin-scrolls($track-color: $gray-100, $thumb-color: $gray-400) {
+  scrollbar-width: thin;
+  scrollbar-color: $thumb-color $track-color;
+
+  &::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: $track-color;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: $thumb-color;
+    border-radius: 4px;
+  }
+}
+
+// Deprecated styles mixin (for compatibility warnings)
+@mixin deprecated-styles($class-name) {
+  // Add a comment in the CSS for deprecated classes
+  /* Deprecated: #{$class-name} - Consider using Tailwind utilities instead */
+}
+
+// Text truncate mixin (Bootstrap utility)
+@mixin text-truncate() {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// Button variant mixin (Bootstrap button styles)
+@mixin button-variant($background, $border, $color: color-contrast($background)) {
+  color: $color;
+  background-color: $background;
+  border-color: $border;
+
+  &:hover {
+    color: $color;
+    background-color: darken($background, 7.5%);
+    border-color: darken($border, 10%);
+  }
+
+  &:focus,
+  &.focus {
+    color: $color;
+    background-color: darken($background, 7.5%);
+    border-color: darken($border, 10%);
+  }
+
+  &:active,
+  &.active {
+    color: $color;
+    background-color: darken($background, 10%);
+    border-color: darken($border, 12.5%);
+  }
+}
+
+// Button size mixin (Bootstrap button sizing)
+@mixin button-size($padding-y, $padding-x, $font-size, $border-radius) {
+  padding: $padding-y $padding-x;
+  font-size: $font-size;
+  border-radius: $border-radius;
+}
+
+// Transition mixin (Bootstrap transitions)
+@mixin transition($transition...) {
+  transition: $transition;
+}
+
+// Box shadow mixin (Bootstrap shadows)
+@mixin box-shadow($shadow...) {
+  box-shadow: $shadow;
+}
+
+// Border radius mixins (Bootstrap border utilities)
+@mixin border-top-radius($radius) {
+  border-top-left-radius: $radius;
+  border-top-right-radius: $radius;
+}
+
+@mixin border-bottom-radius($radius) {
+  border-bottom-left-radius: $radius;
+  border-bottom-right-radius: $radius;
+}
+
+// Gradient mixin (Bootstrap gradients)
+@mixin gradient-y($start-color, $end-color) {
+  background-image: linear-gradient(to bottom, $start-color, $end-color);
+  background-repeat: repeat-x;
+}
+
+// Clearfix mixin (Bootstrap clearfix utility)
+@mixin clearfix() {
+  &::after {
+    display: block;
+    clear: both;
+    content: "";
+  }
+}
+
+// Form validation state mixin (Bootstrap form validation)
+@mixin form-validation-state($state, $color, $icon) {
+  .#{$state}-feedback {
+    display: none;
+    width: 100%;
+    margin-top: 0.25rem;
+    font-size: 0.875rem;
+    color: $color;
+  }
+
+  .#{$state}-tooltip {
+    position: absolute;
+    top: 100%;
+    z-index: 5;
+    display: none;
+    max-width: 100%;
+    padding: 0.25rem 0.5rem;
+    margin-top: 0.1rem;
+    font-size: 0.875rem;
+    color: #fff;
+    background-color: rgba($color, 0.9);
+    border-radius: 0.25rem;
+  }
+
+  .was-validated .form-control:#{$state},
+  .form-control.is-#{$state} {
+    border-color: $color;
+
+    &:focus {
+      border-color: $color;
+      box-shadow: 0 0 0 0.2rem rgba($color, 0.25);
+    }
+
+    ~ .#{$state}-feedback,
+    ~ .#{$state}-tooltip {
+      display: block;
+    }
+  }
+}
+
+// Hover navbar mixin (custom navbar hover effects)
+@mixin hover-navbar() {
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      @content;
+    }
+  }
+}
+
+// Gradient background mixin (Bootstrap gradient backgrounds)
+@mixin gradient-bg($color) {
+  background-color: $color;
+  @if $enable-gradients {
+    background-image: linear-gradient(180deg, mix($white, $color, 15%), $color);
+    background-repeat: repeat-x;
+  }
+}
+
+// Visually hidden mixin (Bootstrap accessibility utility)
+@mixin visually-hidden() {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+// Font size mixin (Bootstrap responsive font sizing)
+@mixin font-size($size) {
+  font-size: $size;
+}

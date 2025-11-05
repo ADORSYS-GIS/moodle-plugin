@@ -1,0 +1,625 @@
+/* admin.less */
+.formtable tbody th {
+    @apply font-normal text-right;
+}
+
+.path-admin #assignrole {
+    @apply w-[60%] mx-auto;
+}
+
+.path-admin .admintable .leftalign {
+    text-align: left;
+}
+
+.path-admin .admintable.environmenttable .name,
+.path-admin .admintable.environmenttable .info,
+.path-admin #assignrole .admintable .role,
+.path-admin #assignrole .admintable .userrole,
+.path-admin #assignrole .admintable .roleholder {
+    white-space: nowrap;
+}
+
+.path-admin .incompatibleblockstable td.c0 {
+    @apply font-bold;
+}
+
+#page-admin-course-category .addcategory {
+    @apply p-2.5;
+}
+
+#page-admin-course-index .editcourse {
+    @apply my-5 mx-auto;
+}
+
+#page-admin-course-index .editcourse th,
+#page-admin-course-index .editcourse td {
+    @apply px-2.5;
+}
+
+.timewarninghidden {
+    display: none;
+}
+
+#page-admin-qtypes #qtypes div,
+#page-admin-qtypes #qtypes form,
+#page-admin-qbehaviours #qbehaviours div,
+#page-admin-qbehaviours #qbehaviours form {
+    @apply inline;
+}
+
+#page-admin-qtypes #qtypes img.spacer,
+#page-admin-qbehaviours #qbehaviours img.spacer {
+    @apply w-4;
+}
+
+#page-admin-qbehaviours .cell.c3,
+#page-admin-qtypes .cell.c3 {
+    @apply text-sm;
+}
+
+#page-admin-lang .generalbox,
+#page-admin-course-index .singlebutton,
+#page-admin-course-index .addcategory,
+#page-course-index .buttons,
+#page-course-index-category .buttons,
+#page-admin-course-category .addcategory,
+#page-admin-stickyblocks .generalbox,
+#page-admin-maintenance .buttons,
+#page-admin-course-index .buttons,
+#page-admin-course-category .buttons,
+#page-admin-index .copyright,
+#page-admin-index .copyrightnotice,
+#page-admin-index .adminerror .singlebutton,
+#page-admin-index .adminwarning .singlebutton,
+#page-admin-index #layout-table .singlebutton {
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.path-admin-roles .capabilitysearchui {
+    text-align: left;
+    margin-left: auto; margin-right: auto;
+    margin-top: 1rem;
+}
+
+#page-admin-roles-define .topfields {
+    @apply my-4 mx-0 mb-8;
+}
+
+#page-admin-roles-override .capcurrent,
+#page-admin-roles-define .capdefault {
+    background-color: #f3f4f6;
+}
+
+#page-filter-manage .backlink,
+.path-admin-roles .backlink {
+    margin-top: 1rem;
+}
+
+#page-admin-roles-explain #chooseuser h3,
+#page-admin-roles-usersroles .contextname {
+    @apply mt-0;
+}
+
+#page-admin-roles-explain #chooseusersubmit {
+    @apply mt-0 text-center;
+}
+
+#page-admin-roles-usersroles p {
+    margin: 0;
+}
+
+#page-admin-roles-override .cell.c1,
+#page-admin-roles-assign .cell.c3,
+#page-admin-roles-assign .cell.c1 {
+    @apply pt-3;
+}
+
+#page-admin-roles-override .overridenotice,
+#page-admin-roles-define .definenotice {
+    @apply my-4 mx-[10%] mb-8 text-left;
+}
+
+#page-admin-index .upgradekeyreq {
+    @apply min-w-[220px];
+}
+
+#page-admin-index .adminwarning.availableupdatesinfo .moodleupdateinfo span {
+    display: block;
+}
+
+#page-admin-index .updateplugin div {
+    @apply mb-2;
+}
+
+#page-admin-user-user_bulk #users .fgroup {
+    white-space: nowrap;
+}
+
+#page-admin-report-stats-index .graph {
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+#page-admin-report-courseoverview-index .graph {
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+#page-admin-lang .translator {
+    @apply border border-solid;
+}
+
+// This is the CSS for the role assignment control.
+.path-admin .roleassigntable {
+    width: 100%;
+}
+
+.path-admin .roleassigntable td {
+    @apply align-top py-0.5 px-0.75;
+}
+
+.path-admin .roleassigntable p {
+    @apply text-left my-0.5;
+}
+
+.path-admin .roleassigntable #existingcell,
+.path-admin .roleassigntable #potentialcell {
+    @apply w-[42%];
+}
+
+// Targetting the label at the top.
+.path-admin .roleassigntable #existingcell p > label:first-child,
+.path-admin .roleassigntable #potentialcell p > label:first-child {
+    @apply font-bold;
+}
+
+.path-admin .roleassigntable #buttonscell {
+    @apply w-[16%];
+}
+
+.path-admin .roleassigntable #buttonscell #assignoptions {
+    @apply text-sm;
+}
+
+.path-admin .roleassigntable #removeselect_wrapper,
+.path-admin .roleassigntable #addselect_wrapper {
+    width: 100%;
+}
+
+.path-admin table.rolecap tr.rolecap th {
+    @apply text-left font-normal;
+}
+
+.path-admin .rolecap .hiddenrow {
+    display: none;
+}
+
+.path-admin #defineroletable {
+    .rolecap {
+        .inherit,
+        .allow,
+        .prevent,
+        .prohibit {
+            @apply text-center p-0 min-w-[3.5em];
+        }
+    }
+}
+
+.path-admin .rolecap .cap-name,
+.path-admin .rolecap .note {
+    @apply block text-sm whitespace-nowrap font-normal;
+}
+
+.path-admin .rolecap label {
+    display: block;
+    text-align: center;
+    padding: 0.5rem;
+    margin: 0;
+}
+
+.path-admin,
+.format-site {
+    .header-maxwidth,
+    .secondary-navigation .navigation .nav-tabs {
+        @apply max-w-none;
+    }
+}
+.path-admin.path-admin-roles:not(.format-site),
+.path-admin.path-admin-tool-lp {
+    .header-maxwidth,
+    .secondary-navigation .navigation .nav-tabs {
+        max-width: theme('spacing.courseContentMaxwidth');
+    }
+}
+
+.plugincheckwrapper {
+    width: 100%;
+}
+
+.environmentbox {
+    margin-top: 1rem;
+}
+
+#mnetconfig table {
+    margin-left: auto; margin-right: auto;
+}
+
+.environmenttable .cell {
+    @apply py-0.5 px-2;
+}
+
+#trustedhosts .table {
+    @apply mx-auto w-[500px];
+}
+
+#trustedhosts .standard {
+    width: auto;
+}
+
+// This usage of legend is a bit weird,
+// seems to be using them as error text
+// that's only sometimes visible. Should
+// look into sorting it.
+#adminsettings legend {
+    display: none;
+}
+
+#adminsettings fieldset.error {
+    @apply my-0.5 mx-0 mb-1.5;
+}
+
+#adminsettings fieldset.error legend {
+    display: block;
+}
+
+#admin-spelllanguagelist textarea {
+    /* rtl:ignore */
+    text-align: left;
+    /* rtl:ignore */
+    @apply ltr;
+}
+
+/* Styles for flags on admin settings */
+.adminsettingsflags {
+    @apply float-right;
+}
+
+.adminsettingsflags label {
+    @apply mr-1.5;
+}
+
+.form-description pre,
+.formsettingheading pre {
+    /*rtl:ignore*/
+    @apply ltr;
+}
+
+.form-item .form-setting .form-htmlarea {
+    @apply inline;
+}
+
+.form-item .form-setting .form-htmlarea .htmlarea {
+    @apply w-[640px] block;
+}
+
+.form-item .form-setting .form-multicheckbox ul {
+    @apply list-none p-0 mt-1.5 m-0;
+}
+
+.form-item .form-setting .defaultsnext {
+    display: inline-block;
+}
+
+.form-item .form-setting .locked-checkbox {
+    @apply mr-0.5 ml-1.5 inline;
+}
+
+.form-item .form-setting .form-password .unmask,
+.form-item .form-setting .form-defaultinfo {
+    display: inline-block;
+}
+
+.form-item .form-setting .form-defaultinfo {
+    @apply max-w-full break-words;
+}
+
+#admin-emoticons td input {
+    @apply w-[8em];
+}
+
+#admin-emoticons td.c0 input {
+    @apply w-[4em];
+}
+
+.admin_colourpicker,
+.admin_colourpicker_preview {
+    display: none;
+}
+
+.jsenabled .admin_colourpicker_preview {
+    @apply inline;
+}
+
+@media (min-width: 768px) {
+    .jsenabled .admin_colourpicker {
+        @apply block h-[102px] w-[410px] mb-2.5 box-content;
+    }
+    .admin_colourpicker .colourdialogue {
+        @apply float-left border border-gray-300;
+    }
+    .admin_colourpicker .previewcolour {
+        @apply border border-gray-300 ml-[301px];
+    }
+
+    .admin_colourpicker .currentcolour {
+        @apply border border-gray-300 ml-[301px] border-t-0;
+    }
+}
+
+@media (min-width: 768px) {
+    .jsenabled .admin_colourpicker {
+        @apply h-[150px] mb-2.5 block relative;
+    }
+    .admin_colourpicker .previewcolour {
+        display: none;
+    }
+    .admin_colourpicker .currentcolour {
+        @apply absolute border border-gray-200 top-[100px] left-0;
+    }
+
+}
+.admin_colourpicker .loadingicon {
+    @apply align-middle mx-auto;
+}
+
+#page-admin-index #notice .checkforupdates {
+    text-align: center;
+}
+
+#page-admin-index #page-content .alert a {
+    @apply font-normal underline;
+}
+
+// Plugins overview page at admin/plugins.php
+#page-admin-plugins {
+    #plugins-overview-panel {
+        .info {
+            @apply inline-block mr-4;
+
+            [data-filterby].active {
+                @apply font-bold;
+            }
+        }
+        .updateavailableinstallall {
+            @apply mr-4;
+        }
+    }
+
+    .checkforupdates {
+        @apply my-2.5 mx-0;
+
+        .singlebutton {
+            @apply my-1.5 mx-0 p-0;
+
+            div,
+            input {
+                @apply m-0 mr-0.75;
+            }
+        }
+    }
+
+    .updateavailableinstallall {
+        @apply my-1.5 mx-0 p-0;
+
+        div,
+        input {
+            @apply m-0 mr-0.75 mb-1.5;
+        }
+    }
+
+    #plugins-control-panel {
+        .status-missing td,
+        .deprecatedtype td {
+            @apply bg-warning;
+        }
+
+        .pluginname {
+            .componentname {
+                @apply text-sm text-gray-600 ml-5.5;
+            }
+        }
+
+        .version {
+            .versionnumber {
+                @apply text-sm text-gray-600;
+            }
+        }
+
+        .uninstall {
+            a {
+                @apply text-error;
+            }
+        }
+
+        .notes {
+            .label {
+                @apply mr-0.75;
+            }
+
+            .requiredby {
+                @apply text-sm text-gray-600;
+            }
+        }
+    }
+}
+
+
+// Plugins check page displayed during upgrade.
+#plugins-check-page {
+
+    // Plugins check table.
+    #plugins-check {
+        .status-missing,
+        .deprecatedtype,
+        .status-downgrade {
+            td {
+                @apply bg-error;
+            }
+        }
+    }
+}
+
+// Available plugin update notification.
+
+#plugins-check-page,
+#plugins-control-panel {
+    .pluginupdateinfo {
+        @apply bg-info;
+
+        &.maturity50 {
+            @apply bg-error;
+        }
+
+        &.maturity100,
+        &.maturity150 {
+            @apply bg-warning;
+        }
+        @apply p-1.5 my-2.5 rounded-md;
+
+        .info {
+            display: inline-block;
+        }
+
+        .separator:after {
+            content: " | ";
+        }
+
+        .singlebutton {
+            @apply my-1.5 mx-0 p-0;
+
+            div,
+            input {
+                @apply m-0 mr-0.75;
+            }
+        }
+    }
+}
+
+.plugins-management-confirm-buttons {
+    > div {
+        @apply inline-block my-4 mx-4 mr-0;
+    }
+
+    .continue {
+        padding: 0;
+
+        div,
+        input {
+            margin: 0;
+        }
+    }
+}
+
+#page-admin-index .upgradepluginsinfo {
+    text-align: center;
+}
+
+#page-admin-index .adminwarning.availableupdatesinfo .moodleupdateinfo .separator:after {
+    content: " | ";
+}
+
+/** MNet networking */
+#page-admin-mnet-peers .box.deletedhosts {
+    @apply mb-4 text-sm;
+}
+
+#core-cache-plugin-summaries table,
+#core-cache-store-summaries table {
+    width: 100%;
+}
+
+#core-cache-lock-summary table,
+#core-cache-definition-summaries table,
+#core-cache-mode-mappings table {
+    margin-left: auto; margin-right: auto;
+}
+
+#core-cache-store-summaries .default-store td {
+    font-style: italic;
+}
+
+#core-cache-rescan-definitions,
+#core-cache-mode-mappings .edit-link,
+#core-cache-lock-additional-actions .new-instance {
+    @apply mt-1.5 text-center;
+}
+
+.maintenancewarning {
+    @apply fixed bottom-0 right-0 m-4 overflow-hidden z-dropdown;
+}
+.jsenabled .maintenancewarning {
+    @apply transition-all duration-200;
+}
+
+.modal.modal-in-page {
+    @apply z-0;
+}
+
+#region-main {
+    // Ensure notifications don't clash with following content
+    #user-notifications,
+    .notifications {
+        display: block;
+        margin-bottom: 1rem;
+    }
+
+    // Tidy heading spacing in admin content areas
+    > h1,
+    > h2,
+    > h3 {
+        margin-top: .25rem;
+        margin-bottom: 1rem;
+    }
+}
+
+#page-admin-search {
+    .adminpagetitle {
+        margin-bottom: 0;
+    border-bottom: 0;
+    }
+    .adminpagepath {
+        @apply flex flex-wrap list-none p-0 m-0 mb-6;
+        li {
+            + li:before {
+                @apply pr-2 pl-2;
+                content: "/"; /* Replaced Sass variable with literal */
+            }
+        }
+    }
+    @media (min-width: 640px) {
+        .container {
+            @apply break-words;
+        }
+    }
+}
+
+#page-admin-tasklogs {
+    .task-class {
+        @apply text-sm text-gray-600;
+    }
+}
+
+.path-admin-tool-uploaduser {
+    .uuwarning {
+        @apply bg-warning;
+    }
+
+    .uuerror {
+        @apply bg-error;
+    }
+
+    .uuinfo {
+        @apply bg-success;
+    }
+}

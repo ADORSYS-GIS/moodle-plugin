@@ -1,0 +1,51 @@
+/**
+ Deprecations
+ */
+
+//
+// Deprecation mixin.
+//
+@mixin deprecated-styles($deprecatedrule) {
+    /* stylelint-disable declaration-no-important */
+    body.behat-site &,
+    body.behat-site#{&},
+    body.themedesignermode &,
+    body.themedesignermode#{&} {
+        outline: 3px dotted $red !important;
+        background-color: lighten($red, 50%) !important;
+        &::before {
+            content: "Deprecated style in use (#{$deprecatedrule})" !important;
+            color: $red !important;
+            font-size: smaller !important;
+        }
+    }
+    /* stylelint-enable */
+}
+
+//
+// Deprecated styles.
+//
+
+// All deprecated styles should include "deprecated-styles" mixin.
+// Example:
+// .foo {
+//     .bar {
+//         color: $blue;
+//         @include deprecated-styles();
+//     }
+//     color: $red;
+//     @include deprecated-styles();
+// }
+
+//
+// Deprecated since Moodle 5.0.
+//
+
+// In 6.0 all YUI section spinners wont be needed.
+.course-content .stateready .section .spinner {
+    @include deprecated-styles(".course-content .stateready .section .spinner");
+    display: none;
+}
+
+// TODO: MDL-84465 Final deprecation in 6.0. Remove this line when the Bootstrap 4 backward compatibility period ends.
+// @import "bs4-compat"; // Commented out - too many Bootstrap 4 dependencies

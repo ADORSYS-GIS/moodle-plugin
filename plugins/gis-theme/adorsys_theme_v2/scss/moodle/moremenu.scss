@@ -1,0 +1,173 @@
+// ============================================================================
+// MORE MENU - MODERN OVERFLOW MENU STYLING
+// ============================================================================
+
+.moremenu {
+    opacity: 0;
+    height: $moremenu-height;
+    transition: opacity 0.3s ease;
+    
+    // Fade in when observed
+    &.observed {
+        opacity: 1;
+        animation: fadeInSlide 0.3s ease;
+    }
+    
+    // Nav Link Styling
+    .nav-link {
+        @apply flex items-center px-4;
+        height: $moremenu-height;
+        border-right: none;
+        border-bottom: 3px solid transparent;
+        border-left: none;
+        border-top: none;
+        color: theme('colors.gray.700');
+        font-weight: 500;
+        font-size: theme('fontSize.sm');
+        position: relative;
+        transition: all 0.2s ease;
+        
+        // Hover state
+        &:hover,
+        &:focus {
+            color: theme('colors.blue.600');
+            background-color: theme('colors.gray.50');
+            border-bottom-color: theme('colors.blue.400');
+        }
+
+        // Active state
+        &.active {
+            color: theme('colors.blue.700');
+            background-color: theme('colors.blue.50');
+            border-color: transparent;
+            border-bottom-color: theme('colors.blue.600');
+            font-weight: 600;
+            
+            &:focus,
+            &:hover {
+                background-color: theme('colors.blue.100');
+                border-bottom-color: theme('colors.blue.700');
+            }
+        }
+        
+        &.focus,
+        &:focus {
+            position: relative;
+            outline: none;
+        }
+        
+        // Tab toggle styling
+        &[data-bs-toggle="tab"] {
+            @apply inline-flex flex-col items-center justify-center;
+
+            &::after {
+                content: attr(data-text) / "";
+                height: 0;
+                visibility: hidden;
+                overflow: hidden;
+                user-select: none;
+                pointer-events: none;
+                font-weight: bold;
+
+                @media speech {
+                    display: none;
+                }
+            }
+        }
+    }
+    
+    // Nav Tabs Container
+    .nav-tabs {
+        margin-left: 0;
+        background-color: theme('colors.white');
+        border-bottom: 1px solid theme('colors.gray.200');
+    }
+    
+    .show > .nav-link,
+    .active > .nav-link,
+    .nav-link.show,
+    .nav-link.active {
+        background: transparent;
+    }
+
+    // Dropdown Menu Styling
+    .dropdownmoremenu > .dropdown-menu {
+        border-radius: theme('spacing.2');
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+        border: 1px solid theme('colors.gray.200');
+        padding: theme('spacing.2') 0;
+        margin-top: theme('spacing.1');
+        
+        & > .dropdown-item {
+            padding: 0;
+        }
+        
+        .dropdown-menu {
+            position: static;
+            padding: 0;
+            border: 0;
+            box-shadow: none;
+            
+            &.show {
+                display: block;
+            }
+            
+            .dropdown-item {
+                @apply px-4 py-2;
+                background-color: theme('colors.gray.50');
+                color: theme('colors.gray.700');
+                font-size: theme('fontSize.sm');
+                transition: all 0.15s ease;
+                
+                &:hover,
+                &:focus {
+                    background-color: theme('colors.blue.100');
+                    color: theme('colors.blue.700');
+                    padding-left: theme('spacing.5');
+                }
+            }
+            
+            .dropdown-divider {
+                display: none;
+            }
+        }
+    }
+
+    // Active Dropdown Items
+    .dropdown-item[aria-current="true"],
+    .dropdown-item.active {
+        background-color: theme('colors.blue.50');
+        color: theme('colors.blue.700');
+        font-weight: 600;
+        
+        &:focus-within,
+        &:hover {
+            background-color: theme('colors.blue.100');
+            color: theme('colors.blue.800');
+            
+            a {
+                color: theme('colors.blue.800');
+            }
+        }
+        
+        &:before {
+            content: "✓";
+            @apply mr-2;
+            color: theme('colors.blue.600');
+            font-size: theme('fontSize.sm');
+            font-weight: bold;
+        }
+    }
+}
+
+// Fade in animation
+@keyframes fadeInSlide {
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

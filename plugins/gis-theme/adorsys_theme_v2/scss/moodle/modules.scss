@@ -1,0 +1,1579 @@
+/* modules.less */
+
+// The home for small tweaks to modules that don't require
+// changes drastic enough to pull in the full module css
+// and replace it completely
+// Plus some misc. odds and ends
+
+// Define missing variables
+$grading-drawer-width: 430px;
+$grading-animation-duration: 0.3s;
+$grading-icon-button-size: 36px;
+$spacers: (
+  0: 0,
+  1: 0.25rem,
+  2: 0.5rem,
+  3: 0.75rem,
+  4: 1rem,
+  5: 1.5rem
+);
+$grading-search-button-padding-left: calc(0.5rem + 8px);
+$grading-search-input-padding-left: calc(0.5rem + 0.5rem + 36px - 2px);
+$grading-search-input-padding-right: calc(0.5rem + 36px);
+$input-color: theme('colors.gray.700');
+$input-bg: theme('colors.white');
+$input-border-width: 1px;
+$table-border-color: theme('colors.gray.300');
+$spacer: 1rem;
+$font-size-sm: 0.875rem;
+$border-width: 1px;
+$border-color: theme('colors.gray.300');
+$white: theme('colors.white');
+$font-size-base: 1rem;
+$gray-200: theme('colors.gray.200');
+$gray-800: theme('colors.gray.800');
+$h2-font-size: 2rem;
+
+select {
+    width: auto;
+}
+
+.path-mod {
+    .activity-header:not(:empty) {
+        background-color: #f3f4f6;
+    margin-bottom: 1rem;
+    padding-left: 1rem; padding-right: 1rem;
+    border-radius: 0.5rem;
+
+        & > div:last-child > div:last-child {
+            border-bottom: 0;
+        }
+    }
+    .activity-information {
+
+        .activity-dates {
+            @apply pt-4 pb-4 border-b border-gray-300;
+        }
+        .completion-info {
+            @apply pt-4 pb-4 border-b border-gray-300;
+        }
+    }
+    .activity-description {
+        @apply pt-4 pb-4;
+        & > .box.py-3 {
+            @apply pt-0 pb-0; /* stylelint-disable-line declaration-no-important */
+        }
+        & > .box.py-3:empty {
+            display: none;
+        }
+    }
+    .automatic-completion-conditions .badge {
+        @apply text-xs p-2 mt-2 mix-blend-multiply;
+        &.badge-light {
+            background-color: #e5e7eb; /* stylelint-disable-line declaration-no-important */
+        }
+
+        .icon {
+            @apply w-3 h-3 text-xs;
+        }
+
+        &:first-child {
+            @apply mt-0;
+        }
+    }
+    .activity-description .no-overflow p:last-child {
+        @apply pb-0 mb-0;
+    }
+}
+
+// Choice module
+
+.path-mod-choice {
+    .horizontal .choices .option {
+        display: inline-block;
+    }
+}
+
+.path-mod-choice {
+    .choices .option label {
+        @apply align-top;
+    }
+}
+
+// Forum module
+
+.path-mod-forum .forumsearch {
+    input,
+    .helptooltip {
+        margin: 0.125rem;
+    }
+}
+
+.path-mod-forum .forumheaderlist,
+.path-mod-forum .forumheaderlist td {
+    @apply border-none;
+}
+
+.path-mod-forum {
+    .forumheaderlist {
+        thead .header,
+        tbody .discussion td {
+            @apply whitespace-normal align-top pl-2 pr-2;
+        }
+
+        thead .header {
+            @apply whitespace-normal align-top;
+        }
+
+        thead .header.replies {
+            text-align: center;
+        }
+
+        thead .header.lastpost {
+            text-align: right;
+        }
+
+        thead .header th,
+        tbody .discussion td {
+            &.discussionsubscription {
+                @apply w-4 pl-2 pr-2;
+            }
+        }
+
+        .discussion {
+            .replies,
+            .lastpost {
+                @apply whitespace-normal;
+            }
+
+            .discussionsubscription,
+            .replies {
+                text-align: center;
+            }
+
+            .topic,
+            .discussionsubscription,
+            .topic.starter,
+            .replies,
+            .lastpost {
+                @apply align-top;
+            }
+        }
+    }
+
+    .discussion-list {
+        .topic {
+            // Do not use the default bold style for the table headings.
+            @apply font-normal;
+        }
+    }
+}
+
+.discussion-settings-container {
+    .form-select {
+        width: 100%;
+    }
+
+    input {
+        max-width: 100%;
+    }
+}
+
+.forumpost {
+    @apply border border-gray-300 block p-1.5;
+
+    .header {
+        @apply mb-0.5;
+    }
+
+    .picture img {
+        margin: 0.125rem;
+
+        &.userpicture {
+            @apply ml-0.5 mr-2.5;
+        }
+    }
+
+    .content {
+        .posting.fullpost {
+            margin-top: 0.5rem;
+        }
+    }
+
+    .row {
+        display: block;
+        .topic,
+        .content-mask,
+        .options {
+            @apply ml-12;
+        }
+
+        &.side {
+            @apply clear-both;
+        }
+    }
+}
+
+.forumpost .row .left {
+    @apply w-12;
+}
+
+.forumpost .options .commands {
+    @apply ml-0;
+}
+
+.forumpost .subject {
+    @apply font-bold;
+}
+
+// Override hardcoded forum modules styling
+.forumsearch input[type=text] {
+    margin-bottom: 0;
+}
+
+#page-mod-forum-view {
+    table {
+        .fit-content {
+            @apply w-px whitespace-nowrap;
+        }
+
+        .limit-width {
+            @apply max-w-[200px] whitespace-nowrap text-ellipsis overflow-hidden;
+
+            .author-info {
+                max-width: calc(100% - 35px - theme('spacing.2'));
+            }
+        }
+    }
+}
+
+// Comment out Sass variables and use Tailwind theme() directly or define in tailwind.config.js
+// $author-image-width: 70px;
+// $author-image-margin: 24px;
+// $author-image-width-sm: 30px;
+// $author-image-margin-sm: 8px;
+
+/** Gently highlight the selected post by changing it's background to blue and then fading it out. */
+@keyframes background-highlight {
+    from {
+        background-color: theme('colors.blue.100');
+    }
+    to {
+        background-color: inherit;
+    }
+}
+
+.path-mod-forum .nested-v2-display-mode,
+.path-mod-forum.nested-v2-display-mode {
+    .discussionsubscription {
+        @apply mt-0 text-inherit mb-0;
+    }
+
+    .preload-subscribe,
+    .preload-unsubscribe {
+        display: none;
+    }
+
+    .post-message {
+        @apply leading-relaxed;
+    }
+
+    .indent {
+        @apply ml-0;
+    }
+
+    /** Reset the badge styling back to pill style. */
+    .badge {
+        @apply text-inherit font-inherit px-2 py-0.5 rounded-full;
+    }
+
+    .badge-light {
+        background-color: #e5e7eb;
+    color: #1f2937;
+    }
+
+    /** Style the ratings like a badge. */
+    .rating-aggregate-container {
+        @apply bg-gray-200 text-gray-800 px-2 py-1 leading-none mr-2 align-middle rounded-full text-center;
+    }
+
+    .ratinginput {
+        @apply px-3 py-1 leading-none h-auto rounded-full;
+
+        @media (min-width: 768px) {
+            margin-top: 0.5rem;
+        }
+    }
+
+    .group-image {
+        @apply w-9 h-9 mr-0 float-none inline-block;
+    }
+
+    /** Don't show the discussion locked alert in this mode because it's already indicated with a badge. */
+    .alert.discussionlocked {
+        @apply sr-only;
+    }
+
+    /** Fix muted text contrast ratios for accessibility. */
+    .text-muted,
+    .dimmed_text {
+        color: #4b5563; /* stylelint-disable-line declaration-no-important */
+    }
+
+    .author-header {
+        font-style: italic;
+
+        .author-name {
+            @apply not-italic;
+        }
+    }
+
+    /** Make the tag list text screen reader visible only */
+    .tag_list > b {
+        @apply sr-only;
+    }
+
+    :target > .focus-target {
+        animation-name: background-highlight;
+        animation-duration: 1s;
+        animation-timing-function: ease-in-out;
+        animation-iteration-count: 1;
+    }
+
+    .forum-post-container {
+        .replies-container {
+            .forum-post-container {
+                @apply border-t border-gray-300 pt-6;
+
+                .replies-container .forum-post-container {
+                    @apply border-t-0 pt-0;
+                }
+            }
+
+            .inline-reply-container .reply-author {
+                display: none;
+            }
+        }
+
+        .post-message p:last-of-type {
+            margin-bottom: 0;
+        }
+
+        .author-image-container {
+            @apply w-[theme('spacing.authorImageWidth')] mr-[theme('spacing.authorImageMargin')] flex-shrink-0;
+        }
+
+        .inline-reply-container textarea {
+            @apply border-0 resize-none;
+        }
+
+        .indent {
+            /**
+             * The first post and first set of replies have a larger author image so offset the 2nd
+             * set of replies by the image width + margin to ensure they align.
+             */
+            .indent {
+                padding-left: calc(theme('spacing.authorImageWidth') + theme('spacing.authorImageMargin'));
+
+                /**
+                 * Reduce the size of the the author image for all second level replies (and below).
+                 */
+                .author-image-container {
+                    @apply w-[theme('spacing.authorImageWidthSm')] mr-[theme('spacing.authorImageMarginSm')];
+                    padding-top: calc((36px - theme('spacing.authorImageWidthSm')) * 0.5);
+                }
+
+                /**
+                 * Adjust the indentation offset for all 3rd level replies and below for the smaller author image.
+                 */
+                .indent {
+                    padding-left: calc(theme('spacing.authorImageWidthSm') + theme('spacing.authorImageMarginSm'));
+
+                    /**
+                     * Stop indenting the replies after the 5th reply.
+                     */
+                    .indent .indent .indent {
+                        @apply pl-0;
+                    }
+                }
+            }
+        }
+    }
+}
+
+/** Extra small devices (portrait phones, less than 576px). */
+@media (min-width: 768px) {
+    #page-mod-forum-discuss.nested-v2-display-mode {
+        .forum-post-container {
+            .author-image-container {
+                @apply w-[theme('spacing.authorImageWidthSm')] mr-[theme('spacing.authorImageMarginSm')];
+            }
+
+            .indent {
+                .indent {
+                    padding-left: calc(theme('spacing.authorImageWidthSm') + theme('spacing.authorImageMarginSm'));
+
+                    .indent .indent {
+                        @apply pl-0;
+                    }
+                }
+            }
+        }
+
+        .group-image {
+            @apply w-7 h-7;
+        }
+    }
+}
+
+// Make filter popover content scrollable if needed.
+.filter-scrollable {
+    @apply overflow-y-auto max-h-[25em] mb-4;
+}
+
+// Required to fit a date mform into a filter popover.
+.filter-dates-popover {
+    @apply w-full max-w-[41.5em];
+}
+
+// Comment out Sass variables and use Tailwind theme() directly or define in tailwind.config.js
+// $grading-drawer-width: 430px !default;
+// $grading-animation-duration: .3s !default;
+// $grading-icon-button-size: 36px !default;
+// $grading-search-button-padding-left: calc(#{map-get($spacers, 2)} + 8px) !default;
+// $grading-search-input-padding-left: calc(#{map-get($spacers, 2)} + #{map-get($spacers, 2)} + #{$grading-icon-button-size} - calc(#{$input-border-width} * 2)) !default; /* stylelint-disable-line max-line-length */
+// $grading-search-input-padding-right: calc(#{map-get($spacers, 2)} + #{$grading-icon-button-size}) !default;
+// $grading-nav-bar-active-drawer-button-bottom: calc(#{map-get($spacers, 2) * -1} - 1px) !default;
+// $grading-content-show-content-button-padding-left: calc(#{map-get($spacers, 2) * 2} + 45px) !default;
+
+// $input-line-height-lg:  1.5 !default;
+
+@keyframes expandSearchButton {
+    from {
+        height: theme('spacing.9');
+        width: theme('spacing.9');
+        border-radius: theme('spacing.4.5');
+        background-color: theme('colors.gray.200');
+    }
+    to {
+        width: 100%;
+        height: theme('spacing.12');
+        border-radius: 0;
+        background-color: theme('colors.white');
+        border-color: theme('colors.gray.300');
+        padding-left: calc(theme('spacing.2') + 8px);
+        padding-top: theme('spacing.3');
+        padding-bottom: theme('spacing.3');
+        font-size: theme('fontSize.lg');
+        line-height: 1.5;
+        right: 0;
+    }
+}
+
+@keyframes collapseSearchButton {
+    from {
+        width: 100%;
+        height: theme('spacing.12');
+        border-radius: 0;
+        background-color: theme('colors.white');
+        border-color: theme('colors.gray.300');
+        padding-left: calc(theme('spacing.2') + 8px);
+        padding-top: theme('spacing.3');
+        padding-bottom: theme('spacing.3');
+        font-size: theme('fontSize.lg');
+        line-height: 1.5;
+        right: 0;
+    }
+    to {
+        height: theme('spacing.9');
+        width: theme('spacing.9');
+        border-radius: theme('spacing.4.5');
+        background-color: theme('colors.gray.200');
+    }
+}
+
+.path-mod-forum .unified-grader {
+    @screen xs {
+        .navbar {
+            max-height: none;
+    z-index: 10;
+        }
+    }
+
+    .body-container {
+        overflow: auto;
+        &.hidden {
+            display: none; /* stylelint-disable-line declaration-no-important */
+        }
+    }
+
+    .userpicture {
+        @apply h-15 w-15;
+    }
+
+    .grader-grading-panel {
+        top: 0;
+        position: absolute;
+        height: 100%;
+        z-index: 0;
+        width: $grading-drawer-width;
+
+        &.hidden {
+            right: ($grading-drawer-width * -1);
+        }
+
+        .grading-icon {
+            width: $grading-icon-button-size;
+        }
+
+        .user-picker-container {
+            .user-full-name {
+                max-width: 240px;
+            }
+
+            .page-link {
+                width: $grading-icon-button-size;
+                height: $grading-icon-button-size;
+                display: flex;
+                text-align: center;
+                align-items: center;
+                justify-content: center;
+            }
+        }
+
+        .header-container {
+            height: 65px;
+            position: relative;
+            overflow: hidden;
+
+            .info-container {
+                position: absolute;
+                top: 50%;
+                left: 0;
+                transform: translateY(-50%);
+                width: 100%;
+                height: 100%;
+                padding: map-get($spacers, 2);
+                padding-right: calc(#{$grading-icon-button-size} + #{map-get($spacers, 2)});
+                opacity: 1;
+                visibility: visible;
+                transition: left $grading-animation-duration ease-in-out;
+                z-index: 1;
+            }
+
+            .toggle-search-button {
+                &.expand {
+                    animation-name: expandSearchButton;
+                    animation-duration: $grading-animation-duration;
+                    animation-timing-function: ease-in-out;
+                }
+
+                &.collapse {
+                    display: block;
+                    animation-name: collapseSearchButton;
+                    animation-duration: $grading-animation-duration;
+                }
+            }
+
+            .user-search-container {
+                overflow: hidden;
+                position: absolute;
+                top: 50%;
+                right: 0;
+                transform: translateY(-50%);
+                z-index: 2;
+                width: 100%;
+                height: 100% !important; /* stylelint-disable-line declaration-no-important */
+                padding: map-get($spacers, 2);
+
+                .search-input-container {
+                    position: relative;
+                    overflow: visible;
+                    flex-wrap: nowrap;
+
+                    input {
+                        padding-left: $grading-search-input-padding-left;
+                        padding-right: $grading-search-input-padding-right;
+                        opacity: 1;
+                        visibility: visible;
+                        transition:
+                            opacity 0s linear $grading-animation-duration,
+                            visibility 0s linear;
+                    }
+
+                    .search-icon {
+                        position: absolute;
+                        top: 50%;
+                        left: map-get($spacers, 2);
+                        transform: translateY(-50%);
+                        color: $input-color;
+                        height: $grading-icon-button-size;
+                        width: calc(#{$grading-icon-button-size} - calc(#{$input-border-width} * 2));
+                        background-color: $input-bg;
+                        opacity: 1;
+                        visibility: visible;
+                        transition:
+                            opacity 0s linear $grading-animation-duration,
+                            visibility 0s linear $grading-animation-duration;
+                    }
+
+                    .toggle-search-button {
+                        position: absolute;
+                        top: 50%;
+                        right: map-get($spacers, 2);
+                        transform: translateY(-50%);
+                        z-index: 1;
+                        color: inherit;
+                        text-align: left;
+                        padding-left: 9px;
+                        transition: right 0s linear $grading-animation-duration;
+
+                        .expanded-icon {
+                            opacity: 1;
+                            visibility: visible;
+                            max-width: 50px;
+                            max-height: 50px;
+                            transition:
+                                opacity 0s linear $grading-animation-duration,
+                                max-height 0s linear $grading-animation-duration,
+                                max-width 0s linear $grading-animation-duration,
+                                visibility 0s linear $grading-animation-duration;
+                        }
+
+                        .collapsed-icon {
+                            opacity: 0;
+                            visibility: hidden;
+                            max-height: 0;
+                            max-width: 0;
+                            overflow: hidden;
+                            transition:
+                                opacity 0s linear $grading-animation-duration,
+                                max-height 0s linear $grading-animation-duration,
+                                max-width 0s linear $grading-animation-duration,
+                                visibility 0s linear $grading-animation-duration;
+                        }
+                    }
+                }
+
+                &.collapsed {
+                    width: calc(#{$grading-icon-button-size} + #{map-get($spacers, 2)} + #{map-get($spacers, 2)});
+                    transition: width $grading-animation-duration ease-in-out;
+
+                    .search-input-container {
+                        flex-wrap: nowrap;
+
+                        input,
+                        .search-icon {
+                            opacity: 0;
+                            visibility: hidden;
+                            transition:
+                                opacity 0s linear,
+                                visibility 0s linear;
+                        }
+
+                        input {
+                            padding-left: 0;
+                            padding-right: 0;
+                        }
+
+                        .toggle-search-button {
+                            .expanded-icon {
+                                opacity: 0;
+                                visibility: hidden;
+                                max-height: 0;
+                                max-width: 0;
+                                overflow: hidden;
+                                transition:
+                                    opacity 0s linear,
+                                    max-height 0s linear,
+                                    max-width 0s linear,
+                                    visibility 0s linear;
+                            }
+
+                            .collapsed-icon {
+                                opacity: 1;
+                                visibility: visible;
+                                max-width: 50px;
+                                max-height: 50px;
+                                transition:
+                                    opacity 0s linear,
+                                    max-height 0s linear,
+                                    max-width 0s linear,
+                                    visibility 0s linear;
+                            }
+                        }
+                    }
+                }
+            }
+
+            .user-search-container:not(.collapsed) + .info-container {
+                opacity: 0;
+                visibility: hidden;
+                left: calc(100% * -1);
+                transition:
+                    left $grading-animation-duration ease-in-out,
+                    opacity 0s linear $grading-animation-duration,
+                    visibility 0s linear $grading-animation-duration,
+                    padding 0s linear $grading-animation-duration;
+            }
+        }
+    }
+
+    .grader-module-content {
+        overflow-y: auto;
+        margin-right: theme('spacing.graderDrawerWidth');
+        @apply transition-all duration-200 ease-in-out;
+    }
+
+    .drawer-button {
+        position: relative;
+
+        &.active::after {
+            @apply content-[''] absolute bottom-[-3px] left-0 w-full h-px bg-primary;
+        }
+
+        .icon {
+            @apply text-xl h-5 w-5;
+        }
+    }
+
+    .grader-module-content-display {
+        .discussion-container {
+            &:last-of-type {
+                > hr {
+                    display: none;
+                }
+            }
+
+            .posts-container {
+                &:last-of-type {
+                    > hr {
+                        display: none;
+                    }
+                }
+
+                .parent-container {
+                    position: relative;
+
+                    .show-content-button {
+                        @apply absolute h-full w-full left-0 top-0 text-left z-10;
+                        padding-left: calc(theme('spacing.2') * 2 + 45px);
+
+                        &:not(.collapsed) {
+                            display: none;
+                        }
+                    }
+
+                    .content {
+                        display: block;
+    height: auto; /* stylelint-disable-line declaration-no-important */
+
+                        .header {
+                            transition-property: all;
+    transition-duration: 300ms;
+    transition-timing-function: ease-in-out;
+
+                            div + div {
+                                opacity: 1;
+    visibility: visible;
+    max-height: none;
+    transition-property: opacity;
+    transition-duration: 300ms;
+                                transition-property: opacity, visibility;
+                            }
+                        }
+
+                        .body-content-container {
+                            opacity: 1;
+    visibility: visible;
+    max-height: none;
+    transition-property: opacity;
+    transition-duration: 300ms;
+                            transition-property: opacity, visibility;
+                        }
+
+                        .forum-post-core {
+                            opacity: 1;
+    visibility: visible;
+    max-height: none;
+    transition-property: opacity;
+    transition-duration: 300ms;
+                            transition-property: opacity, visibility;
+                        }
+                    }
+
+                    .show-content-button.collapsed + .content {
+                        opacity: 0.3;
+
+                        .header {
+                            margin-bottom: 0; /* stylelint-disable-line declaration-no-important */
+
+                            div + div {
+                                @apply opacity-0 invisible max-h-0;
+                            }
+                        }
+
+                        .body-content-container {
+                            @apply opacity-0 invisible max-h-0;
+                        }
+
+                        .forum-post-core {
+                            @apply opacity-0 invisible max-h-0;
+                        }
+                    }
+
+                    .show-content-button.collapsed:hover + .content,
+                    .show-content-button.collapsed:focus + .content {
+                        opacity: 1;
+                    }
+                }
+            }
+        }
+
+        .no-post-container {
+            .icon {
+                @apply h-[250px] w-[250px] mr-0;
+            }
+        }
+
+        .nested-v2-display-mode {
+            .discussion-container {
+                .posts-container {
+                    .parent-container {
+                        .show-content-button {
+                            padding-left: calc(theme('spacing.authorImageWidth') + theme('spacing.authorImageMargin'));
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    .no-search-results-container {
+        .icon {
+            @apply h-[250px] w-[250px] mr-0;
+        }
+    }
+
+    .nested-v2-display-mode {
+        .view-context-button {
+            margin-left: calc(theme('spacing.authorImageWidth') + theme('spacing.authorImageMargin'));
+            border-radius: 0.5rem;
+        }
+
+        .parent-container {
+            position: relative;
+
+            &:after {
+                @apply absolute bg-gray-200 w-0.5;
+                top: calc(theme('spacing.authorImageWidth') + theme('spacing.2'));
+                content: "";
+                height: calc(100% - theme('spacing.authorImageWidth') + theme('spacing.2'));
+            }
+        }
+
+        .parent-container + .post-container {
+            .author-image-container {
+                img {
+                    @apply w-[theme('spacing.authorImageWidthSm')]; /* stylelint-disable-line declaration-no-important */
+                }
+            }
+        }
+    }
+}
+
+.path-mod-forum .unified-grader .nested-v2-display-mode,
+.path-mod-forum .modal .nested-v2-display-mode {
+    .post-subject {
+        display: none;
+    }
+}
+
+@media (min-width: 640px) {
+    .path-mod-forum .unified-grader {
+        .grader-grading-panel {
+            @apply w-full fixed h-[calc(100vh-50px)] overflow-scroll top-[50px];
+        }
+        .body-container {
+            @apply overflow-visible;
+        }
+    }
+}
+
+// End styling for mod_forum.
+
+.maincalendar .calendarmonth td,
+.maincalendar .calendarmonth th {
+    border: 1px dotted $table-border-color;
+}
+
+.path-grade-report-grader h1 {
+    text-align: inherit;
+}
+
+#page-mod-data-view #singleimage {
+    width: auto;
+}
+
+.template_heading {
+    margin-top: 10px;
+}
+
+.breadcrumb-button {
+    margin-top: 4px;
+}
+
+.breadcrumb-button .singlebutton {
+    float: left;
+    margin-left: 4px;
+}
+
+.langmenu form {
+    margin: 0;
+}
+// contributed by Paul Hibbitts, see http://msdn.microsoft@mixin com/en-us/library/ie/jj583807(v=vs.85).aspx
+canvas {
+    -ms-touch-action: auto;
+}
+
+div#dock {
+    display: none;
+}
+
+// Choice module
+
+// Lesson module
+
+/** General styles (scope: all of lesson) **/
+.path-mod-lesson .invisiblefieldset.fieldsetfix {
+    display: block;
+}
+.path-mod-lesson .answeroption .checkbox label p {
+    display: inline;
+}
+.path-mod-lesson .slideshow {
+    overflow: auto;
+    padding: 15px;
+}
+#page-mod-lesson-view .branchbuttoncontainer .singlebutton button[type="submit"] {
+    white-space: normal;
+}
+#page-mod-lesson-view {
+    .vertical .singlebutton {
+        display: block;
+        + .singlebutton {
+            margin-left: 0;
+            margin-top: 1rem;
+        }
+    }
+    .fitem .felement .form-select {
+        align-self: flex-start;
+    }
+}
+.path-mod-lesson .table td {
+    vertical-align: middle;
+    label {
+        margin-bottom: 0;
+    }
+    .highlight {
+        display: inline-block;
+        margin-left: 0.25rem;
+    }
+    input[type="checkbox"] {
+        display: block;
+    }
+}
+
+.path-mod-wiki .wiki_headingtitle,
+.path-mod-wiki .midpad,
+.path-mod-wiki .wiki_headingtime {
+    text-align: inherit;
+}
+
+.path-mod-wiki .wiki_contentbox {
+    width: 100%;
+}
+
+.nav .caret {
+    margin-left: 4px;
+}
+
+// Dividers
+.nav {
+    .divider {
+        overflow: hidden;
+        width: 0;
+    }
+}
+
+// Usermenu
+.userloggedinas,
+.userswitchedrole,
+.loginfailures {
+    .usermenu {
+        .usertext {
+            float: left;
+            text-align: right;
+            margin-right: $spacer * 0.5;
+            height: 35px;
+            .meta {
+                font-size: $font-size-sm;
+                align-items: center;
+            }
+        }
+        .avatar {
+            img {
+                margin: 0;
+            }
+        }
+    }
+}
+
+.userloggedinas .usermenu {
+    .userbutton .avatars {
+        position: relative;
+        display: inline-block;
+        .avatar {
+            &.current {
+                display: inline-block;
+                position: absolute;
+                bottom: 0;
+                right: 0;
+                width: 20px;
+                height: 20px;
+                border-radius: 50%;
+                img {
+                    vertical-align: baseline;
+                }
+                .userinitials.size-35 {
+                    width: 20px;
+                    height: 20px;
+                    border: $border-width solid $border-color;
+                    background-color: $white;
+                    font-size: $font-size-base * .6;
+                }
+            }
+            img {
+                width: inherit;
+                height: inherit;
+            }
+        }
+        .realuser {
+            width: 35px;
+            height: 35px;
+            display: inline-block;
+        }
+    }
+}
+
+.userinitials {
+    background-color: $gray-200;
+    vertical-align: middle;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    color: $gray-800;
+    font-weight: normal;
+    margin-right: $spacer * 0.25;
+    &.size-16,
+    &.size-30 {
+        font-size: 0.7rem;
+        width: 30px;
+        height: 30px;
+    }
+    &.size-35 {
+        width: 35px;
+        height: 35px;
+    }
+    &.size-50 {
+        width: 50px;
+        height: 50px;
+    }
+    &.size-64 {
+        width: 64px;
+        height: 64px;
+    }
+    &.size-100 {
+        width: 100px;
+        height: 100px;
+        font-size: $h2-font-size;
+    }
+}
+
+img.userpicture {
+    margin-right: $spacer * 0.25;
+}
+
+@media (max-width: 768px) {
+    .usertext {
+        display: none;
+    }
+}
+
+// Quiz module
+#page-mod-quiz-mod #id_reviewoptionshdr .col-md-3,
+#page-mod-quiz-mod #id_reviewoptionshdr .col-md-9 {
+    @apply w-auto max-w-none;
+}
+
+#page-mod-quiz-mod #id_reviewoptionshdr .fcontainer > .fitem {
+    @apply float-left w-80 inline-block min-h-48;
+}
+
+#page-mod-quiz-mod #id_reviewoptionshdr .btn-link {
+    @apply leading-normal align-bottom;
+}
+#page-mod-quiz-mod #id_reviewoptionshdr .form-check {
+    @apply w-auto h-5.5 flex justify-start;
+}
+
+#page-mod-quiz-mod #id_reviewoptionshdr .review_option_item {
+    @apply w-[90%] h-5.5;
+}
+
+// Question navigation block.
+.path-mod-quiz #mod_quiz_navblock {
+    .qnbutton {
+        text-decoration: none;
+        font-size: 14px;
+        line-height: 20px;
+        font-weight: normal;
+        @apply no-underline text-sm leading-tight font-normal bg-base-100 h-10 w-7 rounded-sm border-0 overflow-hidden whitespace-nowrap m-0.5;
+    }
+
+    span.qnbutton {
+        cursor: default;
+    background-color: #e5e7eb;
+    color: #374151;
+    }
+
+    a.qnbutton:hover,
+    a.qnbutton:active,
+    a.qnbutton:focus {
+        @apply underline;
+    }
+
+    .qnbutton .thispageholder {
+        @apply border border-solid rounded-sm z-10;
+    }
+
+    .qnbutton.thispage .thispageholder {
+        @apply border-[3px];
+    }
+
+    .allquestionsononepage .qnbutton.thispage .thispageholder {
+        border: 1px solid;
+    }
+
+    .qnbutton .trafficlight {
+        @apply border-0 bg-base-100 bg-center bg-no-repeat bg-auto h-5 mt-5 rounded-b-sm;
+        background-size: 10px;
+    }
+
+    .qnbutton.correct .thispageholder {
+        @apply border-success;
+    }
+
+    .qnbutton.incorrect .thispageholder {
+        @apply border-error;
+    }
+
+    .qnbutton.partiallycorrect .thispageholder {
+        @apply border-warning;
+    }
+
+    .qnbutton.correct,
+    .qnbutton.correct .trafficlight {
+        background-color: theme('colors.green.100'); /* light green */
+    }
+
+    .qnbutton.incorrect,
+    .qnbutton.incorrect .trafficlight {
+        background-color: theme('colors.red.100'); /* light red */
+    }
+
+    .qnbutton.partiallycorrect,
+    .qnbutton.partiallycorrect .trafficlight {
+        background-color: theme('colors.yellow.100'); /* light yellow */
+    }
+
+    .qnbutton.blocked,
+    .qnbutton.blocked .trafficlight,
+    .qnbutton.complete,
+    .qnbutton.complete .trafficlight,
+    .qnbutton.answersaved,
+    .qnbutton.answersaved .trafficlight,
+    .qnbutton.requiresgrading,
+    .qnbutton.requiresgrading .trafficlight {
+        background-color: #d1d5db;
+    }
+
+    .qnbutton.notyetanswered .trafficlight,
+    .qnbutton.invalidanswer .trafficlight {
+        background-color: #ffffff;
+    }
+
+    .qnbutton.correct .trafficlight {
+        background-image: url([[pix:core|i/grade_correct]]);
+        @apply text-success;
+        background-size: 14px;
+    }
+
+    .qnbutton.blocked .trafficlight {
+        background-image: url([[pix:core|t/locked]]);
+    }
+
+    .qnbutton.notanswered .trafficlight,
+    .qnbutton.incorrect .trafficlight {
+        background-image: url([[pix:core|i/grade_incorrect]]);
+        @apply text-error;
+        background-size: 14px;
+    }
+
+    .qnbutton.partiallycorrect .trafficlight {
+        background-image: url([[pix:core|i/grade_partiallycorrect]]);
+        @apply text-warning;
+        background-size: 14px;
+    }
+
+    .qnbutton.complete .trafficlight,
+    .qnbutton.answersaved .trafficlight,
+    .qnbutton.requiresgrading .trafficlight {
+        background-color: #d1d5db;
+    }
+}
+
+#page-mod-quiz-edit ul.slots li.section li.activity .instancemaxmarkcontainer form input {
+    @apply h-[1.4em] align-middle;
+}
+
+#page-mod-quiz-edit ul.slots li.section li.activity .instancemaxmarkcontainer {
+    @apply py-2 px-0.5 m-0.5;
+}
+
+/* Override the color of the quiz attempt icons for accessibility. */
+#attemptsform,
+.formulation .answer {
+    .icon.text-success {
+        @apply text-success !important; /* stylelint-disable-line declaration-no-important */
+    }
+    .icon.text-danger {
+        @apply text-error !important; /* stylelint-disable-line declaration-no-important */
+    }
+    .icon.text-warning {
+        @apply text-warning !important; /* stylelint-disable-line declaration-no-important */
+    }
+}
+
+/* Countdown timer. */
+#page-mod-quiz-attempt #region-main {
+    @apply overflow-x-inherit;
+}
+
+#quiz-timer-wrapper {
+    display: none;
+    position: sticky;
+    justify-content: flex-end;
+    top: calc(theme('spacing.navbarHeight') + theme('spacing.1.25'));
+    @apply z-sticky;
+    #quiz-timer {
+        @apply border border-red-500 bg-white;
+    }
+}
+.pagelayout-embedded #quiz-timer-wrapper {
+    @apply top-1.25;
+}
+
+// Assign.
+.path-mod-assign [data-region="grade-actions-panel"] [data-region="grade-actions"] .collapse-buttons {
+    @apply top-auto;
+}
+
+// This section removes the responsiveness from the form in the grading panel
+.path-mod-assign #page-content [data-region="grade-panel"] .mform:not(.unresponsive) .fcontainer .fitem.popout .felement {
+    height: calc(100% - theme('spacing.16')); /* 4rem = 16 * 0.25rem = 4rem */
+}
+
+.path-mod-assign [data-region="grade-panel"] {
+    @apply pt-4;
+}
+.path-mod-assign [data-region="grade-panel"] .fitem > .col-md-3,
+.path-mod-assign [data-region="grade-panel"] .fitem > .col-md-9 {
+    @apply w-full p-0 max-w-full flex-none;
+}
+.path-mod-assign [data-region="grade-panel"] fieldset,
+.path-mod-assign [data-region="grade-panel"] .fitem.row {
+    margin: 0;
+}
+
+.path-mod-assign [data-region="grade-panel"] .mform .fitem.has-popout .felement {
+    width: 100%;
+    overflow: auto;
+    height: calc(100% - theme('spacing.16'));
+}
+
+.path-mod-assign [data-region="grade-panel"] .mform .fitem .felement {
+    width: auto;
+}
+
+// Now styles for the popout sections.
+
+.path-mod-assign [data-region="grade-panel"] .popout {
+    background-color: #ffffff;
+}
+
+.path-mod-assign [data-region="grade-panel"] .fitem.has-popout {
+    background-color: #ffffff;
+    border-radius: 0.5rem;
+    border: 1px solid;
+    border-color: #e5e7eb;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+.path-mod-assign [data-region="grade-panel"] .has-popout .col-md-3 {
+    @apply border-b border-gray-200 mb-4;
+}
+
+
+.path-mod-assign [data-region="grade-panel"] .popout > .col-md-3 {
+    @apply flex items-start justify-between text-xl;
+}
+
+.path-mod-assign [data-region="grade-panel"] .popout [data-region="popout-button"] {
+    @apply mt-0;
+}
+
+// Now style the fixed header elements.
+
+.path-mod-assign [data-region="assignment-info"] {
+    @apply overflow-y-hidden;
+}
+
+.path-mod-assign [data-region="grading-navigation"] {
+    @apply p-1.5;
+}
+
+.path-mod-assign [data-region="grade-actions"] {
+    @apply p-2.5;
+}
+
+.path-mod-assign [data-region="user-info"] .img-rounded {
+    @apply mt-0;
+}
+
+.path-mod-assign [data-region="grading-navigation-panel"] {
+    @apply h-[85px];
+}
+
+@media (max-width: 767px) {
+    .path-mod-assign [data-region="grading-navigation-panel"] {
+        height: auto;
+    }
+    .path-mod-assign [data-region="user-info"] {
+        margin-top: 1rem;
+    }
+}
+
+.path-mod-assign [data-region="grading-navigation"] [data-region="input-field"] input {
+    width: auto;
+    display: inline-block;
+}
+
+/**
+ * Assign feedback.
+ */
+.assignfeedback_editpdf_widget * {
+    @apply box-content;
+}
+
+.assignfeedback_editpdf_widget button {
+    box-sizing: border-box;
+}
+
+.assignfeedback_editpdf_widget .commentcolourbutton img {
+    border: 0;
+}
+
+.assignfeedback_editpdf_widget .label {
+    @apply relative py-2 px-3 mb-3 border border-transparent text-info border-info bg-info rounded-md;
+}
+
+.assignfeedback_editpdf_menu {
+    padding: 0;
+}
+
+.path-mod-assign [data-region="grade-panel"] .gradingform_guide .remark .commentchooser {
+    @apply float-none;
+}
+.path-mod-assign [data-region="grade-panel"] .gradingform_guide .markingguideremark {
+    width: 100%;
+}
+.path-mod-assign [data-region="grade-panel"] .mform .fitem .felement[data-fieldtype="grading"] {
+    padding-left: 1rem; padding-right: 1rem;
+}
+.path-mod-assign [data-region="grade-panel"] .showmarkerdesc,
+.path-mod-assign [data-region="grade-panel"] .showstudentdesc {
+    background-color: #ffffff;
+}
+
+.path-mod-assign .gradingtable thead tr {
+    position: sticky;
+    z-index: 10;
+    top: theme('spacing.navbarHeight');
+}
+
+/**
+ * Mod LTI.
+ */
+.path-admin-mod-lti {
+    .btn .loader img,
+    #tool-list-loader-container .loader img {
+        height: auto;
+    }
+}
+
+/**
+ * Mod Feedback.
+ */
+
+.path-mod-feedback {
+    span.feedback_info {
+        @apply font-bold;
+    }
+    div.feedback_is_dependent {
+        @apply bg-gray-600;
+    }
+    span.feedback_depend {
+        @apply text-error;
+    }
+    hr.feedback_pagebreak {
+        @apply h-1 bg-gray-600 border-0 m-0;
+    }
+    .feedback_bar_image {
+        @apply h-2.5;
+    }
+    #analysis-form {
+        label {
+            @apply inline;
+        }
+    }
+    .templateslist {
+        td.cell.action {
+            @apply w-[10%];
+        }
+        th.header.action {
+            @apply w-[10%];
+        }
+    }
+    .feedback-item-label {
+        width: 100%;
+    }
+    // Feedback edit form.
+    #feedback_edit_form {
+        [id*=_feedback_item_].feedback_itemlist,
+        .feedback_itemlist.sortable-list-is-dragged {
+            padding: 0.75rem;
+    border: 1px solid;
+    border-color: #e5e7eb;
+    background-color: #ffffff;
+    position: relative;
+    border-radius: 0.375rem;
+            .itemname {
+                @apply mr-5;
+            }
+            .itemactions {
+                @apply absolute top-3 right-3;
+            }
+            &.sortable-list-current-position {
+                background-color: #f3f4f6;
+            }
+        }
+        .sortable-list-is-dragged {
+            @apply opacity-75;
+            max-width: theme('spacing.courseContentMaxwidth');
+        }
+        .loading-icon {
+            @apply absolute left-1/2;
+            top: calc(50% - theme('spacing.2'));
+        }
+    }
+
+    // Templates page.
+    &#page-mod-feedback-manage_templates {
+        .coursetemplates,
+        .publictemplates {
+            .no-overflow {
+                @apply overflow-visible;
+            }
+            .action-menu .menubar {
+                justify-content: flex-end;
+            }
+        }
+    }
+
+    // Analysis page.
+    table.analysis {
+        @apply w-full border-t border-gray-200 mt-2.5;
+        &.itemtype_textarea td {
+            padding-top: 0.25rem; padding-bottom: 0.25rem;
+    padding-left: 0; padding-right: 0;
+        }
+        tr:first-child th {
+            @apply pt-2.5;
+        }
+        tr:hover {
+            background-color: #d1d5db;
+        }
+        td.singlevalue:before,
+        td.optionname:before {
+            content: '- ';
+        }
+        tr.isempty {
+            display: none;
+        }
+    }
+
+    // Responses list.
+    #showentrytable td.cell.completed_timemodified,
+    #showentryanontable td.cell.random_response {
+        @apply font-bold;
+    }
+
+    #showentrytable td.cell.userpic,
+    #showentrytable td.cell.deleteentry,
+    #showentryanontable td.cell.deleteentry {
+        @apply w-2.5;
+    }
+
+    // Responses navigation.
+    .response_navigation {
+        @apply my-2;
+        a {
+            display: block;
+            &.back_to_list {
+                text-align: center;
+            }
+        }
+        .prev_response {
+            text-align: left;
+            &:before {
+                /*rtl:raw:
+                content: ' ► ';
+                */
+                /*rtl:remove*/
+                content: ' ◄ ';
+            }
+        }
+        .next_response {
+            text-align: right;
+            &:after {
+                /*rtl:raw:
+                content: ' ◄ ';
+                */
+                /*rtl:remove*/
+                content: ' ► ';
+            }
+        }
+    }
+}

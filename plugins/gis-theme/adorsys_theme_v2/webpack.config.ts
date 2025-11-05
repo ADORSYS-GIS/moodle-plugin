@@ -32,13 +32,45 @@ const config: Configuration = {
 
   module: {
     rules: [
+      // Rule 1: Process .css files with Tailwind (PostCSS + Sass)
       {
-        test: /\.(s[ac]ss|css)$/,
+        test: /\.css$/,
         use: [
           MiniCssExtractPlugin.loader,
-          'css-loader',
-          'postcss-loader',
-          'sass-loader'
+          {
+            loader: 'css-loader',
+            options: {
+              url: false, // Don't process url() in CSS
+            },
+          },
+          {
+            loader: 'postcss-loader',
+            options: {
+              sourceMap: true,
+            },
+          },
+        ]
+      },
+      // Rule 2: Process .scss files with pure Sass (NO PostCSS to avoid @apply issues)
+      {
+        test: /\.scss$/,
+        use: [
+          MiniCssExtractPlugin.loader,
+          {
+            loader: 'css-loader',
+            options: {
+              url: false, // Don't process url() - Moodle uses [[pix:...]] placeholders
+            },
+          },
+          {
+            loader: 'sass-loader',
+            options: {
+              sourceMap: true,
+              sassOptions: {
+                includePaths: [path.resolve(__dirname, 'scss')],
+              },
+            },
+          },
         ]
       },
       {
@@ -51,7 +83,7 @@ const config: Configuration = {
 
   plugins: [
     new MiniCssExtractPlugin({
-      filename: 'style/[name].css'
+      filename: 'dist/bundle.css'
     }),
 
     //  Copy only Moodle plugin-relevant files
@@ -61,6 +93,7 @@ const config: Configuration = {
         { from: 'layout', to: 'layout' },
         { from: 'pix', to: 'pix' },
         { from: 'lang', to: 'lang' },
+        { from: 'scss', to: 'scss' },
 
         // Copy PHP root files like version.php, lib.php etc.
         {

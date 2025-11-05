@@ -1,0 +1,219 @@
+/**
+ * File buttons.scss.
+ * Contains styles for buttons.
+ */
+
+.singlebutton {
+    display: inline-block;
+
+    + .singlebutton {
+        @apply ml-2; // Equivalent to $spacer * 0.5
+    }
+}
+
+.continuebutton {
+    text-align: center;
+}
+
+p.arrow_button {
+    @apply mt-20 text-center; // 5em is roughly 20 units in Tailwind (5 * 4)
+}
+
+#addcontrols {
+    // This is displayed in a column between 2 20 row multi-selects. This should be just short of half way.
+    @apply mt-32 text-center mb-12; // 8em is roughly 32 units, 3em is roughly 12 units
+
+    label {
+        @apply inline;
+    }
+}
+
+#addcontrols,
+#removecontrols {
+    input {
+        width: 100%;
+    margin-left: auto; margin-right: auto;
+    }
+}
+
+.btn-lineup {
+    @apply mb-2.5 ml-1.5; // 10px is 2.5 units, 5px is 1.25 units, rounded to 1.5
+}
+
+/* Small buttons should have the same border-radius as the normal buttons. */
+.btn-sm,
+.btn-group-sm > .btn {
+    // DaisyUI handles this with btn-sm class
+}
+
+/**
+ * Focus styles to improve Bootstrap default contrast.
+ */
+
+// Replaced Bootstrap mixin with direct Tailwind focus utilities
+.btn {
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-500;
+}
+
+// Site-wide primary button styling (Indigo)
+.btn-primary,
+.btn.btn-primary {
+    background-color: #4f46e5; // indigo-600
+    border-color: #4f46e5;
+    color: #ffffff;
+    font-weight: 600;
+    border-radius: 0.5rem;
+    padding: 0.625rem 1rem;
+    transition: background-color 0.2s ease, box-shadow 0.2s ease, transform 0.06s ease;
+}
+.btn-primary:hover,
+.btn.btn-primary:hover {
+    background-color: #4338ca; // indigo-700
+    border-color: #4338ca;
+}
+.btn-primary:active,
+.btn.btn-primary:active {
+    background-color: #3730a3; // indigo-800
+    border-color: #3730a3;
+    transform: translateY(1px);
+}
+.btn-primary:focus,
+.btn.btn-primary:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.35); // indigo focus ring
+}
+.btn-primary:disabled,
+.btn.btn-primary:disabled,
+.btn-primary.disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+.btn-secondary {
+    @apply focus-visible:ring-gray-500;
+}
+.btn-accent {
+    @apply focus-visible:ring-blue-300; // Assuming accent is blue from tailwind.config.js
+}
+.btn-info {
+    @apply focus-visible:ring-blue-600;
+}
+.btn-success {
+    @apply focus-visible:ring-green-600;
+}
+.btn-warning {
+    @apply focus-visible:ring-yellow-500;
+}
+.btn-error {
+    @apply focus-visible:ring-red-600;
+}
+
+// For outline buttons, the ring color should match the outline color
+.btn-outline-primary {
+    color: #4f46e5;
+    border-color: #4f46e5;
+    background-color: transparent;
+    @apply focus-visible:ring-indigo-500;
+}
+.btn-outline-primary:hover {
+    color: #ffffff;
+    background-color: #4f46e5;
+    border-color: #4f46e5;
+}
+.btn-outline-secondary {
+    @apply focus-visible:ring-gray-500;
+}
+.btn-outline-accent {
+    @apply focus-visible:ring-blue-300;
+}
+.btn-outline-info {
+    @apply focus-visible:ring-blue-600;
+}
+.btn-outline-success {
+    @apply focus-visible:ring-green-600;
+}
+.btn-outline-warning {
+    @apply focus-visible:ring-yellow-500;
+}
+.btn-outline-error {
+    @apply focus-visible:ring-red-600;
+}
+
+
+/**
+ * Icon buttons.
+ */
+
+.btn-icon {
+    @apply btn btn-square inline-flex items-center justify-center;
+    // Default icon size, can be overridden by icon-size classes
+    @apply h-10 w-10 text-base; // Assuming default icon height + 1rem is 40px (2.5rem) and text-base is 1rem (16px)
+    .icon {
+        margin: 0;
+    }
+    // This loop needs to be converted to specific Tailwind classes or removed if DaisyUI handles it.
+    // For now, I'll keep the structure but apply Tailwind classes.
+    &.icon-size-sm {
+        @apply h-8 w-8 text-sm; // Example: if $length is 1rem, then 1rem + 1rem = 2rem = 32px
+    }
+    &.icon-size-md {
+        @apply h-10 w-10 text-base;
+    }
+    &.icon-size-lg {
+        @apply h-12 w-12 text-lg;
+    }
+    &.icon-size-xl {
+        @apply h-16 w-16 text-xl;
+    }
+}
+
+/* Specific styles for the collapse/expand buttons. */
+.btn-icon.icons-collapse-expand {
+    @apply text-primary bg-indigo-100; // Using indigo-100 for light primary background
+    &:hover {
+        @apply outline-2 outline-primary; // Tailwind's outline utility
+    }
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-500;
+}
+
+/**
+ * Subtle buttons.
+ */
+
+// DaisyUI's btn-ghost is a good equivalent for subtle buttons.
+.btn-subtle-primary {
+    @apply btn btn-ghost font-medium text-primary hover:bg-indigo-600 hover:text-white focus-visible:ring-indigo-500;
+}
+.btn-subtle-secondary {
+    @apply btn btn-ghost font-medium text-secondary hover:bg-gray-600 hover:text-white focus-visible:ring-gray-500;
+}
+.btn-subtle-accent {
+    @apply btn btn-ghost font-medium text-accent hover:bg-blue-300 hover:text-white focus-visible:ring-blue-300;
+}
+.btn-subtle-info {
+    @apply btn btn-ghost font-medium text-info hover:bg-blue-600 hover:text-white focus-visible:ring-blue-600;
+}
+.btn-subtle-success {
+    @apply btn btn-ghost font-medium text-success hover:bg-green-600 hover:text-white focus-visible:ring-green-600;
+}
+.btn-subtle-warning {
+    @apply btn btn-ghost font-medium text-warning hover:bg-yellow-500 hover:text-white focus-visible:ring-yellow-500;
+}
+.btn-subtle-error {
+    @apply btn btn-ghost font-medium text-error hover:bg-red-600 hover:text-white focus-visible:ring-red-600;
+}
+
+.btn-subtle-body {
+    @apply btn btn-ghost font-medium text-gray-700 bg-transparent border border-gray-300 hover:bg-gray-600 hover:text-white focus-visible:ring-gray-600;
+}
+
+/*
+ * Add content buttons.
+ */
+
+.btn-add-content {
+    @apply rounded-lg border-2 border-dashed border-gray-300 text-primary bg-white text-sm font-bold;
+    &:hover,
+    &:focus {
+        @apply bg-indigo-100 border-solid border-primary text-primary;
+    }
+}

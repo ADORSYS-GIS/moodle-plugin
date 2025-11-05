@@ -1,4 +1,14 @@
-// plain preset: minimal
-$primary: #2563eb;
-$accent: #6d28d9;
-@import '../moodle/moodle';
+/**
+ * Plain preset file.
+ *
+ * This preset now uses Tailwind CSS and DaisyUI instead of Bootstrap.
+ * FontAwesome has been removed in favor of modern icon systems.
+ *
+ * To create your own preset file:
+ * - Duplicate this file and rename it, for instance to preset-apple.scss.
+ * - In settings.php, find the references to 'plain', duplicate them and rename
+ *   them to 'apple'. (Look around the choices for 'theme_boost/preset').
+ */
+
+// Import Core moodle CSS (which now includes Tailwind)
+@import "../moodle";

@@ -1,0 +1,387 @@
+// ============================================================================
+// NAVBAR - MODERN PROFESSIONAL STYLING
+// ============================================================================
+
+// Main Navbar Container
+.navbar.fixed-top,
+.navbar-fixed-top {
+    // Structure & Spacing
+    @apply p-0 flex items-stretch;
+    height: $navbar-height;
+    
+    // Visual Style - Modern, clean look
+    background-color: theme('colors.white');
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    border-bottom: 1px solid theme('colors.gray.200');
+    
+    // Smooth transitions
+    transition: box-shadow 0.3s ease, background-color 0.3s ease;
+    
+    // Hover state - subtle elevation
+    &:hover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    }
+
+    // Layout container
+    .container-fluid {
+        display: flex;
+        align-items: center;
+        gap: theme('spacing.4');
+        width: 100%;
+        // Match Boost layout
+        justify-content: flex-start;
+
+        // Use the page-heading-menu as a spacer to push the rest to the right
+        > .page-heading-menu {
+            margin-left: auto;
+        }
+    }
+
+    // Brand Logo Area
+    .navbar-brand {
+        @apply flex items-center px-4;
+        transition: opacity 0.2s ease;
+        
+        &:hover {
+            opacity: 0.85;
+        }
+        
+        .logo {
+            max-height: calc(#{$navbar-height} - (#{$primary-nav-padding-y} * 2));
+            transition: transform 0.2s ease;
+            
+            &:hover {
+                transform: scale(1.02);
+            }
+        }
+    }
+    
+    // Navigation Links - Modern styling
+    .nav-link {
+        @apply flex items-center px-4;
+        height: 100%;
+        white-space: nowrap;
+        color: theme('colors.gray.700');
+        font-weight: 500;
+        font-size: theme('fontSize.sm');
+        position: relative;
+        transition: all 0.2s ease;
+        
+        // Hover effect with bottom border
+        &:hover,
+        &:focus {
+            color: theme('colors.blue.600');
+            background-color: theme('colors.gray.50');
+            
+            &::after {
+                content: '';
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                height: 3px;
+                background-color: theme('colors.blue.600');
+                animation: slideIn 0.2s ease;
+            }
+        }
+        
+        // Active state
+        &.active {
+            color: theme('colors.blue.700');
+            font-weight: 600;
+            
+            &::after {
+                content: '';
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                height: 3px;
+                background-color: theme('colors.blue.700');
+            }
+        }
+    }
+    
+    // Visual Dividers
+    .divider {
+        @apply w-px bg-gray-200;
+        height: 60%;
+        align-self: center;
+        opacity: 0.6;
+    }
+
+    // Dropdown behavior inside header - hidden by default
+    .dropdown-menu {
+        display: none;
+    }
+    .dropdown-menu.show {
+        display: block;
+    }
+
+    // User Navigation Area
+    #usernavigation {
+        margin-left: auto;
+        order: 99; // Ensure this block sits at the far right in the flex row
+        display: flex;
+        align-items: center;
+        gap: theme('spacing.2');
+
+        .nav-link {
+            padding: 0 theme('spacing.3');
+        }
+
+        // Do not display when only the container has .show (safety guard)
+        .dropdown.show > .dropdown-menu { display: none; }
+        .dropdown-menu.show { display: block; }
+    }
+    
+    // Login Button/Link
+    .login {
+        @apply flex items-center px-4;
+        
+        .nav-link {
+            @apply bg-blue-600 text-white rounded-lg px-6 py-2;
+            height: auto;
+            font-weight: 600;
+            
+            &:hover {
+                @apply bg-blue-700;
+                transform: translateY(-1px);
+                box-shadow: 0 4px 8px rgba(37, 99, 235, 0.3);
+                
+                &::after {
+                    display: none;
+                }
+            }
+        }
+    }
+    
+    // User Menu Dropdown
+    .usermenu {
+        @apply flex items-center;
+        
+        .action-menu {
+            @apply flex items-center h-full;
+        }
+        
+        .dropdown {
+            @apply flex items-center h-full;
+            
+            .dropdown-toggle {
+                @apply p-0 px-3 rounded-none flex items-center h-full;
+                background: transparent;
+                border: none;
+                color: theme('colors.gray.700');
+                font-weight: 500;
+                transition: all 0.2s ease;
+                
+                &:hover,
+                &:focus {
+                    color: theme('colors.blue.600');
+                    background-color: theme('colors.gray.50');
+                }
+                
+                // User avatar styling
+                .userpicture {
+                    @apply rounded-full;
+                    border: 2px solid theme('colors.gray.300');
+                    transition: border-color 0.2s ease;
+                    
+                    &:hover {
+                        border-color: theme('colors.blue.500');
+                    }
+                }
+            }
+        }
+        
+        // Dropdown Menu Styling
+        .dropdown-menu {
+            @apply min-w-[235px];
+            border-radius: theme('spacing.2');
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+            border: 1px solid theme('colors.gray.200');
+            padding: theme('spacing.2') 0;
+            margin-top: theme('spacing.2');
+            
+            .carousel-navigation-link {
+                > * {
+                    pointer-events: none;
+                }
+            }
+            
+            .dropdown-item {
+                @apply px-4 py-2;
+                color: theme('colors.gray.700');
+                font-size: theme('fontSize.sm');
+                transition: all 0.15s ease;
+                position: relative;
+                
+                &:hover,
+                &:focus {
+                    background-color: theme('colors.blue.50');
+                    color: theme('colors.blue.700');
+                    padding-left: theme('spacing.5');
+                }
+                
+                &.carousel-navigation-link::after {
+                    content: '→';
+                    @apply absolute right-3 text-gray-400;
+                    font-size: theme('fontSize.base');
+                    padding-top: theme('spacing.0.5');
+                    transition: all 0.2s ease;
+                }
+                
+                &.carousel-navigation-link:hover::after {
+                    right: theme('spacing.2');
+                    color: theme('colors.blue.600');
+                }
+            }
+            
+            // Submenu Styling
+            .submenu {
+                .header {
+                    @apply px-4 py-2 text-xs uppercase font-semibold;
+                    color: theme('colors.gray.500');
+                    letter-spacing: 0.05em;
+                    
+                    .icon {
+                        @apply w-5 h-5 m-0;
+                        font-size: theme('fontSize.xl');
+                    }
+                }
+                
+                .items {
+                    .dropdown-item {
+                        &[aria-current="true"] {
+                            background-color: theme('colors.blue.50');
+                            color: theme('colors.blue.700');
+                            font-weight: 600;
+                            
+                            &::before {
+                                content: '✓';
+                                @apply mr-2;
+                                color: theme('colors.blue.600');
+                                font-size: theme('fontSize.xs');
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    // Language Menu
+    .langmenu {
+        .dropdown {
+            @apply flex items-center h-full;
+            
+            .dropdown-toggle {
+                @apply p-0 px-3 rounded-none flex items-center h-full;
+                transition: all 0.2s ease;
+                
+                &:hover {
+                    background-color: theme('colors.gray.50');
+                }
+            }
+        }
+        
+        .dropdown-menu {
+            .dropdown-item {
+                &[aria-current="true"] {
+                    background-color: theme('colors.blue.50');
+                    color: theme('colors.blue.700');
+                    font-weight: 600;
+                    
+                    &::before {
+                        content: '✓';
+                        @apply mr-2;
+                        font-size: theme('fontSize.xs');
+                        padding-left: theme('spacing.1');
+                    }
+                }
+            }
+        }
+        
+        // Responsive: Hide language button text on mobile
+        @media (max-width: 767.98px) {
+            .langbutton {
+                display: none;
+            }
+        }
+    }
+    
+    // Action Menus
+    .moodle-actionmenu .menubar,
+    .action-menu-trigger .dropdown {
+        @apply h-full flex items-center;
+    }
+    
+    // Dropdown max height with scroll
+    .dropdown .dropdown-menu {
+        max-height: calc(100vh - #{$navbar-height});
+        overflow-y: auto;
+        
+        // Custom scrollbar
+        &::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        &::-webkit-scrollbar-track {
+            background: theme('colors.gray.100');
+        }
+        
+        &::-webkit-scrollbar-thumb {
+            background: theme('colors.gray.400');
+            border-radius: 3px;
+            
+            &:hover {
+                background: theme('colors.gray.500');
+            }
+        }
+    }
+}
+
+// RTL Support
+.dir-rtl .navbar.fixed-top,
+.dir-rtl .navbar-fixed-top {
+    .usermenu {
+        .dropdown-menu {
+            .dropdown-item {
+                &.carousel-navigation-link::after {
+                    content: '←';
+                    right: auto;
+                    left: theme('spacing.3');
+                }
+                
+                &.carousel-navigation-link:hover::after {
+                    left: theme('spacing.2');
+                }
+            }
+        }
+    }
+}
+
+// Page Margin for Fixed Navbar
+#page {
+    margin-top: $navbar-height;
+    transition: margin-top 0.3s ease;
+}
+
+.pagelayout-embedded #page {
+    margin-top: 0;
+}
+
+// CSS Variable for JavaScript access
+:root {
+    --navbar-height: #{$navbar-height};
+}
+
+// Animations
+@keyframes slideIn {
+    from {
+        transform: scaleX(0);
+    }
+    to {
+        transform: scaleX(1);
+    }
+}
