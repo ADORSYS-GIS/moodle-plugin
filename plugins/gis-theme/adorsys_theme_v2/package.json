@@ -8,7 +8,7 @@
   "scripts": {
     "build": "NODE_OPTIONS='--loader ts-node/esm' webpack --config webpack.config.ts --mode production",
     "dev": "webpack --mode development --watch",
-    "clean": "rm -rf data/common/resources",
+    "clean": "rm -rf data/common/resources dist",
     "start": "webpack serve --mode development"
   },
   "devDependencies": {

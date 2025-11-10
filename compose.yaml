@@ -65,6 +65,10 @@ services:
       - moodledata_data:/bitnami/moodledata
       - ./plugins:/bitnami/moodle/plugins/custom/plugins:ro
       - plugins_downloads:/bitnami/moodle/plugins/downloaded:ro
+      - ./outputs/plugins/gis-theme/adorsys_theme_v1:/bitnami/moodle/theme/adorsys_theme_v1:ro
+      - ./outputs/plugins/gis-theme/adorsys_theme_v2:/bitnami/moodle/theme/adorsys_theme_v2:ro
+
+
     depends_on:
       <<: *moodle_depends_on
       moodle-init:
