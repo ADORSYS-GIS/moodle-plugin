@@ -20,18 +20,18 @@ $spacers: (
 $grading-search-button-padding-left: calc(0.5rem + 8px);
 $grading-search-input-padding-left: calc(0.5rem + 0.5rem + 36px - 2px);
 $grading-search-input-padding-right: calc(0.5rem + 36px);
-$input-color: theme('colors.gray.700');
-$input-bg: theme('colors.white');
+$input-color: #374151;
+$input-bg: #ffffff;
 $input-border-width: 1px;
-$table-border-color: theme('colors.gray.300');
+$table-border-color: #d1d5db;
 $spacer: 1rem;
 $font-size-sm: 0.875rem;
 $border-width: 1px;
-$border-color: theme('colors.gray.300');
-$white: theme('colors.white');
+$border-color: #d1d5db;
+$white: #ffffff;
 $font-size-base: 1rem;
-$gray-200: theme('colors.gray.200');
-$gray-800: theme('colors.gray.800');
+$gray-200: #e5e7eb;
+$gray-800: #1f2937;
 $h2-font-size: 2rem;
 
 select {
@@ -52,37 +52,51 @@ select {
     .activity-information {
 
         .activity-dates {
-            @apply pt-4 pb-4 border-b border-gray-300;
+            padding-top: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #d1d5db;
         }
         .completion-info {
-            @apply pt-4 pb-4 border-b border-gray-300;
+            padding-top: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #d1d5db;
         }
     }
     .activity-description {
-        @apply pt-4 pb-4;
+        padding-top: 1rem;
+        padding-bottom: 1rem;
         & > .box.py-3 {
-            @apply pt-0 pb-0; /* stylelint-disable-line declaration-no-important */
+            padding-top: 0;
+            padding-bottom: 0;
         }
         & > .box.py-3:empty {
             display: none;
         }
     }
     .automatic-completion-conditions .badge {
-        @apply text-xs p-2 mt-2 mix-blend-multiply;
+        font-size: 0.75rem;
+        line-height: 1rem;
+        padding: 0.5rem;
+        margin-top: 0.5rem;
+        mix-blend-mode: multiply;
         &.badge-light {
-            background-color: #e5e7eb; /* stylelint-disable-line declaration-no-important */
+            background-color: #e5e7eb;
         }
 
         .icon {
-            @apply w-3 h-3 text-xs;
+            width: 0.75rem;
+            height: 0.75rem;
+            font-size: 0.75rem;
+            line-height: 1rem;
         }
 
         &:first-child {
-            @apply mt-0;
+            margin-top: 0;
         }
     }
     .activity-description .no-overflow p:last-child {
-        @apply pb-0 mb-0;
+        padding-bottom: 0;
+        margin-bottom: 0;
     }
 }
 
@@ -96,7 +110,7 @@ select {
 
 .path-mod-choice {
     .choices .option label {
-        @apply align-top;
+        vertical-align: top;
     }
 }
 
@@ -111,18 +125,22 @@ select {
 
 .path-mod-forum .forumheaderlist,
 .path-mod-forum .forumheaderlist td {
-    @apply border-none;
+    border: none;
 }
 
 .path-mod-forum {
     .forumheaderlist {
         thead .header,
         tbody .discussion td {
-            @apply whitespace-normal align-top pl-2 pr-2;
+            white-space: normal;
+            vertical-align: top;
+            padding-left: 0.5rem;
+            padding-right: 0.5rem;
         }
 
         thead .header {
-            @apply whitespace-normal align-top;
+            white-space: normal;
+            vertical-align: top;
         }
 
         thead .header.replies {
@@ -136,14 +154,16 @@ select {
         thead .header th,
         tbody .discussion td {
             &.discussionsubscription {
-                @apply w-4 pl-2 pr-2;
+                width: 1rem;
+                padding-left: 0.5rem;
+                padding-right: 0.5rem;
             }
         }
 
         .discussion {
             .replies,
             .lastpost {
-                @apply whitespace-normal;
+                white-space: normal;
             }
 
             .discussionsubscription,
@@ -156,7 +176,7 @@ select {
             .topic.starter,
             .replies,
             .lastpost {
-                @apply align-top;
+                vertical-align: top;
             }
         }
     }
@@ -164,7 +184,7 @@ select {
     .discussion-list {
         .topic {
             // Do not use the default bold style for the table headings.
-            @apply font-normal;
+            font-weight: 400;
         }
     }
 }
@@ -180,17 +200,20 @@ select {
 }
 
 .forumpost {
-    @apply border border-gray-300 block p-1.5;
+    border: 1px solid #d1d5db;
+    display: block;
+    padding: 0.375rem;
 
     .header {
-        @apply mb-0.5;
+        margin-bottom: 0.125rem;
     }
 
     .picture img {
         margin: 0.125rem;
 
         &.userpicture {
-            @apply ml-0.5 mr-2.5;
+            margin-left: 0.125rem;
+            margin-right: 0.625rem;
         }
     }
 
@@ -205,25 +228,25 @@ select {
         .topic,
         .content-mask,
         .options {
-            @apply ml-12;
+            margin-left: 3rem;
         }
 
         &.side {
-            @apply clear-both;
+            clear: both;
         }
     }
 }
 
 .forumpost .row .left {
-    @apply w-12;
+    width: 3rem;
 }
 
 .forumpost .options .commands {
-    @apply ml-0;
+    margin-left: 0;
 }
 
 .forumpost .subject {
-    @apply font-bold;
+    font-weight: 700;
 }
 
 // Override hardcoded forum modules styling
@@ -234,14 +257,18 @@ select {
 #page-mod-forum-view {
     table {
         .fit-content {
-            @apply w-px whitespace-nowrap;
+            width: 1px;
+            white-space: nowrap;
         }
 
         .limit-width {
-            @apply max-w-[200px] whitespace-nowrap text-ellipsis overflow-hidden;
+            max-width: 200px;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden;
 
             .author-info {
-                max-width: calc(100% - 35px - theme('spacing.2'));
+                max-width: calc(100% - 35px - 0.5rem);
             }
         }
     }
@@ -256,7 +283,7 @@ select {
 /** Gently highlight the selected post by changing it's background to blue and then fading it out. */
 @keyframes background-highlight {
     from {
-        background-color: theme('colors.blue.100');
+        background-color: #dbeafe;
     }
     to {
         background-color: inherit;
@@ -266,7 +293,9 @@ select {
 .path-mod-forum .nested-v2-display-mode,
 .path-mod-forum.nested-v2-display-mode {
     .discussionsubscription {
-        @apply mt-0 text-inherit mb-0;
+        margin-top: 0;
+        color: inherit;
+        margin-bottom: 0;
     }
 
     .preload-subscribe,
@@ -275,16 +304,23 @@ select {
     }
 
     .post-message {
-        @apply leading-relaxed;
+        line-height: 1.625;
     }
 
     .indent {
-        @apply ml-0;
+        margin-left: 0;
     }
 
     /** Reset the badge styling back to pill style. */
     .badge {
-        @apply text-inherit font-inherit px-2 py-0.5 rounded-full;
+        color: inherit;
+        font-family: inherit;
+        font-weight: inherit;
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+        padding-top: 0.125rem;
+        padding-bottom: 0.125rem;
+        border-radius: 9999px;
     }
 
     .badge-light {
@@ -294,11 +330,27 @@ select {
 
     /** Style the ratings like a badge. */
     .rating-aggregate-container {
-        @apply bg-gray-200 text-gray-800 px-2 py-1 leading-none mr-2 align-middle rounded-full text-center;
+        background-color: #e5e7eb;
+        color: #1f2937;
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+        padding-top: 0.25rem;
+        padding-bottom: 0.25rem;
+        line-height: 1;
+        margin-right: 0.5rem;
+        vertical-align: middle;
+        border-radius: 9999px;
+        text-align: center;
     }
 
     .ratinginput {
-        @apply px-3 py-1 leading-none h-auto rounded-full;
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
+        padding-top: 0.25rem;
+        padding-bottom: 0.25rem;
+        line-height: 1;
+        height: auto;
+        border-radius: 9999px;
 
         @media (min-width: 768px) {
             margin-top: 0.5rem;
@@ -306,12 +358,24 @@ select {
     }
 
     .group-image {
-        @apply w-9 h-9 mr-0 float-none inline-block;
+        width: 2.25rem;
+        height: 2.25rem;
+        margin-right: 0;
+        float: none;
+        display: inline-block;
     }
 
     /** Don't show the discussion locked alert in this mode because it's already indicated with a badge. */
     .alert.discussionlocked {
-        @apply sr-only;
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
     }
 
     /** Fix muted text contrast ratios for accessibility. */
@@ -324,13 +388,21 @@ select {
         font-style: italic;
 
         .author-name {
-            @apply not-italic;
+            font-style: normal;
         }
     }
 
     /** Make the tag list text screen reader visible only */
     .tag_list > b {
-        @apply sr-only;
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
     }
 
     :target > .focus-target {
@@ -343,10 +415,12 @@ select {
     .forum-post-container {
         .replies-container {
             .forum-post-container {
-                @apply border-t border-gray-300 pt-6;
+                border-top: 1px solid #d1d5db;
+                padding-top: 1.5rem;
 
                 .replies-container .forum-post-container {
-                    @apply border-t-0 pt-0;
+                    border-top: 0;
+                    padding-top: 0;
                 }
             }
 
@@ -360,11 +434,14 @@ select {
         }
 
         .author-image-container {
-            @apply w-[theme('spacing.authorImageWidth')] mr-[theme('spacing.authorImageMargin')] flex-shrink-0;
+            width: 70px;
+            margin-right: 24px;
+            flex-shrink: 0;
         }
 
         .inline-reply-container textarea {
-            @apply border-0 resize-none;
+            border: 0;
+            resize: none;
         }
 
         .indent {
@@ -373,27 +450,28 @@ select {
              * set of replies by the image width + margin to ensure they align.
              */
             .indent {
-                padding-left: calc(theme('spacing.authorImageWidth') + theme('spacing.authorImageMargin'));
+                padding-left: calc(70px + 24px);
 
                 /**
                  * Reduce the size of the the author image for all second level replies (and below).
                  */
                 .author-image-container {
-                    @apply w-[theme('spacing.authorImageWidthSm')] mr-[theme('spacing.authorImageMarginSm')];
-                    padding-top: calc((36px - theme('spacing.authorImageWidthSm')) * 0.5);
+                    width: 30px;
+                    margin-right: 8px;
+                    padding-top: calc((36px - 30px) * 0.5);
                 }
 
                 /**
                  * Adjust the indentation offset for all 3rd level replies and below for the smaller author image.
                  */
                 .indent {
-                    padding-left: calc(theme('spacing.authorImageWidthSm') + theme('spacing.authorImageMarginSm'));
+                    padding-left: calc(30px + 8px);
 
                     /**
                      * Stop indenting the replies after the 5th reply.
                      */
                     .indent .indent .indent {
-                        @apply pl-0;
+                        padding-left: 0;
                     }
                 }
             }
@@ -406,34 +484,39 @@ select {
     #page-mod-forum-discuss.nested-v2-display-mode {
         .forum-post-container {
             .author-image-container {
-                @apply w-[theme('spacing.authorImageWidthSm')] mr-[theme('spacing.authorImageMarginSm')];
+                width: 30px;
+                margin-right: 8px;
             }
 
             .indent {
                 .indent {
-                    padding-left: calc(theme('spacing.authorImageWidthSm') + theme('spacing.authorImageMarginSm'));
+                    padding-left: calc(30px + 8px);
 
                     .indent .indent {
-                        @apply pl-0;
+                        padding-left: 0;
                     }
                 }
             }
         }
 
         .group-image {
-            @apply w-7 h-7;
+            width: 1.75rem;
+            height: 1.75rem;
         }
     }
 }
 
 // Make filter popover content scrollable if needed.
 .filter-scrollable {
-    @apply overflow-y-auto max-h-[25em] mb-4;
+    overflow-y: auto;
+    max-height: 25em;
+    margin-bottom: 1rem;
 }
 
 // Required to fit a date mform into a filter popover.
 .filter-dates-popover {
-    @apply w-full max-w-[41.5em];
+    width: 100%;
+    max-width: 41.5em;
 }
 
 // Comment out Sass variables and use Tailwind theme() directly or define in tailwind.config.js
@@ -450,21 +533,21 @@ select {
 
 @keyframes expandSearchButton {
     from {
-        height: theme('spacing.9');
-        width: theme('spacing.9');
-        border-radius: theme('spacing.4.5');
-        background-color: theme('colors.gray.200');
+        height: 2.25rem;
+        width: 2.25rem;
+        border-radius: 1.125rem;
+        background-color: #e5e7eb;
     }
     to {
         width: 100%;
-        height: theme('spacing.12');
+        height: 3rem;
         border-radius: 0;
-        background-color: theme('colors.white');
-        border-color: theme('colors.gray.300');
-        padding-left: calc(theme('spacing.2') + 8px);
-        padding-top: theme('spacing.3');
-        padding-bottom: theme('spacing.3');
-        font-size: theme('fontSize.lg');
+        background-color: #ffffff;
+        border-color: #d1d5db;
+        padding-left: calc(0.5rem + 8px);
+        padding-top: 0.75rem;
+        padding-bottom: 0.75rem;
+        font-size: 1.125rem;
         line-height: 1.5;
         right: 0;
     }
@@ -473,30 +556,30 @@ select {
 @keyframes collapseSearchButton {
     from {
         width: 100%;
-        height: theme('spacing.12');
+        height: 3rem;
         border-radius: 0;
-        background-color: theme('colors.white');
-        border-color: theme('colors.gray.300');
-        padding-left: calc(theme('spacing.2') + 8px);
-        padding-top: theme('spacing.3');
-        padding-bottom: theme('spacing.3');
-        font-size: theme('fontSize.lg');
+        background-color: #ffffff;
+        border-color: #d1d5db;
+        padding-left: calc(0.5rem + 8px);
+        padding-top: 0.75rem;
+        padding-bottom: 0.75rem;
+        font-size: 1.125rem;
         line-height: 1.5;
         right: 0;
     }
     to {
-        height: theme('spacing.9');
-        width: theme('spacing.9');
-        border-radius: theme('spacing.4.5');
-        background-color: theme('colors.gray.200');
+        height: 2.25rem;
+        width: 2.25rem;
+        border-radius: 1.125rem;
+        background-color: #e5e7eb;
     }
 }
 
 .path-mod-forum .unified-grader {
-    @screen xs {
+    @media (min-width: 0px) {
         .navbar {
             max-height: none;
-    z-index: 10;
+            z-index: 10;
         }
     }
 
@@ -508,7 +591,8 @@ select {
     }
 
     .userpicture {
-        @apply h-15 w-15;
+        height: 3.75rem;
+        width: 3.75rem;
     }
 
     .grader-grading-panel {
@@ -721,19 +805,30 @@ select {
 
     .grader-module-content {
         overflow-y: auto;
-        margin-right: theme('spacing.graderDrawerWidth');
-        @apply transition-all duration-200 ease-in-out;
+        margin-right: 430px;
+        transition-property: all;
+        transition-duration: 200ms;
+        transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     .drawer-button {
         position: relative;
 
         &.active::after {
-            @apply content-[''] absolute bottom-[-3px] left-0 w-full h-px bg-primary;
+            content: '';
+            position: absolute;
+            bottom: -3px;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background-color: var(--fallback-p, oklch(var(--p) / 1));
         }
 
         .icon {
-            @apply text-xl h-5 w-5;
+            font-size: 1.25rem;
+            line-height: 1.75rem;
+            height: 1.25rem;
+            width: 1.25rem;
         }
     }
 
@@ -756,8 +851,14 @@ select {
                     position: relative;
 
                     .show-content-button {
-                        @apply absolute h-full w-full left-0 top-0 text-left z-10;
-                        padding-left: calc(theme('spacing.2') * 2 + 45px);
+                        position: absolute;
+                        height: 100%;
+                        width: 100%;
+                        left: 0;
+                        top: 0;
+                        text-align: left;
+                        z-index: 10;
+                        padding-left: calc(0.5rem * 2 + 45px);
 
                         &:not(.collapsed) {
                             display: none;
@@ -809,16 +910,22 @@ select {
                             margin-bottom: 0; /* stylelint-disable-line declaration-no-important */
 
                             div + div {
-                                @apply opacity-0 invisible max-h-0;
+                                opacity: 0;
+                                visibility: hidden;
+                                max-height: 0;
                             }
                         }
 
                         .body-content-container {
-                            @apply opacity-0 invisible max-h-0;
+                            opacity: 0;
+                            visibility: hidden;
+                            max-height: 0;
                         }
 
                         .forum-post-core {
-                            @apply opacity-0 invisible max-h-0;
+                            opacity: 0;
+                            visibility: hidden;
+                            max-height: 0;
                         }
                     }
 
@@ -832,7 +939,9 @@ select {
 
         .no-post-container {
             .icon {
-                @apply h-[250px] w-[250px] mr-0;
+                height: 250px;
+                width: 250px;
+                margin-right: 0;
             }
         }
 
@@ -841,7 +950,7 @@ select {
                 .posts-container {
                     .parent-container {
                         .show-content-button {
-                            padding-left: calc(theme('spacing.authorImageWidth') + theme('spacing.authorImageMargin'));
+                            padding-left: calc(70px + 24px);
                         }
                     }
                 }
@@ -851,13 +960,15 @@ select {
 
     .no-search-results-container {
         .icon {
-            @apply h-[250px] w-[250px] mr-0;
+            height: 250px;
+            width: 250px;
+            margin-right: 0;
         }
     }
 
     .nested-v2-display-mode {
         .view-context-button {
-            margin-left: calc(theme('spacing.authorImageWidth') + theme('spacing.authorImageMargin'));
+            margin-left: calc(70px + 24px);
             border-radius: 0.5rem;
         }
 
@@ -865,17 +976,19 @@ select {
             position: relative;
 
             &:after {
-                @apply absolute bg-gray-200 w-0.5;
-                top: calc(theme('spacing.authorImageWidth') + theme('spacing.2'));
+                position: absolute;
+                background-color: #e5e7eb;
+                width: 0.125rem;
+                top: calc(70px + 0.5rem);
                 content: "";
-                height: calc(100% - theme('spacing.authorImageWidth') + theme('spacing.2'));
+                height: calc(100% - 70px + 0.5rem);
             }
         }
 
         .parent-container + .post-container {
             .author-image-container {
                 img {
-                    @apply w-[theme('spacing.authorImageWidthSm')]; /* stylelint-disable-line declaration-no-important */
+                    width: 30px;
                 }
             }
         }
@@ -892,10 +1005,14 @@ select {
 @media (min-width: 640px) {
     .path-mod-forum .unified-grader {
         .grader-grading-panel {
-            @apply w-full fixed h-[calc(100vh-50px)] overflow-scroll top-[50px];
+            width: 100%;
+            position: fixed;
+            height: calc(100vh - 50px);
+            overflow: scroll;
+            top: 50px;
         }
         .body-container {
-            @apply overflow-visible;
+            overflow: visible;
         }
     }
 }
@@ -1114,22 +1231,31 @@ img.userpicture {
 // Quiz module
 #page-mod-quiz-mod #id_reviewoptionshdr .col-md-3,
 #page-mod-quiz-mod #id_reviewoptionshdr .col-md-9 {
-    @apply w-auto max-w-none;
+    width: auto;
+    max-width: none;
 }
 
 #page-mod-quiz-mod #id_reviewoptionshdr .fcontainer > .fitem {
-    @apply float-left w-80 inline-block min-h-48;
+    float: left;
+    width: 20rem;
+    display: inline-block;
+    min-height: 12rem;
 }
 
 #page-mod-quiz-mod #id_reviewoptionshdr .btn-link {
-    @apply leading-normal align-bottom;
+    line-height: normal;
+    vertical-align: bottom;
 }
 #page-mod-quiz-mod #id_reviewoptionshdr .form-check {
-    @apply w-auto h-5.5 flex justify-start;
+    width: auto;
+    height: 1.375rem;
+    display: flex;
+    justify-content: flex-start;
 }
 
 #page-mod-quiz-mod #id_reviewoptionshdr .review_option_item {
-    @apply w-[90%] h-5.5;
+    width: 90%;
+    height: 1.375rem;
 }
 
 // Question navigation block.
@@ -1139,7 +1265,19 @@ img.userpicture {
         font-size: 14px;
         line-height: 20px;
         font-weight: normal;
-        @apply no-underline text-sm leading-tight font-normal bg-base-100 h-10 w-7 rounded-sm border-0 overflow-hidden whitespace-nowrap m-0.5;
+        text-decoration: none;
+        font-size: 0.875rem;
+        line-height: 1.25rem;
+        line-height: 1.25;
+        font-weight: 400;
+        background-color: var(--fallback-b1, oklch(var(--b1) / 1));
+        height: 2.5rem;
+        width: 1.75rem;
+        border-radius: 0.125rem;
+        border: 0;
+        overflow: hidden;
+        white-space: nowrap;
+        margin: 0.125rem;
     }
 
     span.qnbutton {
@@ -1151,15 +1289,17 @@ img.userpicture {
     a.qnbutton:hover,
     a.qnbutton:active,
     a.qnbutton:focus {
-        @apply underline;
+        text-decoration: underline;
     }
 
     .qnbutton .thispageholder {
-        @apply border border-solid rounded-sm z-10;
+        border: 1px solid;
+        border-radius: 0.125rem;
+        z-index: 10;
     }
 
     .qnbutton.thispage .thispageholder {
-        @apply border-[3px];
+        border-width: 3px;
     }
 
     .allquestionsononepage .qnbutton.thispage .thispageholder {
@@ -1167,35 +1307,43 @@ img.userpicture {
     }
 
     .qnbutton .trafficlight {
-        @apply border-0 bg-base-100 bg-center bg-no-repeat bg-auto h-5 mt-5 rounded-b-sm;
+        border: 0;
+        background-color: var(--fallback-b1, oklch(var(--b1) / 1));
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: auto;
+        height: 1.25rem;
+        margin-top: 1.25rem;
+        border-bottom-left-radius: 0.125rem;
+        border-bottom-right-radius: 0.125rem;
         background-size: 10px;
     }
 
     .qnbutton.correct .thispageholder {
-        @apply border-success;
+        border-color: var(--fallback-su, oklch(var(--su) / 1));
     }
 
     .qnbutton.incorrect .thispageholder {
-        @apply border-error;
+        border-color: var(--fallback-er, oklch(var(--er) / 1));
     }
 
     .qnbutton.partiallycorrect .thispageholder {
-        @apply border-warning;
+        border-color: var(--fallback-wa, oklch(var(--wa) / 1));
     }
 
     .qnbutton.correct,
     .qnbutton.correct .trafficlight {
-        background-color: theme('colors.green.100'); /* light green */
+        background-color: #dcfce7;
     }
 
     .qnbutton.incorrect,
     .qnbutton.incorrect .trafficlight {
-        background-color: theme('colors.red.100'); /* light red */
+        background-color: #fee2e2;
     }
 
     .qnbutton.partiallycorrect,
     .qnbutton.partiallycorrect .trafficlight {
-        background-color: theme('colors.yellow.100'); /* light yellow */
+        background-color: #fef9c3;
     }
 
     .qnbutton.blocked,
@@ -1216,7 +1364,7 @@ img.userpicture {
 
     .qnbutton.correct .trafficlight {
         background-image: url([[pix:core|i/grade_correct]]);
-        @apply text-success;
+        color: var(--fallback-su, oklch(var(--su) / 1));
         background-size: 14px;
     }
 
@@ -1227,13 +1375,13 @@ img.userpicture {
     .qnbutton.notanswered .trafficlight,
     .qnbutton.incorrect .trafficlight {
         background-image: url([[pix:core|i/grade_incorrect]]);
-        @apply text-error;
+        color: var(--fallback-er, oklch(var(--er) / 1));
         background-size: 14px;
     }
 
     .qnbutton.partiallycorrect .trafficlight {
         background-image: url([[pix:core|i/grade_partiallycorrect]]);
-        @apply text-warning;
+        color: var(--fallback-wa, oklch(var(--wa) / 1));
         background-size: 14px;
     }
 
@@ -1245,62 +1393,71 @@ img.userpicture {
 }
 
 #page-mod-quiz-edit ul.slots li.section li.activity .instancemaxmarkcontainer form input {
-    @apply h-[1.4em] align-middle;
+    height: 1.4em;
+    vertical-align: middle;
 }
 
 #page-mod-quiz-edit ul.slots li.section li.activity .instancemaxmarkcontainer {
-    @apply py-2 px-0.5 m-0.5;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    padding-left: 0.125rem;
+    padding-right: 0.125rem;
+    margin: 0.125rem;
 }
 
 /* Override the color of the quiz attempt icons for accessibility. */
 #attemptsform,
 .formulation .answer {
     .icon.text-success {
-        @apply text-success !important; /* stylelint-disable-line declaration-no-important */
+        color: var(--fallback-su, oklch(var(--su) / 1)) !important;
     }
     .icon.text-danger {
-        @apply text-error !important; /* stylelint-disable-line declaration-no-important */
+        color: var(--fallback-er, oklch(var(--er) / 1)) !important;
     }
     .icon.text-warning {
-        @apply text-warning !important; /* stylelint-disable-line declaration-no-important */
+        color: var(--fallback-wa, oklch(var(--wa) / 1)) !important;
     }
 }
 
 /* Countdown timer. */
 #page-mod-quiz-attempt #region-main {
-    @apply overflow-x-inherit;
+    overflow-x: inherit;
 }
 
 #quiz-timer-wrapper {
     display: none;
     position: sticky;
     justify-content: flex-end;
-    top: calc(theme('spacing.navbarHeight') + theme('spacing.1.25'));
-    @apply z-sticky;
+    top: calc(50px + 0.3125rem);
+    z-index: 1020;
     #quiz-timer {
-        @apply border border-red-500 bg-white;
+        border: 1px solid #ef4444;
+        background-color: #ffffff;
     }
 }
 .pagelayout-embedded #quiz-timer-wrapper {
-    @apply top-1.25;
+    top: 0.3125rem;
 }
 
 // Assign.
 .path-mod-assign [data-region="grade-actions-panel"] [data-region="grade-actions"] .collapse-buttons {
-    @apply top-auto;
+    top: auto;
 }
 
 // This section removes the responsiveness from the form in the grading panel
 .path-mod-assign #page-content [data-region="grade-panel"] .mform:not(.unresponsive) .fcontainer .fitem.popout .felement {
-    height: calc(100% - theme('spacing.16')); /* 4rem = 16 * 0.25rem = 4rem */
+    height: calc(100% - 4rem);
 }
 
 .path-mod-assign [data-region="grade-panel"] {
-    @apply pt-4;
+    padding-top: 1rem;
 }
 .path-mod-assign [data-region="grade-panel"] .fitem > .col-md-3,
 .path-mod-assign [data-region="grade-panel"] .fitem > .col-md-9 {
-    @apply w-full p-0 max-w-full flex-none;
+    width: 100%;
+    padding: 0;
+    max-width: 100%;
+    flex: none;
 }
 .path-mod-assign [data-region="grade-panel"] fieldset,
 .path-mod-assign [data-region="grade-panel"] .fitem.row {
@@ -1310,7 +1467,7 @@ img.userpicture {
 .path-mod-assign [data-region="grade-panel"] .mform .fitem.has-popout .felement {
     width: 100%;
     overflow: auto;
-    height: calc(100% - theme('spacing.16'));
+    height: calc(100% - 4rem);
 }
 
 .path-mod-assign [data-region="grade-panel"] .mform .fitem .felement {
@@ -1332,38 +1489,43 @@ img.userpicture {
     margin-bottom: 1rem;
 }
 .path-mod-assign [data-region="grade-panel"] .has-popout .col-md-3 {
-    @apply border-b border-gray-200 mb-4;
+    border-bottom: 1px solid #e5e7eb;
+    margin-bottom: 1rem;
 }
 
 
 .path-mod-assign [data-region="grade-panel"] .popout > .col-md-3 {
-    @apply flex items-start justify-between text-xl;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    font-size: 1.25rem;
+    line-height: 1.75rem;
 }
 
 .path-mod-assign [data-region="grade-panel"] .popout [data-region="popout-button"] {
-    @apply mt-0;
+    margin-top: 0;
 }
 
 // Now style the fixed header elements.
 
 .path-mod-assign [data-region="assignment-info"] {
-    @apply overflow-y-hidden;
+    overflow-y: hidden;
 }
 
 .path-mod-assign [data-region="grading-navigation"] {
-    @apply p-1.5;
+    padding: 0.375rem;
 }
 
 .path-mod-assign [data-region="grade-actions"] {
-    @apply p-2.5;
+    padding: 0.625rem;
 }
 
 .path-mod-assign [data-region="user-info"] .img-rounded {
-    @apply mt-0;
+    margin-top: 0;
 }
 
 .path-mod-assign [data-region="grading-navigation-panel"] {
-    @apply h-[85px];
+    height: 85px;
 }
 
 @media (max-width: 767px) {
@@ -1384,7 +1546,7 @@ img.userpicture {
  * Assign feedback.
  */
 .assignfeedback_editpdf_widget * {
-    @apply box-content;
+    box-sizing: content-box;
 }
 
 .assignfeedback_editpdf_widget button {
@@ -1396,7 +1558,17 @@ img.userpicture {
 }
 
 .assignfeedback_editpdf_widget .label {
-    @apply relative py-2 px-3 mb-3 border border-transparent text-info border-info bg-info rounded-md;
+    position: relative;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+    margin-bottom: 0.75rem;
+    border: 1px solid transparent;
+    color: var(--fallback-in, oklch(var(--in) / 1));
+    border-color: var(--fallback-in, oklch(var(--in) / 1));
+    background-color: var(--fallback-in, oklch(var(--in) / 1));
+    border-radius: 0.375rem;
 }
 
 .assignfeedback_editpdf_menu {
@@ -1404,7 +1576,7 @@ img.userpicture {
 }
 
 .path-mod-assign [data-region="grade-panel"] .gradingform_guide .remark .commentchooser {
-    @apply float-none;
+    float: none;
 }
 .path-mod-assign [data-region="grade-panel"] .gradingform_guide .markingguideremark {
     width: 100%;
@@ -1420,7 +1592,7 @@ img.userpicture {
 .path-mod-assign .gradingtable thead tr {
     position: sticky;
     z-index: 10;
-    top: theme('spacing.navbarHeight');
+    top: 50px;
 }
 
 /**
@@ -1439,31 +1611,34 @@ img.userpicture {
 
 .path-mod-feedback {
     span.feedback_info {
-        @apply font-bold;
+        font-weight: 700;
     }
     div.feedback_is_dependent {
-        @apply bg-gray-600;
+        background-color: #4b5563;
     }
     span.feedback_depend {
-        @apply text-error;
+        color: var(--fallback-er, oklch(var(--er) / 1));
     }
     hr.feedback_pagebreak {
-        @apply h-1 bg-gray-600 border-0 m-0;
+        height: 0.25rem;
+        background-color: #4b5563;
+        border: 0;
+        margin: 0;
     }
     .feedback_bar_image {
-        @apply h-2.5;
+        height: 0.625rem;
     }
     #analysis-form {
         label {
-            @apply inline;
+            display: inline;
         }
     }
     .templateslist {
         td.cell.action {
-            @apply w-[10%];
+            width: 10%;
         }
         th.header.action {
-            @apply w-[10%];
+            width: 10%;
         }
     }
     .feedback-item-label {
@@ -1480,22 +1655,25 @@ img.userpicture {
     position: relative;
     border-radius: 0.375rem;
             .itemname {
-                @apply mr-5;
+                margin-right: 1.25rem;
             }
             .itemactions {
-                @apply absolute top-3 right-3;
+                position: absolute;
+                top: 0.75rem;
+                right: 0.75rem;
             }
             &.sortable-list-current-position {
                 background-color: #f3f4f6;
             }
         }
         .sortable-list-is-dragged {
-            @apply opacity-75;
-            max-width: theme('spacing.courseContentMaxwidth');
+            opacity: 0.75;
+            max-width: 830px;
         }
         .loading-icon {
-            @apply absolute left-1/2;
-            top: calc(50% - theme('spacing.2'));
+            position: absolute;
+            left: 50%;
+            top: calc(50% - 0.5rem);
         }
     }
 
@@ -1504,7 +1682,7 @@ img.userpicture {
         .coursetemplates,
         .publictemplates {
             .no-overflow {
-                @apply overflow-visible;
+                overflow: visible;
             }
             .action-menu .menubar {
                 justify-content: flex-end;
@@ -1514,13 +1692,15 @@ img.userpicture {
 
     // Analysis page.
     table.analysis {
-        @apply w-full border-t border-gray-200 mt-2.5;
+        width: 100%;
+        border-top: 1px solid #e5e7eb;
+        margin-top: 0.625rem;
         &.itemtype_textarea td {
             padding-top: 0.25rem; padding-bottom: 0.25rem;
     padding-left: 0; padding-right: 0;
         }
         tr:first-child th {
-            @apply pt-2.5;
+            padding-top: 0.625rem;
         }
         tr:hover {
             background-color: #d1d5db;
@@ -1537,18 +1717,19 @@ img.userpicture {
     // Responses list.
     #showentrytable td.cell.completed_timemodified,
     #showentryanontable td.cell.random_response {
-        @apply font-bold;
+        font-weight: 700;
     }
 
     #showentrytable td.cell.userpic,
     #showentrytable td.cell.deleteentry,
     #showentryanontable td.cell.deleteentry {
-        @apply w-2.5;
+        width: 0.625rem;
     }
 
     // Responses navigation.
     .response_navigation {
-        @apply my-2;
+        margin-top: 0.5rem;
+        margin-bottom: 0.5rem;
         a {
             display: block;
             &.back_to_list {

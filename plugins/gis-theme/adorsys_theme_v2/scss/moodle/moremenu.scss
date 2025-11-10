@@ -15,38 +15,42 @@
     
     // Nav Link Styling
     .nav-link {
-        @apply flex items-center px-4;
+        display: flex;
+        align-items: center;
+        padding-left: 1rem;
+        padding-right: 1rem;
         height: $moremenu-height;
         border-right: none;
         border-bottom: 3px solid transparent;
         border-left: none;
         border-top: none;
-        color: theme('colors.gray.700');
+        color: #374151;
         font-weight: 500;
-        font-size: theme('fontSize.sm');
+        font-size: 0.875rem;
+        line-height: 1.25rem;
         position: relative;
         transition: all 0.2s ease;
         
         // Hover state
         &:hover,
         &:focus {
-            color: theme('colors.blue.600');
-            background-color: theme('colors.gray.50');
-            border-bottom-color: theme('colors.blue.400');
+            color: #2563eb;
+            background-color: #f9fafb;
+            border-bottom-color: #60a5fa;
         }
 
         // Active state
         &.active {
-            color: theme('colors.blue.700');
-            background-color: theme('colors.blue.50');
+            color: #1d4ed8;
+            background-color: #eff6ff;
             border-color: transparent;
-            border-bottom-color: theme('colors.blue.600');
+            border-bottom-color: #2563eb;
             font-weight: 600;
             
             &:focus,
             &:hover {
-                background-color: theme('colors.blue.100');
-                border-bottom-color: theme('colors.blue.700');
+                background-color: #dbeafe;
+                border-bottom-color: #1d4ed8;
             }
         }
         
@@ -58,7 +62,10 @@
         
         // Tab toggle styling
         &[data-bs-toggle="tab"] {
-            @apply inline-flex flex-col items-center justify-center;
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
 
             &::after {
                 content: attr(data-text) / "";
@@ -79,8 +86,8 @@
     // Nav Tabs Container
     .nav-tabs {
         margin-left: 0;
-        background-color: theme('colors.white');
-        border-bottom: 1px solid theme('colors.gray.200');
+        background-color: #ffffff;
+        border-bottom: 1px solid #e5e7eb;
     }
     
     .show > .nav-link,
@@ -92,11 +99,11 @@
 
     // Dropdown Menu Styling
     .dropdownmoremenu > .dropdown-menu {
-        border-radius: theme('spacing.2');
+        border-radius: 0.5rem;
         box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-        border: 1px solid theme('colors.gray.200');
-        padding: theme('spacing.2') 0;
-        margin-top: theme('spacing.1');
+        border: 1px solid #e5e7eb;
+        padding: 0.5rem 0;
+        margin-top: 0.25rem;
         
         & > .dropdown-item {
             padding: 0;
@@ -113,17 +120,21 @@
             }
             
             .dropdown-item {
-                @apply px-4 py-2;
-                background-color: theme('colors.gray.50');
-                color: theme('colors.gray.700');
-                font-size: theme('fontSize.sm');
+                padding-left: 1rem;
+                padding-right: 1rem;
+                padding-top: 0.5rem;
+                padding-bottom: 0.5rem;
+                background-color: #f9fafb;
+                color: #374151;
+                font-size: 0.875rem;
+                line-height: 1.25rem;
                 transition: all 0.15s ease;
                 
                 &:hover,
                 &:focus {
-                    background-color: theme('colors.blue.100');
-                    color: theme('colors.blue.700');
-                    padding-left: theme('spacing.5');
+                    background-color: #dbeafe;
+                    color: #1d4ed8;
+                    padding-left: 1.25rem;
                 }
             }
             
@@ -136,25 +147,26 @@
     // Active Dropdown Items
     .dropdown-item[aria-current="true"],
     .dropdown-item.active {
-        background-color: theme('colors.blue.50');
-        color: theme('colors.blue.700');
+        background-color: #eff6ff;
+        color: #1d4ed8;
         font-weight: 600;
         
         &:focus-within,
         &:hover {
-            background-color: theme('colors.blue.100');
-            color: theme('colors.blue.800');
+            background-color: #dbeafe;
+            color: #1e40af;
             
             a {
-                color: theme('colors.blue.800');
+                color: #1e40af;
             }
         }
         
         &:before {
             content: "✓";
-            @apply mr-2;
-            color: theme('colors.blue.600');
-            font-size: theme('fontSize.sm');
+            margin-right: 0.5rem;
+            color: #2563eb;
+            font-size: 0.875rem;
+            line-height: 1.25rem;
             font-weight: bold;
         }
     }

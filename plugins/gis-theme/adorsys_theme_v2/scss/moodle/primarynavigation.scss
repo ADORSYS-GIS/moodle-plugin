@@ -3,46 +3,52 @@
 // ============================================================================
 
 .primary-navigation {
-    background-color: theme('colors.white');
-    border-bottom: 1px solid theme('colors.gray.200');
+    background-color: #ffffff;
+    border-bottom: 1px solid #e5e7eb;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
     
     .navigation {
         height: $navbar-height;
-        @apply flex items-center;
+        display: flex;
+        align-items: center;
         max-width: 1440px;
         margin: 0 auto;
-        padding: 0 theme('spacing.4');
+        padding: 0 1rem;
         
         .nav-link {
-            @apply flex items-center px-4;
+            display: flex;
+            align-items: center;
+            padding-left: 1rem;
+            padding-right: 1rem;
             height: $navbar-height;
-            color: theme('colors.gray.700');
+            color: #374151;
             font-weight: 500;
-            font-size: theme('fontSize.sm');
+            font-size: 0.875rem;
+            line-height: 1.25rem;
             border-top: 3px solid transparent;
             position: relative;
             transition: all 0.2s ease;
             
             // Hover effect
             &:hover {
-                color: theme('colors.blue.600');
-                background-color: theme('colors.gray.50');
-                border-top-color: theme('colors.blue.400');
+                color: #2563eb;
+                background-color: #f9fafb;
+                border-top-color: #60a5fa;
             }
             
             // Active state
             &.active {
-                color: theme('colors.blue.700');
+                color: #1d4ed8;
                 font-weight: 600;
-                border-top-color: theme('colors.blue.600');
-                background-color: theme('colors.blue.50');
+                border-top-color: #2563eb;
+                background-color: #eff6ff;
             }
             
             // Icon styling
             .icon {
-                @apply mr-2;
-                font-size: theme('fontSize.lg');
+                margin-right: 0.5rem;
+                font-size: 1.125rem;
+                line-height: 1.75rem;
                 transition: transform 0.2s ease;
             }
             
@@ -54,10 +60,10 @@
         // Dropdown in primary nav
         .dropdown {
             .dropdown-menu {
-                border-radius: theme('spacing.2');
+                border-radius: 0.5rem;
                 box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-                border: 1px solid theme('colors.gray.200');
-                margin-top: theme('spacing.1');
+                border: 1px solid #e5e7eb;
+                margin-top: 0.25rem;
             }
         }
     }
@@ -78,7 +84,7 @@
 .drawer-primary {
     .drawercontent {
         padding: 0;
-        background-color: theme('colors.white');
+        background-color: #ffffff;
         
         .list-group {
             border-radius: 0;
@@ -87,22 +93,25 @@
             .list-group-item {
                 border-left: 0;
                 border-right: 0;
-                @apply px-6 py-3;
-                color: theme('colors.gray.700');
+                padding-left: 1.5rem;
+                padding-right: 1.5rem;
+                padding-top: 0.75rem;
+                padding-bottom: 0.75rem;
+                color: #374151;
                 font-weight: 500;
                 transition: all 0.2s ease;
                 
                 &:hover {
-                    background-color: theme('colors.blue.50');
-                    color: theme('colors.blue.700');
-                    padding-left: theme('spacing.7');
+                    background-color: #eff6ff;
+                    color: #1d4ed8;
+                    padding-left: 1.75rem;
                 }
                 
                 &.active {
-                    background-color: theme('colors.blue.100');
-                    color: theme('colors.blue.700');
+                    background-color: #dbeafe;
+                    color: #1d4ed8;
                     font-weight: 600;
-                    border-left: 4px solid theme('colors.blue.600');
+                    border-left: 4px solid #2563eb;
                 }
             }
         }

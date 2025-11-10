@@ -14,15 +14,24 @@
 }
 
 #adminsettings span.error {
-    @apply inline-block border border-error rounded-md bg-error-content p-1 mb-1;
+    display: inline-block;
+    border: 1px solid var(--fallback-er, oklch(var(--er) / 1));
+    border-radius: 0.375rem;
+    background-color: var(--fallback-erc, oklch(var(--erc) / 1));
+    padding: 0.25rem;
+    margin-bottom: 0.25rem;
 }
 
 .mform .d-flex {
     .fitem {
-        @apply my-0.5 mr-1 !important; // 0.1rem is 0.5 units, 0.25rem is 1 unit
+        margin-top: 0.125rem !important;
+        margin-bottom: 0.125rem !important;
+        margin-right: 0.25rem !important;
     }
     br + label {
-        @apply justify-start w-full mr-0;
+        justify-content: flex-start;
+        width: 100%;
+        margin-right: 0;
     }
 }
 
@@ -55,7 +64,8 @@
 }
 
 .mform fieldset {
-    @apply mb-2 border-b border-gray-300; // $spacer * 0.5 is 0.5rem = 8px = 2 units
+    margin-bottom: 0.5rem;
+    border-bottom: 1px solid #d1d5db;
 }
 
 #adminsettings .form-control[size] {
@@ -63,7 +73,7 @@
 }
 
 #adminsettings .error {
-    @apply text-error;
+    color: var(--fallback-er, oklch(var(--er) / 1));
 }
 
 .mform ul.file-list {
@@ -74,7 +84,7 @@
 
 .mform label .req,
 .mform label .adv {
-    @apply cursor-help;
+    cursor: help;
 }
 /*rtl:ignore*/
 input#id_externalurl {
@@ -82,7 +92,7 @@ input#id_externalurl {
 }
 
 #portfolio-add-button {
-    @apply inline;
+    display: inline;
 }
 
 .form-defaultinfo,
@@ -91,7 +101,9 @@ input#id_externalurl {
 }
 
 .form-label .form-shortname {
-    @apply text-xs block; // Equivalent to $font-size-xs
+    font-size: 0.75rem;
+    line-height: 1rem;
+    display: block;
 }
 
 .formsettingheading .form-horizontal {
@@ -101,11 +113,12 @@ input#id_externalurl {
 // Moodle doesn't differentiate between uneditable inputs and form help text.
 // Styling them both as form help provides a subtle, consistent appearance.
 .no-felement.fstatic {
-    @apply text-gray-500 pt-1.5; // 5px is roughly 1.5 units
+    color: #6b7280;
+    padding-top: 0.375rem;
 }
 
 .no-fitem .fstaticlabel {
-    @apply font-bold;
+    font-weight: 700;
 }
 
 .form-item .form-setting .defaultsnext > input {
@@ -116,12 +129,19 @@ input#id_externalurl {
     // Need to specify .defaultsnext and the .form-checkbox class
     // is somewhat randomly re-used on various actual checkboxes
     // throughout the admin forms, instead of on the wrapper div.
-    @apply mt-1.5 inline-block; // 5px is roughly 1.5 units
+    margin-top: 0.375rem;
+    display: inline-block;
 }
 
 #adminsettings h3 {
     // Legend styling for form sections.
-    @apply block w-full p-0 mb-4 text-lg leading-8 border-b border-gray-300; // $line-height-base is usually 1.5, so 1.5rem = 24px = 6 units. $font-size-lg is 1.25rem = 20px.
+    display: block;
+    width: 100%;
+    padding: 0;
+    margin-bottom: 1rem;
+    font-size: 1.125rem;
+    line-height: 2rem;
+    border-bottom: 1px solid #d1d5db;
 }
 
 // I think this could be avoided (or at least tidied up) ifr
@@ -139,12 +159,12 @@ input#id_externalurl {
 
 // Reduce the mediaplugin width when using inside forms.
 .que.match .mediaplugin {
-    @apply w-1/2; // 50vw is equivalent to w-1/2
+    width: 50%;
 }
 
 /* rtl:ignore */
 #page-admin-grade-edit-scale-edit .error input#id_name {
-    @apply mr-42; // 170px is roughly 42.5 units, rounded to 42
+    margin-right: 10.5rem;
 }
 
 #page-grade-edit-outcome-course .courseoutcomes {
@@ -183,7 +203,7 @@ input#id_externalurl {
 }
 
 div#dateselector-calendar-panel {
-    @apply z-[3100]; /* Set higher than the z-index of the filemanager - see MDL-39047. */
+    z-index: 3100; /* Set higher than the z-index of the filemanager - see MDL-39047. */
 }
 
 /**
@@ -199,22 +219,28 @@ div#dateselector-calendar-panel {
 }
 
 .availability-field img {
-    @apply w-4 h-4;
+    width: 1rem;
+    height: 1rem;
 }
 
 .availability-eye {
-    @apply clear-left float-left;
+    clear: left;
+    float: left;
 }
 .availability-inner,
 .availability-plugincontrols {
-    @apply float-left rounded-lg border border-gray-300 p-4 mt-2; // 1rem = 16px = 4 units, 0.5rem = 8px = 2 units
+    float: left;
+    border-radius: 0.5rem;
+    border: 1px solid #d1d5db;
+    padding: 1rem;
+    margin-top: 0.5rem;
 }
 .availability-plugincontrols,
 .availability-childlist .availability-inner {
-    @apply ml-2.5; // .625rem = 10px = 2.5 units
+    margin-left: 0.625rem;
 }
 .availability-field .availability-plugincontrols .availability-group select {
-    @apply max-w-48; // 12rem = 192px = 48 units
+    max-width: 12rem;
 }
 
 /* Custom styles for autocomplete form element */
@@ -222,22 +248,41 @@ div#dateselector-calendar-panel {
 [data-fieldtype=autocomplete] select,
 [data-fieldtype=tags] select,
 .form-autocomplete-original-select {
-    @apply invisible overflow-hidden w-60 h-11 m-0 p-0 border-0; // 15rem = 240px = 60 units, 44px = 11 units
-    margin-top: theme('spacing.4') + theme('spacing.1'); // $font-size-base * $line-height-base + $input-padding-y-sm; (1rem * 1.5 + 0.25rem = 1.75rem = 28px = 7 units)
+    visibility: hidden;
+    overflow: hidden;
+    width: 15rem;
+    height: 2.75rem;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    margin-top: 1.75rem;
     vertical-align: bottom;
 }
 .form-autocomplete-selection {
-    @apply my-1; // $input-padding-y-sm is 0.25rem = 4px = 1 unit
+    margin-top: 0.25rem;
+    margin-bottom: 0.25rem;
     // Padding top and bottom, plus mb-1 and the 100% lineheight.
-    min-height: calc(2 * theme('spacing.1') + 2 * theme('fontSize.base')); // 2 * 0.25rem + 2 * 1rem = 2.5rem = 40px
+    min-height: calc(2 * 0.25rem + 2 * 1rem);
 }
 
 .form-autocomplete-selection [role=option] {
-    @apply cursor-pointer whitespace-normal break-words leading-normal text-left;
+    cursor: pointer;
+    white-space: normal;
+    overflow-wrap: break-word;
+    line-height: normal;
+    text-align: left;
 }
 
 .form-autocomplete-suggestions {
-    @apply absolute bg-base-100 border border-gray-300 min-w-[206px] max-h-80 overflow-auto mt-1 p-2 z-30; // 20em = 320px = 80 units, $dropdown-spacer is 0.25rem = 4px = 1 unit, $dropdown-padding-y is 0.5rem = 8px = 2 units
+    position: absolute;
+    background-color: var(--fallback-b1, oklch(var(--b1) / 1));
+    border: 1px solid #d1d5db;
+    min-width: 206px;
+    max-height: 20rem;
+    overflow: auto;
+    margin-top: 0.25rem;
+    padding: 0.5rem;
+    z-index: 30;
 }
 
 // DaisyUI handles disabled select colors
@@ -245,11 +290,19 @@ div#dateselector-calendar-panel {
 // $form-select-disabled-bg: $gray-200 !default;
 
 .form-autocomplete-suggestions li {
-    @apply list-none p-2 m-0 cursor-pointer text-base-content break-normal overflow-auto whitespace-normal; // $dropdown-item-padding-y $dropdown-item-padding-x are 0.25rem 1rem = 4px 16px = 1 4 units
+    list-style: none;
+    padding: 0.5rem;
+    margin: 0;
+    cursor: pointer;
+    color: var(--fallback-bc, oklch(var(--bc) / 1));
+    word-break: normal;
+    overflow: auto;
+    white-space: normal;
     &:hover,
     &:focus,
     &[aria-selected="true"] {
-        @apply bg-primary text-primary-content; // Using DaisyUI primary for active/hover
+        background-color: var(--fallback-p, oklch(var(--p) / 1));
+        color: var(--fallback-pc, oklch(var(--pc) / 1));
     }
     &[aria-disabled="true"] {
         pointer-events: none;
@@ -257,7 +310,11 @@ div#dateselector-calendar-panel {
     background-color: #e5e7eb;
     }
     &.suggestions-heading {
-        @apply pointer-events-none font-bold text-base-content bg-base-100 pl-2; // calc(#{$dropdown-item-padding-x} / 2) is 0.5rem = 8px = 2 units
+        pointer-events: none;
+        font-weight: 700;
+        color: var(--fallback-bc, oklch(var(--bc) / 1));
+        background-color: var(--fallback-b1, oklch(var(--b1) / 1));
+        padding-left: 0.5rem;
     }
     &::before {
         content: "\200B";
@@ -265,15 +322,23 @@ div#dateselector-calendar-panel {
 }
 
 .form-autocomplete-downarrow {
-    @apply text-base-content top-0.5 right-2 cursor-pointer; // 0.2rem = 3.2px = 0.5 units, 0.5rem = 8px = 2 units
+    color: var(--fallback-bc, oklch(var(--bc) / 1));
+    top: 0.125rem;
+    right: 0.5rem;
+    cursor: pointer;
     .loading-icon {
-        @apply absolute top-0 left-0 bg-white;
+        position: absolute;
+        top: 0;
+        left: 0;
+        background-color: #ffffff;
     }
 }
 
 /** Custom autocomplete selection styling */
 .form-autocomplete-selection + input.form-control {
-    @apply w-auto inline-block align-middle;
+    width: auto;
+    display: inline-block;
+    vertical-align: middle;
 }
 
 .form-autocomplete-selection [data-active-selection=true] {
@@ -283,9 +348,9 @@ div#dateselector-calendar-panel {
 select.form-control {
     &[size],
     &[multiple] {
-        @apply pr-0;
+        padding-right: 0;
         option {
-            @apply w-fit;
+            width: fit-content;
         }
     }
 }
@@ -297,11 +362,12 @@ select[multiple] {
 }
 
 select[size="1"] {
-    @apply overflow-visible;
+    overflow: visible;
 }
 
 textarea[data-auto-rows] {
-    @apply overflow-x-hidden resize-none;
+    overflow-x: hidden;
+    resize: none;
 }
 
 /** Display elements under labels in vertical forms regardless of the screen size. */
@@ -310,7 +376,10 @@ textarea[data-auto-rows] {
         margin: 0;
         & > .col-md-3,
         & > .col-md-9 {
-            @apply flex-none max-w-full w-auto p-0;
+            flex: none;
+            max-width: 100%;
+            width: auto;
+            padding: 0;
         }
         &.femptylabel > .col-md-3 {
             display: none;
@@ -322,22 +391,27 @@ textarea[data-auto-rows] {
 }
 
 .mform .col-form-label .form-label-addon {
-    @apply ml-1; // 0.25rem = 4px = 1 unit
+    margin-left: 0.25rem;
 }
 
-@media (min-width: theme('screens.sm')) {
+@media (min-width: 640px) {
     .mform:not(.full-width-labels) .col-form-label .form-label-addon {
-        @apply ml-auto;
+        margin-left: auto;
     }
 }
 
 [data-fieldtype="modgrade"] .fitem {
-    @apply pb-2; // $input-padding-y is 0.375rem = 6px = 1.5 units, rounded to 2
+    padding-bottom: 0.5rem;
 }
 
 // We dont' use the mixin because it's expensive.
 [data-fieldtype="modgrade"] {
-    @apply bg-base-100 rounded-lg border border-gray-300 p-4 ml-4 max-w-xs; // $card-spacer-x is 1.25rem = 20px = 5 units, $grid-gutter-width * 0.5 is 0.75rem = 12px = 3 units, 30rem = 480px = 120 units
+    background-color: var(--fallback-b1, oklch(var(--b1) / 1));
+    border-radius: 0.5rem;
+    border: 1px solid #d1d5db;
+    padding: 1rem;
+    margin-left: 1rem;
+    max-width: 20rem;
 }
 
 // Styles for the JS file types browser provided by the "filetypes" element.
@@ -352,8 +426,8 @@ textarea[data-auto-rows] {
 // The autocomplete popup needs a display:block container to correctly position to popup.
 .felement[data-fieldtype="autocomplete"],
 .felement[data-fieldtype="tags"] {
-    @apply block !important; /* stylelint-disable-line declaration-no-important */
-    @apply static;
+    display: block !important; /* stylelint-disable-line declaration-no-important */
+    position: static;
 }
 
 // Show editor at 100% width by default.
@@ -361,9 +435,9 @@ textarea[data-auto-rows] {
     flex-grow: 1;
 }
 
-@media (min-width: theme('screens.md')) {
+@media (min-width: 768px) {
     .mform fieldset .fcontainer.collapseable .col-form-label {
-        @apply pl-10; // $spacer * 2.5 is 2.5rem = 40px = 10 units
+        padding-left: 2.5rem;
     }
 }
 
@@ -394,21 +468,21 @@ textarea[data-auto-rows] {
         .form-inset-item {
             position: absolute;
     z-index: 30;
-            padding-top: calc(theme('spacing.1.5') + theme('borderWidth.DEFAULT')); // $input-padding-y is 0.375rem = 6px = 1.5 units, $input-border-width is 1px
+            padding-top: calc(0.375rem + 1px);
         }
 
         &.form-inset-left {
             .form-control {
-                @apply pl-6; // $spacer * 1.5 is 1.5rem = 24px = 6 units
+                padding-left: 1.5rem;
             }
         }
 
         &.form-inset-right {
             .form-control {
-                @apply pr-6; // $spacer * 1.5 is 1.5rem = 24px = 6 units
+                padding-right: 1.5rem;
             }
             .form-inset-item {
-                @apply right-0;
+                right: 0;
             }
         }
     }
@@ -417,18 +491,18 @@ textarea[data-auto-rows] {
 // For form elements aligned to the left with no padding (e.g. Completion conditions activity settings).
 .form-check {
     &.left-indented {
-        @apply pl-0;
+        padding-left: 0;
     }
 }
 
 // Remove the margins that come with the icon.
 .toggle-sensitive-btn .icon {
-    @apply mr-0;
+    margin-right: 0;
 }
 
 // Input group elements display border radius depending on the proximity of other elements.
 // This corrects border radius of the input when 'small screen only' mode hides the toggle button.
-@media (min-width: theme('screens.sm')) {
+@media (min-width: 640px) {
     .toggle-sensitive-wrapper.small-screens-only.input-group:not(.has-validation) > {
         .form-control:not(:last-child) {
             border-radius: 0.375rem; // $input-border-radius is 0.375rem = 6px = rounded-md

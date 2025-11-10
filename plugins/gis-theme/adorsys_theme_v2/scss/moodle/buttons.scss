@@ -7,7 +7,7 @@
     display: inline-block;
 
     + .singlebutton {
-        @apply ml-2; // Equivalent to $spacer * 0.5
+        margin-left: 0.5rem;
     }
 }
 
@@ -16,15 +16,18 @@
 }
 
 p.arrow_button {
-    @apply mt-20 text-center; // 5em is roughly 20 units in Tailwind (5 * 4)
+    margin-top: 5rem;
+    text-align: center;
 }
 
 #addcontrols {
     // This is displayed in a column between 2 20 row multi-selects. This should be just short of half way.
-    @apply mt-32 text-center mb-12; // 8em is roughly 32 units, 3em is roughly 12 units
+    margin-top: 8rem;
+    text-align: center;
+    margin-bottom: 3rem;
 
     label {
-        @apply inline;
+        display: inline;
     }
 }
 
@@ -37,7 +40,8 @@ p.arrow_button {
 }
 
 .btn-lineup {
-    @apply mb-2.5 ml-1.5; // 10px is 2.5 units, 5px is 1.25 units, rounded to 1.5
+    margin-bottom: 0.625rem;
+    margin-left: 0.375rem;
 }
 
 /* Small buttons should have the same border-radius as the normal buttons. */
@@ -52,7 +56,10 @@ p.arrow_button {
 
 // Replaced Bootstrap mixin with direct Tailwind focus utilities
 .btn {
-    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-500;
+    &:focus-visible {
+        outline: none;
+        box-shadow: 0 0 0 2px #fff, 0 0 0 4px #6366f1;
+    }
 }
 
 // Site-wide primary button styling (Indigo)
@@ -89,22 +96,34 @@ p.arrow_button {
     cursor: not-allowed;
 }
 .btn-secondary {
-    @apply focus-visible:ring-gray-500;
+    &:focus-visible {
+        box-shadow: 0 0 0 2px #fff, 0 0 0 4px #6b7280;
+    }
 }
 .btn-accent {
-    @apply focus-visible:ring-blue-300; // Assuming accent is blue from tailwind.config.js
+    &:focus-visible {
+        box-shadow: 0 0 0 2px #fff, 0 0 0 4px #93c5fd;
+    }
 }
 .btn-info {
-    @apply focus-visible:ring-blue-600;
+    &:focus-visible {
+        box-shadow: 0 0 0 2px #fff, 0 0 0 4px #2563eb;
+    }
 }
 .btn-success {
-    @apply focus-visible:ring-green-600;
+    &:focus-visible {
+        box-shadow: 0 0 0 2px #fff, 0 0 0 4px #16a34a;
+    }
 }
 .btn-warning {
-    @apply focus-visible:ring-yellow-500;
+    &:focus-visible {
+        box-shadow: 0 0 0 2px #fff, 0 0 0 4px #eab308;
+    }
 }
 .btn-error {
-    @apply focus-visible:ring-red-600;
+    &:focus-visible {
+        box-shadow: 0 0 0 2px #fff, 0 0 0 4px #dc2626;
+    }
 }
 
 // For outline buttons, the ring color should match the outline color
@@ -112,7 +131,9 @@ p.arrow_button {
     color: #4f46e5;
     border-color: #4f46e5;
     background-color: transparent;
-    @apply focus-visible:ring-indigo-500;
+    &:focus-visible {
+        box-shadow: 0 0 0 2px #fff, 0 0 0 4px #6366f1;
+    }
 }
 .btn-outline-primary:hover {
     color: #ffffff;
@@ -120,22 +141,34 @@ p.arrow_button {
     border-color: #4f46e5;
 }
 .btn-outline-secondary {
-    @apply focus-visible:ring-gray-500;
+    &:focus-visible {
+        box-shadow: 0 0 0 2px #fff, 0 0 0 4px #6b7280;
+    }
 }
 .btn-outline-accent {
-    @apply focus-visible:ring-blue-300;
+    &:focus-visible {
+        box-shadow: 0 0 0 2px #fff, 0 0 0 4px #93c5fd;
+    }
 }
 .btn-outline-info {
-    @apply focus-visible:ring-blue-600;
+    &:focus-visible {
+        box-shadow: 0 0 0 2px #fff, 0 0 0 4px #2563eb;
+    }
 }
 .btn-outline-success {
-    @apply focus-visible:ring-green-600;
+    &:focus-visible {
+        box-shadow: 0 0 0 2px #fff, 0 0 0 4px #16a34a;
+    }
 }
 .btn-outline-warning {
-    @apply focus-visible:ring-yellow-500;
+    &:focus-visible {
+        box-shadow: 0 0 0 2px #fff, 0 0 0 4px #eab308;
+    }
 }
 .btn-outline-error {
-    @apply focus-visible:ring-red-600;
+    &:focus-visible {
+        box-shadow: 0 0 0 2px #fff, 0 0 0 4px #dc2626;
+    }
 }
 
 
@@ -144,35 +177,58 @@ p.arrow_button {
  */
 
 .btn-icon {
-    @apply btn btn-square inline-flex items-center justify-center;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 1 / 1;
     // Default icon size, can be overridden by icon-size classes
-    @apply h-10 w-10 text-base; // Assuming default icon height + 1rem is 40px (2.5rem) and text-base is 1rem (16px)
+    height: 2.5rem;
+    width: 2.5rem;
+    font-size: 1rem;
+    line-height: 1.5rem;
     .icon {
         margin: 0;
     }
     // This loop needs to be converted to specific Tailwind classes or removed if DaisyUI handles it.
     // For now, I'll keep the structure but apply Tailwind classes.
     &.icon-size-sm {
-        @apply h-8 w-8 text-sm; // Example: if $length is 1rem, then 1rem + 1rem = 2rem = 32px
+        height: 2rem;
+        width: 2rem;
+        font-size: 0.875rem;
+        line-height: 1.25rem;
     }
     &.icon-size-md {
-        @apply h-10 w-10 text-base;
+        height: 2.5rem;
+        width: 2.5rem;
+        font-size: 1rem;
+        line-height: 1.5rem;
     }
     &.icon-size-lg {
-        @apply h-12 w-12 text-lg;
+        height: 3rem;
+        width: 3rem;
+        font-size: 1.125rem;
+        line-height: 1.75rem;
     }
     &.icon-size-xl {
-        @apply h-16 w-16 text-xl;
+        height: 4rem;
+        width: 4rem;
+        font-size: 1.25rem;
+        line-height: 1.75rem;
     }
 }
 
 /* Specific styles for the collapse/expand buttons. */
 .btn-icon.icons-collapse-expand {
-    @apply text-primary bg-indigo-100; // Using indigo-100 for light primary background
+    color: var(--fallback-p, oklch(var(--p) / 1));
+    background-color: #e0e7ff;
     &:hover {
-        @apply outline-2 outline-primary; // Tailwind's outline utility
+        outline-width: 2px;
+        outline-color: var(--fallback-p, oklch(var(--p) / 1));
     }
-    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-500;
+    &:focus-visible {
+        outline: none;
+        box-shadow: 0 0 0 2px #fff, 0 0 0 4px #6366f1;
+    }
 }
 
 /**
@@ -181,29 +237,102 @@ p.arrow_button {
 
 // DaisyUI's btn-ghost is a good equivalent for subtle buttons.
 .btn-subtle-primary {
-    @apply btn btn-ghost font-medium text-primary hover:bg-indigo-600 hover:text-white focus-visible:ring-indigo-500;
+    font-weight: 500;
+    color: var(--fallback-p, oklch(var(--p) / 1));
+    background-color: transparent;
+    &:hover {
+        background-color: #4f46e5;
+        color: #ffffff;
+    }
+    &:focus-visible {
+        box-shadow: 0 0 0 2px #fff, 0 0 0 4px #6366f1;
+    }
 }
 .btn-subtle-secondary {
-    @apply btn btn-ghost font-medium text-secondary hover:bg-gray-600 hover:text-white focus-visible:ring-gray-500;
+    font-weight: 500;
+    color: var(--fallback-s, oklch(var(--s) / 1));
+    background-color: transparent;
+    &:hover {
+        background-color: #4b5563;
+        color: #ffffff;
+    }
+    &:focus-visible {
+        box-shadow: 0 0 0 2px #fff, 0 0 0 4px #6b7280;
+    }
 }
 .btn-subtle-accent {
-    @apply btn btn-ghost font-medium text-accent hover:bg-blue-300 hover:text-white focus-visible:ring-blue-300;
+    font-weight: 500;
+    color: var(--fallback-a, oklch(var(--a) / 1));
+    background-color: transparent;
+    &:hover {
+        background-color: #93c5fd;
+        color: #ffffff;
+    }
+    &:focus-visible {
+        box-shadow: 0 0 0 2px #fff, 0 0 0 4px #93c5fd;
+    }
 }
 .btn-subtle-info {
-    @apply btn btn-ghost font-medium text-info hover:bg-blue-600 hover:text-white focus-visible:ring-blue-600;
+    font-weight: 500;
+    color: var(--fallback-in, oklch(var(--in) / 1));
+    background-color: transparent;
+    &:hover {
+        background-color: #2563eb;
+        color: #ffffff;
+    }
+    &:focus-visible {
+        box-shadow: 0 0 0 2px #fff, 0 0 0 4px #2563eb;
+    }
 }
 .btn-subtle-success {
-    @apply btn btn-ghost font-medium text-success hover:bg-green-600 hover:text-white focus-visible:ring-green-600;
+    font-weight: 500;
+    color: var(--fallback-su, oklch(var(--su) / 1));
+    background-color: transparent;
+    &:hover {
+        background-color: #16a34a;
+        color: #ffffff;
+    }
+    &:focus-visible {
+        box-shadow: 0 0 0 2px #fff, 0 0 0 4px #16a34a;
+    }
 }
 .btn-subtle-warning {
-    @apply btn btn-ghost font-medium text-warning hover:bg-yellow-500 hover:text-white focus-visible:ring-yellow-500;
+    font-weight: 500;
+    color: var(--fallback-wa, oklch(var(--wa) / 1));
+    background-color: transparent;
+    &:hover {
+        background-color: #eab308;
+        color: #ffffff;
+    }
+    &:focus-visible {
+        box-shadow: 0 0 0 2px #fff, 0 0 0 4px #eab308;
+    }
 }
 .btn-subtle-error {
-    @apply btn btn-ghost font-medium text-error hover:bg-red-600 hover:text-white focus-visible:ring-red-600;
+    font-weight: 500;
+    color: var(--fallback-er, oklch(var(--er) / 1));
+    background-color: transparent;
+    &:hover {
+        background-color: #dc2626;
+        color: #ffffff;
+    }
+    &:focus-visible {
+        box-shadow: 0 0 0 2px #fff, 0 0 0 4px #dc2626;
+    }
 }
 
 .btn-subtle-body {
-    @apply btn btn-ghost font-medium text-gray-700 bg-transparent border border-gray-300 hover:bg-gray-600 hover:text-white focus-visible:ring-gray-600;
+    font-weight: 500;
+    color: #374151;
+    background-color: transparent;
+    border: 1px solid #d1d5db;
+    &:hover {
+        background-color: #4b5563;
+        color: #ffffff;
+    }
+    &:focus-visible {
+        box-shadow: 0 0 0 2px #fff, 0 0 0 4px #4b5563;
+    }
 }
 
 /*
@@ -211,9 +340,18 @@ p.arrow_button {
  */
 
 .btn-add-content {
-    @apply rounded-lg border-2 border-dashed border-gray-300 text-primary bg-white text-sm font-bold;
+    border-radius: 0.5rem;
+    border: 2px dashed #d1d5db;
+    color: var(--fallback-p, oklch(var(--p) / 1));
+    background-color: #ffffff;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    font-weight: 700;
     &:hover,
     &:focus {
-        @apply bg-indigo-100 border-solid border-primary text-primary;
+        background-color: #e0e7ff;
+        border-style: solid;
+        border-color: var(--fallback-p, oklch(var(--p) / 1));
+        color: var(--fallback-p, oklch(var(--p) / 1));
     }
 }

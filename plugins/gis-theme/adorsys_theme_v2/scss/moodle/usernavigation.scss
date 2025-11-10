@@ -1,14 +1,14 @@
 // User Initials Display (Circular Avatar with Letters)
 .userinitials {
-    background-color: theme('colors.gray.200');
+    background-color: #e5e7eb;
     vertical-align: middle;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     border-radius: 50%;
-    color: theme('colors.gray.700');
+    color: #374151;
     font-weight: 500;
-    margin-right: theme('spacing.1');
+    margin-right: 0.25rem;
     transition: all 0.2s ease;
     
     // Size variants
@@ -46,23 +46,30 @@
 
 // User Picture (alternative to initials)
 img.userpicture {
-    margin-right: theme('spacing.1');
+    margin-right: 0.25rem;
     border-radius: 50%;
     transition: all 0.2s ease;
 }
 
 // User Menu Container
 .usermenu-container {
-    @apply flex items-center;
+    display: flex;
+    align-items: center;
     
     .usermenu {
-        @apply flex items-center;
+        display: flex;
+        align-items: center;
         
         .dropdown {
-            @apply flex items-center h-full;
+            display: flex;
+            align-items: center;
+            height: 100%;
             
             .dropdown-toggle {
-                @apply flex items-center px-3;
+                display: flex;
+                align-items: center;
+                padding-left: 0.75rem;
+                padding-right: 0.75rem;
                 background: transparent;
                 border: none;
                 height: 100%;
@@ -70,19 +77,22 @@ img.userpicture {
                 
                 &:hover,
                 &:focus {
-                    background-color: theme('colors.gray.50');
+                    background-color: #f9fafb;
                 }
                 
                 // User Button with Avatar
                 .userbutton {
-                    @apply flex items-center;
+                    display: flex;
+                    align-items: center;
                     
                     .avatars {
                         position: relative;
                         display: inline-block;
                         
                         .avatar {
-                            @apply flex items-center justify-center;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
                             
                             &.current {
                                 display: inline-block;
@@ -113,30 +123,34 @@ img.userpicture {
             
             // Dropdown Menu
             .dropdown-menu {
-                border-radius: theme('spacing.2');
+                border-radius: 0.5rem;
                 box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-                border: 1px solid theme('colors.gray.200');
-                padding: theme('spacing.2') 0;
-                margin-top: theme('spacing.2');
+                border: 1px solid #e5e7eb;
+                padding: 0.5rem 0;
+                margin-top: 0.5rem;
                 min-width: 250px;
                 
                 .dropdown-item {
-                    @apply px-4 py-2;
-                    color: theme('colors.gray.700');
-                    font-size: theme('fontSize.sm');
+                    padding-left: 1rem;
+                    padding-right: 1rem;
+                    padding-top: 0.5rem;
+                    padding-bottom: 0.5rem;
+                    color: #374151;
+                    font-size: 0.875rem;
+                    line-height: 1.25rem;
                     transition: all 0.15s ease;
                     
                     &:hover,
                     &:focus {
-                        background-color: theme('colors.blue.50');
-                        color: theme('colors.blue.700');
-                        padding-left: theme('spacing.5');
+                        background-color: #eff6ff;
+                        color: #1d4ed8;
+                        padding-left: 1.25rem;
                     }
                 }
                 
                 .dropdown-divider {
-                    margin: theme('spacing.2') 0;
-                    border-color: theme('colors.gray.200');
+                    margin: 0.5rem 0;
+                    border-color: #e5e7eb;
                 }
             }
         }
@@ -166,15 +180,17 @@ img.userpicture {
     
     // Toggle Button
     .popover-region-toggle {
-        @apply flex items-center justify-center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         cursor: pointer;
         position: relative;
-        padding: theme('spacing.2') theme('spacing.3');
+        padding: 0.5rem 0.75rem;
         transition: all 0.2s ease;
-        border-radius: theme('spacing.1');
+        border-radius: 0.25rem;
         
         &:hover {
-            background-color: theme('colors.gray.50');
+            background-color: #f9fafb;
         }
         
         // Arrow indicator when expanded
@@ -183,7 +199,7 @@ img.userpicture {
             display: inline-block;
             border-left: 10px solid transparent;
             border-right: 10px solid transparent;
-            border-bottom: 10px solid theme('colors.white');
+            border-bottom: 10px solid #ffffff;
             position: absolute;
             bottom: 0;
             right: 7px;
@@ -195,7 +211,7 @@ img.userpicture {
             display: inline-block;
             border-left: 9px solid transparent;
             border-right: 9px solid transparent;
-            border-bottom: 9px solid theme('colors.gray.200');
+            border-bottom: 9px solid #e5e7eb;
             position: absolute;
             bottom: -1px;
             right: 8px;
@@ -217,11 +233,12 @@ img.userpicture {
         position: absolute;
         top: 0;
         right: 0;
-        background-color: theme('colors.red.600');
-        color: theme('colors.white');
+        background-color: #dc2626;
+        color: #ffffff;
         border-radius: 10px;
-        padding: 0 theme('spacing.1.5');
-        font-size: theme('fontSize.xs');
+        padding: 0 0.375rem;
+        font-size: 0.75rem;
+        line-height: 1rem;
         min-width: 18px;
         height: 18px;
         display: flex;
@@ -244,9 +261,9 @@ img.userpicture {
         width: 380px;
         max-width: 90vw;
         height: 500px;
-        border: 1px solid theme('colors.gray.200');
-        background-color: theme('colors.white');
-        border-radius: theme('spacing.2');
+        border: 1px solid #e5e7eb;
+        background-color: #ffffff;
+        border-radius: 0.5rem;
         box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
         z-index: 1050;
         transition: opacity 0.3s ease, visibility 0.3s ease;
@@ -254,20 +271,30 @@ img.userpicture {
     
     // Header
     .popover-region-header-container {
-        @apply flex items-center justify-between px-4 py-3;
-        border-bottom: 1px solid theme('colors.gray.200');
-        background-color: theme('colors.gray.50');
-        border-radius: theme('spacing.2') theme('spacing.2') 0 0;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding-left: 1rem;
+        padding-right: 1rem;
+        padding-top: 0.75rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 1px solid #e5e7eb;
+        background-color: #f9fafb;
+        border-radius: 0.5rem 0.5rem 0 0;
     }
     
     .popover-region-header-text {
-        @apply font-semibold text-sm;
-        color: theme('colors.gray.700');
+        font-weight: 600;
+        font-size: 0.875rem;
+        line-height: 1.25rem;
+        color: #374151;
         margin: 0;
     }
     
     .popover-region-header-actions {
-        @apply flex items-center gap-2;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
         
         > * {
             transition: transform 0.2s ease;
@@ -283,7 +310,7 @@ img.userpicture {
         height: calc(100% - 85px);
         width: 100%;
         overflow-y: auto;
-        padding: theme('spacing.2');
+        padding: 0.5rem;
         
         // Custom scrollbar
         &::-webkit-scrollbar {
@@ -291,21 +318,25 @@ img.userpicture {
         }
         
         &::-webkit-scrollbar-track {
-            background: theme('colors.gray.100');
+            background: #f3f4f6;
         }
         
         &::-webkit-scrollbar-thumb {
-            background: theme('colors.gray.400');
+            background: #9ca3af;
             border-radius: 3px;
             
             &:hover {
-                background: theme('colors.gray.500');
+                background: #6b7280;
             }
         }
         
         .empty-message {
-            @apply text-center py-8 text-sm;
-            color: theme('colors.gray.500');
+            text-align: center;
+            padding-top: 2rem;
+            padding-bottom: 2rem;
+            font-size: 0.875rem;
+            line-height: 1.25rem;
+            color: #6b7280;
             display: none;
         }
         
@@ -317,19 +348,25 @@ img.userpicture {
     
     // Footer
     .popover-region-footer-container {
-        @apply flex items-center justify-center py-3;
-        border-top: 1px solid theme('colors.gray.200');
-        background-color: theme('colors.gray.50');
-        border-radius: 0 0 theme('spacing.2') theme('spacing.2');
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding-top: 0.75rem;
+        padding-bottom: 0.75rem;
+        border-top: 1px solid #e5e7eb;
+        background-color: #f9fafb;
+        border-radius: 0 0 0.5rem 0.5rem;
     }
     
     .popover-region-seeall-text {
-        @apply text-sm font-medium;
-        color: theme('colors.blue.600');
+        font-size: 0.875rem;
+        line-height: 1.25rem;
+        font-weight: 500;
+        color: #2563eb;
         transition: color 0.2s ease;
         
         &:hover {
-            color: theme('colors.blue.700');
+            color: #1d4ed8;
         }
     }
 }
@@ -389,7 +426,7 @@ img.userpicture {
         .usertext {
             float: left;
             text-align: right;
-            margin-right: theme('spacing.2');
+            margin-right: 0.5rem;
             height: 35px;
             
             .meta {
@@ -423,8 +460,8 @@ img.userpicture {
                     .userinitials.size-35 {
                         width: 20px;
                         height: 20px;
-                        border: 1px solid theme('colors.gray.300');
-                        background-color: theme('colors.white');
+                        border: 1px solid #d1d5db;
+                        background-color: #ffffff;
                         font-size: 0.5625rem;
                     }
                 }

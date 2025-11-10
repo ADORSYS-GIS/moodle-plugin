@@ -3,48 +3,53 @@
 // ============================================================================
 
 .secondary-navigation {
-    padding-bottom: theme('spacing.4');
-    background-color: theme('colors.gray.50');
+    padding-bottom: 1rem;
+    background-color: #f9fafb;
     
     .navigation {
-        border-bottom: 1px solid theme('colors.gray.300');
-        background-color: theme('colors.white');
+        border-bottom: 1px solid #d1d5db;
+        background-color: #ffffff;
         margin: 0 -0.5rem;
         padding: 0 0.5rem;
         box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
         
         .nav-tabs {
-            @apply flex items-center;
+            display: flex;
+            align-items: center;
             border: none;
             max-width: $course-content-maxwidth;
             margin: 0 auto;
-            gap: theme('spacing.1');
+            gap: 0.25rem;
             
             .nav-link {
-                @apply px-6 py-3;
+                padding-left: 1.5rem;
+                padding-right: 1.5rem;
+                padding-top: 0.75rem;
+                padding-bottom: 0.75rem;
                 border-radius: 0;
                 border: none;
                 border-bottom: 3px solid transparent;
-                color: theme('colors.gray.600');
+                color: #4b5563;
                 font-weight: 500;
-                font-size: theme('fontSize.sm');
+                font-size: 0.875rem;
+                line-height: 1.25rem;
                 position: relative;
                 transition: all 0.2s ease;
                 
                 // Hover effect
                 &:hover {
-                    color: theme('colors.blue.600');
-                    background-color: theme('colors.blue.50');
-                    border-bottom-color: theme('colors.blue.400');
+                    color: #2563eb;
+                    background-color: #eff6ff;
+                    border-bottom-color: #60a5fa;
                 }
                 
                 // Active state - modern tab look
                 &.active,
                 &.show {
-                    color: theme('colors.blue.700');
+                    color: #1d4ed8;
                     font-weight: 600;
                     background-color: transparent;
-                    border-bottom-color: theme('colors.blue.600');
+                    border-bottom-color: #2563eb;
                     
                     &::after {
                         content: '';
@@ -54,15 +59,15 @@
                         right: 0;
                         height: 3px;
                         background: linear-gradient(90deg, 
-                            theme('colors.blue.600'), 
-                            theme('colors.blue.400')
+                            #2563eb, 
+                            #60a5fa
                         );
                     }
                 }
                 
                 // Icon in tabs
                 .icon {
-                    @apply mr-2;
+                    margin-right: 0.5rem;
                     transition: transform 0.2s ease;
                 }
                 
@@ -77,7 +82,7 @@
 // Responsive padding
 @include media-breakpoint-up(md) {
     .secondary-navigation .navigation {
-        padding: 0 calc(0.5rem + theme('spacing.4'));
+        padding: 0 calc(0.5rem + 1rem);
     }
 }
 

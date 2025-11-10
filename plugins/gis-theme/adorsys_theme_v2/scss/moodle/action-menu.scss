@@ -4,7 +4,8 @@
 }
 
 .action-menu {
-    @apply whitespace-nowrap inline;
+    white-space: nowrap;
+    display: inline;
 
     // Kebab action menus do no show chevrons or extra dropdown icons.
     .dropdown-toggle.no-caret {
@@ -18,7 +19,8 @@
     }
 
     .dropdown.downleft .dropdown-subpanel-content {
-        @apply right-0 left-auto;
+        right: 0;
+        left: auto;
     }
 
     .dropdown-subpanel.content-displayed {
@@ -26,12 +28,12 @@
     }
 
     .dropdown-subpanel-content {
-        max-width: theme('spacing.modalSm');
+        max-width: 448px;
         box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
     }
 
     .dropdown-subpanel-content.show {
-        @apply animate-animate-pop;
+        animation: pop 0.2s ease-out;
     }
 
     // Chevrons in sub panel items are always to end.
@@ -65,7 +67,9 @@
 // Make links in a menu clickable anywhere in the row.
 .dropdown-item {
     a {
-        @apply block w-full text-base-content;
+        display: block;
+        width: 100%;
+        color: var(--fallback-bc, oklch(var(--bc) / 1));
     }
 
     &.active,
@@ -74,7 +78,7 @@
     &:focus,
     &:focus-within {
         a {
-            @apply text-primary;
+            color: var(--fallback-p, oklch(var(--p) / 1));
         }
     }
 
@@ -86,7 +90,10 @@
 
         &:before {
             content: '✓'; /* Checkmark for selected item */
-            @apply absolute left-1.5 text-xs;
+            position: absolute;
+            left: 0.375rem;
+            font-size: 0.75rem;
+            line-height: 1rem;
         }
     }
 }
@@ -95,11 +102,11 @@
 
     &:focus,
     &:focus-within {
-        outline: solid theme('colors.primary.200');
+        outline: solid oklch(var(--p) / 0.2);
     }
 
     a:focus,
     a:focus-visible {
-        @apply outline-0;
+        outline: 0;
     }
 }

@@ -6,13 +6,15 @@
 .navbar.fixed-top,
 .navbar-fixed-top {
     // Structure & Spacing
-    @apply p-0 flex items-stretch;
+    padding: 0;
+    display: flex;
+    align-items: stretch;
     height: $navbar-height;
     
     // Visual Style - Modern, clean look
-    background-color: theme('colors.white');
+    background-color: #ffffff;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-    border-bottom: 1px solid theme('colors.gray.200');
+    border-bottom: 1px solid #e5e7eb;
     
     // Smooth transitions
     transition: box-shadow 0.3s ease, background-color 0.3s ease;
@@ -26,7 +28,7 @@
     .container-fluid {
         display: flex;
         align-items: center;
-        gap: theme('spacing.4');
+        gap: 1rem;
         width: 100%;
         // Align items to the start
         justify-content: flex-start;
@@ -39,7 +41,10 @@
 
     // Brand Logo Area
     .navbar-brand {
-        @apply flex items-center px-4;
+        display: flex;
+        align-items: center;
+        padding-left: 1rem;
+        padding-right: 1rem;
         transition: opacity 0.2s ease;
         
         &:hover {
@@ -58,20 +63,24 @@
     
     // Navigation Links - Modern styling
     .nav-link {
-        @apply flex items-center px-4;
+        display: flex;
+        align-items: center;
+        padding-left: 1rem;
+        padding-right: 1rem;
         height: 100%;
         white-space: nowrap;
-        color: theme('colors.gray.700');
+        color: #374151;
         font-weight: 500;
-        font-size: theme('fontSize.sm');
+        font-size: 0.875rem;
+        line-height: 1.25rem;
         position: relative;
         transition: all 0.2s ease;
         
         // Hover effect with bottom border
         &:hover,
         &:focus {
-            color: theme('colors.blue.600');
-            background-color: theme('colors.gray.50');
+            color: #2563eb;
+            background-color: #f9fafb;
             
             &::after {
                 content: '';
@@ -80,14 +89,14 @@
                 left: 0;
                 right: 0;
                 height: 3px;
-                background-color: theme('colors.blue.600');
+                background-color: #2563eb;
                 animation: slideIn 0.2s ease;
             }
         }
         
         // Active state
         &.active {
-            color: theme('colors.blue.700');
+            color: #1d4ed8;
             font-weight: 600;
             
             &::after {
@@ -97,14 +106,15 @@
                 left: 0;
                 right: 0;
                 height: 3px;
-                background-color: theme('colors.blue.700');
+                background-color: #1d4ed8;
             }
         }
     }
     
     // Visual Dividers
     .divider {
-        @apply w-px bg-gray-200;
+        width: 1px;
+        background-color: #e5e7eb;
         height: 60%;
         align-self: center;
         opacity: 0.6;
@@ -124,10 +134,10 @@
         order: 99; // Ensure this block sits at the far right in the flex row
         display: flex;
         align-items: center;
-        gap: theme('spacing.2');
+        gap: 0.5rem;
 
         .nav-link {
-            padding: 0 theme('spacing.3');
+            padding: 0 0.75rem;
         }
 
         // Do not display when only the container has .show (safety guard)
@@ -137,15 +147,24 @@
     
     // Login Button/Link
     .login {
-        @apply flex items-center px-4;
+        display: flex;
+        align-items: center;
+        padding-left: 1rem;
+        padding-right: 1rem;
         
         .nav-link {
-            @apply bg-blue-600 text-white rounded-lg px-6 py-2;
+            background-color: #2563eb;
+            color: #ffffff;
+            border-radius: 0.5rem;
+            padding-left: 1.5rem;
+            padding-right: 1.5rem;
+            padding-top: 0.5rem;
+            padding-bottom: 0.5rem;
             height: auto;
             font-weight: 600;
             
             &:hover {
-                @apply bg-blue-700;
+                background-color: #1d4ed8;
                 transform: translateY(-1px);
                 box-shadow: 0 4px 8px rgba(37, 99, 235, 0.3);
                 
@@ -158,37 +177,48 @@
     
     // User Menu Dropdown
     .usermenu {
-        @apply flex items-center;
+        display: flex;
+        align-items: center;
         
         .action-menu {
-            @apply flex items-center h-full;
+            display: flex;
+            align-items: center;
+            height: 100%;
         }
         
         .dropdown {
-            @apply flex items-center h-full;
+            display: flex;
+            align-items: center;
+            height: 100%;
             
             .dropdown-toggle {
-                @apply p-0 px-3 rounded-none flex items-center h-full;
+                padding: 0;
+                padding-left: 0.75rem;
+                padding-right: 0.75rem;
+                border-radius: 0;
+                display: flex;
+                align-items: center;
+                height: 100%;
                 background: transparent;
                 border: none;
-                color: theme('colors.gray.700');
+                color: #374151;
                 font-weight: 500;
                 transition: all 0.2s ease;
                 
                 &:hover,
                 &:focus {
-                    color: theme('colors.blue.600');
-                    background-color: theme('colors.gray.50');
+                    color: #2563eb;
+                    background-color: #f9fafb;
                 }
                 
                 // User avatar styling
                 .userpicture {
-                    @apply rounded-full;
-                    border: 2px solid theme('colors.gray.300');
+                    border-radius: 9999px;
+                    border: 2px solid #d1d5db;
                     transition: border-color 0.2s ease;
                     
                     &:hover {
-                        border-color: theme('colors.blue.500');
+                        border-color: #3b82f6;
                     }
                 }
             }
@@ -196,12 +226,12 @@
         
         // Dropdown Menu Styling
         .dropdown-menu {
-            @apply min-w-[235px];
-            border-radius: theme('spacing.2');
+            min-width: 235px;
+            border-radius: 0.5rem;
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-            border: 1px solid theme('colors.gray.200');
-            padding: theme('spacing.2') 0;
-            margin-top: theme('spacing.2');
+            border: 1px solid #e5e7eb;
+            padding: 0.5rem 0;
+            margin-top: 0.5rem;
             
             .carousel-navigation-link {
                 > * {
@@ -210,58 +240,76 @@
             }
             
             .dropdown-item {
-                @apply px-4 py-2;
-                color: theme('colors.gray.700');
-                font-size: theme('fontSize.sm');
+                padding-left: 1rem;
+                padding-right: 1rem;
+                padding-top: 0.5rem;
+                padding-bottom: 0.5rem;
+                color: #374151;
+                font-size: 0.875rem;
+                line-height: 1.25rem;
                 transition: all 0.15s ease;
                 position: relative;
                 
                 &:hover,
                 &:focus {
-                    background-color: theme('colors.blue.50');
-                    color: theme('colors.blue.700');
-                    padding-left: theme('spacing.5');
+                    background-color: #eff6ff;
+                    color: #1d4ed8;
+                    padding-left: 1.25rem;
                 }
                 
                 &.carousel-navigation-link::after {
                     content: '→';
-                    @apply absolute right-3 text-gray-400;
-                    font-size: theme('fontSize.base');
-                    padding-top: theme('spacing.0.5');
+                    position: absolute;
+                    right: 0.75rem;
+                    color: #9ca3af;
+                    font-size: 1rem;
+                    line-height: 1.5rem;
+                    padding-top: 0.125rem;
                     transition: all 0.2s ease;
                 }
                 
                 &.carousel-navigation-link:hover::after {
-                    right: theme('spacing.2');
-                    color: theme('colors.blue.600');
+                    right: 0.5rem;
+                    color: #2563eb;
                 }
             }
             
             // Submenu Styling
             .submenu {
                 .header {
-                    @apply px-4 py-2 text-xs uppercase font-semibold;
-                    color: theme('colors.gray.500');
+                    padding-left: 1rem;
+                    padding-right: 1rem;
+                    padding-top: 0.5rem;
+                    padding-bottom: 0.5rem;
+                    font-size: 0.75rem;
+                    line-height: 1rem;
+                    text-transform: uppercase;
+                    font-weight: 600;
+                    color: #6b7280;
                     letter-spacing: 0.05em;
                     
                     .icon {
-                        @apply w-5 h-5 m-0;
-                        font-size: theme('fontSize.xl');
+                        width: 1.25rem;
+                        height: 1.25rem;
+                        margin: 0;
+                        font-size: 1.25rem;
+                        line-height: 1.75rem;
                     }
                 }
                 
                 .items {
                     .dropdown-item {
                         &[aria-current="true"] {
-                            background-color: theme('colors.blue.50');
-                            color: theme('colors.blue.700');
+                            background-color: #eff6ff;
+                            color: #1d4ed8;
                             font-weight: 600;
                             
                             &::before {
                                 content: '✓';
-                                @apply mr-2;
-                                color: theme('colors.blue.600');
-                                font-size: theme('fontSize.xs');
+                                margin-right: 0.5rem;
+                                color: #2563eb;
+                                font-size: 0.75rem;
+                                line-height: 1rem;
                             }
                         }
                     }
@@ -273,14 +321,22 @@
     // Language Menu
     .langmenu {
         .dropdown {
-            @apply flex items-center h-full;
+            display: flex;
+            align-items: center;
+            height: 100%;
             
             .dropdown-toggle {
-                @apply p-0 px-3 rounded-none flex items-center h-full;
+                padding: 0;
+                padding-left: 0.75rem;
+                padding-right: 0.75rem;
+                border-radius: 0;
+                display: flex;
+                align-items: center;
+                height: 100%;
                 transition: all 0.2s ease;
                 
                 &:hover {
-                    background-color: theme('colors.gray.50');
+                    background-color: #f9fafb;
                 }
             }
         }
@@ -288,15 +344,16 @@
         .dropdown-menu {
             .dropdown-item {
                 &[aria-current="true"] {
-                    background-color: theme('colors.blue.50');
-                    color: theme('colors.blue.700');
+                    background-color: #eff6ff;
+                    color: #1d4ed8;
                     font-weight: 600;
                     
                     &::before {
                         content: '✓';
-                        @apply mr-2;
-                        font-size: theme('fontSize.xs');
-                        padding-left: theme('spacing.1');
+                        margin-right: 0.5rem;
+                        font-size: 0.75rem;
+                        line-height: 1rem;
+                        padding-left: 0.25rem;
                     }
                 }
             }
@@ -313,7 +370,9 @@
     // Action Menus
     .moodle-actionmenu .menubar,
     .action-menu-trigger .dropdown {
-        @apply h-full flex items-center;
+        height: 100%;
+        display: flex;
+        align-items: center;
     }
     
     // Dropdown max height with scroll
@@ -327,15 +386,15 @@
         }
         
         &::-webkit-scrollbar-track {
-            background: theme('colors.gray.100');
+            background: #f3f4f6;
         }
         
         &::-webkit-scrollbar-thumb {
-            background: theme('colors.gray.400');
+            background: #9ca3af;
             border-radius: 3px;
             
             &:hover {
-                background: theme('colors.gray.500');
+                background: #6b7280;
             }
         }
     }
@@ -350,11 +409,11 @@
                 &.carousel-navigation-link::after {
                     content: '←';
                     right: auto;
-                    left: theme('spacing.3');
+                    left: 0.75rem;
                 }
                 
                 &.carousel-navigation-link:hover::after {
-                    left: theme('spacing.2');
+                    left: 0.5rem;
                 }
             }
         }

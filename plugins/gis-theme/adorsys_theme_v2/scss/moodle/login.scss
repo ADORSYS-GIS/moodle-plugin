@@ -2,7 +2,8 @@
 // Variables are no longer needed as they are replaced by Tailwind's theme() or direct classes.
 
 .pagelayout-login #region-main {
-    @apply border-0 bg-inherit;
+    border: 0;
+    background-color: inherit;
 }
 
 .pagelayout-login #page {
@@ -20,14 +21,20 @@
 }
 
 .login-container {
-    @apply bg-white p-12 shadow-lg mb-8 rounded-lg; // 3rem = 12 units, 2rem = 8 units
+    background-color: #ffffff;
+    padding: 3rem;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    margin-bottom: 2rem;
+    border-radius: 0.5rem;
     width: 100%;
     max-width: 560px;
     min-height: 520px;
     .login-languagemenu {
-        @apply flex justify-start;
+        display: flex;
+        justify-content: flex-start;
         .dropdown-menu {
-            @apply max-h-75 overflow-y-auto; // 300px is roughly 75 units
+            max-height: 300px;
+            overflow-y: auto;
         }
     }
     .login-logo {
@@ -36,15 +43,19 @@
     margin-bottom: 1rem; // 1rem = 4 units
     }
     .login-divider {
-        @apply mt-6 mb-6 border-t border-gray-300; // 1.5rem = 6 units
+        margin-top: 1.5rem;
+        margin-bottom: 1.5rem;
+        border-top: 1px solid #d1d5db;
     }
 
     h1.login-heading {
-        @apply text-2xl; // Equivalent to $h2-font-size
+        font-size: 1.5rem;
+        line-height: 2rem;
     }
 
     h2.login-heading {
-        @apply text-xl; // Equivalent to $h4-font-size
+        font-size: 1.25rem;
+        line-height: 1.75rem;
     }
     .login-identityproviders {
         .login-identityprovider-btn {
@@ -53,11 +64,14 @@
         }
     }
     .divider {
-        @apply w-px bg-gray-300 h-8; // $border-width is usually 1px, $font-size-base * 2 is 2rem = 32px = 8 units
+        width: 1px;
+        background-color: #d1d5db;
+        height: 2rem;
     }
     .action-menu-trigger {
         a {
-            @apply my-2; // 0.5rem = 2 units
+            margin-top: 0.5rem;
+            margin-bottom: 0.5rem;
         }
     }
 }
@@ -195,8 +209,8 @@
     justify-content: center;
 }
 
-@media (min-width: theme('screens.md')) {
+@media (min-width: 768px) {
     .login-container {
-        @apply w-[560px] !important; /* stylelint-disable-line declaration-no-important */
+        width: 560px !important; /* stylelint-disable-line declaration-no-important */
     }
 }

@@ -1,10 +1,13 @@
 /* admin.less */
 .formtable tbody th {
-    @apply font-normal text-right;
+    font-weight: 400;
+    text-align: right;
 }
 
 .path-admin #assignrole {
-    @apply w-[60%] mx-auto;
+    width: 60%;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .path-admin .admintable .leftalign {
@@ -20,20 +23,24 @@
 }
 
 .path-admin .incompatibleblockstable td.c0 {
-    @apply font-bold;
+    font-weight: 700;
 }
 
 #page-admin-course-category .addcategory {
-    @apply p-2.5;
+    padding: 0.625rem;
 }
 
 #page-admin-course-index .editcourse {
-    @apply my-5 mx-auto;
+    margin-top: 1.25rem;
+    margin-bottom: 1.25rem;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 #page-admin-course-index .editcourse th,
 #page-admin-course-index .editcourse td {
-    @apply px-2.5;
+    padding-left: 0.625rem;
+    padding-right: 0.625rem;
 }
 
 .timewarninghidden {
@@ -44,17 +51,18 @@
 #page-admin-qtypes #qtypes form,
 #page-admin-qbehaviours #qbehaviours div,
 #page-admin-qbehaviours #qbehaviours form {
-    @apply inline;
+    display: inline;
 }
 
 #page-admin-qtypes #qtypes img.spacer,
 #page-admin-qbehaviours #qbehaviours img.spacer {
-    @apply w-4;
+    width: 1rem;
 }
 
 #page-admin-qbehaviours .cell.c3,
 #page-admin-qtypes .cell.c3 {
-    @apply text-sm;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
 }
 
 #page-admin-lang .generalbox,
@@ -83,7 +91,10 @@
 }
 
 #page-admin-roles-define .topfields {
-    @apply my-4 mx-0 mb-8;
+    margin-top: 1rem;
+    margin-bottom: 2rem;
+    margin-left: 0;
+    margin-right: 0;
 }
 
 #page-admin-roles-override .capcurrent,
@@ -98,11 +109,12 @@
 
 #page-admin-roles-explain #chooseuser h3,
 #page-admin-roles-usersroles .contextname {
-    @apply mt-0;
+    margin-top: 0;
 }
 
 #page-admin-roles-explain #chooseusersubmit {
-    @apply mt-0 text-center;
+    margin-top: 0;
+    text-align: center;
 }
 
 #page-admin-roles-usersroles p {
@@ -112,16 +124,20 @@
 #page-admin-roles-override .cell.c1,
 #page-admin-roles-assign .cell.c3,
 #page-admin-roles-assign .cell.c1 {
-    @apply pt-3;
+    padding-top: 0.75rem;
 }
 
 #page-admin-roles-override .overridenotice,
 #page-admin-roles-define .definenotice {
-    @apply my-4 mx-[10%] mb-8 text-left;
+    margin-top: 1rem;
+    margin-bottom: 2rem;
+    margin-left: 10%;
+    margin-right: 10%;
+    text-align: left;
 }
 
 #page-admin-index .upgradekeyreq {
-    @apply min-w-[220px];
+    min-width: 220px;
 }
 
 #page-admin-index .adminwarning.availableupdatesinfo .moodleupdateinfo span {
@@ -129,7 +145,7 @@
 }
 
 #page-admin-index .updateplugin div {
-    @apply mb-2;
+    margin-bottom: 0.5rem;
 }
 
 #page-admin-user-user_bulk #users .fgroup {
@@ -147,7 +163,7 @@
 }
 
 #page-admin-lang .translator {
-    @apply border border-solid;
+    border: 1px solid;
 }
 
 // This is the CSS for the role assignment control.
@@ -156,30 +172,37 @@
 }
 
 .path-admin .roleassigntable td {
-    @apply align-top py-0.5 px-0.75;
+    vertical-align: top;
+    padding-top: 0.125rem;
+    padding-bottom: 0.125rem;
+    padding-left: 0.1875rem;
+    padding-right: 0.1875rem;
 }
 
 .path-admin .roleassigntable p {
-    @apply text-left my-0.5;
+    text-align: left;
+    margin-top: 0.125rem;
+    margin-bottom: 0.125rem;
 }
 
 .path-admin .roleassigntable #existingcell,
 .path-admin .roleassigntable #potentialcell {
-    @apply w-[42%];
+    width: 42%;
 }
 
 // Targetting the label at the top.
 .path-admin .roleassigntable #existingcell p > label:first-child,
 .path-admin .roleassigntable #potentialcell p > label:first-child {
-    @apply font-bold;
+    font-weight: 700;
 }
 
 .path-admin .roleassigntable #buttonscell {
-    @apply w-[16%];
+    width: 16%;
 }
 
 .path-admin .roleassigntable #buttonscell #assignoptions {
-    @apply text-sm;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
 }
 
 .path-admin .roleassigntable #removeselect_wrapper,
@@ -188,7 +211,8 @@
 }
 
 .path-admin table.rolecap tr.rolecap th {
-    @apply text-left font-normal;
+    text-align: left;
+    font-weight: 400;
 }
 
 .path-admin .rolecap .hiddenrow {
@@ -201,14 +225,20 @@
         .allow,
         .prevent,
         .prohibit {
-            @apply text-center p-0 min-w-[3.5em];
+            text-align: center;
+            padding: 0;
+            min-width: 3.5em;
         }
     }
 }
 
 .path-admin .rolecap .cap-name,
 .path-admin .rolecap .note {
-    @apply block text-sm whitespace-nowrap font-normal;
+    display: block;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    white-space: nowrap;
+    font-weight: 400;
 }
 
 .path-admin .rolecap label {
@@ -222,14 +252,14 @@
 .format-site {
     .header-maxwidth,
     .secondary-navigation .navigation .nav-tabs {
-        @apply max-w-none;
+        max-width: none;
     }
 }
 .path-admin.path-admin-roles:not(.format-site),
 .path-admin.path-admin-tool-lp {
     .header-maxwidth,
     .secondary-navigation .navigation .nav-tabs {
-        max-width: theme('spacing.courseContentMaxwidth');
+        max-width: 830px;
     }
 }
 
@@ -246,11 +276,16 @@
 }
 
 .environmenttable .cell {
-    @apply py-0.5 px-2;
+    padding-top: 0.125rem;
+    padding-bottom: 0.125rem;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
 }
 
 #trustedhosts .table {
-    @apply mx-auto w-[500px];
+    margin-left: auto;
+    margin-right: auto;
+    width: 500px;
 }
 
 #trustedhosts .standard {
@@ -266,7 +301,10 @@
 }
 
 #adminsettings fieldset.error {
-    @apply my-0.5 mx-0 mb-1.5;
+    margin-top: 0.125rem;
+    margin-bottom: 0.375rem;
+    margin-left: 0;
+    margin-right: 0;
 }
 
 #adminsettings fieldset.error legend {
@@ -277,34 +315,40 @@
     /* rtl:ignore */
     text-align: left;
     /* rtl:ignore */
-    @apply ltr;
+    direction: ltr;
 }
 
 /* Styles for flags on admin settings */
 .adminsettingsflags {
-    @apply float-right;
+    float: right;
 }
 
 .adminsettingsflags label {
-    @apply mr-1.5;
+    margin-right: 0.375rem;
 }
 
 .form-description pre,
 .formsettingheading pre {
     /*rtl:ignore*/
-    @apply ltr;
+    direction: ltr;
 }
 
 .form-item .form-setting .form-htmlarea {
-    @apply inline;
+    display: inline;
 }
 
 .form-item .form-setting .form-htmlarea .htmlarea {
-    @apply w-[640px] block;
+    width: 640px;
+    display: block;
 }
 
 .form-item .form-setting .form-multicheckbox ul {
-    @apply list-none p-0 mt-1.5 m-0;
+    list-style: none;
+    padding: 0;
+    margin-top: 0.375rem;
+    margin-bottom: 0;
+    margin-left: 0;
+    margin-right: 0;
 }
 
 .form-item .form-setting .defaultsnext {
@@ -312,7 +356,9 @@
 }
 
 .form-item .form-setting .locked-checkbox {
-    @apply mr-0.5 ml-1.5 inline;
+    margin-right: 0.125rem;
+    margin-left: 0.375rem;
+    display: inline;
 }
 
 .form-item .form-setting .form-password .unmask,
@@ -321,15 +367,16 @@
 }
 
 .form-item .form-setting .form-defaultinfo {
-    @apply max-w-full break-words;
+    max-width: 100%;
+    overflow-wrap: break-word;
 }
 
 #admin-emoticons td input {
-    @apply w-[8em];
+    width: 8em;
 }
 
 #admin-emoticons td.c0 input {
-    @apply w-[4em];
+    width: 4em;
 }
 
 .admin_colourpicker,
@@ -338,39 +385,55 @@
 }
 
 .jsenabled .admin_colourpicker_preview {
-    @apply inline;
+    display: inline;
 }
 
 @media (min-width: 768px) {
     .jsenabled .admin_colourpicker {
-        @apply block h-[102px] w-[410px] mb-2.5 box-content;
+        display: block;
+        height: 102px;
+        width: 410px;
+        margin-bottom: 0.625rem;
+        box-sizing: content-box;
     }
     .admin_colourpicker .colourdialogue {
-        @apply float-left border border-gray-300;
+        float: left;
+        border: 1px solid #d1d5db;
     }
     .admin_colourpicker .previewcolour {
-        @apply border border-gray-300 ml-[301px];
+        border: 1px solid #d1d5db;
+        margin-left: 301px;
     }
 
     .admin_colourpicker .currentcolour {
-        @apply border border-gray-300 ml-[301px] border-t-0;
+        border: 1px solid #d1d5db;
+        border-top: 0;
+        margin-left: 301px;
     }
 }
 
 @media (min-width: 768px) {
     .jsenabled .admin_colourpicker {
-        @apply h-[150px] mb-2.5 block relative;
+        height: 150px;
+        margin-bottom: 0.625rem;
+        display: block;
+        position: relative;
     }
     .admin_colourpicker .previewcolour {
         display: none;
     }
     .admin_colourpicker .currentcolour {
-        @apply absolute border border-gray-200 top-[100px] left-0;
+        position: absolute;
+        border: 1px solid #e5e7eb;
+        top: 100px;
+        left: 0;
     }
 
 }
 .admin_colourpicker .loadingicon {
-    @apply align-middle mx-auto;
+    vertical-align: middle;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 #page-admin-index #notice .checkforupdates {
@@ -378,77 +441,100 @@
 }
 
 #page-admin-index #page-content .alert a {
-    @apply font-normal underline;
+    font-weight: 400;
+    text-decoration: underline;
 }
 
 // Plugins overview page at admin/plugins.php
 #page-admin-plugins {
     #plugins-overview-panel {
         .info {
-            @apply inline-block mr-4;
+            display: inline-block;
+            margin-right: 1rem;
 
             [data-filterby].active {
-                @apply font-bold;
+                font-weight: 700;
             }
         }
         .updateavailableinstallall {
-            @apply mr-4;
+            margin-right: 1rem;
         }
     }
 
     .checkforupdates {
-        @apply my-2.5 mx-0;
+        margin-top: 0.625rem;
+        margin-bottom: 0.625rem;
+        margin-left: 0;
+        margin-right: 0;
 
         .singlebutton {
-            @apply my-1.5 mx-0 p-0;
+            margin-top: 0.375rem;
+            margin-bottom: 0.375rem;
+            margin-left: 0;
+            margin-right: 0;
+            padding: 0;
 
             div,
             input {
-                @apply m-0 mr-0.75;
+                margin: 0;
+                margin-right: 0.1875rem;
             }
         }
     }
 
     .updateavailableinstallall {
-        @apply my-1.5 mx-0 p-0;
+        margin-top: 0.375rem;
+        margin-bottom: 0.375rem;
+        margin-left: 0;
+        margin-right: 0;
+        padding: 0;
 
         div,
         input {
-            @apply m-0 mr-0.75 mb-1.5;
+            margin: 0;
+            margin-right: 0.1875rem;
+            margin-bottom: 0.375rem;
         }
     }
 
     #plugins-control-panel {
         .status-missing td,
         .deprecatedtype td {
-            @apply bg-warning;
+            background-color: var(--fallback-wa, oklch(var(--wa) / 1));
         }
 
         .pluginname {
             .componentname {
-                @apply text-sm text-gray-600 ml-5.5;
+                font-size: 0.875rem;
+                line-height: 1.25rem;
+                color: #4b5563;
+                margin-left: 1.375rem;
             }
         }
 
         .version {
             .versionnumber {
-                @apply text-sm text-gray-600;
+                font-size: 0.875rem;
+                line-height: 1.25rem;
+                color: #4b5563;
             }
         }
 
         .uninstall {
             a {
-                @apply text-error;
+                color: var(--fallback-er, oklch(var(--er) / 1));
             }
         }
 
         .notes {
             .label {
-                @apply mr-0.75;
+                margin-right: 0.1875rem;
             }
 
             .requiredby {
-                @apply text-sm text-gray-600;
+                font-size: 0.875rem;
+                line-height: 1.25rem;
+                color: #4b5563;
             }
         }
     }
@@ -464,7 +550,7 @@
         .deprecatedtype,
         .status-downgrade {
             td {
-                @apply bg-error;
+                background-color: var(--fallback-er, oklch(var(--er) / 1));
             }
         }
     }
@@ -475,17 +561,20 @@
 #plugins-check-page,
 #plugins-control-panel {
     .pluginupdateinfo {
-        @apply bg-info;
+        background-color: var(--fallback-in, oklch(var(--in) / 1));
 
         &.maturity50 {
-            @apply bg-error;
+            background-color: var(--fallback-er, oklch(var(--er) / 1));
         }
 
         &.maturity100,
         &.maturity150 {
-            @apply bg-warning;
+            background-color: var(--fallback-wa, oklch(var(--wa) / 1));
         }
-        @apply p-1.5 my-2.5 rounded-md;
+        padding: 0.375rem;
+        margin-top: 0.625rem;
+        margin-bottom: 0.625rem;
+        border-radius: 0.375rem;
 
         .info {
             display: inline-block;
@@ -496,11 +585,16 @@
         }
 
         .singlebutton {
-            @apply my-1.5 mx-0 p-0;
+            margin-top: 0.375rem;
+            margin-bottom: 0.375rem;
+            margin-left: 0;
+            margin-right: 0;
+            padding: 0;
 
             div,
             input {
-                @apply m-0 mr-0.75;
+                margin: 0;
+                margin-right: 0.1875rem;
             }
         }
     }
@@ -508,7 +602,11 @@
 
 .plugins-management-confirm-buttons {
     > div {
-        @apply inline-block my-4 mx-4 mr-0;
+        display: inline-block;
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+        margin-left: 1rem;
+        margin-right: 0;
     }
 
     .continue {
@@ -531,7 +629,9 @@
 
 /** MNet networking */
 #page-admin-mnet-peers .box.deletedhosts {
-    @apply mb-4 text-sm;
+    margin-bottom: 1rem;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
 }
 
 #core-cache-plugin-summaries table,
@@ -552,18 +652,26 @@
 #core-cache-rescan-definitions,
 #core-cache-mode-mappings .edit-link,
 #core-cache-lock-additional-actions .new-instance {
-    @apply mt-1.5 text-center;
+    margin-top: 0.375rem;
+    text-align: center;
 }
 
 .maintenancewarning {
-    @apply fixed bottom-0 right-0 m-4 overflow-hidden z-dropdown;
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    margin: 1rem;
+    overflow: hidden;
+    z-index: 1000;
 }
 .jsenabled .maintenancewarning {
-    @apply transition-all duration-200;
+    transition-property: all;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 200ms;
 }
 
 .modal.modal-in-page {
-    @apply z-0;
+    z-index: 0;
 }
 
 #region-main {
@@ -589,37 +697,45 @@
     border-bottom: 0;
     }
     .adminpagepath {
-        @apply flex flex-wrap list-none p-0 m-0 mb-6;
+        display: flex;
+        flex-wrap: wrap;
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        margin-bottom: 1.5rem;
         li {
             + li:before {
-                @apply pr-2 pl-2;
+                padding-right: 0.5rem;
+                padding-left: 0.5rem;
                 content: "/"; /* Replaced Sass variable with literal */
             }
         }
     }
     @media (min-width: 640px) {
         .container {
-            @apply break-words;
+            overflow-wrap: break-word;
         }
     }
 }
 
 #page-admin-tasklogs {
     .task-class {
-        @apply text-sm text-gray-600;
+        font-size: 0.875rem;
+        line-height: 1.25rem;
+        color: #4b5563;
     }
 }
 
 .path-admin-tool-uploaduser {
     .uuwarning {
-        @apply bg-warning;
+        background-color: var(--fallback-wa, oklch(var(--wa) / 1));
     }
 
     .uuerror {
-        @apply bg-error;
+        background-color: var(--fallback-er, oklch(var(--er) / 1));
     }
 
     .uuinfo {
-        @apply bg-success;
+        background-color: var(--fallback-su, oklch(var(--su) / 1));
     }
 }

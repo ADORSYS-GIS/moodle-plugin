@@ -1,18 +1,18 @@
 /* core.less */
 
-$bg-inverse-link-color: theme('colors.white') !default;
+$bg-inverse-link-color: #ffffff !default;
 
-$dropzone-border: theme('colors.gray.900') !default;
+$dropzone-border: #111827 !default;
 
-$collapse-list-item-padding-y: theme('spacing.2') !default;
-$collapse-list-item-padding-x: theme('spacing.4') !default;
-$collapse-list-item-hover-bg: theme('colors.blue.100') !default;
-$collapse-list-item-hover-border: theme('colors.blue.200') !default;
+$collapse-list-item-padding-y: 0.5rem !default;
+$collapse-list-item-padding-x: 1rem !default;
+$collapse-list-item-hover-bg: #dbeafe !default;
+$collapse-list-item-hover-border: #bfdbfe !default;
 
-$thin-scroll-bg-thumb: theme('colors.gray.600') !default;
-$thin-scroll-bg-hover: theme('colors.gray.700') !default;
+$thin-scroll-bg-thumb: #4b5563 !default;
+$thin-scroll-bg-hover: #374151 !default;
 
-$font-size-xs: theme('fontSize.xs') !default;
+$font-size-xs: 0.75rem !default;
 
 #region-main {
     overflow-y: visible;
@@ -20,14 +20,27 @@ $font-size-xs: theme('fontSize.xs') !default;
 }
 
 .context-header-settings-menu,
-.regiwhat is darton-main-settings-menu {
-    @apply sm:float-right sm:w-auto sm:max-w-[4em] sm:h-8 sm:block sm:mt-1;
-    @apply md:flex md:justify-end;
+.region-main-settings-menu {
+    @media (min-width: 640px) {
+        float: right;
+        width: auto;
+        max-width: 4em;
+        height: 2rem;
+        display: block;
+        margin-top: 0.25rem;
+    }
+    @media (min-width: 768px) {
+        display: flex;
+        justify-content: flex-end;
+    }
 }
 
 .context-header-settings-menu .dropdown-toggle > .icon,
 #region-main-settings-menu .dropdown-toggle > .icon {
-    @apply h-6 text-2xl w-auto;
+    height: 1.5rem;
+    font-size: 1.5rem;
+    line-height: 2rem;
+    width: auto;
 }
 /** Prevent user notifications overlapping with region main settings menu */
 #user-notifications {
@@ -97,7 +110,7 @@ a:not([class]),
         outline: none;
     color: #111827;
     background-color: #e0e7ff;
-        box-shadow: 0 -2px theme('colors.indigo.100'), 0 2px theme('colors.gray.800');
+        box-shadow: 0 -2px #e0e7ff, 0 2px #1f2937;
     }
     &:focus:hover {
         text-decoration: none;
@@ -207,16 +220,16 @@ button.btn-close,
 
 .red,
 .notifyproblem {
-    @apply text-warning;
+    color: var(--fallback-wa, oklch(var(--wa) / 1));
 }
 
 .green,
 .notifysuccess {
-    @apply text-success;
+    color: var(--fallback-su, oklch(var(--su) / 1));
 }
 
 .highlight {
-    @apply text-info;
+    color: var(--fallback-in, oklch(var(--in) / 1));
 }
 
 .bg-primary-light {
@@ -240,7 +253,7 @@ a.autolink {
 /* Block which is hidden if javascript enabled, prevents fickering visible when JS from footer used! */
 .collapsibleregioncaption {
     white-space: nowrap;
-    min-height: theme('lineHeight.normal');
+    min-height: 1.5;
 }
 
 /* ========================================
@@ -461,7 +474,15 @@ form.popupform div {
 
 // Accessibility: text 'seen' by screen readers but not visual users.
 .accesshide {
-    @apply sr-only;
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
 }
 
 span.hide,
@@ -579,10 +600,15 @@ a.skip:active {
 
 // My Moodle
 .path-my .coursebox {
-    @apply my-4 p-0;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    padding: 0;
 
     .overview {
-        @apply my-2 mx-4;
+        margin-top: 0.5rem;
+        margin-bottom: 0.5rem;
+        margin-left: 1rem;
+        margin-right: 1rem;
     }
 }
 
@@ -720,7 +746,7 @@ table.mod_index {
 * Completion progress report
 */
 .completion-expired {
-    @apply text-warning;
+    color: var(--fallback-wa, oklch(var(--wa) / 1));
 }
 
 .completion-expected {
@@ -754,7 +780,7 @@ span.flagged-tag,
 tr.flagged-tag,
 span.flagged-tag a,
 tr.flagged-tag a {
-    @apply text-warning;
+    color: var(--fallback-wa, oklch(var(--wa) / 1));
 }
 
 .tag-management-table {
@@ -1090,7 +1116,7 @@ audio.mediaplugin_html5audio {
 .pagelayout-popup {
     .moodle-dialogue-base {
         .moodle-dialogue-lightbox {
-            @apply bg-transparent;
+            background-color: transparent;
         }
         .moodle-dialogue {
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); // Using a generic shadow for now
@@ -1132,7 +1158,9 @@ audio.mediaplugin_html5audio {
 }
 
 .moodle-dialogue-base .moodle-dialogue-wrap .moodle-dialogue-hd {
-    @apply flex p-4 border-b border-gray-300; // Assuming $dialogue-base-hd-border-color is a light gray
+    display: flex;
+    padding: 1rem;
+    border-bottom: 1px solid #d1d5db;
 }
 
 .moodle-dialogue-base .moodle-dialogue-wrap .moodle-dialogue-hd.yui3-widget-hd {
@@ -1145,7 +1173,11 @@ audio.mediaplugin_html5audio {
 }
 
 .moodle-dialogue-base .moodle-dialogue-wrap .moodle-dialogue-hd h5 {
-    @apply text-2xl font-normal mb-0 leading-normal;
+    font-size: 1.5rem;
+    line-height: 2rem;
+    font-weight: 400;
+    margin-bottom: 0;
+    line-height: normal;
 }
 
 .moodle-dialogue-base .moodle-dialogue-wrap .moodle-dialogue-hd .yui3-widget-buttons {
@@ -1159,7 +1191,16 @@ audio.mediaplugin_html5audio {
 }
 
 .moodle-dialogue-base .closebutton {
-    @apply p-4 -my-4 -mx-4 ml-auto relative bg-transparent border-0 shadow-none opacity-70;
+    padding: 1rem;
+    margin-top: -1rem;
+    margin-bottom: -1rem;
+    margin-left: auto;
+    margin-right: -1rem;
+    position: relative;
+    background-color: transparent;
+    border: 0;
+    box-shadow: none;
+    opacity: 0.7;
     &:hover,
     &:active {
         opacity: 1;
@@ -1205,15 +1246,22 @@ audio.mediaplugin_html5audio {
 }
 
 .moodle-dialogue-exception .param-stacktrace .stacktrace-file {
-    @apply text-gray-700 text-sm; // Assuming a dark gray color
+    color: #374151;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
 }
 
 .moodle-dialogue-exception .param-stacktrace .stacktrace-line {
-    @apply text-warning text-sm;
+    color: var(--fallback-wa, oklch(var(--wa) / 1));
+    font-size: 0.875rem;
+    line-height: 1.25rem;
 }
 
 .moodle-dialogue-exception .param-stacktrace .stacktrace-call {
-    @apply text-gray-800 text-sm border-b border-gray-300; // Assuming dark gray and light gray
+    color: #1f2937;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    border-bottom: 1px solid #d1d5db;
 }
 
 .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft:empty {
@@ -1275,7 +1323,15 @@ audio.mediaplugin_html5audio {
 }
 
 .moodle-dialogue .moodle-dialogue-bd .content-lightbox {
-    @apply opacity-75 w-full h-full top-0 left-0 bg-gray-200 text-center py-10; // Assuming light gray
+    opacity: 0.75;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background-color: #e5e7eb;
+    text-align: center;
+    padding-top: 2.5rem;
+    padding-bottom: 2.5rem;
 }
 /* Apply a default max-height on tooltip text */
 .moodle-dialogue .tooltiptext {
@@ -1307,7 +1363,10 @@ audio.mediaplugin_html5audio {
 }
 
 .chooserdialogue .moodle-dialogue-wrap .moodle-dialogue-bd {
-    @apply p-0 bg-white rounded-b-lg; // Assuming white background
+    padding: 0;
+    background-color: #ffffff;
+    border-bottom-left-radius: 0.5rem;
+    border-bottom-right-radius: 0.5rem;
 }
 /* Center the submit buttons within the area */
 .choosercontainer #chooseform .submitbuttons {
@@ -1328,7 +1387,8 @@ audio.mediaplugin_html5audio {
 }
 /* Various settings for the options area */
 .choosercontainer #chooseform .options {
-    @apply relative border-b border-gray-300; // Assuming light gray
+    position: relative;
+    border-bottom: 1px solid #d1d5db;
 }
 /* Only set these options if we're showing the js container */
 .jschooser .choosercontainer #chooseform .alloptions {
@@ -1378,7 +1438,11 @@ audio.mediaplugin_html5audio {
 }
 
 .choosercontainer #chooseform .option label {
-    @apply block m-0 py-2 border-b border-gray-200; // Assuming light gray
+    display: block;
+    margin: 0;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #e5e7eb;
 }
 
 .choosercontainer #chooseform .option .icon {
@@ -1403,7 +1467,18 @@ audio.mediaplugin_html5audio {
 /* The instruction/help area */
 .jschooser .choosercontainer #chooseform .instruction,
 .jschooser .choosercontainer #chooseform .typesummary {
-    @apply hidden absolute top-0 right-0 bottom-0 left-60 m-0 p-6 bg-gray-50 overflow-x-hidden overflow-y-auto leading-loose; // Assuming light gray
+    display: none;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 15rem;
+    margin: 0;
+    padding: 1.5rem;
+    background-color: #f9fafb;
+    overflow-x: hidden;
+    overflow-y: auto;
+    line-height: 1.75;
 }
 /* Selected option settings */
 .jschooser .choosercontainer #chooseform .instruction,
@@ -1412,7 +1487,9 @@ audio.mediaplugin_html5audio {
 }
 
 .choosercontainer #chooseform .selected {
-    @apply bg-indigo-100 -mt-px pt-px; // Assuming a light indigo for selected state
+    background-color: #e0e7ff;
+    margin-top: -1px;
+    padding-top: 1px;
 }
 
 
@@ -1442,19 +1519,55 @@ audio.mediaplugin_html5audio {
 }
 
 .formlisting {
-    @apply relative my-4 p-4 bg-white border border-gray-300 rounded-md; // Assuming white background and light gray border
+    position: relative;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    padding: 1rem;
+    background-color: #ffffff;
+    border: 1px solid #d1d5db;
+    border-radius: 0.375rem;
 }
 
 .formlistingmore {
-    @apply absolute cursor-pointer -bottom-px -right-px px-2 py-1 text-xs font-bold bg-gray-200 border border-gray-300 text-gray-700 rounded-tr-md rounded-bl-md; // Assuming light gray colors
+    position: absolute;
+    cursor: pointer;
+    bottom: -1px;
+    right: -1px;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
+    font-size: 0.75rem;
+    line-height: 1rem;
+    font-weight: 700;
+    background-color: #e5e7eb;
+    border: 1px solid #d1d5db;
+    color: #374151;
+    border-top-right-radius: 0.375rem;
+    border-bottom-left-radius: 0.375rem;
 }
 
 .formlistingall {
-    @apply my-4 p-0 rounded-md;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    padding: 0;
+    border-radius: 0.375rem;
 }
 
 .formlistingrow {
-    @apply cursor-pointer border-b border-l border-r border-gray-300 bg-white rounded-b-md p-1 top-1/2 left-1/2 min-h-9 float-left w-36; // Assuming light gray border and white background
+    cursor: pointer;
+    border-bottom: 1px solid #d1d5db;
+    border-left: 1px solid #d1d5db;
+    border-right: 1px solid #d1d5db;
+    background-color: #ffffff;
+    border-bottom-left-radius: 0.375rem;
+    border-bottom-right-radius: 0.375rem;
+    padding: 0.25rem;
+    top: 50%;
+    left: 50%;
+    min-height: 2.25rem;
+    float: left;
+    width: 9rem;
 }
 
 body.jsenabled .formlistingradio {
@@ -1471,7 +1584,11 @@ a.criteria-action {
 }
 
 div.criteria-description {
-    @apply p-4 my-1 bg-gray-100 border border-gray-300; // Assuming light gray colors
+    padding: 1rem;
+    margin-top: 0.25rem;
+    margin-bottom: 0.25rem;
+    background-color: #f3f4f6;
+    border: 1px solid #d1d5db;
 }
 
 ul.badges {
@@ -1698,9 +1815,10 @@ img#persona_signin {
         font-weight: bold;
     }
     .logo {
-        @apply my-4;
+        margin-top: 1rem;
+        margin-bottom: 1rem;
         img {
-            @apply max-h-19; // 75px is approx 18.75 * 4 = 75, so h-19 is close
+            max-height: 4.75rem;
         }
     }
 }
@@ -1734,7 +1852,7 @@ nav.navbar .logo img {
         }
         .userinitials,
         .userpicture {
-            @apply mr-4;
+            margin-right: 1rem;
         }
     }
 }
@@ -1808,12 +1926,22 @@ dd:after {
             z-index: 9999;
             border: $alert-border-width solid transparent;
             width: fit-content;
-            @apply text-blue-800 border-blue-300 bg-blue-50; // Approximate Tailwind colors for info alert
+            color: #1e40af;
+            border-color: #93c5fd;
+            background-color: #eff6ff;
         }
-        @apply sm:block;
-        @apply sm:w-80 sm:align-text-bottom sm:mb-0;
+        @media (min-width: 640px) {
+            display: block;
+        }
+        @media (min-width: 640px) {
+            width: 20rem;
+            vertical-align: text-bottom;
+            margin-bottom: 0;
+        }
         &[role="combobox"] {
-            @apply sm:w-auto;
+            @media (min-width: 640px) {
+                width: auto;
+            }
         }
 
         select {
@@ -1923,12 +2051,27 @@ dd:after {
         transition-property: opacity, visibility;
         &:before {
             content: '';
-            @apply inline-block border-l-8 border-r-8 border-t-8 border-l-transparent border-r-transparent border-t-gray-700 absolute -bottom-2 left-1/2 -translate-x-1/2;
+            display: inline-block;
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-top: 8px solid #374151;
+            position: absolute;
+            bottom: -0.5rem;
+            left: 50%;
+            transform: translateX(-50%);
         }
 
         &:after {
             content: '';
-            @apply inline-block border-l-7 border-r-7 border-t-7 border-l-transparent border-r-transparent border-t-gray-800 absolute -bottom-1.5 left-1/2 -translate-x-1/2 z-10;
+            display: inline-block;
+            border-left: 7px solid transparent;
+            border-right: 7px solid transparent;
+            border-top: 7px solid #1f2937;
+            position: absolute;
+            bottom: -0.375rem;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
         }
     }
 
@@ -1948,9 +2091,14 @@ dd:after {
         margin-right: 0.5rem;
     background-color: #ffffff;
     }
-    @apply md:block;
+    @media (min-width: 768px) {
+        display: block;
+    }
     .nav {
-        @apply md:mt-4 md:mr-0;
+        @media (min-width: 768px) {
+            margin-top: 1rem;
+            margin-right: 0;
+        }
     }
 }
 
@@ -1961,13 +2109,16 @@ $footer-link-color: $bg-inverse-link-color !default;
 
 .footer-dark {
     a {
-        @apply text-white underline pt-2 pb-2; // Assuming $footer-link-color is white
+        color: #ffffff;
+        text-decoration: underline;
+        padding-top: 0.5rem;
+        padding-bottom: 0.5rem;
         .icon {
-            @apply text-white;
+            color: #ffffff;
         }
 
         &:focus .icon {
-            @apply text-base-content;
+            color: var(--fallback-bc, oklch(var(--bc) / 1));
         }
     }
 }
@@ -1976,26 +2127,30 @@ $footer-link-color: $bg-inverse-link-color !default;
     .btn-footer-popover {
         display: none;
         position: fixed;
-        @apply bottom-8 right-8 shadow-md;
+        bottom: 2rem;
+        right: 2rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
     }
 }
 
 .btn-footer-communication {
     display: none;
     position: fixed;
-    @apply bottom-20 right-8 shadow-md;
+    bottom: 5rem;
+    right: 2rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
 .hasstickyfooter .btn-footer-popover {
-    bottom: calc(1rem + theme('spacing.stickyFooterHeight'));
+    bottom: calc(1rem + 80px);
 }
 
 .hasstickyfooter .btn-footer-communication {
-    bottom: calc(4rem + theme('spacing.stickyFooterHeight'));
+    bottom: calc(4rem + 80px);
 }
 
 .hasstickyfooter .maintenancewarning {
-    bottom: theme('spacing.stickyFooterHeight');
+    bottom: 80px;
 }
 
 .popover.footer {
@@ -2003,9 +2158,10 @@ $footer-link-color: $bg-inverse-link-color !default;
         padding: 0;
         .footer-section {
             a {
-                @apply text-base-content underline;
+                color: var(--fallback-bc, oklch(var(--bc) / 1));
+                text-decoration: underline;
                 .icon {
-                    @apply text-base-content;
+                    color: var(--fallback-bc, oklch(var(--bc) / 1));
                 }
                 &:focus {
                     text-decoration: none;
@@ -2030,14 +2186,15 @@ $footer-link-color: $bg-inverse-link-color !default;
     }
     .jsenabled .maintenancewarning,
     .jsenabled.hasstickyfooter:has(.drawer-right-toggle) .maintenancewarning {
-        @apply right-20;
+        right: 5rem;
     }
 }
 
 .bg-inverse a {
-    @apply text-white underline; // Assuming $bg-inverse-link-color is white
+    color: #ffffff;
+    text-decoration: underline;
     .icon {
-        @apply text-white;
+        color: #ffffff;
     }
 }
 
@@ -2056,7 +2213,12 @@ $footer-link-color: $bg-inverse-link-color !default;
 .visually-hidden-focusable {
     &:active,
     &:focus {
-        @apply z-40 fixed bg-gray-200 p-2 left-0 top-0; // Assuming light gray background
+        z-index: 40;
+        position: fixed;
+        background-color: #e5e7eb;
+        padding: 0.5rem;
+        left: 0;
+        top: 0;
     }
 }
 
@@ -2077,7 +2239,10 @@ $footer-link-color: $bg-inverse-link-color !default;
     height: 100%;
     background-color: #e5e7eb; // Assuming light gray background
     .loading-icon {
-        @apply absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
 
         .icon {
             max-height: 2em;
@@ -2097,13 +2262,13 @@ $footer-link-color: $bg-inverse-link-color !default;
 
 @keyframes bg-pulse-grey {
     0% {
-        background-color: theme('colors.gray.100');
+        background-color: #f3f4f6;
     }
     50% {
-        background-color: theme('colors.gray.200');
+        background-color: #e5e7eb;
     }
     100% {
-        background-color: theme('colors.gray.100');
+        background-color: #f3f4f6;
     }
 }
 
@@ -2213,7 +2378,9 @@ input[disabled] {
 }
 
 .matchtext {
-    @apply bg-indigo-100 text-base-content h-6; // Assuming light indigo for primary lighten
+    background-color: #e0e7ff;
+    color: var(--fallback-bc, oklch(var(--bc) / 1));
+    height: 1.5rem;
 }
 
 .border-radius {
@@ -2226,20 +2393,21 @@ input[disabled] {
 
 // Any dialog (modal or dropdown) forced max-widths limits.
 .dialog-big {
-    @apply max-w-2xl; // Equivalent to Bootstrap's modal-md
+    max-width: 42rem;
 }
 
 .dialog-small {
-    @apply max-w-lg; // Equivalent to Bootstrap's modal-sm
+    max-width: 32rem;
 }
 
-@apply sm:block;
-.dialog-big {
-    @apply sm:w-2xl;
-}
+@media (min-width: 640px) {
+    .dialog-big {
+        width: 42rem;
+    }
 
-.dialog-small {
-    @apply sm:w-lg;
+    .dialog-small {
+        width: 32rem;
+    }
 }
 
 /*
@@ -2262,7 +2430,8 @@ input[disabled] {
 // Emoji picker.
 // Emoji picker.
 .emoji-picker {
-    @apply w-88 h-96; // 350px and 400px
+    width: 22rem;
+    height: 24rem;
     .category-button {
         padding-top: 0.375rem; padding-bottom: 0.375rem;
     height: 100%;
@@ -2287,30 +2456,44 @@ input[disabled] {
         height: 2.5rem; // 40px
 
         .category-name {
-            @apply leading-10;
+            line-height: 2.5rem;
         }
 
         .emoji-button {
-            @apply h-10 w-10 leading-10 text-2xl overflow-hidden;
+            height: 2.5rem;
+            width: 2.5rem;
+            line-height: 2.5rem;
+            font-size: 1.5rem;
+            line-height: 2rem;
+            overflow: hidden;
         }
     }
 
     .emoji-preview {
-        @apply h-10 text-4xl leading-10;
+        height: 2.5rem;
+        font-size: 2.25rem;
+        line-height: 2.5rem;
+        line-height: 2.5rem;
     }
 
     .emoji-short-name {
         line-height: calc(40px * 0.5);
     }
 
-    @apply sm:w-80; // 320px
+    @media (min-width: 640px) {
+        width: 20rem;
+    }
 }
 
 .emoji-auto-complete {
     height: 2.5rem; // $picker-row-height
 
     .btn.btn-icon.emoji-button {
-        @apply h-10 w-10 leading-10 text-2xl;
+        height: 2.5rem;
+        width: 2.5rem;
+        line-height: 2.5rem;
+        font-size: 1.5rem;
+        line-height: 2rem;
 
         &.active {
             background-color: #e5e7eb;
@@ -2319,7 +2502,9 @@ input[disabled] {
 }
 
 .toast-wrapper {
-    @apply max-w-md max-h-0 z-50; // Assuming $toast-max-width is around 400px (md) and z-50 for high z-index
+    max-width: 28rem;
+    max-height: 0;
+    z-index: 50;
     > :first-child {
         margin-top: 1rem;
     }
@@ -2330,7 +2515,7 @@ input[disabled] {
 // Use .alert-info, .alert-success, .alert-warning, .alert-error from DaisyUI
 
 .alert a {
-    @apply font-bold;
+    font-weight: 700;
 }
 
 .breadcrumb:empty {
@@ -2343,13 +2528,20 @@ input[disabled] {
     }
 
     .breadcrumb:not(:empty) {
-        @apply w-full flex-nowrap mb-2;
+        width: 100%;
+        flex-wrap: nowrap;
+        margin-bottom: 0.5rem;
         .breadcrumb-item {
-            @apply pt-1 pb-1 inline-flex overflow-hidden;
+            padding-top: 0.25rem;
+            padding-bottom: 0.25rem;
+            display: inline-flex;
+            overflow: hidden;
         }
         .breadcrumb-item a,
         .breadcrumb-item span {
-            @apply overflow-hidden text-ellipsis whitespace-nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
     }
 
@@ -2358,7 +2550,8 @@ input[disabled] {
     padding-left: 1rem; padding-right: 1rem;
     }
     .pagination {
-        @apply flex-wrap justify-center;
+        flex-wrap: wrap;
+        justify-content: center;
     }
     .card .card-body {
         padding: 0.5rem;
@@ -2374,9 +2567,13 @@ input[disabled] {
     // Navs and Tabs in small screens.
     .nav-tabs:not(.more-nav),
     .nav-pills {
-        @apply m-0 border-0 p-0.5 bg-gray-200;
+        margin: 0;
+        border: 0;
+        padding: 0.125rem;
+        background-color: #e5e7eb;
         .nav-item {
-            @apply flex-1 text-center;
+            flex: 1;
+            text-align: center;
         }
         .nav-link {
             border: 0;
@@ -2408,7 +2605,7 @@ input[disabled] {
 .alert.cta {
     .cta-icon {
         .icon {
-            @apply p-1.5;
+            padding: 0.375rem;
             &.fa {
                 border-radius: 9999px;
     border: 1px solid;
@@ -2432,10 +2629,12 @@ input[disabled] {
         appearance: none;
     }
     &::-webkit-scrollbar-thumb {
-        @apply bg-primary border-r border-r-white;
+        background-color: var(--fallback-p, oklch(var(--p) / 1));
+        border-right: 1px solid #ffffff;
     }
     &::-webkit-scrollbar-track {
-        @apply bg-indigo-100 border-r border-r-white;
+        background-color: #e0e7ff;
+        border-right: 1px solid #ffffff;
     }
 }
 
@@ -2455,19 +2654,23 @@ input[disabled] {
 
 body.dragging {
     .drop-zone {
-        @apply border border-dashed border-gray-900;
+        border: 1px dashed #111827;
     }
 
     .drop-up {
-        @apply border-t border-gray-900 rounded-tl-none rounded-tr-none;
+        border-top: 1px solid #111827;
+        border-top-left-radius: 0;
+        border-top-right-radius: 0;
     }
 
     .drop-down {
-        @apply border-b border-gray-900 rounded-bl-none rounded-br-none;
+        border-bottom: 1px solid #111827;
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 0;
     }
 
     .dragging {
-        @apply opacity-60;
+        opacity: 0.6;
     }
 }
 
@@ -2484,23 +2687,39 @@ body.dragging {
     cursor: pointer;
 
     .dropzone {
-        @apply flex justify-center items-center flex-col border-2 border-dashed border-gray-300 rounded-lg; // Assuming light gray borders
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        border: 2px dashed #d1d5db;
+        border-radius: 0.5rem;
         &.dragover {
-            @apply border-blue-500; // Assuming a blue color for dragover
+            border-color: #3b82f6;
         }
     }
 
     .dropzone-icon {
         color: #6b7280;
         .icon {
-            @apply text-6xl w-auto h-auto max-w-none max-h-none mr-0;
+            font-size: 3.75rem;
+            line-height: 1;
+            width: auto;
+            height: auto;
+            max-width: none;
+            max-height: none;
+            margin-right: 0;
         }
     }
 
     .dropzone-visually-hidden-focusable {
         &:active,
         &:focus {
-            @apply outline-none focus:ring focus:ring-opacity-50 z-40 relative bg-gray-200 p-2; // Assuming light gray background
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.5);
+            z-index: 40;
+            position: relative;
+            background-color: #e5e7eb;
+            padding: 0.5rem;
         }
     }
 }
@@ -2508,18 +2727,37 @@ body.dragging {
 // Generic classes reactive components can use.
 
 .overlay-preview {
-    @apply bg-gray-200 border-2 border-dashed border-primary absolute top-0 left-0 w-full h-full; // Assuming light gray background
+    background-color: #e5e7eb;
+    border: 2px dashed var(--fallback-p, oklch(var(--p) / 1));
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     .overlay-preview-wrapper {
-        @apply absolute top-0 p-8 w-full;
+        position: absolute;
+        top: 0;
+        padding: 2rem;
+        width: 100%;
     }
 
     .overlay-preview-content {
-        @apply relative top-0 p-4 m-auto w-full max-w-xl bg-primary text-white text-lg rounded-lg;
+        position: relative;
+        top: 0;
+        padding: 1rem;
+        margin: auto;
+        width: 100%;
+        max-width: 36rem;
+        background-color: var(--fallback-p, oklch(var(--p) / 1));
+        color: #ffffff;
+        font-size: 1.125rem;
+        line-height: 1.75rem;
+        border-radius: 0.5rem;
     }
 }
 
 .overlay-preview-borders {
-    @apply outline-2 outline-dashed outline-primary;
+    outline: 2px dashed var(--fallback-p, oklch(var(--p) / 1));
 }
 
 .waitstate {
@@ -2539,15 +2777,19 @@ body.dragging {
 
 .collapse-list {
     .collapse-list-item {
-        @apply py-2 px-4;
+        padding-top: 0.5rem;
+        padding-bottom: 0.5rem;
+        padding-left: 1rem;
+        padding-right: 1rem;
         &:hover,
         &:focus {
-            @apply bg-blue-100 border-blue-200;
+            background-color: #dbeafe;
+            border-color: #bfdbfe;
         }
     }
     .collapse-list-item-content {
         .collapse-list-item {
-            padding-left: calc(theme('spacing.4') * 3);
+            padding-left: calc(1rem * 3);
         }
     }
 }
@@ -2555,7 +2797,8 @@ body.dragging {
 .page-mycourses {
     .block_myoverview {
         .block-cards {
-            @apply border-t border-gray-300 pt-4;
+            border-top: 1px solid #d1d5db;
+            padding-top: 1rem;
         }
     }
     // Drawer-based theme styling
@@ -2563,7 +2806,9 @@ body.dragging {
         .block_myoverview {
             border: 0;
             & > .card-body {
-                @apply pt-0 pl-0 pr-0;
+                padding-top: 0;
+                padding-left: 0;
+                padding-right: 0;
             }
         }
     }
@@ -2577,7 +2822,10 @@ body.dragging {
 }
 
 .dropdown-toggle::after {
-    @apply inline-block ml-1 w-2 h-2;
+    display: inline-block;
+    margin-left: 0.25rem;
+    width: 0.5rem;
+    height: 0.5rem;
     content: '';
     background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23333' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
     background-repeat: no-repeat;
@@ -2597,7 +2845,10 @@ body.dragging {
 
 // Drop direction specific icons (if needed, otherwise DaisyUI handles this)
 .dropleft .dropdown-toggle::before {
-    @apply inline-block mr-1 w-2 h-2;
+    display: inline-block;
+    margin-right: 0.25rem;
+    width: 0.5rem;
+    height: 0.5rem;
     content: '';
     background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23333' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M11 2L5 8l6 6'/%3e%3c/svg%3e");
     background-repeat: no-repeat;
@@ -2611,7 +2862,10 @@ body.dragging {
 }
 
 .dropright .dropdown-toggle::after {
-    @apply inline-block ml-1 w-2 h-2;
+    display: inline-block;
+    margin-left: 0.25rem;
+    width: 0.5rem;
+    height: 0.5rem;
     content: '';
     background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23333' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M5 2l6 6-6 6'/%3e%3c/svg%3e");
     background-repeat: no-repeat;
@@ -2625,7 +2879,10 @@ body.dragging {
 }
 
 .dropup .dropdown-toggle::after {
-    @apply inline-block ml-1 w-2 h-2;
+    display: inline-block;
+    margin-left: 0.25rem;
+    width: 0.5rem;
+    height: 0.5rem;
     content: '';
     background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23333' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M14 11L8 5l-6 6'/%3e%3c/svg%3e");
     background-repeat: no-repeat;
@@ -2650,18 +2907,27 @@ body.dragging {
         padding-top: 0.25rem;
     margin: 0;
         li:first-child {
-            @apply cursor-default text-gray-600 py-1 px-6 block;
+            cursor: default;
+            color: #4b5563;
+            padding-top: 0.25rem;
+            padding-bottom: 0.25rem;
+            padding-left: 1.5rem;
+            padding-right: 1.5rem;
+            display: block;
         }
         .dropdown-item {
-            @apply pl-10;
+            padding-left: 2.5rem;
         }
     }
 
     .dropdown-item {
-        @apply py-2 px-16;
+        padding-top: 0.5rem;
+        padding-bottom: 0.5rem;
+        padding-left: 4rem;
+        padding-right: 4rem;
 
         [aria-selected="true"] {
-            @apply font-bold;
+            font-weight: 700;
         }
     }
 }
@@ -2676,40 +2942,57 @@ body.dragging {
 
 .initialbargroups ul {
     -webkit-margin-start: 0; /* stylelint-disable-line */
-    @apply -mr-px;
+    margin-right: -1px;
 }
 
 .page-item {
     &:first-child {
         .page-link {
             .initialbargroups & {
-                @apply rounded-l-none rounded-r-none;
+                border-top-left-radius: 0;
+                border-bottom-left-radius: 0;
+                border-top-right-radius: 0;
+                border-bottom-right-radius: 0;
             }
             .initialbargroups .pagination-lg:first-child & {
-                @apply rounded-l-lg;
+                border-top-left-radius: 0.5rem;
+                border-bottom-left-radius: 0.5rem;
             }
             .initialbargroups .pagination-sm:first-child & {
-                @apply rounded-l-sm;
+                border-top-left-radius: 0.125rem;
+                border-bottom-left-radius: 0.125rem;
             }
         }
     }
     &:last-child {
         .page-link {
             .initialbargroups & {
-                @apply rounded-l-none rounded-r-none;
+                border-top-left-radius: 0;
+                border-bottom-left-radius: 0;
+                border-top-right-radius: 0;
+                border-bottom-right-radius: 0;
             }
             .initialbargroups .pagination-lg:last-child & {
-                @apply rounded-r-lg;
+                border-top-right-radius: 0.5rem;
+                border-bottom-right-radius: 0.5rem;
             }
             .initialbargroups .pagination-sm:last-child & {
-                @apply rounded-r-sm;
+                border-top-right-radius: 0.125rem;
+                border-bottom-right-radius: 0.125rem;
             }
         }
     }
 }
 
 blockquote {
-    @apply m-0 mx-2 mb-4 pl-4 text-gray-700 border-l-5 border-l-gray-500;
+    margin: 0;
+    margin-left: 0.5rem;
+    margin-right: 0.5rem;
+    margin-bottom: 1rem;
+    padding-left: 1rem;
+    color: #374151;
+    border-left-width: 5px;
+    border-left-color: #6b7280;
 }
 
 .pagelayout-maintenance,
@@ -2745,9 +3028,12 @@ blockquote {
         }
     }
     .showmore-button {
-        @apply float-right no-underline;
+        float: right;
+        text-decoration: none;
         .icon {
-            @apply text-sm m-0;
+            font-size: 0.875rem;
+            line-height: 1.25rem;
+            margin: 0;
         }
     }
 }
@@ -2783,14 +3069,14 @@ blockquote {
 /* Choice list component. */
 .choicelist {
     // Choicelist is designed to fit inside a small modal.
-    @apply min-w-80; // calc(theme('width.lg') - 25px) approx
+    min-width: 20rem;
     // Align the font based icons.
     i.icon {
-        @apply align-middle;
+        vertical-align: middle;
     }
 }
 
 /* General card customisations. */
 .card.active {
-    @apply border-gray-500;
+    border-color: #6b7280;
 }

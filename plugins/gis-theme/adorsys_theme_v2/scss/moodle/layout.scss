@@ -1,6 +1,19 @@
 .layout {
     &.fullscreen {
-        @apply h-screen fixed inset-0 z-50 transition-all duration-500 w-screen m-0 opacity-100 bg-base-100;
+        height: 100vh;
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        z-index: 50;
+        transition-property: all;
+        transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+        transition-duration: 500ms;
+        width: 100vw;
+        margin: 0;
+        opacity: 1;
+        background-color: var(--fallback-b1, oklch(var(--b1) / 1));
 
         > div {
             height: 100%;
@@ -8,9 +21,18 @@
         }
 
         .loading-icon {
-            @apply mx-auto text-center inline-block w-full fixed top-2/5;
+            margin-left: auto;
+            margin-right: auto;
+            text-align: center;
+            display: inline-block;
+            width: 100%;
+            position: fixed;
+            top: 40%;
             .icon {
-                @apply max-w-16 max-h-16 text-4xl;
+                max-width: 4rem;
+                max-height: 4rem;
+                font-size: 2.25rem;
+                line-height: 2.5rem;
             }
         }
     }
@@ -36,15 +58,15 @@
     }
 }
 
-@media (min-width: theme('screens.md')) {
+@media (min-width: 768px) {
     .pagelayout-standard,
     body.limitedwidth {
         #page.drawers {
             .main-inner {
-                max-width: theme('spacing.courseContentMaxwidth');
+                max-width: 830px;
             }
             .footer-popover {
-                max-width: theme('spacing.courseContentMaxwidth');
+                max-width: 830px;
                 width: 100%;
     margin-left: auto; margin-right: auto;
     border-radius: 0.5rem;
@@ -52,7 +74,7 @@
         }
     }
     .header-maxwidth {
-        max-width: theme('spacing.courseContentMaxwidth');
+        max-width: 830px;
         margin-left: auto; margin-right: auto;
     padding-left: 1rem; padding-right: 1rem;
 
@@ -65,8 +87,9 @@
 .drawer-toggles {
 
     .drawer-toggler {
-        @apply fixed z-20;
-        top: calc(theme('spacing.navbarHeight') + theme('spacing.2.5'));
+        position: fixed;
+        z-index: 20;
+        top: calc(4rem + 0.625rem);
         .btn {
             border-radius: 9999px;
     padding: 1rem;
@@ -76,29 +99,40 @@
                 width: auto;
     height: auto;
             }
-            @apply focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500;
-            @apply transition-all duration-200;
+            &:focus {
+                outline: none;
+                box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.5), 0 0 0 4px rgba(99, 102, 241, 0.25);
+            }
+            transition-property: all;
+            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+            transition-duration: 200ms;
         }
     }
 
     .drawer-left-toggle {
-        @apply left-0;
+        left: 0;
         .btn {
-            @apply rounded-l-none pr-3.5 pl-2.5;
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+            padding-right: 0.875rem;
+            padding-left: 0.625rem;
 
             &:hover {
-                @apply pl-5;
+                padding-left: 1.25rem;
             }
         }
     }
 
     .drawer-right-toggle {
-        @apply right-0;
+        right: 0;
         .btn {
-            @apply rounded-r-none pr-2.5 pl-3.5;
+            border-top-right-radius: 0;
+            border-bottom-right-radius: 0;
+            padding-right: 0.625rem;
+            padding-left: 0.875rem;
 
             &:hover {
-                @apply pr-5;
+                padding-right: 1.25rem;
             }
         }
     }
@@ -112,43 +146,48 @@
     display: none;
 }
 
-@media (max-width: theme('screens.md')) {
+@media (max-width: 767.98px) {
     //the scroll to top button
     .drawer-toggles {
         z-index: 50;
 
         .drawer-right-toggle,
         .drawer-left-toggle {
-            top: calc(99vh - (theme('spacing.navbarHeight') * 2.5));
+            top: calc(99vh - (4rem * 2.5));
         }
     }
     #page.drawers.scroll-down {
         .drawer-right-toggle {
-            @apply translate-x-full pointer-events-auto invisible;
+            transform: translateX(100%);
+            pointer-events: auto;
+            visibility: hidden;
         }
         .drawer-left-toggle {
-            @apply -translate-x-full pointer-events-auto invisible;
+            transform: translateX(-100%);
+            pointer-events: auto;
+            visibility: hidden;
         }
     }
     .hasstickyfooter:has(.drawer-right-toggle) .maintenancewarning {
-        @apply right-8;
+        right: 2rem;
     }
     .hasstickyfooter:has(.drawer-left-toggle) .maintenancewarning {
-        @apply ml-14;
+        margin-left: 3.5rem;
     }
 }
 
-@media (min-width: theme('screens.sm')) {
+@media (min-width: 640px) {
     #page.drawers .main-inner {
         margin-top: 1.5rem;
     }
 }
 
-@media (min-width: theme('screens.md')) {
+@media (min-width: 768px) {
 
     // Add some padding for the drawer toggle buttons
     #page.drawers {
-        @apply md:px-12;
+        padding-left: 3rem;
+        padding-right: 3rem;
         .main-inner {
             padding: 1.5rem;
     padding-left: 0.5rem; padding-right: 0.5rem;
@@ -159,50 +198,58 @@
     }
 }
 
-@media (min-width: theme('screens.lg')) {
+@media (min-width: 1024px) {
     .drawer-left,
     .drawer-right {
-        top: theme('spacing.navbarHeight');
-        height: calc(100vh - theme('spacing.navbarHeight'));
+        top: 4rem;
+        height: calc(100vh - 4rem);
     }
     .hasstickyfooter {
         .drawer-left,
         .drawer-right {
-            top: theme('spacing.navbarHeight');
-            height: calc(100vh - theme('spacing.navbarHeight') - theme('spacing.stickyFooterHeight'));
+            top: 4rem;
+            height: calc(100vh - 4rem - 80px);
         }
     }
 
     #page.drawers {
-        @apply relative overflow-y-visible transition-all duration-200 inset-x-0;
+        position: relative;
+        overflow-y: visible;
+        transition-property: all;
+        transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+        transition-duration: 200ms;
+        left: 0;
+        right: 0;
         &.show-drawer-left {
-            margin-left: theme('spacing.drawerLeftWidth');
-            @apply mr-0 pl-4;
+            margin-left: 320px;
+            margin-right: 0;
+            padding-left: 1rem;
         }
         &.show-drawer-right {
-            @apply ml-0 pr-4;
-            margin-right: theme('spacing.drawerRightWidth');
+            margin-left: 0;
+            padding-right: 1rem;
+            margin-right: 320px;
             .jsenabled & .popover-process-monitor,
             .jsenabled & .btn-footer-popover,
             .jsenabled & .btn-footer-communication {
-                right: calc(theme('spacing.drawerRightWidth') + theme('spacing.8'));
+                right: calc(320px + 2rem);
             }
             .jsenabled:has(&) .maintenancewarning {
-                right: calc(theme('spacing.drawerRightWidth') + theme('spacing.20'));
+                right: calc(320px + 5rem);
             }
         }
         &.show-drawer-left.show-drawer-right {
-            margin-left: theme('spacing.drawerLeftWidth');
-            margin-right: theme('spacing.drawerRightWidth');
+            margin-left: 320px;
+            margin-right: 320px;
         }
         &.hasstickyfooter {
-            margin-bottom: theme('spacing.stickyFooterHeight');
+            margin-bottom: 80px;
         }
     }
 }
 
 .drawercontrolbuttons {
-    @apply mt-23;
+    margin-top: 5.75rem;
     .buttons {
         z-index: 10;
     }
