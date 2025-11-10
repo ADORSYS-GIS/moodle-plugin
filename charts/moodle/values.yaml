@@ -1,10 +1,5 @@
 moodle:
   debug: true
-  image:
-    registry: docker.io
-    repository: bitnamilegacy/moodle
-    tag: 5.0.2-debian-12-r2
-    pullPolicy: IfNotPresent
   moodleUsername: admin
   moodlePassword: adorsys-gis
   moodleEmail: gis-udm@adorsys.com

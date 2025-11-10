@@ -1,7 +1,7 @@
 services:
   # https://github.com/bitnami/containers/tree/main/bitnami/moodle
   moodle-init:
-    image: docker.io/bitnamilegacy/moodle:5.0
+    image: docker.io/bitnami/moodle:5.0
     deploy: &moodle_deploy
       resources:
         limits:
@@ -23,15 +23,21 @@ services:
       BITNAMI_DEBUG: true
       EXTRA_LOCALES: "fr_FR.UTF-8 UTF-8, de_DE.UTF-8 UTF-8"
     entrypoint: /bin/bash
-    command:
+    command: # This script was removed from https://github.com/bitnami/containers/blob/main/bitnami/moodle/5.0/debian-12/rootfs/opt/bitnami/scripts/moodle/entrypoint.sh
       - -c
       - |
         set -ex
+
+        # Load Moodle environment
         . /opt/bitnami/scripts/moodle-env.sh
+
+        # Load libraries
         . /opt/bitnami/scripts/libbitnami.sh
         . /opt/bitnami/scripts/liblog.sh
         . /opt/bitnami/scripts/libwebserver.sh
+
         print_welcome_page
+
         info "** Starting Moodle setup **"
         . /opt/bitnami/scripts/"$(web_server_type)"/setup.sh
         . /opt/bitnami/scripts/php/setup.sh
@@ -40,6 +46,7 @@ services:
         . /opt/bitnami/scripts/moodle/setup.sh
         . /post-init.sh
         info "** Moodle setup finished! **"
+
     volumes:
       - moodle_data:/bitnami/moodle
       - moodledata_data:/bitnami/moodledata
@@ -53,8 +60,9 @@ services:
       plugin-downloader:
         condition: service_completed_successfully
 
+  # https://github.com/bitnami/containers/tree/main/bitnami/moodle
   moodle:
-    image: docker.io/bitnamilegacy/moodle:5.0
+    image: docker.io/bitnami/moodle:5.0
     deploy: *moodle_deploy
     ports:
       - "8080:8080"
@@ -63,19 +71,17 @@ services:
     volumes:
       - moodle_data:/bitnami/moodle
       - moodledata_data:/bitnami/moodledata
+      # Local source‑controlled plugins (read‑only)
       - ./plugins:/bitnami/moodle/plugins/custom/plugins:ro
+      # Plugins downloaded via Moodle UI go here (read‑write)
       - plugins_downloads:/bitnami/moodle/plugins/downloaded:ro
-      - ./outputs/plugins/gis-theme/adorsys_theme_v1:/bitnami/moodle/theme/adorsys_theme_v1:ro
-      - ./outputs/plugins/gis-theme/adorsys_theme_v2:/bitnami/moodle/theme/adorsys_theme_v2:ro
-
-
     depends_on:
       <<: *moodle_depends_on
       moodle-init:
         condition: service_completed_successfully
 
   plugin-downloader:
-    image: alpine/git:latest
+    image: alpine/git:latest # Using an image with wget/curl and unzip.
     deploy:
       resources:
         limits:
@@ -86,6 +92,9 @@ services:
       - ./.docker/plugin-downloader/download_plugin.sh:/scripts/download_plugins.sh:ro
     environment:
       PLUGINS_DIR: "/plugin_downloads"
+      # List of plugins to download. Format: "URL,TARGET_DIR;URL,TARGET_DIR;..."
+      # Use full, direct download links to the .zip files.
+      # TARGET_DIR is the expected folder name after unzipping (e.g., 'mod_minilesson').
       PLUGINS_TO_DOWNLOAD: >
         https://moodle.org/plugins/download.php/36782/theme_seo_moodle50_2025070900.zip,theme_seo;
         https://moodle.org/plugins/download.php/36820/mod_minilesson_moodle50_2025071300.zip,mod_minilesson;
@@ -96,7 +105,7 @@ services:
       - "/scripts/download_plugins.sh"
 
   mariadb:
-    image: docker.io/bitnamilegacy/mariadb:latest
+    image: docker.io/bitnami/mariadb
     deploy:
       resources:
         limits:
@@ -113,7 +122,7 @@ services:
       - mariadb_data:/bitnami/mariadb
 
   redis:
-    image: docker.io/bitnamilegacy/redis:8.0
+    image: docker.io/bitnami/redis:8.0
     deploy:
       resources:
         limits:
@@ -152,7 +161,7 @@ services:
       retries: 3
 
   minio:
-    image: docker.io/bitnamilegacy/minio:latest
+    image: bitnami/minio:latest
     deploy:
       resources:
         limits:
@@ -172,7 +181,7 @@ services:
       retries: 5
 
   minio-object-browser:
-    image: docker.io/bitnamilegacy/minio-object-browser:latest
+    image: bitnami/minio-object-browser
     deploy:
       resources:
         limits:
@@ -188,7 +197,7 @@ services:
       - server
 
   minio-init:
-    image: docker.io/bitnamilegacy/minio-client:latest
+    image: bitnami/minio-client:latest
     deploy:
       resources:
         limits:
@@ -201,6 +210,7 @@ services:
       - -c
       - |-
         set -e;
+
         mc alias set bucketer http://minio:9000 minio-gis kwak-kwak;
         mc mb bucketer/moodle --ignore-existing
         mc anonymous set-json /tmp/policy.json bucketer/moodle
@@ -243,6 +253,11 @@ services:
       - mariadb_data:/web/mariadb_data
       - redis_data:/web/redis_data
       - minio_data:/web/minio_data
+
+#  selenium:
+#    image: "selenium/standalone-chrome"
+#    volumes:
+#      - /dev/shm:/dev/shm
 
 volumes:
   moodle_data:
