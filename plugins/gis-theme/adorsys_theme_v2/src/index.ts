@@ -10,30 +10,30 @@ console.log("Adorsys Moodle theme initialized.");
 // If page content is available, no preloader is needed
 // If page content is not yet available, preloader displays until content is ready
 
-function hidePreloader() {
-    const preloader = document.querySelector('.preloader-wrapper') as HTMLElement;
+// function hidePreloader() {
+//     const preloader = document.querySelector('.preloader-wrapper') as HTMLElement;
     
-    if (!preloader) return; // Exit if preloader doesn't exist
+//     if (!preloader) return; // Exit if preloader doesn't exist
     
-    // Page content is ready, hide preloader with fade-out effect
-    preloader.style.opacity = '0';
-   // preloader.style.transition = 'opacity 0.5s ease';
+//     // Page content is ready, hide preloader with fade-out effect
+//     preloader.style.opacity = '0';
+//    // preloader.style.transition = 'opacity 0.5s ease';
     
-    // Remove preloader from DOM after fade animation completes
-    setTimeout(function() {
-        preloader.style.display = 'none';
-    }, 100);
-}
+//     // Remove preloader from DOM after fade animation completes
+//     setTimeout(function() {
+//         preloader.style.display = 'none';
+//     }, 100);
+// }
 
-// Check if page content is already available
-if (document.readyState === 'complete') {
-    // Page content is already available, no preloader needed
-    hidePreloader();
-} else {
-    // Page content is not yet available, keep preloader visible
-    // Wait until all page content (images, stylesheets, scripts, fonts, etc.) is ready
-    window.addEventListener('load', function() {
-        // Page content is now ready, hide the preloader
-        hidePreloader();
-    });
-}
+// // Check if page content is already available
+// if (document.readyState === 'complete') {
+//     // Page content is already available, no preloader needed
+//     hidePreloader();
+// } else {
+//     // Page content is not yet available, keep preloader visible
+//     // Wait until all page content (images, stylesheets, scripts, fonts, etc.) is ready
+//     window.addEventListener('load', function() {
+//         // Page content is now ready, hide the preloader
+//         hidePreloader();
+//     });
+// }
