@@ -1,4 +1,5 @@
 /** @type {import('tailwindcss').Config} */
+// Tailwind CSS v4 Configuration
 export default {
   content: [
     './templates/**/*.mustache',

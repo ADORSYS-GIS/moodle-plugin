@@ -1,7 +1,5 @@
-/* Tailwind CSS v3 directives */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* Tailwind CSS v4 - New import syntax */
+@import "tailwindcss";
 
 /* Custom CSS variables */
 :root {
