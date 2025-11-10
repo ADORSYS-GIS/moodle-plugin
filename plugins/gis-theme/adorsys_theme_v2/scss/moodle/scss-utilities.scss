@@ -1,7 +1,7 @@
 /**
- * Bootstrap compatibility mixins and functions
+ * CSS framework compatibility mixins and functions
  * 
- * These are Bootstrap mixins and functions reimplemented for Tailwind/DaisyUI
+ * Utility mixins and functions for Tailwind/DaisyUI integration
  * to maintain compatibility with existing Moodle SCSS code.
  */
 
@@ -32,7 +32,7 @@
   @return color.mix(if($weight > 0, #fff, #000), $color, math.abs($weight));
 }
 
-// Color contrast function (simplified for DaisyUI)
+// Color contrast function
 @function color-contrast($background, $color-light: #ffffff, $color-dark: #000000) {
   // Simple luminance check
   @return if(color.lightness($background) > 50%, $color-dark, $color-light);
@@ -256,14 +256,14 @@
   /* Deprecated: #{$class-name} - Consider using Tailwind utilities instead */
 }
 
-// Text truncate mixin (Bootstrap utility)
+// Text truncate mixin
 @mixin text-truncate() {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-// Button variant mixin (Bootstrap button styles)
+// Button variant mixin
 @mixin button-variant($background, $border, $color: color-contrast($background)) {
   color: $color;
   background-color: $background;
@@ -290,24 +290,24 @@
   }
 }
 
-// Button size mixin (Bootstrap button sizing)
+// Button size mixin
 @mixin button-size($padding-y, $padding-x, $font-size, $border-radius) {
   padding: $padding-y $padding-x;
   font-size: $font-size;
   border-radius: $border-radius;
 }
 
-// Transition mixin (Bootstrap transitions)
+// Transition mixin
 @mixin transition($transition...) {
   transition: $transition;
 }
 
-// Box shadow mixin (Bootstrap shadows)
+// Box shadow mixin
 @mixin box-shadow($shadow...) {
   box-shadow: $shadow;
 }
 
-// Border radius mixins (Bootstrap border utilities)
+// Border radius mixins
 @mixin border-top-radius($radius) {
   border-top-left-radius: $radius;
   border-top-right-radius: $radius;
@@ -318,13 +318,13 @@
   border-bottom-right-radius: $radius;
 }
 
-// Gradient mixin (Bootstrap gradients)
+// Gradient mixin
 @mixin gradient-y($start-color, $end-color) {
   background-image: linear-gradient(to bottom, $start-color, $end-color);
   background-repeat: repeat-x;
 }
 
-// Clearfix mixin (Bootstrap clearfix utility)
+// Clearfix mixin
 @mixin clearfix() {
   &::after {
     display: block;
@@ -333,7 +333,7 @@
   }
 }
 
-// Form validation state mixin (Bootstrap form validation)
+// Form validation state mixin
 @mixin form-validation-state($state, $color, $icon) {
   .#{$state}-feedback {
     display: none;
@@ -382,7 +382,7 @@
   }
 }
 
-// Gradient background mixin (Bootstrap gradient backgrounds)
+// Gradient background mixin
 @mixin gradient-bg($color) {
   background-color: $color;
   @if $enable-gradients {

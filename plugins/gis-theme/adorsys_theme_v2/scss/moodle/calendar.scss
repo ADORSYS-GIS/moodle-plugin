@@ -7,6 +7,61 @@
     $calendarEventUserColor: theme('colors.blue.200'); // Pale blue.
     $calendarEventOtherColor: theme('colors.gray.300'); // Pale gray.
 
+/* Modern Calendar Block Styling */
+.block_calendar_month,
+section.block_calendar_month {
+    /* Calendar header with controls */
+    .header {
+        background: linear-gradient(to bottom, #f9fafb, #ffffff) !important;
+        border-bottom: 1px solid #f3f4f6 !important;
+        border-radius: 0.75rem 0.75rem 0 0 !important;
+        padding: 1.25rem !important;
+        
+        /* Course filter dropdown */
+        .cal_courses_flt,
+        select.cal_courses_flt {
+            border-radius: 0.5rem !important;
+            border: 1px solid #e5e7eb !important;
+            transition: all 0.2s ease !important;
+            
+            &:focus {
+                border-color: #4f46e5 !important;
+                box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1) !important;
+                outline: none !important;
+            }
+        }
+        
+        /* New Event button - Indigo styling */
+        button[data-action="new-event-button"],
+        .btn[data-action="new-event-button"] {
+            background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%) !important;
+            color: #ffffff !important;
+            border: none !important;
+            border-radius: 0.5rem !important;
+            padding: 0.625rem 1.25rem !important;
+            font-weight: 600 !important;
+            font-size: 0.9375rem !important;
+            box-shadow: 0 2px 8px rgba(79, 70, 229, 0.25) !important;
+            transition: all 0.2s ease !important;
+            
+            &:hover {
+                background: linear-gradient(135deg, #4338ca 0%, #4f46e5 100%) !important;
+                box-shadow: 0 4px 12px rgba(79, 70, 229, 0.35) !important;
+                transform: translateY(-1px) !important;
+            }
+            
+            &:active {
+                transform: translateY(0) !important;
+            }
+        }
+    }
+    
+    /* Calendar wrapper padding */
+    .calendarwrapper {
+        padding: 1rem !important;
+    }
+}
+
     // Border colours for the event colour indicators.
     $calendarEventCategoryBorderColor: theme('colors.purple.700'); // Purple.
     $calendarEventCourseBorderColor: theme('colors.red.700'); // Red-orange.
@@ -82,37 +137,212 @@
     }
 }
 
-// Calendar restyling.
+// Calendar restyling - Modern Professional Design
 .calendartable {
     @apply w-full table-fixed;
+    border-spacing: 0.375rem;
+    border-collapse: separate;
 
-    th,
+    th {
+        @apply w-[14%] text-center border-0;
+        padding: 0.875rem 0.5rem 1rem;
+        font-weight: 600;
+        font-size: 0.8125rem;
+        color: #6b7280;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        background: transparent;
+        
+        /* Hide full day names, show only abbreviated */
+        .visually-hidden {
+            display: none !important;
+            visibility: hidden !important;
+        }
+    }
+    
     td {
-        @apply w-[14%] align-top text-center border-0;
+        @apply w-[14%] align-top border-0;
+        padding: 0.375rem !important;
+        vertical-align: top !important;
+        
+        /* Day cells with modern card-like appearance */
+        &.day {
+            background: #ffffff !important;
+            border-radius: 0.625rem !important;
+            border: 1px solid #e5e7eb !important;
+            min-height: 5.5rem !important;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+            cursor: pointer !important;
+            position: relative !important;
+            padding: 0.625rem !important;
+            
+            &:hover {
+                border-color: #d1d5db !important;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.04) !important;
+                transform: translateY(-2px) !important;
+            }
+            
+            /* Today highlight */
+            &.today {
+                background: linear-gradient(135deg, #eef2ff 0%, #f9fafb 100%) !important;
+                border-color: #4f46e5 !important;
+                border-width: 2px !important;
+                box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.08), 0 2px 8px rgba(79, 70, 229, 0.12) !important;
+                
+                &:hover {
+                    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.12), 0 4px 16px rgba(79, 70, 229, 0.16) !important;
+                }
+                
+                .day-number-circle {
+                    background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%) !important;
+                    color: #ffffff !important;
+                    font-weight: 700 !important;
+                    box-shadow: 0 2px 8px rgba(79, 70, 229, 0.3) !important;
+                }
+            }
+            
+            /* Weekend styling */
+            &.weekend {
+                background: #fafafa !important;
+                
+                &:hover {
+                    background: #f5f5f5 !important;
+                }
+            }
+            
+            /* Day with events */
+            &.hasevent {
+                background: #f9fafb !important;
+                
+                &:hover {
+                    background: #f3f4f6 !important;
+                }
+                
+                &.today {
+                    background: linear-gradient(135deg, #eef2ff 0%, #f9fafb 100%) !important;
+                }
+            }
+        }
+        
+        /* Empty day cells */
+        &.dayblank {
+            background: transparent !important;
+            border: none !important;
+            cursor: default !important;
+        }
+    }
+    
+    /* Day number circle styling */
+    .day-number-circle {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        width: 2rem !important;
+        height: 2rem !important;
+        border-radius: 50% !important;
+        font-weight: 600 !important;
+        font-size: 0.875rem !important;
+        color: #374151 !important;
+        transition: all 0.2s ease !important;
+        margin-bottom: 0.375rem !important;
+        
+        .day-number {
+            line-height: 1 !important;
+        }
+    }
+    
+    .day:hover .day-number-circle {
+        background: #f3f4f6 !important;
+        transform: scale(1.05) !important;
+    }
+    
+    /* Event list in day cells - Hidden for cleaner appearance */
+    [data-region="day-content"] {
+        display: none !important;
+        visibility: hidden !important;
+    }
+    
+    /* Show small indicator dot for days with events */
+    .day.hasevent {
+        position: relative !important;
+        
+        &::after {
+            content: '' !important;
+            position: absolute !important;
+            bottom: 0.5rem !important;
+            left: 50% !important;
+            transform: translateX(-50%) !important;
+            width: 0.375rem !important;
+            height: 0.375rem !important;
+            border-radius: 50% !important;
+            background: #4f46e5 !important;
+            box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2) !important;
+        }
+        
+        &.today::after {
+            background: #ffffff !important;
+            box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.5) !important;
+        }
     }
 }
 
 .calendar-controls {
-    .previous,
-    .next,
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.25rem 0.5rem 1rem;
+    gap: 1rem;
+    
+    .arrow_link {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.625rem 1.125rem;
+        border-radius: 0.5rem;
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+        color: #4b5563;
+        text-decoration: none;
+        font-weight: 500;
+        font-size: 0.875rem;
+        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+        
+        &:hover {
+            background: #f9fafb;
+            border-color: #4f46e5;
+            color: #4f46e5;
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.12);
+            transform: translateY(-1px);
+            
+            .arrow {
+                transform: translateX(-3px);
+            }
+        }
+        
+        &.next:hover .arrow {
+            transform: translateX(3px);
+        }
+        
+        .arrow {
+            font-size: 1rem;
+            transition: transform 0.25s ease;
+            color: #6b7280;
+        }
+        
+        .arrow_text {
+            font-weight: 500;
+        }
+    }
+    
     .current {
-        @apply block float-left w-[12%];
-    }
-
-    .previous {
-        @apply text-left border border-transparent w-1/4;
-    }
-
-    .current {
-        @apply text-center w-1/2;
-    }
-
-    .next {
-        @apply text-right border border-transparent w-1/4;
-    }
-
-    .drop-target {
-        @apply box-border border border-dashed border-primary;
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #1f2937;
+        margin: 0;
+        flex: 1;
+        text-align: center;
+        letter-spacing: -0.01em;
     }
 }
 

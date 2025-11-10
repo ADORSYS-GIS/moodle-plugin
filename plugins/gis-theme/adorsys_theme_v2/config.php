@@ -15,12 +15,12 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
-* Theme config file for adorsys_theme_v2
-*
-* @package    theme_adorsys_theme_v2
-* @copyright  2025 Adorsys
-* @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
-*/
+ * Theme configuration for adorsys_theme_v2
+ *
+ * @package    theme_adorsys_theme_v2
+ * @copyright  2025 adorsys_gis <gis-udm@adorsys.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 
 defined('MOODLE_INTERNAL') || die();
@@ -33,12 +33,7 @@ $THEME->sheets = ['main'];
 
 $THEME->usefallback = true;
 
-$THEME->scss = function($theme) {
-    return theme_adorsys_theme_v2_get_main_scss_content($theme);
-};
 
-$THEME->extrascsscallback = 'theme_adorsys_theme_v2_get_extra_scss';
-$THEME->prescsscallback = 'theme_adorsys_theme_v2_get_pre_scss';
 $THEME->precompiledcsscallback = 'theme_adorsys_theme_v2_get_precompiled_css';
 
 
@@ -181,7 +176,6 @@ $THEME->layouts = [
                 ];
                 
                 
-$THEME->page_init = 'theme_adorsys_theme_v2_page_init';           
 
 $THEME->rendererfactory = 'theme_overridden_renderer_factory';
                 

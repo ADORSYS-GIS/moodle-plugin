@@ -1,115 +1,367 @@
+/* ======================================
+   MODERN PROFESSIONAL MODAL STYLES
+   Bootstrap 5 compatible with enhanced UX
+   ====================================== */
+
+/* Modal Base - CSS Variables following Bootstrap 5 conventions */
 .modal {
-    .modal-body {
-        & > .loading-icon {
-            display: block;
-    position: relative;
-    width: 100%;
-    height: 100%;
+    /* Positioning & Layout */
+    --bs-modal-zindex: 1055;
+    --bs-modal-width: 540px;
+    --bs-modal-margin: 0.5rem;
+    
+    /* Colors & Background */
+    --bs-modal-color: #212529;
+    --bs-modal-bg: #ffffff;
+    --bs-modal-border-color: rgba(0, 0, 0, 0.1);
+    --bs-modal-border-width: 1px;
+    
+    /* Border Radius - Modern rounded corners */
+    --bs-modal-border-radius: 0.75rem;
+    --bs-modal-inner-border-radius: calc(0.75rem - 1px);
+    
+    /* Shadows - Professional depth */
+    --bs-modal-box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15), 0 2px 8px rgba(0, 0, 0, 0.08);
+    
+    /* Header */
+    --bs-modal-header-padding-x: 1.5rem;
+    --bs-modal-header-padding-y: 1.25rem;
+    --bs-modal-header-padding: 1.25rem 1.5rem;
+    --bs-modal-header-border-color: rgba(0, 0, 0, 0.06);
+    --bs-modal-header-border-width: 1px;
+    
+    /* Body */
+    --bs-modal-padding: 1.5rem;
+    
+    /* Footer */
+    --bs-modal-footer-gap: 0.75rem;
+    --bs-modal-footer-bg: transparent;
+    --bs-modal-footer-border-color: rgba(0, 0, 0, 0.06);
+    --bs-modal-footer-border-width: 1px;
+    
+    /* Title */
+    --bs-modal-title-line-height: 1.4;
+    
+    /* Structure */
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    z-index: var(--bs-modal-zindex) !important;
+    display: none;
+    width: 100% !important;
+    height: 100% !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    outline: 0;
+    
+    /* Smooth backdrop filter for modern blur effect */
+    -webkit-overflow-scrolling: touch;
+}
 
-            .icon {
-                @apply absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2;
-            }
-        }
-    }
+/* Modal shown state */
+.modal.show {
+    display: block;
+}
 
-    // DaisyUI's modal close button (modal-action button) handles styling.
-    // If a custom close button is used, apply btn-ghost and focus styles.
-    .btn-close {
-        // Adjust the margins so the focus outline does not look clipped.
-        @apply -mt-1.5 -mr-1.5 -mb-1.5 ml-auto; // 0.4rem is roughly 1.5 units
-
-        // Inherit the opacity when focus is received for better focus outline contrast.
-        &:not(:disabled):not(.disabled) {
-            &:hover,
-            &:focus {
-                opacity: 1; // DaisyUI buttons typically handle this, but explicitly setting for clarity.
-            }
-        }
+/* Modal Dialog Container */
+.modal-dialog {
+    position: relative !important;
+    width: auto !important;
+    margin: var(--bs-modal-margin) !important;
+    pointer-events: none !important;
+    
+    /* Center horizontally on larger screens */
+    @media (min-width: 576px) {
+        max-width: var(--bs-modal-width) !important;
+        margin-right: auto !important;
+        margin-left: auto !important;
     }
 }
 
-/* Change the modal-dialog-scrollable class to position: static to fix the issue with popper.js and autocomplete. */
-.modal-dialog-scrollable:has(.form-autocomplete-suggestions) {
-    @apply static;
+/* Fade-in animation */
+.modal.fade .modal-dialog {
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    transform: translateY(-30px);
+}
+
+.modal.show .modal-dialog {
+    transform: translateY(0);
+}
+
+/* Static modal shake animation */
+.modal.modal-static .modal-dialog {
+    animation: modal-shake 0.3s;
+}
+
+@keyframes modal-shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-8px); }
+    75% { transform: translateX(8px); }
+}
+
+/* Scrollable modal */
+.modal-dialog-scrollable {
+    height: calc(100% - var(--bs-modal-margin) * 2);
+    
     .modal-content {
-        @apply static;
-        .modal-body {
-            @apply static;
+        max-height: 100%;
+        overflow: hidden;
+    }
+    
+    .modal-body {
+        overflow-y: auto;
+    }
+}
+
+/* Centered modal */
+.modal-dialog-centered {
+    display: flex;
+    align-items: center;
+    min-height: calc(100% - var(--bs-modal-margin) * 2);
+}
+
+/* Modal Content Surface */
+.modal-content {
+    position: relative !important;
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+    color: var(--bs-modal-color) !important;
+    pointer-events: auto !important;
+    background-color: var(--bs-modal-bg) !important;
+    background-clip: padding-box !important;
+    border: var(--bs-modal-border-width) solid var(--bs-modal-border-color) !important;
+    border-radius: var(--bs-modal-border-radius) !important;
+    box-shadow: var(--bs-modal-box-shadow) !important;
+    outline: 0 !important;
+    
+    /* Smooth transitions */
+    transition: box-shadow 0.2s ease !important;
+}
+
+/* Modal Header */
+.modal-header {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--bs-modal-header-padding);
+    border-bottom: var(--bs-modal-header-border-width) solid var(--bs-modal-header-border-color);
+    border-top-left-radius: var(--bs-modal-inner-border-radius);
+    border-top-right-radius: var(--bs-modal-inner-border-radius);
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 1));
+    
+    .btn-close {
+        padding: calc(var(--bs-modal-header-padding-y) * 0.5) calc(var(--bs-modal-header-padding-x) * 0.5);
+        margin: calc(-0.5 * var(--bs-modal-header-padding-y)) calc(-0.5 * var(--bs-modal-header-padding-x)) calc(-0.5 * var(--bs-modal-header-padding-y)) auto;
+        opacity: 0.6;
+        transition: opacity 0.2s ease, transform 0.1s ease;
+        
+        &:hover {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+        
+        &:focus {
+            opacity: 1;
+            box-shadow: 0 0 0 0.2rem rgba(79, 70, 229, 0.25);
         }
     }
 }
 
-/* Bug fix for TinyMCE menu when in fullscreen mode. */
+/* Modal Title */
+.modal-title {
+    margin-bottom: 0;
+    line-height: var(--bs-modal-title-line-height);
+    font-weight: 600;
+    font-size: 1.25rem;
+    color: #1a202c;
+}
+
+/* Modal Body */
+.modal-body {
+    position: relative;
+    flex: 1 1 auto;
+    padding: var(--bs-modal-padding);
+    
+    /* Loading icon styling */
+    & > .loading-icon {
+        display: block;
+        position: relative;
+        width: 100%;
+        height: 100%;
+        min-height: 200px;
+        
+        .icon {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 3rem;
+            color: #4f46e5;
+            animation: spin 1s linear infinite;
+        }
+    }
+}
+
+@keyframes spin {
+    from { transform: translate(-50%, -50%) rotate(0deg); }
+    to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+/* Modal Footer */
+.modal-footer {
+    display: flex;
+    flex-shrink: 0;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    padding: calc(var(--bs-modal-padding) - var(--bs-modal-footer-gap) * 0.5);
+    background-color: var(--bs-modal-footer-bg);
+    border-top: var(--bs-modal-footer-border-width) solid var(--bs-modal-footer-border-color);
+    border-bottom-right-radius: var(--bs-modal-inner-border-radius);
+    border-bottom-left-radius: var(--bs-modal-inner-border-radius);
+    
+    > * {
+        margin: calc(var(--bs-modal-footer-gap) * 0.5);
+    }
+    
+    /* Modern button spacing */
+    .btn + .btn {
+        margin-left: 0.75rem;
+    }
+}
+
+/* Modal Backdrop */
+.modal-backdrop {
+    --bs-backdrop-zindex: 1050;
+    --bs-backdrop-bg: #000;
+    --bs-backdrop-opacity: 0.55;
+    
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    z-index: var(--bs-backdrop-zindex) !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    background-color: var(--bs-backdrop-bg) !important;
+    backdrop-filter: blur(2px);
+    pointer-events: auto !important;
+    cursor: pointer !important;
+    
+    &.fade {
+        opacity: 0;
+        transition: opacity 0.25s ease;
+    }
+    
+    &.show {
+        opacity: var(--bs-backdrop-opacity) !important;
+    }
+}
+
+/* Responsive Modal Sizes */
+@media (min-width: 576px) {
+    .modal {
+        --bs-modal-margin: 1.75rem;
+        --bs-modal-box-shadow: 0 15px 50px rgba(0, 0, 0, 0.18), 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    .modal-sm {
+        --bs-modal-width: 300px;
+    }
+}
+
+@media (min-width: 992px) {
+    .modal-lg,
+    .modal-xl {
+        --bs-modal-width: 800px;
+    }
+}
+
+@media (min-width: 1200px) {
+    .modal-xl {
+        --bs-modal-width: 1140px;
+    }
+}
+
+/* Calendar-specific: New event modal needs more space */
+.path-calendar .modal {
+    --bs-modal-width: 680px;
+    
+    @media (min-width: 992px) {
+        --bs-modal-width: 820px;
+    }
+    
+    .modal-body {
+        padding: 2rem 1.5rem;
+    }
+}
+
+/* Form-heavy modals get extra padding */
+.modal-body {
+    .form-group,
+    .fitem {
+        margin-bottom: 1.25rem;
+        
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
+}
+
+/* ====================================
+   BUG FIXES & COMPATIBILITY
+   ==================================== */
+
+/* Fix for autocomplete/popper.js positioning */
+.modal-dialog-scrollable:has(.form-autocomplete-suggestions) {
+    position: static;
+    
+    .modal-content {
+        position: static;
+        
+        .modal-body {
+            position: static;
+        }
+    }
+}
+
+/* TinyMCE fullscreen compatibility */
 body.tox-fullscreen .modal-dialog {
     width: 100%;
     max-width: 100%;
     height: 100%;
-
+    
     .modal-header {
-        @apply h-0 p-0;
+        height: 0;
+        padding: 0;
+        overflow: hidden;
     }
-
+    
+    .modal-content {
+        height: 100%;
+        border-radius: 0;
+    }
+    
     .tox-tinymce-aux {
         position: relative;
+        z-index: 1060;
     }
 }
 
-/* Bug fix TinyMCE menu width dropdowns when in fullscreen mode. */
 body.tox-fullscreen .tox.tox-tinymce-aux {
-    @apply relative !important; // stylelint-disable-line declaration-no-important
+    position: relative !important; /* stylelint-disable-line declaration-no-important */
+    z-index: 1060;
 }
 
-/* Modal visual polish to align with Boost */
-.modal {
-    --bs-modal-width: 540px;
-    --bs-modal-padding: 1rem;
-    --bs-modal-bg: #fff;
-    --bs-modal-border-color: rgba(0, 0, 0, 0.125);
-    --bs-modal-border-width: 1px;
-    --bs-modal-border-radius: .5rem;
-    --bs-modal-inner-border-radius: .5rem;
-    --bs-modal-header-border-color: rgba(0, 0, 0, 0.08);
-    --bs-modal-footer-border-color: rgba(0, 0, 0, 0.08);
-    --bs-modal-box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
-}
-
-/* Ensure centered dialog at all widths */
-.modal-dialog {
-    margin-right: auto;
-    margin-left: auto;
-}
-
-/* Content surface and shadow */
-.modal-content {
-    background-color: var(--bs-modal-bg);
-    border: var(--bs-modal-border-width) solid var(--bs-modal-border-color);
-    border-radius: var(--bs-modal-border-radius);
-    box-shadow: var(--bs-modal-box-shadow);
-}
-
-/* Header and footer separators */
-.modal-header {
-    border-bottom-color: var(--bs-modal-header-border-color);
-}
-.modal-footer {
-    border-top-color: var(--bs-modal-footer-border-color);
-}
-
-/* Backdrop styling similar to Boost */
-.modal-backdrop {
-    --bs-backdrop-bg: #000;
-    --bs-backdrop-opacity: 0.5;
-    background-color: var(--bs-backdrop-bg);
-}
-.modal-backdrop.fade { opacity: 0; }
-.modal-backdrop.show { opacity: var(--bs-backdrop-opacity); }
-
-/* Calendar: New event modal typically needs more horizontal space */
-.path-calendar .modal {
-    --bs-modal-width: 680px;
-}
-@media (min-width: 992px) {
-    .path-calendar .modal {
-        --bs-modal-width: 800px;
+/* Reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+    .modal.fade .modal-dialog,
+    .modal-backdrop.fade {
+        transition: none;
+    }
+    
+    @keyframes modal-shake {
+        0%, 100% { transform: translateX(0); }
     }
 }

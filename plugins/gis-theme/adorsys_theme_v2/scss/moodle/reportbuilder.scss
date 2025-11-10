@@ -112,7 +112,7 @@ $rb-right-sidebar-width: 350px !default;
     $tabs-height: 83px;
     $sidebar-margin-top: calc(#{$navbar-height} + #{$tabs-height} + #{20px});
     .path-admin-reportbuilder.pagelayout-popup {
-        // Fix for behat-site defined in theme/boost/scss/moodle/debug.scss:7 is not needed. Override it.
+        // Override behat-site fixed positioning for popup layout.
         &.behat-site .fixed-top {
             position: fixed;
         }

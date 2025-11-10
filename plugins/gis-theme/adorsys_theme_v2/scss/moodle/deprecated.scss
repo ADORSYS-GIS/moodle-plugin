@@ -46,6 +46,3 @@
     @include deprecated-styles(".course-content .stateready .section .spinner");
     display: none;
 }
-
-// TODO: MDL-84465 Final deprecation in 6.0. Remove this line when the Bootstrap 4 backward compatibility period ends.
-// @import "bs4-compat"; // Commented out - too many Bootstrap 4 dependencies

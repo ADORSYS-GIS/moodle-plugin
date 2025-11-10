@@ -1,8 +1,8 @@
 /**
- * Moodle forms HTML isn't changeable via renderers (yet?) so this
- * .less file imports styles from the bootstrap $variables file and
- * adds them to the existing Moodle form CSS ids and classes.
- *
+ * Moodle forms HTML styling
+ * 
+ * Custom form styles for Moodle form elements using Tailwind CSS utilities
+ * and modern design principles.
  */
 
 .jsenabled .mform .containsadvancedelements .advanced {
@@ -98,10 +98,8 @@ input#id_externalurl {
     color: #6b7280; // Equivalent to $text-muted
 }
 
-// Moodle doesn't differentiate between what Bootstrap calls
-// .uneditable-inputs and form help text. Styling them both as
-// uneditable looks ugly, styling both as form help is fairly
-// subtle in it's impact. Going for the latter as the best option.
+// Moodle doesn't differentiate between uneditable inputs and form help text.
+// Styling them both as form help provides a subtle, consistent appearance.
 .no-felement.fstatic {
     @apply text-gray-500 pt-1.5; // 5px is roughly 1.5 units
 }
@@ -122,7 +120,7 @@ input#id_externalurl {
 }
 
 #adminsettings h3 {
-    // Copied from bootstrap/forms.less tag legend.
+    // Legend styling for form sections.
     @apply block w-full p-0 mb-4 text-lg leading-8 border-b border-gray-300; // $line-height-base is usually 1.5, so 1.5rem = 24px = 6 units. $font-size-lg is 1.25rem = 20px.
 }
 
@@ -273,7 +271,7 @@ div#dateselector-calendar-panel {
     }
 }
 
-/** Undo some bootstrap things */
+/** Custom autocomplete selection styling */
 .form-autocomplete-selection + input.form-control {
     @apply w-auto inline-block align-middle;
 }
@@ -292,8 +290,7 @@ select.form-control {
     }
 }
 
-/* Non-bootstrap selects with a size show their contents outside of the element.
- * Remove when we update to stable bootstrap 4. (MDL-56511) */
+/* Selects with a size attribute need overflow control to prevent content overflow. */
 select[size],
 select[multiple] {
     overflow: auto;

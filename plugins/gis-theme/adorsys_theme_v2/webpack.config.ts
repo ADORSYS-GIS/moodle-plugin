@@ -51,7 +51,9 @@ const config: Configuration = {
           },
         ]
       },
-      // Rule 2: Process .scss files with pure Sass (NO PostCSS to avoid @apply issues)
+      // Rule 2: Process .scss files with ONLY Sass (NO Tailwind/PostCSS)
+      // Flow: SCSS → Sass → CSS Loader → Extract
+      // Tailwind is completely separate in .css files
       {
         test: /\.scss$/,
         use: [

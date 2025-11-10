@@ -1,6 +1,34 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Theme library functions for adorsys_theme_v2
+ *
+ * @package    theme_adorsys_theme_v2
+ * @copyright  2025 adorsys_gis <gis-udm@adorsys.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ * Initialize theme assets on page load
+ *
+ * @param moodle_page $page The page object
+ */
 function theme_adorsys_theme_v2_page_init(moodle_page $page) {
     // Load JS
     $page->requires->js(new moodle_url('/theme/adorsys_theme_v2/js/bundle.js'), true);
@@ -90,5 +118,5 @@ function theme_adorsys_theme_v2_get_pre_scss($theme) {
  */
 function theme_adorsys_theme_v2_get_precompiled_css() {
     global $CFG;
-    return file_get_contents($CFG->dirroot . '/theme/adorsys_theme_v2/style/bundle.css');
+    return file_get_contents($CFG->dirroot . '/theme/adorsys_theme_v2/dist/bundle.css');
 }

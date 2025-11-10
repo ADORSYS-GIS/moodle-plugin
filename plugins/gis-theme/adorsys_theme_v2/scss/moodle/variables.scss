@@ -1,8 +1,8 @@
 /**
- * Moodle variables
+ * Moodle theme variables
  *
- * Variables written for Moodle specific components
- * Mapped from Bootstrap to Tailwind CSS / DaisyUI
+ * Variables for Moodle specific components
+ * Using Tailwind CSS / DaisyUI design tokens
  */
 
 // Import Sass built-in modules
@@ -11,19 +11,19 @@
 @use 'sass:math';
 
 // ========================================
-// BOOTSTRAP TO TAILWIND VARIABLE MAPPINGS
+// TAILWIND CSS VARIABLE MAPPINGS
 // ========================================
 
 // Prefix for CSS custom properties
 $prefix: bs- !default;
 
-// Enable/disable features (Bootstrap feature flags)
+// Enable/disable features
 $enable-rounded: true !default;
 $enable-shadows: false !default;
 $enable-gradients: false !default;
 $enable-transitions: true !default;
 
-// Spacing variables (Bootstrap spacing system)
+// Spacing variables
 $spacer: 1rem !default; // 16px base spacing unit
 $spacers: (
   0: 0,
@@ -262,10 +262,10 @@ $grid-breakpoints: (
   xxl: 1536px
 ) !default;
 
-// Grid gutter (Bootstrap grid system)
+// Grid gutter
 $grid-gutter-width: 1.5rem !default;  // 24px
 
-// Theme colors map (Bootstrap-compatible)
+// Theme colors map
 $theme-colors: (
   primary: $primary,
   secondary: $secondary,

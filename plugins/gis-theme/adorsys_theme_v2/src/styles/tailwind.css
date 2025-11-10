@@ -1,12 +1,10 @@
-@import "tailwindcss";
+/* Tailwind CSS v3 directives */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-/* Content paths for Tailwind v4 */
-@source "../../templates/**/*.mustache";
-@source "../../layout/**/*.php";
-@source "../**/*.ts";
-
-/* Theme customization for Tailwind v4 */
-@theme {
+/* Custom CSS variables */
+:root {
   /* Primary colors */
   --color-primary-50: #eef2ff;
   --color-primary-100: #e0e7ff;

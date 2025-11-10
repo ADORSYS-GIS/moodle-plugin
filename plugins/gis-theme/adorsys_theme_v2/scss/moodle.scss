@@ -1,8 +1,12 @@
-// Moodle variables and Bootstrap compatibility layer
-@import "moodle/variables";
-@import "moodle/bootstrap-compat";
+// Pure SCSS - NO Tailwind directives
+// Tailwind is loaded separately via src/styles/tailwind.css
+// Both are combined in the final bundle.css output
 
-// Old Moodle stuff from base theme.
+// Moodle variables and SCSS utility functions/mixins
+@import "moodle/variables";
+@import "moodle/scss-utilities";
+
+// Old Moodle stuff from base theme
 // Massive, needs broken up.
 @import "moodle/core";
 @import "moodle/calendar";
@@ -56,6 +60,3 @@
 @import "moodle/dropdown";
 @import "moodle/deprecated";
 @import "moodle/task-indicator";
-
-// Custom Adorsys additions
-@import "moodle/preloader";

@@ -5,7 +5,9 @@
 // Make links in a menu clickable anywhere in the row.
 .dropdown-item {
     a {
-        @apply block w-full text-base-content;
+        display: block;
+        width: 100%;
+        color: inherit;
     }
     // DaisyUI's .dropdown-item handles active/hover/focus styles.
     // If specific Moodle active styles are needed, they can be added here.
@@ -15,28 +17,34 @@
     &:focus,
     &:focus-within {
         a {
-            @apply text-primary; // Using primary color for active/hover links
+            color: $primary; // Using primary color for active/hover links
         }
     }
     &[aria-current="true"],
     &[aria-selected="true"] {
         position: relative;
-    display: flex;
-    align-items: center;
+        display: flex;
+        align-items: center;
         &:before {
-            // Replaced FontAwesome with a simple checkmark SVG or character
-            content: '✓'; // Or use a custom SVG icon via background-image
-            @apply absolute left-1.5 text-xs; // 0.4rem is roughly 1.5 units, 0.7rem is roughly text-xs
+            content: '';
+            position: absolute;
+            left: 0.375rem; // 1.5 units
+            width: 1rem;
+            height: 1rem;
+            background-image: url('../pix/icons/check.svg');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
         }
     }
 }
 
 .dropdown-menu {
-    @apply w-fit;
+    width: fit-content;
     &:has(.dropdown-item-active) {
         .dropdown-item {
             // Make space for active item indicator.
-            @apply pl-4; // Equivalent to map-get($spacers, 4)
+            padding-left: 1rem; // Equivalent to map-get($spacers, 4)
         }
     }
 }

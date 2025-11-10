@@ -243,22 +243,105 @@ a.autolink {
     min-height: theme('lineHeight.normal');
 }
 
-.pagelayout-mydashboard.jsenabled .collapsibleregioncaption {
-    cursor: pointer;
+/* ========================================
+   DASHBOARD PAGE - MODERN PROFESSIONAL STYLING
+   ======================================== */
+
+.pagelayout-mydashboard {
+    /* Dashboard page header */
+    #page-header {
+        padding: 1.5rem 0 1rem;
+        
+        /* Page title */
+        .page-context-header {
+            h1 {
+                font-size: 2rem;
+                font-weight: 700;
+                color: #1a202c;
+                margin: 0;
+                letter-spacing: -0.025em;
+            }
+        }
+        
+        /* Customise button */
+        .singlebutton {
+            .btn-secondary {
+                border-radius: 0.5rem;
+                padding: 0.625rem 1.25rem;
+                font-weight: 600;
+                border: 1px solid #e5e7eb;
+                background: #ffffff;
+                color: #374151;
+                transition: all 0.2s ease;
+                
+                &:hover {
+                    background: #f9fafb;
+                    border-color: #d1d5db;
+                    transform: translateY(-1px);
+                    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+                }
+            }
+        }
+    }
+    
+    /* Main region styling */
+    #region-main {
+        border: 0;
+        padding: 0;
+        background-color: transparent;
+        margin-top: -1px;
+    }
+    
+    /* Block cards modernization */
+    .block,
+    section.block {
+        border-radius: 0.75rem !important;
+        border: 1px solid #f3f4f6 !important;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02) !important;
+        transition: all 0.2s ease !important;
+        background: #ffffff !important;
+        overflow: hidden;
+        
+        &:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06) !important;
+        }
+        
+        /* Block title */
+        .card-title,
+        h3.card-title {
+            font-weight: 600 !important;
+            font-size: 1.125rem !important;
+            color: #1f2937 !important;
+            margin-bottom: 0 !important;
+        }
+        
+        /* Block body padding */
+        .card-body {
+            padding: 1.5rem !important;
+        }
+    }
+    
+    /* Collapsible regions */
+    &.jsenabled .collapsibleregioncaption {
+        cursor: pointer;
+    }
 }
 
-.pagelayout-mydashboard #region-main {
-    border: 0;
-    padding: 0;
-    background-color: transparent;
-    margin-top: -1px;
-}
-
+/* Responsive adjustments */
 @media (max-width: theme('screens.md')) {
     .pagelayout-mydashboard,
     .pagelayout-login {
         #region-main-box {
-            padding-left: 0; padding-right: 0;
+            padding-left: 0;
+            padding-right: 0;
+        }
+        
+        #page-header {
+            padding: 1rem 0;
+            
+            h1 {
+                font-size: 1.5rem;
+            }
         }
     }
 }
@@ -2475,7 +2558,7 @@ body.dragging {
             @apply border-t border-gray-300 pt-4;
         }
     }
-    // Boost theme styling only (drawers not used in classic).
+    // Drawer-based theme styling
     .drawers {
         .block_myoverview {
             border: 0;

@@ -300,7 +300,7 @@
         }
         .activity-name-area {
             grid-area: name;
-            // Prevent bootstrap strech-link from covering the inplace editable button using z-index.
+            // Prevent stretch-link from covering the inplace editable button using z-index.
             .activityname {
                 .afterlink {
                     @apply ml-2;
@@ -731,7 +731,7 @@
 
             &:after {
                 @apply absolute text-xl text-gray-600 flex justify-center items-center w-[30px] h-[30px] left-[calc(50%-15px)] top-[calc(50%-15px)] animate-spin-slow;
-                content: '⚙️'; // Replaced FontAwesome spinner with a Unicode gear icon
+                content: '⚙️'; // Unicode gear icon for loading indicator
             }
 
             // Prevent inner editingprogress.

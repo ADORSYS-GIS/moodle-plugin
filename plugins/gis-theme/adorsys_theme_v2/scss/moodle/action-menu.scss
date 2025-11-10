@@ -38,7 +38,7 @@
     .dropdown-subpanel .dropdown-item {
         &::after {
             border: 0;
-            content: '>'; /* Replaced FontAwesome with simple character */
+            content: '>'; /* Simple character for submenu indicator */
         }
 
         &::before {
@@ -53,7 +53,7 @@
     .dropdown-subpanel .dropdown-item {
         &::after {
             border: 0;
-            content: '<'; /* Replaced FontAwesome with simple character */
+            content: '<'; /* Simple character for submenu indicator */
         }
 
         &::before {
@@ -85,7 +85,7 @@
     align-items: center;
 
         &:before {
-            content: '✓'; /* Replaced FontAwesome with simple character */
+            content: '✓'; /* Checkmark for selected item */
             @apply absolute left-1.5 text-xs;
         }
     }

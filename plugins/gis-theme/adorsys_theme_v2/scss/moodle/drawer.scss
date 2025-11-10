@@ -58,8 +58,7 @@ $drawer-bg: darken($body-bg, 5%) !default;
     right: auto;
     left: 0;
 
-    /* Override the z-indexes defined in bootstrap/_list-group.scss that
-       lead to side effects on the user tours positioning. */
+    /* Override the default z-indexes that may interfere with user tours positioning. */
     .list-group-item-action.active,
     .list-group-item.active {
         z-index: inherit;
@@ -246,7 +245,7 @@ $right-drawer-width: 320px;
         // then it is hidden behind the top navbar.
         // The workaround is to actually give a z-index to the drawer so it appears in front of the
         // navbar (https://developer.mozilla.org/en-US/docs/Web/CSS/z-index).
-        &#theme_boost-drawers-blocks:focus-within {
+        &#theme_adorsys_theme_v2-drawers-blocks:focus-within {
             z-index: $zindex-fixed + 1;
         }
 

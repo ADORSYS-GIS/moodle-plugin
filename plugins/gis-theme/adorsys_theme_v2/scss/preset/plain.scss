@@ -1,13 +1,10 @@
 /**
  * Plain preset file.
  *
- * This preset now uses Tailwind CSS and DaisyUI instead of Bootstrap.
- * FontAwesome has been removed in favor of modern icon systems.
- *
  * To create your own preset file:
  * - Duplicate this file and rename it, for instance to preset-apple.scss.
  * - In settings.php, find the references to 'plain', duplicate them and rename
- *   them to 'apple'. (Look around the choices for 'theme_boost/preset').
+ *   them to 'apple'. (Look around the choices for 'theme_adorsys_theme_v2/preset').
  */
 
 // Import Core moodle CSS (which now includes Tailwind)

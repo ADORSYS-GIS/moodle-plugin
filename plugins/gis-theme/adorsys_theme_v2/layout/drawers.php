@@ -15,11 +15,11 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * A drawer based layout for the adorsys_theme_v2 theme.
+ * Drawer-based layout for the adorsys_theme_v2 theme
  *
- * @package   theme_adorsys_theme_v2
- * @copyright 2025 adorsys gis
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    theme_adorsys_theme_v2
+ * @copyright  2025 adorsys_gis <gis-udm@adorsys.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
