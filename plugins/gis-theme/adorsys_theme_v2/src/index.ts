@@ -17,12 +17,12 @@ function hidePreloader() {
     
     // Page content is ready, hide preloader with fade-out effect
     preloader.style.opacity = '0';
-    preloader.style.transition = 'opacity 0.5s ease';
+   // preloader.style.transition = 'opacity 0.5s ease';
     
     // Remove preloader from DOM after fade animation completes
     setTimeout(function() {
         preloader.style.display = 'none';
-    }, 500);
+    }, 100);
 }
 
 // Check if page content is already available
