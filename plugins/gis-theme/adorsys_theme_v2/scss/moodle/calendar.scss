@@ -1,0 +1,987 @@
+@layer components {
+    // Calendar colour variables defined.
+    $calendarEventCategoryColor: #e9d5ff; // Pale purple.
+    $calendarEventCourseColor: #fecaca; // Pale red.
+    $calendarEventGlobalColor: #bbf7d0; // Pale green.
+    $calendarEventGroupColor: #fef08a; // Pale yellow.
+    $calendarEventUserColor: #bfdbfe; // Pale blue.
+    $calendarEventOtherColor: #d1d5db; // Pale gray.
+
+/* Modern Calendar Block Styling */
+.block_calendar_month,
+section.block_calendar_month {
+    /* Calendar header with controls */
+    .header {
+        background: linear-gradient(to bottom, #f9fafb, #ffffff) !important;
+        border-bottom: 1px solid #f3f4f6 !important;
+        border-radius: 0.75rem 0.75rem 0 0 !important;
+        padding: 1.25rem !important;
+        
+        /* Course filter dropdown */
+        .cal_courses_flt,
+        select.cal_courses_flt {
+            border-radius: 0.5rem !important;
+            border: 1px solid #e5e7eb !important;
+            transition: all 0.2s ease !important;
+            
+            &:focus {
+                border-color: #4f46e5 !important;
+                box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1) !important;
+                outline: none !important;
+            }
+        }
+        
+        /* New Event button - Indigo styling */
+        button[data-action="new-event-button"],
+        .btn[data-action="new-event-button"] {
+            background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%) !important;
+            color: #ffffff !important;
+            border: none !important;
+            border-radius: 0.5rem !important;
+            padding: 0.625rem 1.25rem !important;
+            font-weight: 600 !important;
+            font-size: 0.9375rem !important;
+            box-shadow: 0 2px 8px rgba(79, 70, 229, 0.25) !important;
+            transition: all 0.2s ease !important;
+            
+            &:hover {
+                background: linear-gradient(135deg, #4338ca 0%, #4f46e5 100%) !important;
+                box-shadow: 0 4px 12px rgba(79, 70, 229, 0.35) !important;
+                transform: translateY(-1px) !important;
+            }
+            
+            &:active {
+                transform: translateY(0) !important;
+            }
+        }
+    }
+    
+    /* Calendar wrapper padding */
+    .calendarwrapper {
+        padding: 1rem !important;
+    }
+}
+
+    // Border colours for the event colour indicators.
+    $calendarEventCategoryBorderColor: #7c3aed; // Purple.
+    $calendarEventCourseBorderColor: #b91c1c; // Red-orange.
+    $calendarEventGlobalBorderColor: #15803d; // Green.
+    $calendarEventGroupBorderColor: #a16207; // Dark orange.
+    $calendarEventUserBorderColor: #1d4ed8; // Blue.
+    $calendarEventOtherBorderColor: #4b5563; // Gray.
+
+    // Border for the event colour indicators.
+    $calendarEventCategoryBorder: 2px solid $calendarEventCategoryBorderColor; // Purple.
+    $calendarEventCourseBorder: 2px solid $calendarEventCourseBorderColor; // Red-orange.
+    $calendarEventGlobalBorder: 2px solid $calendarEventGlobalBorderColor; // Green.
+    $calendarEventGroupBorder: 2px solid $calendarEventGroupBorderColor; // Dark orange.
+    $calendarEventUserBorder: 2px solid $calendarEventUserBorderColor; // Blue.
+    $calendarEventOtherBorder: 2px solid $calendarEventOtherBorderColor; // Gray.
+
+    // This will be the colour of mini-calendar links, hide/show filter icons, edit/delete icon buttons.
+    $calendarEventColor: #312e81;
+
+    $calendarCurrentDateColor: #ffffff;
+    $calendarCurrentDateBackground: #4f46e5;
+
+// Calendar event background colours defined.
+.calendar_event_category {
+    background-color: #e9d5ff;
+    .commands a {
+        color: #312e81;
+    }
+}
+.calendar_event_course {
+    background-color: #fecaca;
+    .commands a {
+        color: #312e81;
+    }
+}
+
+.calendar_event_site {
+    background-color: #bbf7d0;
+    .commands a {
+        color: #312e81;
+    }
+}
+
+.calendar_event_group {
+    background-color: #fef08a;
+    .commands a {
+        color: #312e81;
+    }
+}
+
+.calendar_event_user {
+    background-color: #bfdbfe;
+    .commands a {
+        color: #312e81;
+    }
+}
+
+.calendar_event_other {
+    background-color: #d1d5db;
+    .commands a {
+        color: #312e81;
+    }
+}
+
+.footer-links {
+    span.footer-link:after {
+        content: "\2022";
+        color: #4f46e5;
+    }
+
+    span.footer-link:last-child:after {
+        content: none;
+    }
+}
+
+// Calendar restyling - Modern Professional Design
+.calendartable {
+    width: 100%;
+    table-layout: fixed;
+    border-spacing: 0.375rem;
+    border-collapse: separate;
+
+    th {
+        width: 14%;
+        text-align: center;
+        border: 0;
+        padding: 0.875rem 0.5rem 1rem;
+        font-weight: 600;
+        font-size: 0.8125rem;
+        color: #6b7280;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        background: transparent;
+        
+        /* Hide full day names, show only abbreviated */
+        .visually-hidden {
+            display: none !important;
+            visibility: hidden !important;
+        }
+    }
+    
+    td {
+        width: 14%;
+        vertical-align: top;
+        border: 0;
+        padding: 0.375rem !important;
+        vertical-align: top !important;
+        
+        /* Day cells with modern card-like appearance */
+        &.day {
+            background: #ffffff !important;
+            border-radius: 0.625rem !important;
+            border: 1px solid #e5e7eb !important;
+            min-height: 5.5rem !important;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+            cursor: pointer !important;
+            position: relative !important;
+            padding: 0.625rem !important;
+            
+            &:hover {
+                border-color: #d1d5db !important;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.04) !important;
+                transform: translateY(-2px) !important;
+            }
+            
+            /* Today highlight */
+            &.today {
+                background: linear-gradient(135deg, #eef2ff 0%, #f9fafb 100%) !important;
+                border-color: #4f46e5 !important;
+                border-width: 2px !important;
+                box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.08), 0 2px 8px rgba(79, 70, 229, 0.12) !important;
+                
+                &:hover {
+                    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.12), 0 4px 16px rgba(79, 70, 229, 0.16) !important;
+                }
+                
+                .day-number-circle {
+                    background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%) !important;
+                    color: #ffffff !important;
+                    font-weight: 700 !important;
+                    box-shadow: 0 2px 8px rgba(79, 70, 229, 0.3) !important;
+                }
+            }
+            
+            /* Weekend styling */
+            &.weekend {
+                background: #fafafa !important;
+                
+                &:hover {
+                    background: #f5f5f5 !important;
+                }
+            }
+            
+            /* Day with events */
+            &.hasevent {
+                background: #f9fafb !important;
+                
+                &:hover {
+                    background: #f3f4f6 !important;
+                }
+                
+                &.today {
+                    background: linear-gradient(135deg, #eef2ff 0%, #f9fafb 100%) !important;
+                }
+            }
+        }
+        
+        /* Empty day cells */
+        &.dayblank {
+            background: transparent !important;
+            border: none !important;
+            cursor: default !important;
+        }
+    }
+    
+    /* Day number circle styling */
+    .day-number-circle {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        width: 2rem !important;
+        height: 2rem !important;
+        border-radius: 50% !important;
+        font-weight: 600 !important;
+        font-size: 0.875rem !important;
+        color: #374151 !important;
+        transition: all 0.2s ease !important;
+        margin-bottom: 0.375rem !important;
+        
+        .day-number {
+            line-height: 1 !important;
+        }
+    }
+    
+    .day:hover .day-number-circle {
+        background: #f3f4f6 !important;
+        transform: scale(1.05) !important;
+    }
+    
+    /* Event list in day cells - Hidden for cleaner appearance */
+    [data-region="day-content"] {
+        display: none !important;
+        visibility: hidden !important;
+    }
+    
+    /* Show small indicator dot for days with events */
+    .day.hasevent {
+        position: relative !important;
+        
+        &::after {
+            content: '' !important;
+            position: absolute !important;
+            bottom: 0.5rem !important;
+            left: 50% !important;
+            transform: translateX(-50%) !important;
+            width: 0.375rem !important;
+            height: 0.375rem !important;
+            border-radius: 50% !important;
+            background: #4f46e5 !important;
+            box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2) !important;
+        }
+        
+        &.today::after {
+            background: #ffffff !important;
+            box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.5) !important;
+        }
+    }
+}
+
+.calendar-controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.25rem 0.5rem 1rem;
+    gap: 1rem;
+    
+    .arrow_link {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.625rem 1.125rem;
+        border-radius: 0.5rem;
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+        color: #4b5563;
+        text-decoration: none;
+        font-weight: 500;
+        font-size: 0.875rem;
+        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+        
+        &:hover {
+            background: #f9fafb;
+            border-color: #4f46e5;
+            color: #4f46e5;
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.12);
+            transform: translateY(-1px);
+            
+            .arrow {
+                transform: translateX(-3px);
+            }
+        }
+        
+        &.next:hover .arrow {
+            transform: translateX(3px);
+        }
+        
+        .arrow {
+            font-size: 1rem;
+            transition: transform 0.25s ease;
+            color: #6b7280;
+        }
+        
+        .arrow_text {
+            font-weight: 500;
+        }
+    }
+    
+    .current {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #1f2937;
+        margin: 0;
+        flex: 1;
+        text-align: center;
+        letter-spacing: -0.01em;
+    }
+}
+
+.filters {
+    table {
+        border-collapse: separate;
+        border-spacing: 0.125rem;
+        width: 100%;
+    }
+}
+
+#region-main {
+    .maincalendar {
+        .calendarwrapper {
+            td {
+                & > div {
+                    height: 11.5em;
+                    overflow: hidden;
+                }
+            }
+        }
+    }
+
+}
+
+.maincalendar {
+    vertical-align: top;
+    padding: 0;
+
+    .bottom {
+        text-align: left;
+        width: 98%;
+        margin-left: auto;
+        margin-right: auto;
+        margin-top: 0.625rem;
+
+        color: #4f46e5; // Converted from @include footer-links
+    }
+
+    .heightcontainer {
+        height: 100%;
+    position: relative;
+    }
+
+    .calendarmonth {
+        width: 98%;
+        margin-left: auto;
+        margin-right: auto;
+        margin-top: 0.625rem;
+
+        ul {
+            margin: 0;
+    padding: 0;
+
+            li[data-event-folded="true"] {
+                display: none;
+            }
+
+            li {
+                list-style: none;
+                line-height: 1.375;
+
+                > a {
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                    max-width: 100%;
+                    display: inline-block;
+
+                    &:hover {
+                        text-decoration: none;
+
+                        .eventname {
+                            text-decoration: underline;
+                        }
+                    }
+                }
+
+                a[data-action="view-day-link"] {
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                }
+
+                .icon {
+                    margin-left: 0.25rem;
+                    margin-right: 0.25rem;
+                    vertical-align: baseline;
+                }
+
+                .calendar-circle {
+                    width: 0.75rem;
+                    height: 0.75rem;
+                    border-radius: 9999px;
+                    vertical-align: middle;
+                    display: inline-block;
+
+                    &.calendar_event_category {
+                        background-color: #e9d5ff;
+                        border: 2px solid #7c3aed;
+                    }
+                    &.calendar_event_course {
+                        background-color: #fecaca;
+                        border: 2px solid #b91c1c;
+                    }
+
+                    &.calendar_event_site {
+                        background-color: #bbf7d0;
+                        border: 2px solid #15803d;
+                    }
+
+                    &.calendar_event_group {
+                        background-color: #fef08a;
+                        border: 2px solid #a16207;
+                    }
+
+                    &.calendar_event_user {
+                        background-color: #bfdbfe;
+                        border: 2px solid #1d4ed8;
+                    }
+
+                    &.calendar_event_other {
+                        background-color: #d1d5db;
+                        border: 2px solid #4b5563;
+                    }
+                }
+            }
+        }
+
+        th {
+            text-align: left;
+            padding-left: 1rem;
+        }
+
+        td {
+
+            a.day:focus {
+                display: inline-block;
+                border-radius: 9999px;
+                box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.5);
+            }
+
+            .day-number-circle {
+                display: inline-block;
+                line-height: 1;
+                width: 30px;
+                height: 30px;
+
+                .day-number {
+                    display: inline-block;
+                    padding-top: 0.125rem;
+                    padding-bottom: 0.125rem;
+                    padding-left: 0.25rem;
+                    padding-right: 0.25rem;
+                    width: 100%;
+                    text-align: center;
+                }
+            }
+
+            &.today {
+                .day-number-circle {
+                    border-radius: 9999px;
+                    color: #ffffff;
+                    background-color: #4f46e5;
+                }
+            }
+        }
+
+        .clickable:hover {
+            background-color: #e5e7eb; // Using a neutral gray for hover
+        }
+    }
+
+    .controls {
+        width: 98%;
+        margin-left: auto;
+        margin-right: auto;
+        margin-top: 0.625rem;
+    }
+
+    .calendar_event_category,
+    .calendar_event_course,
+    .calendar_event_site,
+    .calendar_event_group,
+    .calendar_event_user {
+        a:has(> .icon) {
+            &:hover {
+                color: #3730a3;
+                text-decoration: none;
+            }
+        }
+    }
+
+    .calendar_event_category {
+        border-color: #e9d5ff;
+    }
+
+    .calendar_event_course {
+        border-color: #fecaca;
+    }
+
+    .calendar_event_site {
+        border-color: #bbf7d0;
+    }
+
+    .calendar_event_group {
+        border-color: #fef08a;
+    }
+
+    .calendar_event_user {
+        border-color: #bfdbfe;
+    }
+
+    .calendar_event_other {
+        border-color: #d1d5db;
+    }
+
+    .calendartable {
+        td,
+        li {
+            padding: 0.25rem;
+        }
+
+        li {
+            text-align: left;
+        }
+    }
+
+    .header {
+        overflow: hidden;
+
+        .buttons {
+            float: right;
+        }
+    }
+
+    .event {
+        .card-header img {
+            vertical-align: baseline;
+        }
+
+        .location {
+            word-break: break-all;
+            overflow-wrap: break-word;
+        }
+    }
+
+    table#subscription_details_table {
+        td {
+            vertical-align: middle;
+
+            > .btn-group button {
+                padding-left: 0;
+            }
+        }
+    }
+}
+
+// Calendar export.
+#page-calendar-export {
+    .indent {
+        padding-left: 1.25rem;
+    }
+}
+
+// Block minicalendar.
+.block {
+    .bottom {
+        width: 98%;
+        margin-left: auto;
+        margin-right: auto;
+        margin-top: 0.625rem;
+        color: #4f46e5; // Converted from @include footer-links
+    }
+
+    .minicalendar {
+        max-width: 280px;
+        margin-left: auto;
+        margin-right: auto;
+        width: 100%;
+
+        th,
+        td {
+            padding: 0.125rem;
+            font-size: 0.875rem;
+            line-height: 1.25rem;
+            text-align: center;
+        }
+
+        td {
+            &.weekend {
+                color: #6b7280; // Using Tailwind's text-muted equivalent
+            }
+
+            a {
+                width: 100%;
+                height: 100%;
+                display: block;
+                color: #312e81;
+            }
+
+            &.duration_global {
+                border-top: 1px solid #bbf7d0;
+                border-bottom: 1px solid #bbf7d0;
+
+                &.duration_finish {
+                    background-color: #bbf7d0;
+                }
+            }
+
+            &.duration_category {
+                border-top: 1px solid #e9d5ff;
+                border-bottom: 1px solid #e9d5ff;
+
+                &.duration_finish {
+                    background-color: #e9d5ff;
+                }
+            }
+
+            &.duration_course {
+                border-top: 1px solid #fecaca;
+                border-bottom: 1px solid #fecaca;
+
+                &.duration_finish {
+                    background-color: #fecaca;
+                }
+            }
+
+            &.duration_group {
+                border-top: 1px solid #fef08a;
+                border-bottom: 1px solid #fef08a;
+
+                &.duration_finish {
+                    background-color: #fef08a;
+                }
+            }
+
+            &.duration_user {
+                border-top: 1px solid #bfdbfe;
+                border-bottom: 1px solid #bfdbfe;
+
+                &.duration_finish {
+                    background-color: #bfdbfe;
+                }
+            }
+
+            &.duration_other {
+                border-top: 1px solid #d1d5db;
+                border-bottom: 1px solid #d1d5db;
+
+                &.duration_finish {
+                    background-color: #d1d5db;
+                }
+            }
+        }
+
+        caption {
+            color: inherit;
+            font-family: inherit;
+            line-height: inherit;
+            text-align: center;
+        }
+    }
+
+    .calendar_filters {
+        ul {
+            list-style: none;
+    margin: 0;
+    padding: 0;
+        }
+
+        li {
+            margin-bottom: 0.125rem;
+
+            span {
+                &.calendar_event_category,
+                &.calendar_event_course,
+                &.calendar_event_site,
+                &.calendar_event_group,
+                &.calendar_event_user,
+                &.calendar_event_other {
+                    i {
+                        color: #312e81;
+                    }
+                }
+                img {
+                    padding-left: 0.125rem;
+                    padding-right: 0.125rem;
+                    margin: 0;
+                }
+            }
+            .icon {
+                vertical-align: baseline;
+                margin-left: 0.125rem;
+                margin-right: 0.25rem;
+            }
+
+            > a {
+                &:hover {
+                    text-decoration: none;
+
+                    .eventname {
+                        text-decoration: underline;
+                    }
+                }
+            }
+        }
+    }
+
+    .content {
+        h3 {
+            &.eventskey {
+                margin-top: 0.5rem;
+            }
+        }
+    }
+}
+
+// Side block in Course view page is different with other side blocks.
+// We should hide the navigation text and re-arrange the Calendar links.
+.path-course-view {
+    .block {
+        &.block_calendar_month {
+            .maincalendar {
+                div.header {
+                    visibility: hidden;
+                    height: 0;
+                }
+                .calendarwrapper {
+                    .arrow_text {
+                        position: absolute;
+                        width: 1px;
+                        height: 1px;
+                        padding: 0;
+                        margin: -1px;
+                        overflow: hidden;
+                        clip: rect(0, 0, 0, 0);
+                        white-space: nowrap;
+                        border: 0; // Converted from @include visually-hidden
+                    }
+                }
+            }
+
+            .footer {
+                .bottom {
+                    .footer-link {
+                        display: block;
+                    }
+                    .footer-link:after {
+                        content: none;
+                    }
+                }
+            }
+        }
+    }
+}
+
+/* Display month name above the calendar */
+table.calendartable caption {
+    caption-side: top;
+}
+
+// Mixin for day numbers with events
+@mixin day-number-has-event {
+    .day-number {
+        display: inline-block;
+    position: relative;
+
+        .day-number-circle {
+            width: 1.5rem;
+            height: 1.5rem;
+            line-height: 1.5rem;
+            text-align: center;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+        }
+    }
+}
+
+// Also provide as a class for @extend usage
+.day-number-has-event {
+    @include day-number-has-event;
+}
+
+@media (min-width: 768px) { // Converted from @media (min-width: 768px)
+    #page-calender-view {
+        .container-fluid {
+            min-width: 1024px;
+        }
+    }
+}
+
+@media (min-width: 768px) {
+    [data-blockregion]:not([data-blockregion="content"]) {
+        .block {
+            &.block_calendar_month {
+                .maincalendar {
+                    div.header {
+                        visibility: hidden;
+                        height: 0;
+                    }
+
+                    .calendarwrapper {
+                        .current {
+                            width: 40%;
+                            font-size: inherit;
+                            line-height: inherit;
+                        }
+
+                        .previous,
+                        .next {
+                            width: 30%;
+
+                            .arrow_text {
+                                display: none;
+                            }
+                        }
+                    }
+
+                    .calendartable {
+                        &.calendarmonth {
+                            th,
+                            td {
+                                border: none;
+                                text-align: center !important; // stylelint-disable-line declaration-no-important
+                                padding: 0;
+                            }
+
+                            td {
+                                height: auto;
+                                font-size: 0.8em;
+
+                                &.hasevent {
+                                    [data-region="day-content"] {
+                                        display: none;
+                                    }
+
+                                    @include day-number-has-event;
+                                }
+                                &:after {
+                                    content: '';
+                                    display: block;
+                                    margin-top: calc(100% - 26px);
+                                }
+
+                                &.clickable:hover {
+                                    background-color: inherit;
+                                }
+
+                                &.clickable:not(.today):hover {
+                                    .day-number-circle {
+                                        border-radius: 50%;
+                                        background-color: theme('colors.gray.200');
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                .bottom {
+                    // This adds a border on the top side of the footer container.
+                    // So we won't have to add a <hr> element in the footer_options template.
+                    border-top: 1px solid theme('colors.gray.300');
+                    padding-top: theme('spacing.2');
+                }
+            }
+        }
+    }
+}
+
+@media (min-width: 640px) { // Converted from @media (max-width: 768px)
+    .maincalendar {
+        .calendartable {
+            &.calendarmonth {
+                th,
+                td {
+                    border: none;
+                    text-align: center;
+                    padding: 0;
+                    
+                }
+                td {
+                    height: auto;
+                    color: inherit;
+                    padding: 0;
+
+                    &.hasevent {
+                        [data-region="day-content"] {
+                            display: none;
+                        }
+
+                        @include day-number-has-event;
+                    }
+                    &:after {
+                        content: '';
+                        display: block;
+                        margin-top: calc(100% - 26px);
+                    }
+
+                    & > div {
+                        height: auto;
+                    }
+                }
+            }
+        }
+    }
+}
+
+.calendarwrapper {
+    position: relative;
+}
+
+.day-popover-content {
+    &:empty + .day-popover-alternate {
+        display: block;
+    }
+}
+
+.location-content {
+    overflow-wrap: break-word;
+}
+
+.description-content {
+    overflow-wrap: break-word;
+    > p {
+        margin: 0;
+    }
+}
+
+.cal_courses_flt {
+    color: #4b5563;
+    max-width: 75%;
+}
+}

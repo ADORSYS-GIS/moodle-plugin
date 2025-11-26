@@ -1,0 +1,446 @@
+// ============================================================================
+// NAVBAR - MODERN PROFESSIONAL STYLING
+// ============================================================================
+
+// Main Navbar Container
+.navbar.fixed-top,
+.navbar-fixed-top {
+    // Structure & Spacing
+    padding: 0;
+    display: flex;
+    align-items: stretch;
+    height: $navbar-height;
+    
+    // Visual Style - Modern, clean look
+    background-color: #ffffff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    border-bottom: 1px solid #e5e7eb;
+    
+    // Smooth transitions
+    transition: box-shadow 0.3s ease, background-color 0.3s ease;
+    
+    // Hover state - subtle elevation
+    &:hover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    }
+
+    // Layout container
+    .container-fluid {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        width: 100%;
+        // Align items to the start
+        justify-content: flex-start;
+
+        // Use the page-heading-menu as a spacer to push the rest to the right
+        > .page-heading-menu {
+            margin-left: auto;
+        }
+    }
+
+    // Brand Logo Area
+    .navbar-brand {
+        display: flex;
+        align-items: center;
+        padding-left: 1rem;
+        padding-right: 1rem;
+        transition: opacity 0.2s ease;
+        
+        &:hover {
+            opacity: 0.85;
+        }
+        
+        .logo {
+            max-height: calc(#{$navbar-height} - (#{$primary-nav-padding-y} * 2));
+            transition: transform 0.2s ease;
+            
+            &:hover {
+                transform: scale(1.02);
+            }
+        }
+    }
+    
+    // Navigation Links - Modern styling
+    .nav-link {
+        display: flex;
+        align-items: center;
+        padding-left: 1rem;
+        padding-right: 1rem;
+        height: 100%;
+        white-space: nowrap;
+        color: #374151;
+        font-weight: 500;
+        font-size: 0.875rem;
+        line-height: 1.25rem;
+        position: relative;
+        transition: all 0.2s ease;
+        
+        // Hover effect with bottom border
+        &:hover,
+        &:focus {
+            color: #2563eb;
+            background-color: #f9fafb;
+            
+            &::after {
+                content: '';
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                height: 3px;
+                background-color: #2563eb;
+                animation: slideIn 0.2s ease;
+            }
+        }
+        
+        // Active state
+        &.active {
+            color: #1d4ed8;
+            font-weight: 600;
+            
+            &::after {
+                content: '';
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                height: 3px;
+                background-color: #1d4ed8;
+            }
+        }
+    }
+    
+    // Visual Dividers
+    .divider {
+        width: 1px;
+        background-color: #e5e7eb;
+        height: 60%;
+        align-self: center;
+        opacity: 0.6;
+    }
+
+    // Dropdown behavior inside header - hidden by default
+    .dropdown-menu {
+        display: none;
+    }
+    .dropdown-menu.show {
+        display: block;
+    }
+
+    // User Navigation Area
+    #usernavigation {
+        margin-left: auto;
+        order: 99; // Ensure this block sits at the far right in the flex row
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+
+        .nav-link {
+            padding: 0 0.75rem;
+        }
+
+        // Do not display when only the container has .show (safety guard)
+        .dropdown.show > .dropdown-menu { display: none; }
+        .dropdown-menu.show { display: block; }
+    }
+    
+    // Login Button/Link
+    .login {
+        display: flex;
+        align-items: center;
+        padding-left: 1rem;
+        padding-right: 1rem;
+        
+        .nav-link {
+            background-color: #2563eb;
+            color: #ffffff;
+            border-radius: 0.5rem;
+            padding-left: 1.5rem;
+            padding-right: 1.5rem;
+            padding-top: 0.5rem;
+            padding-bottom: 0.5rem;
+            height: auto;
+            font-weight: 600;
+            
+            &:hover {
+                background-color: #1d4ed8;
+                transform: translateY(-1px);
+                box-shadow: 0 4px 8px rgba(37, 99, 235, 0.3);
+                
+                &::after {
+                    display: none;
+                }
+            }
+        }
+    }
+    
+    // User Menu Dropdown
+    .usermenu {
+        display: flex;
+        align-items: center;
+        
+        .action-menu {
+            display: flex;
+            align-items: center;
+            height: 100%;
+        }
+        
+        .dropdown {
+            display: flex;
+            align-items: center;
+            height: 100%;
+            
+            .dropdown-toggle {
+                padding: 0;
+                padding-left: 0.75rem;
+                padding-right: 0.75rem;
+                border-radius: 0;
+                display: flex;
+                align-items: center;
+                height: 100%;
+                background: transparent;
+                border: none;
+                color: #374151;
+                font-weight: 500;
+                transition: all 0.2s ease;
+                
+                &:hover,
+                &:focus {
+                    color: #2563eb;
+                    background-color: #f9fafb;
+                }
+                
+                // User avatar styling
+                .userpicture {
+                    border-radius: 9999px;
+                    border: 2px solid #d1d5db;
+                    transition: border-color 0.2s ease;
+                    
+                    &:hover {
+                        border-color: #3b82f6;
+                    }
+                }
+            }
+        }
+        
+        // Dropdown Menu Styling
+        .dropdown-menu {
+            min-width: 235px;
+            border-radius: 0.5rem;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+            border: 1px solid #e5e7eb;
+            padding: 0.5rem 0;
+            margin-top: 0.5rem;
+            
+            .carousel-navigation-link {
+                > * {
+                    pointer-events: none;
+                }
+            }
+            
+            .dropdown-item {
+                padding-left: 1rem;
+                padding-right: 1rem;
+                padding-top: 0.5rem;
+                padding-bottom: 0.5rem;
+                color: #374151;
+                font-size: 0.875rem;
+                line-height: 1.25rem;
+                transition: all 0.15s ease;
+                position: relative;
+                
+                &:hover,
+                &:focus {
+                    background-color: #eff6ff;
+                    color: #1d4ed8;
+                    padding-left: 1.25rem;
+                }
+                
+                &.carousel-navigation-link::after {
+                    content: '→';
+                    position: absolute;
+                    right: 0.75rem;
+                    color: #9ca3af;
+                    font-size: 1rem;
+                    line-height: 1.5rem;
+                    padding-top: 0.125rem;
+                    transition: all 0.2s ease;
+                }
+                
+                &.carousel-navigation-link:hover::after {
+                    right: 0.5rem;
+                    color: #2563eb;
+                }
+            }
+            
+            // Submenu Styling
+            .submenu {
+                .header {
+                    padding-left: 1rem;
+                    padding-right: 1rem;
+                    padding-top: 0.5rem;
+                    padding-bottom: 0.5rem;
+                    font-size: 0.75rem;
+                    line-height: 1rem;
+                    text-transform: uppercase;
+                    font-weight: 600;
+                    color: #6b7280;
+                    letter-spacing: 0.05em;
+                    
+                    .icon {
+                        width: 1.25rem;
+                        height: 1.25rem;
+                        margin: 0;
+                        font-size: 1.25rem;
+                        line-height: 1.75rem;
+                    }
+                }
+                
+                .items {
+                    .dropdown-item {
+                        &[aria-current="true"] {
+                            background-color: #eff6ff;
+                            color: #1d4ed8;
+                            font-weight: 600;
+                            
+                            &::before {
+                                content: '✓';
+                                margin-right: 0.5rem;
+                                color: #2563eb;
+                                font-size: 0.75rem;
+                                line-height: 1rem;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    // Language Menu
+    .langmenu {
+        .dropdown {
+            display: flex;
+            align-items: center;
+            height: 100%;
+            
+            .dropdown-toggle {
+                padding: 0;
+                padding-left: 0.75rem;
+                padding-right: 0.75rem;
+                border-radius: 0;
+                display: flex;
+                align-items: center;
+                height: 100%;
+                transition: all 0.2s ease;
+                
+                &:hover {
+                    background-color: #f9fafb;
+                }
+            }
+        }
+        
+        .dropdown-menu {
+            .dropdown-item {
+                &[aria-current="true"] {
+                    background-color: #eff6ff;
+                    color: #1d4ed8;
+                    font-weight: 600;
+                    
+                    &::before {
+                        content: '✓';
+                        margin-right: 0.5rem;
+                        font-size: 0.75rem;
+                        line-height: 1rem;
+                        padding-left: 0.25rem;
+                    }
+                }
+            }
+        }
+        
+        // Responsive: Hide language button text on mobile
+        @media (max-width: 767.98px) {
+            .langbutton {
+                display: none;
+            }
+        }
+    }
+    
+    // Action Menus
+    .moodle-actionmenu .menubar,
+    .action-menu-trigger .dropdown {
+        height: 100%;
+        display: flex;
+        align-items: center;
+    }
+    
+    // Dropdown max height with scroll
+    .dropdown .dropdown-menu {
+        max-height: calc(100vh - #{$navbar-height});
+        overflow-y: auto;
+        
+        // Custom scrollbar
+        &::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        &::-webkit-scrollbar-track {
+            background: #f3f4f6;
+        }
+        
+        &::-webkit-scrollbar-thumb {
+            background: #9ca3af;
+            border-radius: 3px;
+            
+            &:hover {
+                background: #6b7280;
+            }
+        }
+    }
+}
+
+// RTL Support
+.dir-rtl .navbar.fixed-top,
+.dir-rtl .navbar-fixed-top {
+    .usermenu {
+        .dropdown-menu {
+            .dropdown-item {
+                &.carousel-navigation-link::after {
+                    content: '←';
+                    right: auto;
+                    left: 0.75rem;
+                }
+                
+                &.carousel-navigation-link:hover::after {
+                    left: 0.5rem;
+                }
+            }
+        }
+    }
+}
+
+// Page Margin for Fixed Navbar
+#page {
+    margin-top: $navbar-height;
+    transition: margin-top 0.3s ease;
+}
+
+.pagelayout-embedded #page {
+    margin-top: 0;
+}
+
+// CSS Variable for JavaScript access
+:root {
+    --navbar-height: #{$navbar-height};
+}
+
+// Animations
+@keyframes slideIn {
+    from {
+        transform: scaleX(0);
+    }
+    to {
+        transform: scaleX(1);
+    }
+}

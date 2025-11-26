@@ -1,0 +1,113 @@
+import { fileURLToPath } from 'url';
+import path from 'path';
+import { Configuration } from 'webpack';
+import MiniCssExtractPlugin from 'mini-css-extract-plugin';
+import CopyPlugin from 'copy-webpack-plugin';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// 👇 Set the final build destination
+const OUTPUT_PATH = path.resolve(__dirname, '../../../../moodle-plugin/outputs/plugins/gis-theme/adorsys_theme_v2');
+console.log("Output Path:", OUTPUT_PATH);
+
+const config: Configuration = {
+  mode: 'production',
+  devtool: 'source-map',
+
+  //  Entry points for JS and CSS
+  entry: {
+    bundle: './src/index.ts',
+  },
+
+  output: {
+    path: OUTPUT_PATH,
+    filename: 'js/[name].js',
+    clean: true
+  },
+
+  resolve: {
+    extensions: ['.ts', '.js']
+  },
+
+  module: {
+    rules: [
+      // Rule 1: Process .css files with Tailwind (PostCSS + Sass)
+      {
+        test: /\.css$/,
+        use: [
+          MiniCssExtractPlugin.loader,
+          {
+            loader: 'css-loader',
+            options: {
+              url: false, // Don't process url() in CSS
+            },
+          },
+          {
+            loader: 'postcss-loader',
+            options: {
+              sourceMap: true,
+            },
+          },
+        ]
+      },
+      // Rule 2: Process .scss files with ONLY Sass (NO Tailwind/PostCSS)
+      // Flow: SCSS → Sass → CSS Loader → Extract
+      // Tailwind is completely separate in .css files
+      {
+        test: /\.scss$/,
+        use: [
+          MiniCssExtractPlugin.loader,
+          {
+            loader: 'css-loader',
+            options: {
+              url: false, // Don't process url() - Moodle uses [[pix:...]] placeholders
+            },
+          },
+          {
+            loader: 'sass-loader',
+            options: {
+              sourceMap: true,
+              sassOptions: {
+                includePaths: [path.resolve(__dirname, 'scss')],
+              },
+            },
+          },
+        ]
+      },
+      {
+        test: /\.ts$/,
+        use: 'ts-loader',
+        exclude: /node_modules/
+      }
+    ]
+  },
+
+  plugins: [
+    new MiniCssExtractPlugin({
+      filename: 'dist/bundle.css'
+    }),
+
+    //  Copy only Moodle plugin-relevant files
+    new CopyPlugin({
+      patterns: [
+        { from: 'templates', to: 'templates' },
+        { from: 'layout', to: 'layout' },
+        { from: 'pix', to: 'pix' },
+        { from: 'lang', to: 'lang' },
+        { from: 'scss', to: 'scss' },
+
+        // Copy PHP root files like version.php, lib.php etc.
+        {
+          from: '**/*.php',
+          globOptions: {
+            ignore: ['node_modules/**', 'src/**']
+          },
+          noErrorOnMissing: true
+        }
+      ]
+    })
+  ]
+};
+
+export default config;

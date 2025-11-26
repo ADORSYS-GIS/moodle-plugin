@@ -1,0 +1,397 @@
+/**
+ * File buttons.scss.
+ * Contains styles for buttons.
+ */
+
+.singlebutton {
+    display: inline-block;
+
+    + .singlebutton {
+        margin-left: 0.5rem;
+    }
+}
+
+.continuebutton {
+    text-align: center;
+}
+
+p.arrow_button {
+    margin-top: 5rem;
+    text-align: center;
+}
+
+#addcontrols {
+    // This is displayed in a column between 2 20 row multi-selects. This should be just short of half way.
+    margin-top: 8rem;
+    text-align: center;
+    margin-bottom: 3rem;
+
+    label {
+        display: inline;
+    }
+}
+
+#addcontrols,
+#removecontrols {
+    input {
+        width: 100%;
+    margin-left: auto; margin-right: auto;
+    }
+}
+
+.btn-lineup {
+    margin-bottom: 0.625rem;
+    margin-left: 0.375rem;
+}
+
+/* Small buttons - sizes handled in base .btn rules above */
+
+/**
+ * Focus styles to improve Bootstrap default contrast.
+ */
+
+// Base button styling
+.btn {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    padding: 0.5rem 1rem;
+    border-radius: 0.375rem;
+    font-weight: 500;
+    transition: all 0.15s ease;
+    
+    &:focus-visible {
+        outline: none;
+        box-shadow: 0 0 0 2px #fff, 0 0 0 4px #6366f1;
+    }
+}
+
+// Button sizes
+.btn-sm {
+    font-size: 0.8125rem;
+    line-height: 1.125rem;
+    padding: 0.375rem 0.75rem;
+}
+
+.btn-lg {
+    font-size: 1rem;
+    line-height: 1.5rem;
+    padding: 0.625rem 1.25rem;
+}
+
+// Site-wide primary button styling (Indigo)
+.btn-primary,
+.btn.btn-primary {
+    background-color: #4f46e5; // indigo-600
+    border-color: #4f46e5;
+    color: #ffffff;
+    font-weight: 600;
+    border-radius: 0.375rem;
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    transition: background-color 0.2s ease, box-shadow 0.2s ease, transform 0.06s ease;
+}
+.btn-primary:hover,
+.btn.btn-primary:hover {
+    background-color: #4338ca; // indigo-700
+    border-color: #4338ca;
+}
+.btn-primary:active,
+.btn.btn-primary:active {
+    background-color: #3730a3; // indigo-800
+    border-color: #3730a3;
+    transform: scale(0.98);
+}
+.btn-primary:focus,
+.btn.btn-primary:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.35); // indigo focus ring
+}
+.btn-primary:disabled,
+.btn.btn-primary:disabled,
+.btn-primary.disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+// Secondary button styling
+.btn-secondary,
+.btn.btn-secondary {
+    background-color: #ffffff;
+    border-color: #d1d5db;
+    color: #374151;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    
+    &:hover {
+        background-color: #f3f4f6;
+        border-color: #9ca3af;
+        color: #1f2937;
+    }
+    
+    &:focus-visible {
+        box-shadow: 0 0 0 2px #fff, 0 0 0 4px #6b7280;
+    }
+    
+    &:active {
+        background-color: #e5e7eb;
+        transform: scale(0.98);
+    }
+}
+.btn-accent {
+    &:focus-visible {
+        box-shadow: 0 0 0 2px #fff, 0 0 0 4px #93c5fd;
+    }
+}
+.btn-info {
+    &:focus-visible {
+        box-shadow: 0 0 0 2px #fff, 0 0 0 4px #2563eb;
+    }
+}
+.btn-success {
+    &:focus-visible {
+        box-shadow: 0 0 0 2px #fff, 0 0 0 4px #16a34a;
+    }
+}
+.btn-warning {
+    &:focus-visible {
+        box-shadow: 0 0 0 2px #fff, 0 0 0 4px #eab308;
+    }
+}
+.btn-error {
+    &:focus-visible {
+        box-shadow: 0 0 0 2px #fff, 0 0 0 4px #dc2626;
+    }
+}
+
+// For outline buttons, the ring color should match the outline color
+.btn-outline-primary {
+    color: #4f46e5;
+    border-color: #4f46e5;
+    background-color: transparent;
+    &:focus-visible {
+        box-shadow: 0 0 0 2px #fff, 0 0 0 4px #6366f1;
+    }
+}
+.btn-outline-primary:hover {
+    color: #ffffff;
+    background-color: #4f46e5;
+    border-color: #4f46e5;
+}
+.btn-outline-secondary {
+    &:focus-visible {
+        box-shadow: 0 0 0 2px #fff, 0 0 0 4px #6b7280;
+    }
+}
+.btn-outline-accent {
+    &:focus-visible {
+        box-shadow: 0 0 0 2px #fff, 0 0 0 4px #93c5fd;
+    }
+}
+.btn-outline-info {
+    &:focus-visible {
+        box-shadow: 0 0 0 2px #fff, 0 0 0 4px #2563eb;
+    }
+}
+.btn-outline-success {
+    &:focus-visible {
+        box-shadow: 0 0 0 2px #fff, 0 0 0 4px #16a34a;
+    }
+}
+.btn-outline-warning {
+    &:focus-visible {
+        box-shadow: 0 0 0 2px #fff, 0 0 0 4px #eab308;
+    }
+}
+.btn-outline-error {
+    &:focus-visible {
+        box-shadow: 0 0 0 2px #fff, 0 0 0 4px #dc2626;
+    }
+}
+
+
+/**
+ * Icon buttons.
+ */
+
+.btn-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 1 / 1;
+    // Default icon size, can be overridden by icon-size classes
+    height: 2.5rem;
+    width: 2.5rem;
+    font-size: 1rem;
+    line-height: 1.5rem;
+    .icon {
+        margin: 0;
+    }
+    // This loop needs to be converted to specific Tailwind classes or removed if DaisyUI handles it.
+    // For now, I'll keep the structure but apply Tailwind classes.
+    &.icon-size-sm {
+        height: 2rem;
+        width: 2rem;
+        font-size: 0.875rem;
+        line-height: 1.25rem;
+    }
+    &.icon-size-md {
+        height: 2.5rem;
+        width: 2.5rem;
+        font-size: 1rem;
+        line-height: 1.5rem;
+    }
+    &.icon-size-lg {
+        height: 3rem;
+        width: 3rem;
+        font-size: 1.125rem;
+        line-height: 1.75rem;
+    }
+    &.icon-size-xl {
+        height: 4rem;
+        width: 4rem;
+        font-size: 1.25rem;
+        line-height: 1.75rem;
+    }
+}
+
+/* Specific styles for the collapse/expand buttons. */
+.btn-icon.icons-collapse-expand {
+    color: var(--fallback-p, oklch(var(--p) / 1));
+    background-color: #e0e7ff;
+    &:hover {
+        outline-width: 2px;
+        outline-color: var(--fallback-p, oklch(var(--p) / 1));
+    }
+    &:focus-visible {
+        outline: none;
+        box-shadow: 0 0 0 2px #fff, 0 0 0 4px #6366f1;
+    }
+}
+
+/**
+ * Subtle buttons.
+ */
+
+// DaisyUI's btn-ghost is a good equivalent for subtle buttons.
+.btn-subtle-primary {
+    font-weight: 500;
+    color: var(--fallback-p, oklch(var(--p) / 1));
+    background-color: transparent;
+    &:hover {
+        background-color: #4f46e5;
+        color: #ffffff;
+    }
+    &:focus-visible {
+        box-shadow: 0 0 0 2px #fff, 0 0 0 4px #6366f1;
+    }
+}
+.btn-subtle-secondary {
+    font-weight: 500;
+    color: var(--fallback-s, oklch(var(--s) / 1));
+    background-color: transparent;
+    &:hover {
+        background-color: #4b5563;
+        color: #ffffff;
+    }
+    &:focus-visible {
+        box-shadow: 0 0 0 2px #fff, 0 0 0 4px #6b7280;
+    }
+}
+.btn-subtle-accent {
+    font-weight: 500;
+    color: var(--fallback-a, oklch(var(--a) / 1));
+    background-color: transparent;
+    &:hover {
+        background-color: #93c5fd;
+        color: #ffffff;
+    }
+    &:focus-visible {
+        box-shadow: 0 0 0 2px #fff, 0 0 0 4px #93c5fd;
+    }
+}
+.btn-subtle-info {
+    font-weight: 500;
+    color: var(--fallback-in, oklch(var(--in) / 1));
+    background-color: transparent;
+    &:hover {
+        background-color: #2563eb;
+        color: #ffffff;
+    }
+    &:focus-visible {
+        box-shadow: 0 0 0 2px #fff, 0 0 0 4px #2563eb;
+    }
+}
+.btn-subtle-success {
+    font-weight: 500;
+    color: var(--fallback-su, oklch(var(--su) / 1));
+    background-color: transparent;
+    &:hover {
+        background-color: #16a34a;
+        color: #ffffff;
+    }
+    &:focus-visible {
+        box-shadow: 0 0 0 2px #fff, 0 0 0 4px #16a34a;
+    }
+}
+.btn-subtle-warning {
+    font-weight: 500;
+    color: var(--fallback-wa, oklch(var(--wa) / 1));
+    background-color: transparent;
+    &:hover {
+        background-color: #eab308;
+        color: #ffffff;
+    }
+    &:focus-visible {
+        box-shadow: 0 0 0 2px #fff, 0 0 0 4px #eab308;
+    }
+}
+.btn-subtle-error {
+    font-weight: 500;
+    color: var(--fallback-er, oklch(var(--er) / 1));
+    background-color: transparent;
+    &:hover {
+        background-color: #dc2626;
+        color: #ffffff;
+    }
+    &:focus-visible {
+        box-shadow: 0 0 0 2px #fff, 0 0 0 4px #dc2626;
+    }
+}
+
+.btn-subtle-body {
+    font-weight: 500;
+    color: #374151;
+    background-color: transparent;
+    border: 1px solid #d1d5db;
+    &:hover {
+        background-color: #4b5563;
+        color: #ffffff;
+    }
+    &:focus-visible {
+        box-shadow: 0 0 0 2px #fff, 0 0 0 4px #4b5563;
+    }
+}
+
+/*
+ * Add content buttons.
+ */
+
+.btn-add-content {
+    border-radius: 0.5rem;
+    border: 2px dashed #d1d5db;
+    color: var(--fallback-p, oklch(var(--p) / 1));
+    background-color: #ffffff;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    font-weight: 700;
+    &:hover,
+    &:focus {
+        background-color: #e0e7ff;
+        border-style: solid;
+        border-color: var(--fallback-p, oklch(var(--p) / 1));
+        color: var(--fallback-p, oklch(var(--p) / 1));
+    }
+}

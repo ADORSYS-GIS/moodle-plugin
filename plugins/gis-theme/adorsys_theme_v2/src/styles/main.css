@@ -1,0 +1,87 @@
+@import "tailwindcss";
+@plugin "daisyui";
+
+/* Content paths for Tailwind v4 */
+@source "../../templates/**/*.mustache";
+@source "../../layout/**/*.php";
+@source "../**/*.ts";
+
+/* DaisyUI Theme - Indigo Color for Buttons */
+:root,
+[data-theme="light"],
+html {
+  /* Primary (Indigo) - used for buttons and primary actions */
+  --p: 238 77% 52% !important;           /* Indigo 600 #4f46e5 */
+  --pc: 0 0% 100% !important;            /* Primary text color - white */
+  --pf: 242 74% 61% !important;          /* Primary focus (lighter) - Indigo 500 */
+  
+  /* Secondary (Gray) */
+  --s: 220 9% 46% !important;            /* Gray 600 */
+  --sc: 0 0% 100% !important;            /* Secondary text - white */
+  --sf: 220 9% 36% !important;           /* Secondary focus - Gray 700 */
+  
+  /* Accent (Light Indigo) */
+  --a: 233 100% 95% !important;          /* Indigo 100 */
+  --ac: 243 75% 19% !important;          /* Accent text - Indigo 900 */
+  
+  /* Neutral */
+  --n: 220 13% 96% !important;           /* Gray 100 */
+  --nc: 220 9% 20% !important;           /* Neutral text - Gray 800 */
+  
+  /* Base */
+  --b1: 0 0% 100% !important;            /* White background */
+  --b2: 220 14% 98% !important;          /* Gray 50 */
+  --b3: 220 13% 96% !important;          /* Gray 100 */
+  --bc: 222 47% 11% !important;          /* Base text - Gray 900 */
+  
+  /* State colors */
+  --in: 217 91% 60% !important;          /* Info - Blue 600 */
+  --inc: 0 0% 100% !important;
+  --su: 142 71% 45% !important;          /* Success - Green 600 */
+  --suc: 0 0% 100% !important;
+  --wa: 45 93% 47% !important;           /* Warning - Yellow 500 */
+  --wac: 0 0% 0% !important;
+  --er: 0 72% 51% !important;            /* Error - Red 600 */
+  --erc: 0 0% 100% !important;
+}
+
+/* Force indigo color only for btn-primary - override Moodle defaults */
+.btn-primary,
+.btn.btn-primary {
+  background-color: #4f46e5 !important;
+  border-color: #4f46e5 !important;
+  color: white !important;
+}
+
+.btn-primary:hover,
+.btn-primary:focus,
+.btn.btn-primary:hover,
+.btn.btn-primary:focus {
+  background-color: #4338ca !important;
+  border-color: #4338ca !important;
+  color: white !important;
+}
+
+/* Tailwind theme extensions */
+@theme {
+  --color-primary-50: #eef2ff;
+  --color-primary-100: #e0e7ff;
+  --color-primary-200: #c7d2fe;
+  --color-primary-300: #a5b4fc;
+  --color-primary-400: #818cf8;
+  --color-primary-500: #6366f1;
+  --color-primary-600: #4f46e5;
+  --color-primary-700: #4338ca;
+  --color-primary-800: #3730a3;
+  --color-primary-900: #312e81;
+
+  --color-success: #16a34a;
+  --color-info: #2563eb;
+  --color-warning: #eab308;
+  --color-error: #dc2626;
+
+  --spacing-navbar-height: 4rem;
+  --shadow-hover: 0 8px 24px rgba(0,0,0,0.12);
+}
+
+@import "./login.css";

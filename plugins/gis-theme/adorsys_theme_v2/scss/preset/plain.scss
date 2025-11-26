@@ -1,0 +1,11 @@
+/**
+ * Plain preset file.
+ *
+ * To create your own preset file:
+ * - Duplicate this file and rename it, for instance to preset-apple.scss.
+ * - In settings.php, find the references to 'plain', duplicate them and rename
+ *   them to 'apple'. (Look around the choices for 'theme_adorsys_theme_v2/preset').
+ */
+
+// Import Core moodle CSS (which now includes Tailwind)
+@import "../moodle";

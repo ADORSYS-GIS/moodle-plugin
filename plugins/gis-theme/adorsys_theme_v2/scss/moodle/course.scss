@@ -1,0 +1,951 @@
+@layer components {
+    /*
+     * Course page styles.
+     */
+
+    // Variables.
+    $activity-item-padding: 0.75rem !default;
+    $activity-border-radius: 0.5rem !default;
+    $activity-border-width: 2px !default;
+    $activity-hover-border-color: #4f46e5 !default;
+    $divider-color: #d1d5db !default;
+    $divider-width: 2px !default;
+    $divider-hover-color: #4f46e5 !default;
+
+    /* Course content */
+
+    .course-content ul.section-list {
+        padding: 0;
+    margin: 0;
+    }
+
+    // Re-style ordered list in course content.
+    .course-content .section-item,
+    .course-content .section-item .activity-item {
+        ul {
+            list-style-type: disc;
+            ul {
+                list-style-type: circle;
+                ul {
+                    list-style-type: square;
+                }
+            }
+        }
+    }
+
+    // Expand all/Collapse all.
+    .section-collapsemenu {
+        .collapseall {
+            display: block;
+        }
+
+        .expandall {
+            display: none;
+        }
+
+        &.collapsed {
+            .collapseall {
+                display: none;
+            }
+
+            .expandall {
+                display: block;
+            }
+        }
+    }
+
+    // Max sections reached alert.
+    .max-section-alert {
+        border-top: 2px dashed #d1d5db;
+        font-size: 0.875rem;
+        line-height: 1.25rem;
+        font-weight: 400;
+        color: #4b5563;
+    }
+
+    /* Sections */
+
+    .course-section {
+        list-style: none;
+        margin-top: 0.75rem;
+        // Custom styles for course sections while editing.
+        .editing & {
+            margin-top: 0.5rem;
+        }
+
+        .section-item {
+            padding: 0.75rem;
+    border-width: 2px;
+    border-color: #e5e7eb;
+    border-radius: 0.5rem;
+        }
+
+        &.hidden,
+        &.orphaned {
+            .section-item {
+                background-color: #f3f4f6;
+            }
+        }
+
+        // Highlighted section.
+        &.current {
+            > .section-item {
+                position: relative;
+                &::before {
+                    border-left: 4px solid #6366f1;
+                    position: absolute;
+                    top: 0;
+                    bottom: 0;
+                    left: -8px;
+                    content: '';
+                }
+            }
+        }
+
+        .sectionname > a {
+            color: #111827;
+            &:hover {
+                text-decoration: none;
+            }
+        }
+
+        .sectionbadges .badge {
+            margin-left: 0.5rem;
+            font-weight: 400;
+            .icon {
+                font-size: 0.75rem;
+                line-height: 1rem;
+                width: 0.75rem;
+                height: 0.75rem;
+            }
+        }
+
+        .course-section-header.draggable {
+            cursor: move;
+        }
+
+        .section_action_menu {
+            .dropdown-toggle::after {
+                display: none;
+            }
+        }
+
+        .summarytext {
+            // Add rounded borders to images.
+            img {
+                border-radius: 0.5rem;
+            }
+        }
+
+        // Availability styles for both section and activities.
+        .availabilityinfo {
+            margin-top: 0.5rem;
+            padding-left: 0.75rem;
+            padding-right: 0.75rem;
+            padding-top: 0.25rem;
+            padding-bottom: 0.25rem;
+            background-color: #e5e7eb;
+            font-size: 0.875rem;
+            line-height: 1.25rem;
+            border-radius: 0.5rem;
+            .editavailability {
+                a {
+                    border-radius: 0.25rem;
+                    font-weight: 700;
+                    &:hover {
+                        background-color: #9ca3af;
+                    }
+                    .icon {
+                        color: inherit;
+                        margin-right: 0.25rem;
+                    }
+                }
+            }
+        }
+
+        // Override '.btn-icon' styles from buttons.scss to make section action menu icons bigger.
+        .section_action_menu > .action-menu {
+            .btn-icon {
+                font-size: 1.125rem;
+                line-height: 1.75rem;
+            }
+        }
+
+        .section-summary-activities {
+            .icon {
+                width: auto;
+                color: var(--fallback-p, oklch(var(--p) / 1));
+            }
+        }
+
+        .section-summary-activities + .section {
+            border-top: 2px solid #e5e7eb;
+            margin-top: 0.75rem;
+            padding-top: 0.75rem;
+        }
+
+        .section_goto .icon {
+            font-size: 1.125rem;
+            line-height: 1.75rem;
+            color: var(--fallback-p, oklch(var(--p) / 1));
+        }
+
+        // Add new z-index context for dnd overlay higher divider buttons and quick edit links.
+        .overlay-preview {
+            z-index: 5;
+        }
+    }
+
+    // Old movehere link styles.
+    .section li.movehere a {
+        display: block;
+        width: 100%;
+        height: 2rem;
+        border: 2px dashed #1f2937;
+    }
+
+    /* Activities */
+
+    .activity {
+        list-style: none;
+    padding-top: 0.25rem;
+    margin-top: 0.25rem;
+    border-top-width: 2px;
+    border-color: #e5e7eb;
+        &.indented {
+            .activity-item {
+                margin-left: 0.75rem;
+            }
+        }
+        // Custom styles for activity while editing and for the first activity card in the section.
+        .editing &,
+        .section &:first-child {
+            // Remove activity top border and spacing, while editing a separator is displayed.
+            padding-top: 0;
+            margin-top: 0;
+            border-top: 0;
+        }
+    }
+
+    .activity-item {
+        padding: 0.75rem;
+    border-radius: 0.5rem;
+        &.activityinline {
+            padding-top: 0.75rem; padding-bottom: 0.75rem;
+    padding-left: 0; padding-right: 0;
+        }
+        &.hiddenactivity {
+            background-color: #f3f4f6;
+            .activityiconcontainer,
+            .badge {
+                mix-blend-mode: multiply;
+            }
+        }
+        // Custom styles for activity cards while editing.
+        .editing & {
+            cursor: move;
+            .a {
+                cursor: pointer;
+            }
+            // Add a border on hover to the activity card (avoiding hover effect in inner activities).
+            &:hover:not(:has(.activity:hover)),
+            &.selected {
+                // We use outline here to avoid changing the layout everytime we hover.
+                outline: 2px solid #6366f1;
+                box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+                .activityiconcontainer,
+                .badge {
+                    mix-blend-mode: multiply;
+                }
+            }
+        }
+        .activity.dragging & {
+            border: 2px solid #6366f1;
+            .editing &:hover {
+                // We cancel the outline when dragging because it is not taken into account
+                // in the element/image representing the drag and drop and it cuts out part of the
+                // border.
+                outline: none;
+            }
+        }
+
+        // Activity card grid layout.
+        .activity-grid {
+            display: grid;
+    align-items: center;
+            grid-template-columns: min-content 1fr min-content min-content min-content;
+            grid-template-rows: 1fr repeat(5, min-content);
+            grid-template-areas:
+                "icon   name          groupmode      completion    actions"
+                "icon   visibility    groupmode      completion    actions"
+                "icon   dates         groupmode      completion    actions"
+                "icon   altcontent    altcontent     altcontent    altcontent"
+                "icon   afterlink     afterlink      afterlink     afterlink"
+                "icon   availability  availability   availability  availability";
+            @media (min-width: 640px) {
+                grid-template-columns: min-content 1fr min-content min-content min-content;
+                grid-template-rows: 1fr repeat(4, min-content);
+                grid-template-areas:
+                    "icon          name          actions"
+                    "icon          visibility    actions"
+                    "dates         dates         dates"
+                    "groupmode     groupmode     groupmode"
+                    "completion    completion    completion"
+                    "altcontent    altcontent    altcontent"
+                    "afterlink     afterlink     afterlink"
+                    "availability  availability  availability";
+            }
+        }
+        // Activity card specific grid layout for activities without name.
+        .activity-grid.noname-grid {
+            grid-template-columns: min-content 1fr min-content min-content;
+            grid-template-areas:
+                "visibility    groupmode        completion    actions"
+                "altcontent    altcontent       altcontent    altcontent"
+                "afterlink     afterlink        afterlink     afterlink"
+                "availability  availability     availability  availability";
+            @media (min-width: 640px) {
+                grid-template-columns: 1fr min-content;
+                grid-template-areas:
+                    "visibility    actions"
+                    "altcontent    altcontent"
+                    "groupmode     groupmode"
+                    "afterlink     afterlink"
+                    "completion    completion"
+                    "availability  availability";
+            }
+        }
+
+        .activity-actions {
+            grid-area: actions;
+            .actions {
+                position: relative;
+            }
+        }
+
+        .activity-icon {
+            grid-area: icon;
+        }
+
+        .activity-dates {
+            grid-area: dates;
+            font-size: 0.875rem;
+            line-height: 1.25rem;
+            color: #374151;
+            display: flex;
+            flex-wrap: wrap;
+            column-gap: 0.75rem;
+            @media (min-width: 640px) {
+                margin-top: 0.5rem;
+            }
+        }
+        .activity-name-area {
+            grid-area: name;
+            // Prevent stretch-link from covering the inplace editable button using z-index.
+            .activityname {
+                .afterlink {
+                    margin-left: 0.5rem;
+                }
+                .inplaceeditable .quickeditlink {
+                    position: relative;
+                    z-index: 20;
+                    margin-left: 0.5rem;
+                }
+            }
+            .activitybadge {
+                &.badge-none {
+                    font-weight: 400;
+                    color: var(--fallback-bc, oklch(var(--bc) / 1));
+                    padding: 0;
+                    font-size: 0.875rem;
+                    line-height: 1.25rem;
+                }
+            }
+        }
+
+        .activity-completion {
+            grid-area: completion;
+            justify-self: end;
+            button,
+            a[role="button"] {
+                min-height: 1.25rem;
+            }
+            @media (min-width: 640px) {
+                width: 100%;
+    margin-top: 0.5rem;
+                button {
+                    width: 100%;
+                }
+            }
+            .completion-dialog {
+                color: #374151;
+                font-size: 0.875rem;
+                line-height: 1.25rem;
+                min-width: 12rem;
+                .icon {
+                    font-size: 0.875rem;
+                    line-height: 1.25rem;
+                    width: 0.75rem;
+                    height: 0.75rem;
+                    margin-right: 0.25rem;
+                }
+                .editcompletion a {
+                    border-radius: 0.25rem;
+                    color: #374151;
+                    font-weight: 700;
+                    text-decoration: none;
+                    &:hover {
+                        background-color: #e5e7eb;
+                    }
+                }
+            }
+        }
+
+        .activity-groupmode-info {
+            grid-area: groupmode;
+            justify-self: end;
+            .groupmode-information {
+                height: 1.25rem;
+                width: 1.25rem;
+                border-radius: 0.25rem;
+                .icon {
+                    width: 0.75rem;
+                    height: 0.75rem;
+                }
+            }
+            .groupmode-icon-info {
+                display: none;
+            }
+            @media (min-width: 640px) {
+                width: 100%;
+                margin-top: 0.5rem;
+                padding-top: 0.5rem;
+                border-top: 2px solid #e5e7eb;
+                .groupmode-information {
+                    width: auto;
+                    color: inherit;
+                    padding-left: 0.5rem;
+                    padding-right: 0.5rem;
+                }
+                .groupmode-icon-info {
+                    display: inline;
+                }
+                // Disable v-parent-focus behaviour on small devices to always show the groupmode button.
+                .v-parent-focus {
+                    opacity: 1;
+    visibility: visible;
+                }
+            }
+        }
+
+        .activity-badges {
+            grid-area: visibility;
+            .badge {
+                font-weight: 400;
+                .icon {
+                    font-size: 0.75rem;
+                    line-height: 1rem;
+                    width: 0.75rem;
+                    height: 0.75rem;
+                }
+            }
+        }
+
+        .activity-altcontent {
+            grid-area: altcontent;
+            margin-top: 0.25rem;
+            &.activity-description {
+                margin-top: 0.5rem;
+                padding-top: 0.5rem;
+                border-top: 2px solid #e5e7eb;
+                font-size: 0.875rem;
+                line-height: 1.25rem;
+                // Fix activity description bottom margin for first level-lists.
+                ul:not(.activity-description ul ul) {
+                    margin-bottom: 1rem;
+                }
+            }
+            // Add rounded borders to images.
+            img {
+                border-radius: 0.5rem;
+            }
+        }
+
+        .activity-availability {
+            grid-area: availability;
+        }
+
+        .activity-afterlink {
+            grid-area: afterlink;
+            margin-top: 0.5rem;
+            padding-top: 0.5rem;
+            border-top: 2px solid #e5e7eb;
+        }
+
+        .no-overflow {
+            width: 100%;
+        }
+    }
+
+    .section .draggable .activity-item .dragicon {
+        display: none;
+    }
+
+    /* Dividers */
+
+    .course-content .divider {
+        position: relative;
+        hr {
+            width: 100%;
+            margin-top: 0.5rem;
+            margin-bottom: 0.5rem;
+            margin-left: 0.25rem;
+            margin-right: 0.25rem;
+            border-top: 2px dashed #d1d5db;
+            opacity: 1;
+            .changenumsections.disabled & {
+                border-top: 2px dashed #d1d5db;
+            }
+        }
+        .divider-content {
+            opacity: 0;
+    visibility: hidden;
+    transition-property: all;
+    transition-duration: 100ms;
+    position: absolute;
+            background: linear-gradient(transparent 40%, #ffffff 40%, #ffffff 60%, transparent 60%);
+            .section.hidden & {
+                background: linear-gradient(transparent 40%, #f3f4f6 40%, #f3f4f6 60%, transparent 60%);
+            }
+        }
+        &.always-visible {
+            .divider-content {
+                opacity: 1;
+    visibility: visible;
+            }
+        }
+        &.always-hidden {
+            hr {
+                opacity: 0;
+    visibility: hidden;
+            }
+        }
+        &:hover,
+        &:focus,
+        &:focus-within {
+            .divider-content {
+                opacity: 1;
+    visibility: visible;
+            }
+            hr {
+                opacity: 1;
+    visibility: visible;
+            }
+        }
+        // Style the hr divider when the "Add content" button is hovered.
+        &:has(.btn.add-content:hover) {
+            hr {
+                border-color: var(--fallback-p, oklch(var(--p) / 1));
+                .changenumsections.disabled & {
+                    border-color: #e5e7eb;
+                }
+            }
+        }
+    }
+
+    // These styles will make the activity and section dividers buttons visible (but still without opacity) so
+    // buttons can be keyboard focusable.
+    .activity:focus-within + .activity .divider .divider-content,
+    .course-section-header:focus-within + .content .section .activity:first-child .divider .divider-content,
+    .content .section .activity:focus-within .divider .divider-content,
+    .course-content:focus-within .changenumsections .divider .divider-content {
+        visibility: visible;
+    }
+
+    // Hide last section "Add section". It will rely on the course format general "Add section" button.
+    .course-content ul.topics > li:last-child .changenumsections {
+        display: none;
+    }
+
+    // Custom buttons for dividers.
+    .course-content .divider .btn.add-content {
+        position: relative;
+        z-index: 10;
+        border-radius: 0.25rem;
+        font-size: 0.875rem;
+        line-height: 1.25rem;
+        font-weight: 700;
+        color: #312e81;
+        background-color: #e0e7ff;
+        &:hover,
+        &:focus {
+            color: var(--fallback-pc, oklch(var(--pc) / 1));
+            background-color: var(--fallback-p, oklch(var(--p) / 1));
+        }
+        .icon {
+            width: 0.875rem;
+            height: 0.875rem;
+            font-size: 0.875rem;
+            line-height: 1.25rem;
+        }
+        .changenumsections.disabled & {
+            color: #6b7280;
+            background-color: #e5e7eb;
+            outline: none;
+            box-shadow: none;
+            &:hover,
+            &:focus {
+                color: #6b7280;
+                background-color: #e5e7eb;
+                outline: none;
+                box-shadow: none;
+            }
+            pointer-events: auto; // Restore pointer events for the disabled button so we can see the tooltip.
+        }
+    }
+
+    /* Bulk editing */
+
+    .bulkenabled {
+        .bulk-hidden {
+            display: none;
+        }
+        .section {
+            margin-left: 0.75rem;
+            &:not(:first-child) {
+                margin-top: 1rem;
+            }
+        }
+        .activity {
+            margin-top: 0.5rem;
+            margin-left: 2rem;
+            padding-top: 0.5rem;
+            border-top: 2px dashed #d1d5db;
+            &:first-child {
+                margin-top: 1rem;
+            }
+        }
+        .activity-item {
+            .bulkselect {
+                float: left;
+                margin-left: -2rem;
+            }
+            // Delegated sections are not available for bulk editing.
+            &:has(.delegated-section):hover {
+                outline: none;
+                box-shadow: none;
+            }
+        }
+        .course-section-header .bulkselect {
+            left: -2.75rem;
+            position: relative;
+            width: 0;
+        }
+        @media (min-width: 768px) {
+            .course-content {
+                margin-left: 2rem;
+            }
+        }
+        .sticky-footer-content.bulkactions {
+            .btn {
+                --btn-disabled-border-color: transparent;
+                &:focus {
+                    outline: none;
+                    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.5);
+                }
+            }
+        }
+    }
+
+    // Custom styles for bulk actions sticky footer in small devices.
+    .sticky-footer-content.bulkactions {
+        @media (min-width: 768px) {
+            position: relative;
+            .form-check,
+            .bulkaction-name,
+            .bulkcount {
+                display: none;
+            }
+            .actions button {
+                padding-left: 0.5rem;
+                padding-right: 0.5rem;
+                padding-top: 0;
+                padding-bottom: 0;
+            }
+            .bulkcancel {
+                position: absolute;
+                top: 0;
+                right: 0;
+            }
+        }
+    }
+
+    /* Single section page */
+
+    .single-section {
+        // Revert main section's styles.
+        > ul > .course-section {
+            &.hidden .section-item {
+                background-color: inherit;
+            }
+            .section-item {
+                padding: 0;
+                border: none;
+            }
+        }
+    }
+
+    .single-section-page {
+        .header-action {
+            display: inline-block;
+        }
+        // Revert page header styles to avoid conflict with inplace editable.
+        .page-context-header {
+            overflow: visible;
+        }
+    }
+
+    /* Default activity completion page */
+
+    .defaultactivitycompletion-item {
+        a {
+            color: #000000;
+            text-decoration: none;
+        }
+        .activityicon {
+            width: 2rem;
+            height: 2rem;
+        }
+    }
+
+    /* Home page course */
+
+    .sitetopic {
+        .section-item {
+            margin-bottom: 1rem;
+    border-radius: 0.375rem;
+        }
+    }
+
+    /* Move activity and Move section modals */
+
+    .move-activity-tree {
+        .collapse-list-item {
+            border-radius: 0.375rem;
+
+            &:hover,
+            &:focus {
+                background-color: #e0e7ff;
+
+                a {
+                    color: #312e81;
+                }
+            }
+
+            a {
+                color: var(--fallback-bc, oklch(var(--bc) / 1));
+
+                &:hover,
+                &:focus {
+                    text-decoration: none;
+                }
+            }
+
+            a.disabled {
+                color: #9ca3af;
+            }
+        }
+
+        .collapse-list-item-content .collapse-list-item {
+            padding-top: 0.5rem;
+            padding-bottom: 0.5rem;
+            padding-left: 1rem;
+            padding-right: 1rem;
+        }
+
+        ul {
+            margin-left: 1rem;
+        }
+
+        .collapse-list-link {
+            font-weight: 700;
+        }
+    }
+
+    /* Subsections */
+
+    .activity.subsection {
+        border-top: 0;
+        > .activity-item {
+            border: 2px solid #e5e7eb;
+            padding: 0;
+            margin-top: 0.5rem;
+            margin-bottom: 0.5rem;
+            > .activity-grid > .activity-altcontent {
+                margin-top: 0;
+            }
+        }
+        .section {
+            margin-top: 0;
+            .section-item {
+                border: none;
+                padding: 0.75rem;
+            }
+            .icons-collapse-expand:has(+ h4) {
+                height: 1rem;
+                width: 1rem;
+                font-size: 0.875rem;
+                line-height: 1.25rem;
+            }
+            h4 {
+                font-size: 1.125rem;
+                line-height: 1.75rem;
+            }
+            .section_action_menu > .action-menu .btn-icon {
+                color: inherit;
+            }
+        }
+        + .activity {
+            border-top: 0;
+        }
+        // Allow v-parent-focus only for closest acvitity (avoiding subsection).
+        .focus-control:not(:has(.focus-control)) {
+            &:focus-within .v-parent-focus,
+            &:hover .v-parent-focus {
+                opacity: 1;
+    visibility: visible;
+            }
+        }
+        .focus-control:focus-within .focus-control .v-parent-focus,
+        .focus-control:hover .focus-control .v-parent-focus {
+            opacity: 0;
+    visibility: hidden;
+        }
+    }
+
+    /* Spinners */
+
+    // Edit in progress spinner animation.
+    @keyframes editinprogress-rotation {
+        0% {
+            opacity: 0;
+            transform: rotate(0deg);
+        }
+        50% {
+            opacity: 1;
+        }
+        100% {
+            opacity: 0;
+            transform: rotate(359deg);
+        }
+    }
+
+    .editing {
+        // New editing in progress spinners.
+        .editinprogress {
+            position: relative;
+
+            & > * {
+                opacity: 0.4;
+            }
+
+            .corelightbox,
+            .lightbox {
+                display: none;
+            }
+
+            &:after {
+                position: absolute;
+                font-size: 1.25rem;
+                line-height: 1.75rem;
+                color: #4b5563;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                width: 30px;
+                height: 30px;
+                left: calc(50% - 15px);
+                top: calc(50% - 15px);
+                animation: spin 3s linear infinite;
+                content: '⚙️'; // Unicode gear icon for loading indicator
+            }
+
+            // Prevent inner editingprogress.
+            .editinprogress {
+                &:after {
+                    display: none;
+                }
+            }
+        }
+    }
+
+    /* Drag and drop */
+
+    // Compensate for the border widths when dropzones are displayed.
+    .course-content .section.dropready {
+
+        &.main.drop-down {
+            border-bottom: 1px solid #60a5fa;
+        }
+
+        .course-section-header.dropready.drop-zone {
+            margin-top: -2px;
+        }
+
+        li.activity.dropready.drop-down {
+            border-bottom: 1px solid #60a5fa;
+            margin-bottom: -1px;
+        }
+
+        li.activity.dropready.drop-up {
+            border-top: 1px solid #60a5fa;
+            margin-top: -1px;
+        }
+
+        [data-for="sectioninfo"] {
+            // When a section is empty, the activity dropzone indicator is below
+            // the section info. This ensures the dropzone will not displace the content
+            // even if the section has no restrictions or info to display.
+            min-height: 1px;
+        }
+
+        [data-for="sectioninfo"].drop-down {
+            margin-top: -1px;
+        }
+    }
+
+    /* Old indentation styles */
+
+    .mod-indent-outer {
+        display: table;
+    }
+
+    .mod-indent {
+        display: table-cell;
+    }
+
+    .label .mod-indent {
+        float: left;
+        padding-top: 1.25rem;
+    }
+
+    .activity.label.modtype_label .mod-indent {
+        float: none;
+    }
+    @media (min-width: 640px) {  // Tailwind sm breakpoint
+        $mod-indent-size: 30px;
+        /* Creates a series of .mod-indent-# rule declarations based on indent size and number of indent levels. */
+
+        @for $i from 1 through 16 {
+            $width: ($i * $mod-indent-size);
+
+            .mod-indent-#{$i} {
+                width: $width;
+            }
+        }
+
+        .mod-indent-huge {
+            width: (16 * $mod-indent-size);
+        }
+    }
+}

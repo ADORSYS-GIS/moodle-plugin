@@ -1,0 +1,53 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template theme_adorsys_theme_v2/default
+
+    Default page template for adorsys_theme_v2 theme
+
+    @package    theme_adorsys_theme_v2
+    @copyright  2025 adorsys_gis <gis-udm@adorsys.com>
+    @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+}}
+
+<!DOCTYPE html>
+<html lang="{{ output.get_lang() }}">
+<head>
+    {{{ output.standard_head_html }}}
+</head>
+<body {{{ bodyattributes }}} class="bg-gray-100 min-h-screen">
+
+    {{> theme_adorsys_theme_v2/navbar }}
+
+    <main id="page" class="max-w-7xl mx-auto p-4 grid grid-cols-12 gap-4">
+
+        {{> theme_adorsys_theme_v1/sideblocks }}
+
+        <section id="region-main" class="{{#hasblocks}}col-span-9{{/hasblocks}}{{^hasblocks}}col-span-12{{/hasblocks}}">
+            <div class="card bg-white p-6 shadow">
+                <h1 class="text-2xl font-bold mb-4">{{ pageheading }}</h1>
+                {{{ maincontent }}}
+            </div>
+        </section>
+
+    </main>
+
+    {{> theme_adorsys_theme_v1/footer }}
+
+    {{{ standardendhtml }}}
+</body>
+</html>

@@ -1,0 +1,361 @@
+// Converted to Tailwind/DaisyUI classes directly in the CSS.
+// Variables are no longer needed as they are replaced by Tailwind's theme() or direct classes.
+
+.pagelayout-login #region-main {
+    border: 0;
+    background-color: transparent;
+    padding: 0;
+    margin: 0;
+}
+
+.pagelayout-login #page {
+    background-color: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 2rem 1rem;
+    
+    div[role="main"] {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+    }
+}
+
+.login-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    max-width: 540px;
+    margin: 0 auto;
+}
+
+.login-container {
+    background-color: #ffffff;
+    padding: 3rem;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.15), 0 10px 10px -5px rgba(0, 0, 0, 0.08);
+    border-radius: 1.25rem;
+    width: 100%;
+    max-width: 540px;
+    border: none;
+    position: relative;
+    .login-languagemenu {
+        display: flex;
+        justify-content: flex-start;
+        .dropdown-menu {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+    }
+    .login-logo {
+        display: flex;
+    justify-content: center;
+    margin-bottom: 1rem; // 1rem = 4 units
+    }
+    .login-divider {
+        margin-top: 1.5rem;
+        margin-bottom: 1.5rem;
+        border-top: 1px solid #d1d5db;
+    }
+
+    h1.login-heading {
+        font-size: 2rem;
+        line-height: 2.25rem;
+        font-weight: 700;
+        color: #111827;
+        margin-bottom: 0.75rem;
+        text-align: center;
+        letter-spacing: -0.025em;
+    }
+
+    h2.login-heading {
+        font-size: 1rem;
+        line-height: 1.5rem;
+        font-weight: 400;
+        color: #6b7280;
+        margin-bottom: 2.5rem;
+        text-align: center;
+    }
+    .login-identityproviders {
+        .login-identityprovider-btn {
+            border: 1px solid;
+    border-color: #d1d5db;
+        }
+    }
+    .divider {
+        width: 1px;
+        background-color: #d1d5db;
+        height: 2rem;
+    }
+    .action-menu-trigger {
+        a {
+            margin-top: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+    }
+}
+
+.pagelayout-login .form-control {
+    border: 1.5px solid #e5e7eb;
+    border-radius: 0.625rem;
+    padding: 0.875rem 1.125rem;
+    min-height: 3rem;
+    font-size: 0.9375rem;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    background-color: #f9fafb;
+    width: 100%;
+}
+.pagelayout-login .form-control:focus {
+    outline: none;
+    border-color: #6366f1;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
+    background-color: #ffffff;
+}
+.pagelayout-login label {
+    color: #374151;
+    font-weight: 600;
+    font-size: 0.9375rem;
+    margin-bottom: 0.625rem;
+    display: block;
+}
+.pagelayout-login .form-check-input {
+    border-color: #cbd5e1;
+}
+.pagelayout-login .form-check-input:checked {
+    background-color: #4f46e5;
+    border-color: #4f46e5;
+}
+
+.pagelayout-login .btn-primary,
+.pagelayout-login .btn.btn-primary {
+    background-color: #4f46e5;
+    border-color: #4f46e5;
+    color: #ffffff;
+    font-weight: 600;
+    border-radius: 0.5rem;
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    min-height: 2.25rem;
+    transition: all 0.2s ease;
+}
+
+/* Override btn-lg on login page to keep buttons compact */
+.pagelayout-login .btn-lg,
+.pagelayout-login .btn.btn-lg,
+.pagelayout-login button.btn-lg,
+.pagelayout-login .btn-primary.btn-lg,
+.pagelayout-login button.btn-primary.btn-lg,
+.pagelayout-login #loginbtn {
+    padding: 0.5rem 1rem !important;
+    font-size: 0.875rem !important;
+    line-height: 1.25rem !important;
+    min-height: 2.25rem !important;
+    height: auto !important;
+    max-height: 2.25rem !important;
+}
+.pagelayout-login .btn-primary:hover,
+.pagelayout-login .btn.btn-primary:hover {
+    background-color: #4338ca;
+    border-color: #4338ca;
+}
+.pagelayout-login .btn-primary:active,
+.pagelayout-login .btn.btn-primary:active {
+    background-color: #3730a3;
+    border-color: #3730a3;
+    transform: translateY(1px);
+}
+.pagelayout-login .btn-primary:focus,
+.pagelayout-login .btn.btn-primary:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.35);
+}
+
+.pagelayout-login a {
+    color: #4f46e5;
+    text-decoration: none;
+    transition: color 0.15s ease, text-decoration-color 0.15s ease;
+}
+.pagelayout-login a:hover {
+    color: #4338ca;
+    text-decoration: underline;
+}
+
+/* Template-based heading styles */
+.login-container h1.login-heading,
+.login-container h2.login-heading {
+    text-align: center;
+    width: 100%;
+}
+.login-container h1.login-heading {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 0.75rem;
+    text-align: center;
+    letter-spacing: -0.025em;
+}
+.login-container h2.login-heading {
+    font-size: 1rem;
+    font-weight: 400;
+    color: #6b7280;
+    margin-bottom: 2.5rem;
+    text-align: center;
+}
+
+/* Template-based form field grouping */
+.login-form-username,
+.login-form-password {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1.5rem;
+}
+.login-form-username label,
+.login-form-password label {
+    display: none;
+}
+.login-form-username input,
+.login-form-password input {
+    width: 100%;
+}
+
+/* Template-based divider */
+.login-divider {
+    margin: 2rem 0;
+    border-top: 1px solid #e5e7eb;
+    width: 100%;
+}
+
+/* Template-based language menu and identity providers */
+.login-languagemenu,
+.login-identityproviders {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Make login submit button full width */
+.pagelayout-login .login-form-submit .btn,
+.pagelayout-login .login-form-submit .btn-lg {
+    width: 100%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+@media (min-width: 768px) {
+    .login-container {
+        padding: 3.5rem 3rem;
+    }
+    
+    .login-wrapper {
+        max-width: 540px;
+    }
+}
+
+@media (max-width: 480px) {
+    .login-container {
+        padding: 2rem 1.5rem;
+        border-radius: 1rem;
+    }
+}
+
+/* Modern gradient background */
+.pagelayout-login body {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background-size: cover;
+    background-attachment: fixed;
+    position: relative;
+}
+
+.pagelayout-login body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 70% 80%, rgba(255, 255, 255, 0.08) 0%, transparent 50%);
+    pointer-events: none;
+}
+
+/* Logo area styling - centered */
+.login-container .login-logo {
+    margin-bottom: 2.5rem;
+    text-align: center;
+    
+    img {
+        max-height: 64px;
+        width: auto;
+        display: inline-block;
+    }
+}
+
+/* Center all form elements */
+.pagelayout-login .form-group,
+.pagelayout-login .fitem {
+    margin-bottom: 1.5rem;
+}
+
+/* Remember me checkbox */
+.pagelayout-login .form-check {
+    display: flex;
+    align-items: center;
+    margin: 1rem 0 1.5rem 0;
+}
+
+.pagelayout-login .form-check-label {
+    font-size: 0.875rem;
+    color: #4b5563;
+    font-weight: 500;
+    margin-left: 0.5rem;
+}
+
+/* Forgot password link */
+.pagelayout-login .forgetpass {
+    text-align: center;
+    margin-top: 1.5rem;
+}
+
+/* Links styling */
+.pagelayout-login a:not(.btn) {
+    color: #6366f1;
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: color 0.15s ease;
+    
+    &:hover {
+        color: #4f46e5;
+        text-decoration: underline;
+    }
+}
+
+/* Compact secondary button styling */
+.pagelayout-login .btn-secondary,
+.pagelayout-login .btn.btn-secondary {
+    background-color: #ffffff;
+    border: 1px solid #d1d5db;
+    color: #374151;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    min-height: 2.25rem;
+    border-radius: 0.5rem;
+    
+    &:hover {
+        background-color: #f3f4f6;
+        border-color: #9ca3af;
+        color: #1f2937;
+    }
+}
+
+/* Make all links smaller */
+.pagelayout-login a:not(.btn) {
+    font-size: 0.875rem;
+}

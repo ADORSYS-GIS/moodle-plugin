@@ -1,0 +1,517 @@
+/**
+ * Moodle forms HTML styling
+ * 
+ * Custom form styles for Moodle form elements using Tailwind CSS utilities
+ * and modern design principles.
+ */
+
+.jsenabled .mform .containsadvancedelements .advanced {
+    display: none;
+}
+
+.mform .containsadvancedelements .advanced.show {
+    display: flex;
+}
+
+#adminsettings span.error {
+    display: inline-block;
+    border: 1px solid var(--fallback-er, oklch(var(--er) / 1));
+    border-radius: 0.375rem;
+    background-color: var(--fallback-erc, oklch(var(--erc) / 1));
+    padding: 0.25rem;
+    margin-bottom: 0.25rem;
+}
+
+.mform .d-flex {
+    .fitem {
+        margin-top: 0.125rem !important;
+        margin-bottom: 0.125rem !important;
+        margin-right: 0.25rem !important;
+    }
+    br + label {
+        justify-content: flex-start;
+        width: 100%;
+        margin-right: 0;
+    }
+}
+
+// Override the default form-control width.
+.d-flex {
+    & > .form-control {
+        width: auto;
+    max-width: 100%;
+    }
+    & > textarea.form-control {
+        width: 100%;
+    }
+}
+
+// Override the default form-select width.
+.form-select {
+    width: auto;
+    max-width: 100%;
+    // Remove the default caret from the dropdown toggle button.
+    // This is needed to avoid the double caret when using alongside form-select.
+    &.dropdown-toggle {
+        &::after {
+            content: none;
+        }
+    }
+}
+
+#jump-to-activity.form-select {
+    width: 100%;
+}
+
+.mform fieldset {
+    margin-bottom: 0.5rem;
+    border-bottom: 1px solid #d1d5db;
+}
+
+#adminsettings .form-control[size] {
+    width: auto;
+}
+
+#adminsettings .error {
+    color: var(--fallback-er, oklch(var(--er) / 1));
+}
+
+.mform ul.file-list {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+.mform label .req,
+.mform label .adv {
+    cursor: help;
+}
+/*rtl:ignore*/
+input#id_externalurl {
+    direction: ltr;
+}
+
+#portfolio-add-button {
+    display: inline;
+}
+
+.form-defaultinfo,
+.form-label .form-shortname {
+    color: #6b7280; // Equivalent to $text-muted
+}
+
+.form-label .form-shortname {
+    font-size: 0.75rem;
+    line-height: 1rem;
+    display: block;
+}
+
+.formsettingheading .form-horizontal {
+    color: #6b7280; // Equivalent to $text-muted
+}
+
+// Moodle doesn't differentiate between uneditable inputs and form help text.
+// Styling them both as form help provides a subtle, consistent appearance.
+.no-felement.fstatic {
+    color: #6b7280;
+    padding-top: 0.375rem;
+}
+
+.no-fitem .fstaticlabel {
+    font-weight: 700;
+}
+
+.form-item .form-setting .defaultsnext > input {
+    display: inline-block;
+}
+
+.form-item .form-setting .form-checkbox.defaultsnext {
+    // Need to specify .defaultsnext and the .form-checkbox class
+    // is somewhat randomly re-used on various actual checkboxes
+    // throughout the admin forms, instead of on the wrapper div.
+    margin-top: 0.375rem;
+    display: inline-block;
+}
+
+#adminsettings h3 {
+    // Legend styling for form sections.
+    display: block;
+    width: 100%;
+    padding: 0;
+    margin-bottom: 1rem;
+    font-size: 1.125rem;
+    line-height: 2rem;
+    border-bottom: 1px solid #d1d5db;
+}
+
+// I think this could be avoided (or at least tidied up) ifr
+// we used HTML5 input types like url, phone, email, number etc.
+/* rtl:ignore */
+.mform .fitem .felement input[name="email"],
+.mform .fitem .felement input[name="email2"],
+.mform .fitem .felement input[name="url"],
+.mform .fitem .felement input[name="idnumber"],
+.mform .fitem .felement input[name="phone1"],
+.mform .fitem .felement input[name="phone2"] {
+    text-align: left;
+    direction: ltr;
+}
+
+// Reduce the mediaplugin width when using inside forms.
+.que.match .mediaplugin {
+    width: 50%;
+}
+
+/* rtl:ignore */
+#page-admin-grade-edit-scale-edit .error input#id_name {
+    margin-right: 10.5rem;
+}
+
+#page-grade-edit-outcome-course .courseoutcomes {
+    margin-left: auto; margin-right: auto;
+    width: 100%;
+}
+
+#page-grade-edit-outcome-course .courseoutcomes td {
+    text-align: center;
+}
+/* Install Process' text fields Forms, should always be justified to the left */
+/* rtl:ignore */
+#installform #id_wwwroot,
+#installform #id_dirroot,
+#installform #id_dataroot,
+#installform #id_dbhost,
+#installform #id_dbname,
+#installform #id_dbuser,
+#installform #id_dbpass,
+#installform #id_prefix {
+    direction: ltr;
+}
+
+.mdl-right > label {
+    // Workaround for repository pop-up because the : are outside the label,
+    // can/should be fixed in filemanager renderers.
+    display: inline-block;
+}
+
+.singleselect {
+    max-width: 100%;
+}
+
+.form-item .form-label label {
+    margin-bottom: 0;
+}
+
+div#dateselector-calendar-panel {
+    z-index: 3100; /* Set higher than the z-index of the filemanager - see MDL-39047. */
+}
+
+/**
+ * Show the labels above text editors and file managers except on wide screens.
+ */
+
+
+/* Section and module editing forms contain special JS components for the
+   availability system (if enabled). */
+#id_availabilityconditionsjson[aria-hidden=true],
+.availability-field [aria-hidden=true] {
+    display: none;
+}
+
+.availability-field img {
+    width: 1rem;
+    height: 1rem;
+}
+
+.availability-eye {
+    clear: left;
+    float: left;
+}
+.availability-inner,
+.availability-plugincontrols {
+    float: left;
+    border-radius: 0.5rem;
+    border: 1px solid #d1d5db;
+    padding: 1rem;
+    margin-top: 0.5rem;
+}
+.availability-plugincontrols,
+.availability-childlist .availability-inner {
+    margin-left: 0.625rem;
+}
+.availability-field .availability-plugincontrols .availability-group select {
+    max-width: 12rem;
+}
+
+/* Custom styles for autocomplete form element */
+/* These styles reserve a standard amount of space in the DOM to avoid flicker when the original select element is replaced */
+[data-fieldtype=autocomplete] select,
+[data-fieldtype=tags] select,
+.form-autocomplete-original-select {
+    visibility: hidden;
+    overflow: hidden;
+    width: 15rem;
+    height: 2.75rem;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    margin-top: 1.75rem;
+    vertical-align: bottom;
+}
+.form-autocomplete-selection {
+    margin-top: 0.25rem;
+    margin-bottom: 0.25rem;
+    // Padding top and bottom, plus mb-1 and the 100% lineheight.
+    min-height: calc(2 * 0.25rem + 2 * 1rem);
+}
+
+.form-autocomplete-selection [role=option] {
+    cursor: pointer;
+    white-space: normal;
+    overflow-wrap: break-word;
+    line-height: normal;
+    text-align: left;
+}
+
+.form-autocomplete-suggestions {
+    position: absolute;
+    background-color: var(--fallback-b1, oklch(var(--b1) / 1));
+    border: 1px solid #d1d5db;
+    min-width: 206px;
+    max-height: 20rem;
+    overflow: auto;
+    margin-top: 0.25rem;
+    padding: 0.5rem;
+    z-index: 30;
+}
+
+// DaisyUI handles disabled select colors
+// $form-select-disabled-color: $gray-600 !default;
+// $form-select-disabled-bg: $gray-200 !default;
+
+.form-autocomplete-suggestions li {
+    list-style: none;
+    padding: 0.5rem;
+    margin: 0;
+    cursor: pointer;
+    color: var(--fallback-bc, oklch(var(--bc) / 1));
+    word-break: normal;
+    overflow: auto;
+    white-space: normal;
+    &:hover,
+    &:focus,
+    &[aria-selected="true"] {
+        background-color: var(--fallback-p, oklch(var(--p) / 1));
+        color: var(--fallback-pc, oklch(var(--pc) / 1));
+    }
+    &[aria-disabled="true"] {
+        pointer-events: none;
+    color: #4b5563;
+    background-color: #e5e7eb;
+    }
+    &.suggestions-heading {
+        pointer-events: none;
+        font-weight: 700;
+        color: var(--fallback-bc, oklch(var(--bc) / 1));
+        background-color: var(--fallback-b1, oklch(var(--b1) / 1));
+        padding-left: 0.5rem;
+    }
+    &::before {
+        content: "\200B";
+    }
+}
+
+.form-autocomplete-downarrow {
+    color: var(--fallback-bc, oklch(var(--bc) / 1));
+    top: 0.125rem;
+    right: 0.5rem;
+    cursor: pointer;
+    .loading-icon {
+        position: absolute;
+        top: 0;
+        left: 0;
+        background-color: #ffffff;
+    }
+}
+
+/** Custom autocomplete selection styling */
+.form-autocomplete-selection + input.form-control {
+    width: auto;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.form-autocomplete-selection [data-active-selection=true] {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); // Using a generic shadow for focus
+}
+
+select.form-control {
+    &[size],
+    &[multiple] {
+        padding-right: 0;
+        option {
+            width: fit-content;
+        }
+    }
+}
+
+/* Selects with a size attribute need overflow control to prevent content overflow. */
+select[size],
+select[multiple] {
+    overflow: auto;
+}
+
+select[size="1"] {
+    overflow: visible;
+}
+
+textarea[data-auto-rows] {
+    overflow-x: hidden;
+    resize: none;
+}
+
+/** Display elements under labels in vertical forms regardless of the screen size. */
+.mform.full-width-labels {
+    .fitem.row {
+        margin: 0;
+        & > .col-md-3,
+        & > .col-md-9 {
+            flex: none;
+            max-width: 100%;
+            width: auto;
+            padding: 0;
+        }
+        &.femptylabel > .col-md-3 {
+            display: none;
+        }
+        .form-control {
+            width: 100%;
+        }
+    }
+}
+
+.mform .col-form-label .form-label-addon {
+    margin-left: 0.25rem;
+}
+
+@media (min-width: 640px) {
+    .mform:not(.full-width-labels) .col-form-label .form-label-addon {
+        margin-left: auto;
+    }
+}
+
+[data-fieldtype="modgrade"] .fitem {
+    padding-bottom: 0.5rem;
+}
+
+// We dont' use the mixin because it's expensive.
+[data-fieldtype="modgrade"] {
+    background-color: var(--fallback-b1, oklch(var(--b1) / 1));
+    border-radius: 0.5rem;
+    border: 1px solid #d1d5db;
+    padding: 1rem;
+    margin-left: 1rem;
+    max-width: 20rem;
+}
+
+// Styles for the JS file types browser provided by the "filetypes" element.
+[data-filetypesbrowserbody] {
+    [aria-expanded="false"] > [role="group"],
+    [aria-expanded="false"] [data-filetypesbrowserfeature="hideifcollapsed"],
+    [aria-expanded="true"] [data-filetypesbrowserfeature="hideifexpanded"] {
+        display: none;
+    }
+}
+
+// The autocomplete popup needs a display:block container to correctly position to popup.
+.felement[data-fieldtype="autocomplete"],
+.felement[data-fieldtype="tags"] {
+    display: block !important; /* stylelint-disable-line declaration-no-important */
+    position: static;
+}
+
+// Show editor at 100% width by default.
+[data-fieldtype="editor"] > div {
+    flex-grow: 1;
+}
+
+@media (min-width: 768px) {
+    .mform fieldset .fcontainer.collapseable .col-form-label {
+        padding-left: 2.5rem;
+    }
+}
+
+.collapsemenu {
+    .collapseall {
+        display: block;
+    }
+
+    .expandall {
+        display: none;
+    }
+
+    &.collapsed {
+        .collapseall {
+            display: none;
+        }
+
+        .expandall {
+            display: block;
+        }
+    }
+}
+
+// Form inset on the left/right.
+// Used to display an icon/button within the form control.
+.input-group {
+    &.form-inset {
+        .form-inset-item {
+            position: absolute;
+    z-index: 30;
+            padding-top: calc(0.375rem + 1px);
+        }
+
+        &.form-inset-left {
+            .form-control {
+                padding-left: 1.5rem;
+            }
+        }
+
+        &.form-inset-right {
+            .form-control {
+                padding-right: 1.5rem;
+            }
+            .form-inset-item {
+                right: 0;
+            }
+        }
+    }
+}
+
+// For form elements aligned to the left with no padding (e.g. Completion conditions activity settings).
+.form-check {
+    &.left-indented {
+        padding-left: 0;
+    }
+}
+
+// Remove the margins that come with the icon.
+.toggle-sensitive-btn .icon {
+    margin-right: 0;
+}
+
+// Input group elements display border radius depending on the proximity of other elements.
+// This corrects border radius of the input when 'small screen only' mode hides the toggle button.
+@media (min-width: 640px) {
+    .toggle-sensitive-wrapper.small-screens-only.input-group:not(.has-validation) > {
+        .form-control:not(:last-child) {
+            border-radius: 0.375rem; // $input-border-radius is 0.375rem = 6px = rounded-md
+        }
+        .form-control-lg:not(:last-child) {
+            border-radius: 0.5rem; // $input-border-radius-lg is 0.5rem = 8px = rounded-lg
+        }
+        .toggle-sensitive-btn {
+            display: none;
+        }
+    }
+}

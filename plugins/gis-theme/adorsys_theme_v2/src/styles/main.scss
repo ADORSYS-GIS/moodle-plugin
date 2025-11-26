@@ -1,0 +1,48 @@
+@import "tailwindcss";
+
+/* Content paths for Tailwind v4 */
+@source "../../templates/**/*.mustache";
+@source "../../layout/**/*.php";
+@source "../**/*.ts";
+
+/* Theme customization for Tailwind v4 */
+@theme {
+  /* Primary colors */
+  --color-primary-50: #eef2ff;
+  --color-primary-100: #e0e7ff;
+  --color-primary-200: #c7d2fe;
+  --color-primary-300: #a5b4fc;
+  --color-primary-400: #818cf8;
+  --color-primary-500: #6366f1;
+  --color-primary-600: #4f46e5;
+  --color-primary-700: #4338ca;
+  --color-primary-800: #3730a3;
+  --color-primary-900: #312e81;
+
+  /* Semantic colors */
+  --color-success: #16a34a;
+  --color-info: #2563eb;
+  --color-warning: #eab308;
+  --color-error: #dc2626;
+
+  /* DaisyUI semantic colors for @apply compatibility */
+  --color-base-100: #ffffff;
+  --color-base-200: #f3f4f6;
+  --color-base-300: #e5e7eb;
+  --color-base-content: #1f2937;
+  
+  /* Additional semantic colors used in @apply */
+  --color-primary-700: #4338ca;
+  --color-text-primary: #4f46e5;
+  --color-warning: #eab308;
+  --color-error: #dc2626;
+
+  /* Spacing */
+  --spacing-navbar-height: 4rem;
+  
+  /* Shadows */
+  --shadow-hover: 0 8px 24px rgba(0,0,0,0.12);
+}
+
+/* Import Moodle component styles */
+@import "../../scss/moodle.scss";

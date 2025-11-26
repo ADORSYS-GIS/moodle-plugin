@@ -1,0 +1,256 @@
+.layout {
+    &.fullscreen {
+        height: 100vh;
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        z-index: 50;
+        transition-property: all;
+        transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+        transition-duration: 500ms;
+        width: 100vw;
+        margin: 0;
+        opacity: 1;
+        background-color: var(--fallback-b1, oklch(var(--b1) / 1));
+
+        > div {
+            height: 100%;
+    width: 100%;
+        }
+
+        .loading-icon {
+            margin-left: auto;
+            margin-right: auto;
+            text-align: center;
+            display: inline-block;
+            width: 100%;
+            position: fixed;
+            top: 40%;
+            .icon {
+                max-width: 4rem;
+                max-height: 4rem;
+                font-size: 2.25rem;
+                line-height: 2.5rem;
+            }
+        }
+    }
+}
+
+#page.drawers {
+    margin-top: $navbar-height;
+    @include thin-scrolls($gray-100, $gray-300);
+    .main-inner {
+        max-width: 100%;
+    width: 100%;
+    margin-left: auto; margin-right: auto;
+    border-radius: 0.5rem;
+    background-color: #ffffff;
+    padding: 1.5rem;
+    padding-left: 0.5rem; padding-right: 0.5rem;
+    margin-top: 0.5rem;
+    margin-bottom: 3rem;
+    flex-grow: 1;
+    }
+    .activity-header {
+        margin-left: 1rem; margin-right: 1rem;
+    }
+}
+
+@media (min-width: 768px) {
+    .pagelayout-standard,
+    body.limitedwidth {
+        #page.drawers {
+            .main-inner {
+                max-width: 830px;
+            }
+            .footer-popover {
+                max-width: 830px;
+                width: 100%;
+    margin-left: auto; margin-right: auto;
+    border-radius: 0.5rem;
+            }
+        }
+    }
+    .header-maxwidth {
+        max-width: 830px;
+        margin-left: auto; margin-right: auto;
+    padding-left: 1rem; padding-right: 1rem;
+
+        .header-inner {
+            padding: 0;
+        }
+    }
+}
+
+.drawer-toggles {
+
+    .drawer-toggler {
+        position: fixed;
+        z-index: 20;
+        top: calc(4rem + 0.625rem);
+        .btn {
+            border-radius: 9999px;
+    padding: 1rem;
+    background-color: #d1d5db;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            .icon {
+                width: auto;
+    height: auto;
+            }
+            &:focus {
+                outline: none;
+                box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.5), 0 0 0 4px rgba(99, 102, 241, 0.25);
+            }
+            transition-property: all;
+            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+            transition-duration: 200ms;
+        }
+    }
+
+    .drawer-left-toggle {
+        left: 0;
+        .btn {
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+            padding-right: 0.875rem;
+            padding-left: 0.625rem;
+
+            &:hover {
+                padding-left: 1.25rem;
+            }
+        }
+    }
+
+    .drawer-right-toggle {
+        right: 0;
+        .btn {
+            border-top-right-radius: 0;
+            border-bottom-right-radius: 0;
+            padding-right: 0.625rem;
+            padding-left: 0.875rem;
+
+            &:hover {
+                padding-right: 1.25rem;
+            }
+        }
+    }
+}
+
+#page.drawers.show-drawer-left .drawer-left-toggle {
+    display: none;
+}
+
+#page.drawers.show-drawer-right .drawer-right-toggle {
+    display: none;
+}
+
+@media (max-width: 767.98px) {
+    //the scroll to top button
+    .drawer-toggles {
+        z-index: 50;
+
+        .drawer-right-toggle,
+        .drawer-left-toggle {
+            top: calc(99vh - (4rem * 2.5));
+        }
+    }
+    #page.drawers.scroll-down {
+        .drawer-right-toggle {
+            transform: translateX(100%);
+            pointer-events: auto;
+            visibility: hidden;
+        }
+        .drawer-left-toggle {
+            transform: translateX(-100%);
+            pointer-events: auto;
+            visibility: hidden;
+        }
+    }
+    .hasstickyfooter:has(.drawer-right-toggle) .maintenancewarning {
+        right: 2rem;
+    }
+    .hasstickyfooter:has(.drawer-left-toggle) .maintenancewarning {
+        margin-left: 3.5rem;
+    }
+}
+
+@media (min-width: 640px) {
+    #page.drawers .main-inner {
+        margin-top: 1.5rem;
+    }
+}
+
+@media (min-width: 768px) {
+
+    // Add some padding for the drawer toggle buttons
+    #page.drawers {
+        padding-left: 3rem;
+        padding-right: 3rem;
+        .main-inner {
+            padding: 1.5rem;
+    padding-left: 0.5rem; padding-right: 0.5rem;
+        }
+        div[role="main"] {
+            padding-left: 1rem; padding-right: 1rem;
+        }
+    }
+}
+
+@media (min-width: 1024px) {
+    .drawer-left,
+    .drawer-right {
+        top: 4rem;
+        height: calc(100vh - 4rem);
+    }
+    .hasstickyfooter {
+        .drawer-left,
+        .drawer-right {
+            top: 4rem;
+            height: calc(100vh - 4rem - 80px);
+        }
+    }
+
+    #page.drawers {
+        position: relative;
+        overflow-y: visible;
+        transition-property: all;
+        transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+        transition-duration: 200ms;
+        left: 0;
+        right: 0;
+        &.show-drawer-left {
+            margin-left: 320px;
+            margin-right: 0;
+            padding-left: 1rem;
+        }
+        &.show-drawer-right {
+            margin-left: 0;
+            padding-right: 1rem;
+            margin-right: 320px;
+            .jsenabled & .popover-process-monitor,
+            .jsenabled & .btn-footer-popover,
+            .jsenabled & .btn-footer-communication {
+                right: calc(320px + 2rem);
+            }
+            .jsenabled:has(&) .maintenancewarning {
+                right: calc(320px + 5rem);
+            }
+        }
+        &.show-drawer-left.show-drawer-right {
+            margin-left: 320px;
+            margin-right: 320px;
+        }
+        &.hasstickyfooter {
+            margin-bottom: 80px;
+        }
+    }
+}
+
+.drawercontrolbuttons {
+    margin-top: 5.75rem;
+    .buttons {
+        z-index: 10;
+    }
+}

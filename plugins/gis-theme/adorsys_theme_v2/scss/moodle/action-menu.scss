@@ -1,0 +1,112 @@
+.action-menu .dropdown-toggle {
+    text-decoration: none;
+    display: inline-block;
+}
+
+.action-menu {
+    white-space: nowrap;
+    display: inline;
+
+    // Kebab action menus do no show chevrons or extra dropdown icons.
+    .dropdown-toggle.no-caret {
+        &::after {
+            display: none;
+        }
+
+        &::before {
+            display: none;
+        }
+    }
+
+    .dropdown.downleft .dropdown-subpanel-content {
+        right: 0;
+        left: auto;
+    }
+
+    .dropdown-subpanel.content-displayed {
+        background-color: #e5e7eb;
+    }
+
+    .dropdown-subpanel-content {
+        max-width: 448px;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
+
+    .dropdown-subpanel-content.show {
+        animation: pop 0.2s ease-out;
+    }
+
+    // Chevrons in sub panel items are always to end.
+    .dropdown-subpanel .dropdown-item {
+        &::after {
+            border: 0;
+            content: '>'; /* Simple character for submenu indicator */
+        }
+
+        &::before {
+            display: none;
+        }
+    }
+}
+
+.dir-rtl .action-menu {
+
+    // Chevrons in subpanels items are always to end.
+    .dropdown-subpanel .dropdown-item {
+        &::after {
+            border: 0;
+            content: '<'; /* Simple character for submenu indicator */
+        }
+
+        &::before {
+            display: none;
+        }
+    }
+}
+
+// Make links in a menu clickable anywhere in the row.
+.dropdown-item {
+    a {
+        display: block;
+        width: 100%;
+        color: var(--fallback-bc, oklch(var(--bc) / 1));
+    }
+
+    &.active,
+    &:active,
+    &:hover,
+    &:focus,
+    &:focus-within {
+        a {
+            color: var(--fallback-p, oklch(var(--p) / 1));
+        }
+    }
+
+    &[aria-current="true"],
+    &[aria-selected="true"] {
+        position: relative;
+    display: flex;
+    align-items: center;
+
+        &:before {
+            content: '✓'; /* Checkmark for selected item */
+            position: absolute;
+            left: 0.375rem;
+            font-size: 0.75rem;
+            line-height: 1rem;
+        }
+    }
+}
+
+.dropdown-item-outline {
+
+    &:focus,
+    &:focus-within {
+        outline: solid oklch(var(--p) / 0.2);
+    }
+
+    a:focus,
+    a:focus-visible {
+        outline: 0;
+    }
+}

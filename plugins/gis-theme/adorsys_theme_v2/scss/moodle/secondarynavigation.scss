@@ -1,0 +1,102 @@
+// ============================================================================
+// SECONDARY NAVIGATION - MODERN TAB STYLING
+// ============================================================================
+
+.secondary-navigation {
+    padding-bottom: 1rem;
+    background-color: #f9fafb;
+    
+    .navigation {
+        border-bottom: 1px solid #d1d5db;
+        background-color: #ffffff;
+        margin: 0 -0.5rem;
+        padding: 0 0.5rem;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+        
+        .nav-tabs {
+            display: flex;
+            align-items: center;
+            border: none;
+            max-width: $course-content-maxwidth;
+            margin: 0 auto;
+            gap: 0.25rem;
+            
+            .nav-link {
+                padding-left: 1.5rem;
+                padding-right: 1.5rem;
+                padding-top: 0.75rem;
+                padding-bottom: 0.75rem;
+                border-radius: 0;
+                border: none;
+                border-bottom: 3px solid transparent;
+                color: #4b5563;
+                font-weight: 500;
+                font-size: 0.875rem;
+                line-height: 1.25rem;
+                position: relative;
+                transition: all 0.2s ease;
+                
+                // Hover effect
+                &:hover {
+                    color: #2563eb;
+                    background-color: #eff6ff;
+                    border-bottom-color: #60a5fa;
+                }
+                
+                // Active state - modern tab look
+                &.active,
+                &.show {
+                    color: #1d4ed8;
+                    font-weight: 600;
+                    background-color: transparent;
+                    border-bottom-color: #2563eb;
+                    
+                    &::after {
+                        content: '';
+                        position: absolute;
+                        bottom: -1px;
+                        left: 0;
+                        right: 0;
+                        height: 3px;
+                        background: linear-gradient(90deg, 
+                            #2563eb, 
+                            #60a5fa
+                        );
+                    }
+                }
+                
+                // Icon in tabs
+                .icon {
+                    margin-right: 0.5rem;
+                    transition: transform 0.2s ease;
+                }
+                
+                &:hover .icon {
+                    transform: translateY(-1px);
+                }
+            }
+        }
+    }
+}
+
+// Responsive padding
+@include media-breakpoint-up(md) {
+    .secondary-navigation .navigation {
+        padding: 0 calc(0.5rem + 1rem);
+    }
+}
+
+// Admin and site format specific widths
+.path-admin .header-maxwidth,
+.path-admin .secondary-navigation .navigation .nav-tabs,
+.format-site .header-maxwidth,
+.format-site .secondary-navigation .navigation .nav-tabs {
+    max-width: none;
+}
+
+.path-admin.path-admin-roles:not(.format-site) .header-maxwidth,
+.path-admin.path-admin-roles:not(.format-site) .secondary-navigation .navigation .nav-tabs,
+.path-admin.path-admin-tool-lp .header-maxwidth,
+.path-admin.path-admin-tool-lp .secondary-navigation .navigation .nav-tabs {
+    max-width: $course-content-maxwidth;
+}
