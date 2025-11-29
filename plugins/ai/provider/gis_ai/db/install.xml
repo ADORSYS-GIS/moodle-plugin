@@ -22,5 +22,21 @@
         <INDEX NAME="timestamp_idx" UNIQUE="false" FIELDS="timestamp"/>
       </INDEXES>
     </TABLE>
+    <TABLE NAME="aiprovider_gis_ai_rate_limits" COMMENT="Rate limiting tracking">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true"/>
+        <FIELD NAME="window_start" TYPE="int" LENGTH="10" NOTNULL="true"/>
+        <FIELD NAME="request_count" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0"/>
+        <FIELD NAME="token_count" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="userid_fk" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="user_window_idx" UNIQUE="false" FIELDS="userid,window_start"/>
+      </INDEXES>
+    </TABLE>
   </TABLES>
 </XMLDB>
