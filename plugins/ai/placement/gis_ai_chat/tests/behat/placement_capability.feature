@@ -9,3 +9,11 @@ Feature: GIS AI Chat capability
     And I follow "Student"
     Then I should see "Use GIS AI Chat to generate text"
     And I should see "aiplacement/gis_ai_chat:generate_text"
+
+  @javascript
+  Scenario: Admin can open the chat demo page and see UI
+    Given I log in as "admin"
+    When I am on "/ai/placement/gis_ai_chat/index.php"
+    Then ".gis-ai-chat-full" "css_element" should exist
+    And ".gis-ai-prompt-input" "css_element" should exist
+    And ".gis-ai-send-btn" "css_element" should exist
