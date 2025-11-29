@@ -61,10 +61,12 @@ final class response_normalizer {
         }
 
         $tokens = $response['usage']['total_tokens'] ?? $response['usage']['tokens'] ?? null;
+        $tok = is_numeric($tokens) ? (int)$tokens : null;
         return [
             'content' => $content,
             'raw' => $response,
-            'tokens' => is_numeric($tokens) ? (int)$tokens : null,
+            'tokens' => $tok,
+            'tokens_used' => $tok,
         ];
     }
 }
