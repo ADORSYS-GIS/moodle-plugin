@@ -1,22 +1,35 @@
 <?php
 // This file is part of Moodle - http://moodle.org/
-
-declare(strict_types=1);
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace aiplacement_gis_ai_chat;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * GIS AI Chat placement: exposes the generate_text action in a site-wide chat UX.
+ *
+ * @package    aiplacement_gis_ai_chat
+ * @copyright  2025 Adorsys GIS
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-final class placement extends \core_ai\placement {
+class placement extends \core_ai\placement {
     /**
-     * List Actions this Placement supports.
+     * Get the list of actions that this placement uses.
      *
-     * @return array<int, class-string>
+     * @return array An array of action class names.
      */
-    public function get_action_list(): array {
+    public static function get_action_list(): array {
         return [
             \core_ai\aiactions\generate_text::class,
         ];
