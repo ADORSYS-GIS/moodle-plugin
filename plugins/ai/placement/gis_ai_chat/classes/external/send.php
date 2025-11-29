@@ -44,6 +44,10 @@ final class send extends external_api {
 
         // Handle streaming requests.
         if ($params['stream']) {
+            // Save user message before starting stream
+            if (!empty($params['conversationid'])) {
+                self::save_conversation_message($params['conversationid'], $params['prompttext'], 'user', $USER->id);
+            }
             return self::handle_streaming_request($params, $context);
         }
 
@@ -123,7 +127,12 @@ final class send extends external_api {
         ]);
 
         // Queue the streaming task.
-        $task = new \aiplacement_gis_ai_chat\task\process_stream_chat($streamid, $params['prompttext'], $params['contextid']);
+        $task = new \aiplacement_gis_ai_chat\task\process_stream_chat();
+        $task->set_custom_data([
+            'streamid' => $streamid,
+            'prompt' => $params['prompttext'],
+            'contextid' => $params['contextid'],
+        ]);
         \core_task\manager::queue_adhoc_task($task);
 
         return [
