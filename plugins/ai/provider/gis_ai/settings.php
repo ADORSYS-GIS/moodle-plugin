@@ -49,6 +49,98 @@ if ($hassiteconfig) {
         'gpt-4o',
         PARAM_TEXT
     ));
+    
+    // Rate limiting settings.
+    $settings->add(new \admin_setting_heading(
+        'aiprovider_gis_ai/rate_limiting',
+        get_string('ratelimiting', 'aiprovider_gis_ai'),
+        get_string('ratelimiting_desc', 'aiprovider_gis_ai')
+    ));
+    
+    // Requests per hour.
+    $settings->add(new \admin_setting_configtext(
+        'aiprovider_gis_ai/requests_per_hour',
+        get_string('requestsperhour', 'aiprovider_gis_ai'),
+        get_string('requestsperhour_desc', 'aiprovider_gis_ai'),
+        '60',
+        PARAM_INT
+    ));
+    
+    // Tokens per hour.
+    $settings->add(new \admin_setting_configtext(
+        'aiprovider_gis_ai/tokens_per_hour',
+        get_string('tokensperhour', 'aiprovider_gis_ai'),
+        get_string('tokensperhour_desc', 'aiprovider_gis_ai'),
+        '40000',
+        PARAM_INT
+    ));
+    
+    // Enable streaming.
+    $settings->add(new \admin_setting_configcheckbox(
+        'aiprovider_gis_ai/enable_streaming',
+        get_string('enablestreaming', 'aiprovider_gis_ai'),
+        get_string('enablestreaming_desc', 'aiprovider_gis_ai'),
+        1
+    ));
+    
+    // Enable conversation persistence.
+    $settings->add(new \admin_setting_configcheckbox(
+        'aiprovider_gis_ai/enable_conversations',
+        get_string('enableconversations', 'aiprovider_gis_ai'),
+        get_string('enableconversations_desc', 'aiprovider_gis_ai'),
+        1
+    ));
+    
+    // Advanced settings.
+    $settings->add(new \admin_setting_heading(
+        'aiprovider_gis_ai/advanced',
+        get_string('advanced', 'aiprovider_gis_ai'),
+        get_string('advanced_desc', 'aiprovider_gis_ai')
+    ));
+    
+    // Request timeout.
+    $settings->add(new \admin_setting_configtext(
+        'aiprovider_gis_ai/request_timeout',
+        get_string('requesttimeout', 'aiprovider_gis_ai'),
+        get_string('requesttimeout_desc', 'aiprovider_gis_ai'),
+        '30',
+        PARAM_INT
+    ));
+    
+    // Max tokens per request.
+    $settings->add(new \admin_setting_configtext(
+        'aiprovider_gis_ai/max_tokens',
+        get_string('maxtokens', 'aiprovider_gis_ai'),
+        get_string('maxtokens_desc', 'aiprovider_gis_ai'),
+        '2000',
+        PARAM_INT
+    ));
+    
+    // Temperature.
+    $settings->add(new \admin_setting_configtext(
+        'aiprovider_gis_ai/temperature',
+        get_string('temperature', 'aiprovider_gis_ai'),
+        get_string('temperature_desc', 'aiprovider_gis_ai'),
+        '0.7',
+        PARAM_FLOAT
+    ));
+
+    // Healthcheck status display (read-only).
+    $cache = \cache::make('aiprovider_gis_ai', 'analytics');
+    $health = $cache->get('healthcheck_status');
+    if ($health === false) {
+        $provider = new \aiprovider_gis_ai\provider();
+        $health = $provider->healthcheck();
+        $cache->set('healthcheck_status', $health);
+    }
+    $statushtml = $health['ok']
+        ? '<span class="text-success">✓ ' . s($health['message']) . '</span>'
+        : '<span class="text-danger">✗ ' . s($health['message']) . '</span>';
+    $settings->add(new \admin_setting_heading(
+        'aiprovider_gis_ai/healthcheck',
+        get_string('healthcheck', 'aiprovider_gis_ai'),
+        $statushtml
+    ));
 
     // Attempt to place under AI category; fallback to localplugins if category does not exist.
     $category = $ADMIN->locate('ai') ? 'ai' : 'localplugins';
