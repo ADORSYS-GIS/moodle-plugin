@@ -10,7 +10,7 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * Rust bridge supporting FFI or microservice HTTP mode.
  */
-final class rust_bridge {
+final class rust_bridge implements \aiprovider_gis_ai\interfaces\api_interface {
     /** Public entry to send a prompt via the chosen Rust mode. */
     public static function send_prompt(string $prompt, string $useremail, array $options = []): array {
         $mode = strtolower(\aiprovider_gis_ai\helpers\env_loader::get('AI_RUST_MODE', 'ffi'));
@@ -26,6 +26,20 @@ final class rust_bridge {
             return self::send_via_api($prompt, $useremail, $options);
         }
         throw new \moodle_exception('invalidmode', 'aiprovider_gis_ai', '', $mode);
+    }
+
+    /**
+     * Send a payload to the AI endpoint and return decoded response.
+     * Implements api_interface.
+     *
+     * @param array $payload Expected keys: prompt, useremail, options
+     * @return array
+     */
+    public function send(array $payload): array {
+        $prompt = (string)($payload['prompt'] ?? '');
+        $useremail = (string)($payload['useremail'] ?? '');
+        $options = $payload['options'] ?? [];
+        return self::send_prompt($prompt, $useremail, $options);
     }
 
     /** Call into Rust shared lib via FFI. */
