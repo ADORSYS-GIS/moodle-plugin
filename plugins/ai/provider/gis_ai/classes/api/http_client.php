@@ -11,7 +11,7 @@ defined('MOODLE_INTERNAL') || die();
  * OpenAI-compatible HTTP client used by processors.
  * Supports non-streaming and streaming (SSE-like) responses.
  */
-final class http_client {
+final class http_client implements \aiprovider_gis_ai\interfaces\api_interface {
     /** Resolve config value from plugin config only. Environment is handled by callers. */
     private static function cfg(string $envkey, string $cfgkey, ?string $default = null): string {
         $cfg = get_config('aiprovider_gis_ai');
@@ -37,8 +37,10 @@ final class http_client {
 
         $headers = [
             'Content-Type: application/json',
-            'x-user-email: ' . $useremail,
         ];
+        if ($useremail !== '') {
+            $headers[] = 'x-user-email: ' . $useremail;
+        }
         if ($apikey !== '') {
             $headers[] = 'Authorization: Bearer ' . $apikey;
         }
@@ -82,5 +84,20 @@ final class http_client {
             throw new \RuntimeException('Invalid JSON from AI endpoint: ' . json_last_error_msg());
         }
         return $data;
+    }
+
+    /**
+     * Send a payload to the AI endpoint and return decoded response.
+     * Implements api_interface.
+     *
+     * @param array $payload Expected keys: prompt, useremail, options, stream
+     * @return array
+     */
+    public function send(array $payload): array {
+        $prompt = (string)($payload['prompt'] ?? '');
+        $useremail = (string)($payload['useremail'] ?? '');
+        $options = $payload['options'] ?? [];
+        $stream = (bool)($payload['stream'] ?? false);
+        return self::send_prompt($prompt, $useremail, $options, $stream);
     }
 }
