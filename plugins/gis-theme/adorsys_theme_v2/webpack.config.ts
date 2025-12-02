@@ -32,7 +32,7 @@ const config: Configuration = {
 
   module: {
     rules: [
-      // Rule 1: Process .css files with Tailwind (PostCSS + Sass)
+      // Rule 1: Process .css files with Tailwind via PostCSS
       {
         test: /\.css$/,
         use: [
@@ -51,9 +51,7 @@ const config: Configuration = {
           },
         ]
       },
-      // Rule 2: Process .scss files with ONLY Sass (NO Tailwind/PostCSS)
-      // Flow: SCSS → Sass → CSS Loader → Extract
-      // Tailwind is completely separate in .css files
+      // Rule 2: Process .scss files with Sass only (Tailwind/PostCSS not applied to SCSS)
       {
         test: /\.scss$/,
         use: [
@@ -75,6 +73,7 @@ const config: Configuration = {
           },
         ]
       },
+      // Rule 3: Process TypeScript files
       {
         test: /\.ts$/,
         use: 'ts-loader',
