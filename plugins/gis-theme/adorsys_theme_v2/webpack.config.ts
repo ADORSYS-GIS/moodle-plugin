@@ -7,7 +7,7 @@ import CopyPlugin from 'copy-webpack-plugin';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// 👇 Set the final build destination
+//  Set the build destination
 const OUTPUT_PATH = path.resolve(__dirname, '../../../../moodle-plugin/outputs/plugins/gis-theme/adorsys_theme_v2');
 console.log("Output Path:", OUTPUT_PATH);
 
