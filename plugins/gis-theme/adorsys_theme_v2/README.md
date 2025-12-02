@@ -2,7 +2,7 @@
 
 A modern Moodle theme built with **Tailwind CSS**, **PostCSS**, and **Webpack**.
 
-This theme is a child theme based on Adorsys Theme v1, providing enhanced customization and modern styling capabilities for Moodle learning management system.
+This theme is a child theme based on Adorsys Theme v1, providing enhanced customization and modern styling capabilities for Moodle LMS.
 
 ---
 
@@ -106,7 +106,7 @@ To mount the theme in your Moodle Docker container for live development:
 
    ```yaml
    volumes:
-     - ./plugins/gis-theme/adorsys_theme_v2:/bitnami/moodle/theme/adorsys_theme_v2
+     - ./outputs/plugins/gis-theme/adorsys_theme_v2:/bitnami/moodle/theme/adorsys_theme_v2:ro
    ```
 
 2. **Start the Docker stack**
