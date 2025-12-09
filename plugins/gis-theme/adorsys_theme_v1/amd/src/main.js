@@ -1,6 +1,9 @@
-import $ from 'jquery';
-import log from 'core/log';
+define(['jquery', 'core/log'], function ($, log) {
+    'use strict';
 
-export const init = () => {
-    log.debug('Theme adorsys_theme_v1 initialized');
-};
+    return {
+        init: function () {
+            log.debug('Theme adorsys_theme_v1 initialized');
+        }
+    };
+});

@@ -3,7 +3,7 @@ import path from 'path';
 import { Configuration } from 'webpack';
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import CopyPlugin from 'copy-webpack-plugin';
-import { glob } from 'glob';
+import { globSync } from 'glob';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -13,7 +13,7 @@ const OUTPUT_PATH = path.resolve(__dirname, '../../../../moodle-plugin/outputs/p
 console.log("Output Path:", OUTPUT_PATH);
 
 const amdEntries: Record<string, string> = {};
-const amdFiles = await glob('amd/src/*.js');
+const amdFiles = globSync('amd/src/*.js');
 amdFiles.forEach((file: string) => {
   const name = path.basename(file, '.js');
   amdEntries[`amd/build/${name}.min`] = `./${file}`;
@@ -40,12 +40,6 @@ const config: Configuration = {
       return 'tmp/[name].js';
     },
     clean: true
-  },
-
-  externals: {
-    // Moodle provides these modules at runtime
-    'jquery': 'jquery',
-    'core/log': 'core/log',
   },
 
   resolve: {
