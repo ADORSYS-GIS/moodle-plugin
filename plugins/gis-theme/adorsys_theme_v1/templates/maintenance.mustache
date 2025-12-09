@@ -1,19 +1,45 @@
-<!DOCTYPE html>
-<html lang="{{ output.get_lang() }}">
+{{!
+    @template theme_adorsys_theme_v1/maintenance
+    Adorsys Theme v1 maintenance layout template.
+}}
+{{{output.doctype}}}
+<html {{{output.htmlattributes}}}>
 <head>
-    <meta charset="utf-8" />
-    <title>{{ sitename }}</title>
-    {{{ output.standard_head_html }}}
+    <title>{{{output.page_title}}}</title>
+    <link rel="shortcut icon" href="{{{output.favicon}}}"/>
+    {{{output.standard_head_html}}}
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
-<body {{{ bodyattributes }}} class="bg-yellow-50 text-yellow-900">
 
-    <main class="min-h-screen flex flex-col items-center justify-center px-4 text-center">
-        <div class="max-w-xl">
-            <h1 class="text-3xl font-bold mb-4">{{ sitename }}</h1>
-            {{{ maincontent }}}
+<body data-templates="maintenance" {{{output.body_attributes}}}>
+{{> core/local/toast/wrapper}}
+<div id="page-wrapper position-relative">
+
+    {{{output.standard_top_of_body_html}}}
+    <div class="header-main ">
+        <div class="container">
+            <nav class="navbar navbar-light bg-faded ">
+                <a href="{{{config.wwwroot}}}/?redirect=0" class="navbar-brand">
+                    <span class="site-name hidden-sm-down">{{{sitename}}}</span>
+                </a>
+            </nav>
         </div>
-    </main>
+    </div>
 
-    {{{ output.standard_end_of_body_html }}}
+    <div id="page" class="container pb-3">
+        <div class="row ">
+            <div class="col-12 py-3">
+                {{{output.page_heading}}}
+            </div>
+        </div>
+
+        <div id="page-content" class="row">
+            <section id="region-main" class="col-12" aria-label="{{#str}}content{{/str}}">
+                {{{output.main_content}}}
+            </section>
+        </div>
+    </div>
+</div>
+
 </body>
 </html>

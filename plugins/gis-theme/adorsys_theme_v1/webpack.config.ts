@@ -3,6 +3,7 @@ import path from 'path';
 import { Configuration } from 'webpack';
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import CopyPlugin from 'copy-webpack-plugin';
+import { glob } from 'glob';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -11,19 +12,40 @@ const __dirname = path.dirname(__filename);
 const OUTPUT_PATH = path.resolve(__dirname, '../../../../moodle-plugin/outputs/plugins/gis-theme/adorsys_theme_v1');
 console.log("Output Path:", OUTPUT_PATH);
 
+const amdEntries: Record<string, string> = {};
+const amdFiles = await glob('amd/src/*.js');
+amdFiles.forEach((file: string) => {
+  const name = path.basename(file, '.js');
+  amdEntries[`amd/build/${name}.min`] = `./${file}`;
+});
+
 const config: Configuration = {
   mode: 'production',
   devtool: 'source-map',
 
-  //  Entry points for JS and CSS
+  //  Entry points for JS and CSS + AMD modules
   entry: {
     bundle: './src/index.ts',
+    ...amdEntries,
   },
 
   output: {
     path: OUTPUT_PATH,
-    filename: 'js/[name].js',
+    filename: (pathData) => {
+      // AMD modules go to their configured paths with .js extension
+      if (pathData.chunk?.name?.startsWith('amd/build/')) {
+        return '[name].js';
+      }
+      // Main bundle goes to tmp
+      return 'tmp/[name].js';
+    },
     clean: true
+  },
+
+  externals: {
+    // Moodle provides these modules at runtime
+    'jquery': 'jquery',
+    'core/log': 'core/log',
   },
 
   resolve: {
@@ -45,6 +67,17 @@ const config: Configuration = {
         test: /\.ts$/,
         use: 'ts-loader',
         exclude: /node_modules/
+      },
+      {
+        test: /\.js$/,
+        include: path.resolve(__dirname, 'amd/src'),
+        use: {
+          loader: 'esbuild-loader',
+          options: {
+            loader: 'js',
+            target: 'es2015'
+          }
+        }
       }
     ]
   },
@@ -61,6 +94,7 @@ const config: Configuration = {
         { from: 'layout', to: 'layout' },
         { from: 'pix', to: 'pix' },
         { from: 'lang', to: 'lang' },
+        { from: 'amd/src', to: 'amd/src', noErrorOnMissing: true },
 
         // Copy PHP root files like version.php, lib.php etc.
         {
