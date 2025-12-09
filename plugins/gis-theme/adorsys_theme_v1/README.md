@@ -28,6 +28,8 @@ This repository contains the **adorsys_theme_v1** folder under `plugins/`, desig
 
 ```
 adorsys_theme_v1/
+├── amd/                        # Asynchronous Module Definition (JS)
+│   └── src/                    # JavaScript source files
 ├── classes/                    # PHP classes (autoloaded by Moodle)
 │   └── output/
 │       └── renderer.php        # Renders the theme's output
@@ -35,29 +37,33 @@ adorsys_theme_v1/
 ├── lang/                       # Language files for internationalization
 │   └── en/
 │       └── theme_adorsys_theme_v1.php # English language strings
-├── layout/                     # Defines the page layouts for different Moodle contexts
-│   └── some_layout_files.php   # (e.g., columns.php, default.php, login.php)
-├── lib.php                     # Contains important functions for loading assets and compiling SCSS
-├── package.json                # Project dependencies and scripts
-├── pix/                        # Theme images and assets
-│   ├── favicon.ico             # Favicon for the theme
-│   └── screenshot.png          # Screenshot for Moodle theme selector
-├── postcss.config.mjs          # PostCSS configuration (e.g., Tailwind CSS, Autoprefixer)
-├── README.md                   # This README file
-├── settings.php                # Admin settings for the theme
-├── src/                        # Source files (TypeScript, SCSS, etc.)
-│   ├── assets/                 # Static assets like images or fonts
-│   ├── index.ts                # Main TypeScript entry file
-│   └── styles/                 # SCSS stylesheets
-│       └── main.scss           # Main SCSS file
-├── templates/                  # Mustache templates used by Moodle for rendering
-│   ├── some_mustache_files.mustache # (e.g., columns.mustache, default.mustache)
-│   └── partials/               # Reusable Mustache partials
-│       └── some_partials.mustache # (e.g., footer.mustache, navbar.mustache)
-├── tsconfig.json               # TypeScript configuration
-├── version.php                 # Moodle plugin version details
-├── webpack.config.ts           # Webpack configuration for asset bundling
-└── yarn.lock                   # Yarn dependency lock file
+├── layout/                     # Moodle layout files
+│   ├── columns.mustache        # Layout templates
+│   ├── login.php               # Login page layout
+│   └── ...
+├── lib.php                     # Core theme functions & asset callbacks
+├── package.json                # NPM configuration
+├── pages/                      # Custom PHP pages (e.g. Terms of Service)
+│   └── tos.php
+├── pix/                        # Images & Icons
+│   ├── favicon.ico
+│   └── screenshot.png
+├── postcss.config.mjs          # PostCSS / Tailwind configurations
+├── README.md                   # Documentation
+├── scss/                       # SCSS source files
+├── settings.php                # Admin settings definition
+├── src/                        # TypeScript Source
+│   ├── index.ts                # Main entry point
+│   └── styles/                 # Theme styles
+├── style/                      # Compiled CSS output (generated)
+├── templates/                  # Mustache templates
+│   ├── drawers.mustache        # Navigation drawers
+│   ├── login.mustache          # Login template
+│   └── ...
+├── tsconfig.json               # TypeScript config
+├── version.php                 # Plugin version & dependencies
+├── webpack.config.ts           # Build configuration
+└── yarn.lock                   # Dependency lockfile
 ```
 
 ## Docker Integration

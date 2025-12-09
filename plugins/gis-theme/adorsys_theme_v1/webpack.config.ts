@@ -8,16 +8,17 @@ import { globSync } from 'glob';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// 👇 Set the final build destination
-const OUTPUT_PATH = path.resolve(__dirname, '../../../../moodle-plugin/outputs/plugins/gis-theme/adorsys_theme_v1');
-console.log("Output Path:", OUTPUT_PATH);
-
+// 👇 Get all AMD modules
 const amdEntries: Record<string, string> = {};
 const amdFiles = globSync('amd/src/*.js');
 amdFiles.forEach((file: string) => {
   const name = path.basename(file, '.js');
-  amdEntries[`amd/build/${name}.min`] = `./${file}`;
+  amdEntries[`amd/build/${name}`] = `./${file}`;
 });
+
+// 👇 Set the final build destination
+const OUTPUT_PATH = path.resolve(__dirname, '../../../../moodle-plugin/outputs/plugins/gis-theme/adorsys_theme_v1');
+console.log("Output Path:", OUTPUT_PATH);
 
 const config: Configuration = {
   mode: 'production',
@@ -40,6 +41,12 @@ const config: Configuration = {
       return 'tmp/[name].js';
     },
     clean: true
+  },
+
+  externals: {
+    // Moodle provides these modules at runtime
+    'jquery': 'jquery',
+    'core/log': 'core/log',
   },
 
   resolve: {
