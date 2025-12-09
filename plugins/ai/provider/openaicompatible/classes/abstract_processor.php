@@ -138,10 +138,20 @@ abstract class abstract_processor extends process_base {
         // Construct the full absolute URI manually to avoid Guzzle base_uri merging ambiguities.
         $endpoint = $this->get_endpoint();
         $endpointstr = (string) $endpoint;
+        // Ensure trailing slash for base.
         if (substr($endpointstr, -1) !== '/') {
             $endpointstr .= '/';
         }
-        $newuri = new Uri($endpointstr . $request->getUri());
+        
+        $requestpath = $request->getUri()->getPath();
+        // If the endpoint already contains the request path (e.g. user entered full URL), don't append it again.
+        // We check if the end of the endpoint matches the request path (ignoring the trailing slash we just added).
+        $endpointrtrim = rtrim($endpointstr, '/');
+        if (str_ends_with($endpointrtrim, $requestpath)) {
+             $newuri = new Uri($endpointstr);
+        } else {
+             $newuri = new Uri($endpointstr . $request->getUri());
+        }
         $request = $request->withUri($newuri);
 
         try {

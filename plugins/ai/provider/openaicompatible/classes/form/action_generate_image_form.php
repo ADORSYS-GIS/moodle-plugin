@@ -42,7 +42,7 @@ class action_generate_image_form extends action_form {
         );
         $mform->setType('endpoint', PARAM_URL);
         $mform->addRule('endpoint', null, 'required', null, 'client');
-        $mform->setDefault('endpoint', $this->actionconfig['endpoint'] ?? 'https://api.openai.com/v1/images/generations');
+        $mform->setDefault('endpoint', $this->actionconfig['endpoint'] ?? 'https://api.openai.com/v1/');
 
         if ($this->returnurl) {
             $mform->addElement('hidden', 'returnurl', $this->returnurl);

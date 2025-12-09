@@ -82,6 +82,14 @@ class action_form extends action_settings_form {
     public function get_data(): ?\stdClass {
         $data = parent::get_data();
 
+        if (isset($data->modeltemplate)) {
+            if ($data->modeltemplate === 'custom' && !empty($data->custommodel)) {
+                $data->model = $data->custommodel;
+            } else if ($data->modeltemplate !== 'custom') {
+                $data->model = $data->modeltemplate;
+            }
+        }
+
         if (isset($data->model)) {
             if ($data->modeltemplate === 'custom') {
                 $data->modelsettings['custom']['modelextraparams'] = $data->modelextraparams;
@@ -193,7 +201,7 @@ class action_form extends action_settings_form {
         $mform->setDefault('modeltemplate', $defaultmodel);
         $mform->addHelpButton('modeltemplate', "action:{$this->actionname}:model", 'aiprovider_openaicompatible');
 
-        $mform->addElement('hidden', 'model', $defaultmodel);
+        $mform->addElement('hidden', 'model', $modeltemplate);
         $mform->setType('model', PARAM_TEXT);
 
         $mform->addElement('text', 'custommodel', get_string('custom_model_name', 'aiprovider_openaicompatible'));

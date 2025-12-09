@@ -42,7 +42,7 @@ class action_generate_text_form extends action_form {
         );
         $mform->setType('endpoint', PARAM_URL);
         $mform->addRule('endpoint', null, 'required', null, 'client');
-        $mform->setDefault('endpoint', $actionconfig['endpoint'] ?? 'https://api.openai.com/v1/chat/completions');
+        $mform->setDefault('endpoint', $this->actionconfig['endpoint'] ?? 'https://api.openai.com/v1/');
 
         // System Instructions.
         $mform->addElement(
@@ -52,7 +52,7 @@ class action_generate_text_form extends action_form {
             'wrap="virtual" rows="5" cols="20"',
         );
         $mform->setType('systeminstruction', PARAM_TEXT);
-        $mform->setDefault('systeminstruction', $actionconfig['systeminstruction'] ?? $this->action::get_system_instruction());
+        $mform->setDefault('systeminstruction', $this->actionconfig['systeminstruction'] ?? $this->action::get_system_instruction());
         $mform->addHelpButton('systeminstruction', "action:{$this->actionname}:systeminstruction", 'aiprovider_openaicompatible');
 
         if ($this->returnurl) {
