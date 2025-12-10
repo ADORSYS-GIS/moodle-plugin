@@ -10,7 +10,7 @@ This guide will help you install the **Adorsys Theme v1** theme into your Moodle
 
 - Admin access to the Moodle UI
 
-- Node.js (>=18)
+- Node.js (>=24)
 
 - Yarn
 
