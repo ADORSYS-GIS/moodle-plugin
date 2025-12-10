@@ -6,7 +6,7 @@ This repository contains the **adorsys_theme_v1** folder under `plugins/`, desig
 
 ## Prerequisites
 
-- Node.js (>=18)
+- Node.js (>=24)
 - Yarn
 - Docker & Docker Compose (see root `compose.yaml`)
 
