@@ -43,12 +43,6 @@ const config: Configuration = {
     clean: true
   },
 
-  externals: {
-    // Moodle provides these modules at runtime
-    'jquery': 'jquery',
-    'core/log': 'core/log',
-  },
-
   resolve: {
     extensions: ['.ts', '.js']
   },
