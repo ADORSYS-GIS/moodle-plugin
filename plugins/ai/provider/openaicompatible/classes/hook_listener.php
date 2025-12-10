@@ -85,4 +85,47 @@ class hook_listener {
         $mform->addHelpButton('orgid', 'orgid', 'aiprovider_openaicompatible');
 
     }
+
+    /**
+     * Hook listener for the Open AI action settings form.
+     *
+     * @param after_ai_action_settings_form_hook $hook The hook to add to config action settings.
+     */
+    public static function set_model_form_definition_for_aiprovider_openaicompatible(after_ai_action_settings_form_hook $hook): void {
+        if ($hook->plugin !== 'aiprovider_openaicompatible') {
+            return;
+        }
+
+        $mform = $hook->mform;
+        if (isset($mform->_elementIndex['modeltemplate'])) {
+            $model = $mform->getElementValue('modeltemplate');
+            if (is_array($model)) {
+                $model = $model[0];
+            }
+
+            if ($model == 'custom') {
+                $mform->addElement('header', 'modelsettingsheader', get_string('settings', 'aiprovider_openaicompatible'));
+                $settingshelp = \html_writer::tag('p', get_string('settings_help', 'aiprovider_openaicompatible'));
+                $mform->addElement('html', $settingshelp);
+                $mform->addElement(
+                    'textarea',
+                    'modelextraparams',
+                    get_string('extraparams', 'aiprovider_openaicompatible'),
+                    ['rows' => 5, 'cols' => 20],
+                );
+                $mform->setType('modelextraparams', PARAM_TEXT);
+                $mform->addElement('static', 'modelextraparams_help', null, get_string('extraparams_help', 'aiprovider_openaicompatible'));
+            } else {
+                $targetmodel = helper::get_model_class($model);
+                if ($targetmodel) {
+                    if ($targetmodel->has_model_settings()) {
+                        $mform->addElement('header', 'modelsettingsheader', get_string('settings', 'aiprovider_openaicompatible'));
+                        $settingshelp = \html_writer::tag('p', get_string('settings_help', 'aiprovider_openaicompatible'));
+                        $mform->addElement('html', $settingshelp);
+                        $targetmodel->add_model_settings($mform);
+                    }
+                }
+            }
+        }
+    }
 }

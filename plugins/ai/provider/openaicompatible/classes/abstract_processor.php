@@ -222,7 +222,7 @@ abstract class abstract_processor extends process_base {
 
         return [
             'success' => false,
-            'errorcode' => (string) $status,
+            'errorcode' => (int) $status,
             'errormessage' => (string) $errormessage,
         ];
     }
