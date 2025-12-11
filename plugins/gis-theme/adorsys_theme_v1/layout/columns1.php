@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * A secure layout for the adorsys_theme_v1 theme.
+ * A one column layout for the adorsys_theme_v1 theme.
  *
  * @package   theme_adorsys_theme_v1
  * @copyright 2025 Adorsys Gis
@@ -24,34 +24,12 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-require_once($CFG->dirroot . '/course/lib.php');
-
-// Add block button in editing mode.
-$addblockbutton = $OUTPUT->addblockbutton();
-
-$USER->ajax_updatable_user_prefs['drawer-open-block'] = PARAM_BOOL;
-
-if (isloggedin()) {
-    $blockdraweropen = (get_user_preferences('drawer-open-block') == true);
-} else {
-    $blockdraweropen = false;
-}
-
-$extraclasses = [];
-
-$blockshtml = $OUTPUT->blocks('side-pre');
-$hasblocks = (strpos($blockshtml, 'data-block=') !== false || !empty($addblockbutton));
-
-$bodyattributes = $OUTPUT->body_attributes($extraclasses);
+$bodyattributes = $OUTPUT->body_attributes();
 
 $templatecontext = [
     'sitename' => format_string($SITE->shortname, true, ['context' => context_course::instance(SITEID), "escape" => false]),
     'output' => $OUTPUT,
-    'sidepreblocks' => $blockshtml,
-    'hasblocks' => $hasblocks,
     'bodyattributes' => $bodyattributes,
-    'blockdraweropen' => $blockdraweropen,
-    'addblockbutton' => $addblockbutton,
 ];
 
-echo $OUTPUT->render_from_template('theme_adorsys_theme_v1/drawers', $templatecontext);
+echo $OUTPUT->render_from_template('theme_adorsys_theme_v1/columns1', $templatecontext);

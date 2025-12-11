@@ -1,0 +1,40 @@
+{{!
+    @template theme_adorsys_theme_v1/columns1
+    Adorsys Theme v1 1 column layout template.
+}}
+{{> theme_adorsys_theme_v1/head}}
+
+<body data-templates="columns1" {{{bodyattributes}}}>
+{{> core/local/toast/wrapper}}
+
+<div id="page-wrapper" class="d-print-block position-relative">
+
+    {{{output.standard_top_of_body_html}}}
+
+    <div class="container">
+        <div id="page" class="container-fluid d-print-block">
+            <div id="page-content" class="row pb-3 d-print-block">
+                <div id="region-main-box" class="col-12">
+                    <section id="region-main" aria-label="{{#str}}content{{/str}}">
+                        {{{output.course_content_header}}}
+                        {{{output.main_content}}}
+                        {{{output.activity_navigation}}}
+                        {{{output.course_content_footer}}}
+                    </section>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{{output.standard_after_main_region_html}}}
+
+</div>
+{{{output.standard_end_of_body_html}}}
+</body>
+</html>
+{{#js}}
+    M.util.js_pending('theme_boost/loader');
+    require(['theme_boost/loader'], function() {
+        M.util.js_complete('theme_boost/loader');
+    });
+{{/js}}
