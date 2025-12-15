@@ -1,0 +1,87 @@
+name: Theme Release
+
+# Trigger directly on tag pushes matching the theme pattern
+on:
+  push:
+    tags:
+      - 'theme-*-v*'  
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write  
+ 
+    steps:
+      # Checkout code
+      - uses: actions/checkout@v5
+
+      # Parse tag for theme name & version
+      - name: Parse theme name & version
+        id: parse
+        shell: bash
+        run: |
+          TAG="${GITHUB_REF_NAME}"
+          if [[ "$TAG" =~ ^theme-([a-zA-Z0-9_]+_v[0-9]+)-v([0-9]+\.[0-9]+\.[0-9]+.*)$ ]]; then
+            echo "theme_name=${BASH_REMATCH[1]}" >> $GITHUB_OUTPUT
+            echo "version=${BASH_REMATCH[2]}" >> $GITHUB_OUTPUT
+            echo "theme_path=plugins/gis-theme/${BASH_REMATCH[1]}" >> $GITHUB_OUTPUT
+          else
+            echo "Invalid tag format: $TAG"
+            exit 1
+          fi
+
+      # Validate theme directory exists
+      - name: Validate theme directory
+        run: |
+          test -d "${{ steps.parse.outputs.theme_path }}" || {
+            echo "Theme not found at ${{ steps.parse.outputs.theme_path }}"
+            exit 1
+          }
+
+      # Setup Node.js
+      - uses: actions/setup-node@v5
+        with:
+          node-version: "24"
+
+      # Install dependencies
+      - name: Install dependencies
+        working-directory: ${{ steps.parse.outputs.theme_path }}
+        run: yarn install --frozen-lockfile
+
+      # Build theme
+      - name: Build theme
+        working-directory: ${{ steps.parse.outputs.theme_path }}
+        env:
+          NODE_OPTIONS: "--loader ts-node/esm"
+        run: yarn build
+
+      # Package theme as ZIP (with correct folder structure)
+      - name: Package theme
+        id: zip
+        shell: bash
+        run: |
+          THEME="${{ steps.parse.outputs.theme_name }}"
+          VERSION="${{ steps.parse.outputs.version }}"
+          ZIP_PATH="${GITHUB_WORKSPACE}/${THEME}-${VERSION}.zip"
+          
+          cd plugins/gis-theme
+          zip -r "$ZIP_PATH" "$THEME" \
+            -x "$THEME/node_modules/*" \
+            -x "$THEME/.git/*" \
+            -x "$THEME/.gitignore" \
+            -x "$THEME/yarn.lock" \
+            -x "$THEME/package-lock.json" \
+            -x "$THEME/**/.DS_Store"
+
+          echo "zip_path=$ZIP_PATH" >> $GITHUB_OUTPUT
+
+      # Create GitHub Release
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: "${{ steps.parse.outputs.theme_name }}"
+          files: ${{ steps.zip.outputs.zip_path }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -1,0 +1,74 @@
+name: Provider Release
+
+on:
+  push:
+    tags:
+      - 'provider-*-v*'
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v5
+
+      # Parse tag
+      - name: Parse plugin name & version
+        id: parse
+        shell: bash
+        run: |
+          TAG="${GITHUB_REF_NAME}"
+
+          # provider-{plugin_name}-v{version}
+          if [[ "$TAG" =~ ^provider-([a-zA-Z0-9_]+_v[0-9]+)-v([0-9]+\.[0-9]+\.[0-9]+.*)$ ]]; then
+            PLUGIN="${BASH_REMATCH[1]}"
+            VERSION="${BASH_REMATCH[2]}"
+            echo "plugin_name=$PLUGIN" >> $GITHUB_OUTPUT
+            echo "version=$VERSION" >> $GITHUB_OUTPUT
+            echo "plugin_path=plugins/ai/provider/$PLUGIN" >> $GITHUB_OUTPUT
+          else
+            echo "❌ Invalid tag format: $TAG"
+            exit 1
+          fi
+
+      # Validate plugin directory
+      - name: Validate plugin directory
+        run: |
+          test -d "${{ steps.parse.outputs.plugin_path }}" || {
+            echo "❌ Plugin not found: ${{ steps.parse.outputs.plugin_path }}"
+            exit 1
+          }
+
+
+      # Package ZIP
+      - name: Package plugin
+        id: zip
+        shell: bash
+        run: |
+          PLUGIN="${{ steps.parse.outputs.plugin_name }}"
+          VERSION="${{ steps.parse.outputs.version }}"
+          ZIP_PATH="${GITHUB_WORKSPACE}/${PLUGIN}-${VERSION}.zip"
+
+          cd plugins/ai/provider
+
+          zip -r "$ZIP_PATH" "$PLUGIN" \
+            -x "$PLUGIN/node_modules/*" \
+            -x "$PLUGIN/.git/*" \
+            -x "$PLUGIN/.gitignore" \
+            -x "$PLUGIN/yarn.lock" \
+            -x "$PLUGIN/package-lock.json" \
+            -x "$PLUGIN/**/.DS_Store"
+
+          echo "zip_path=$ZIP_PATH" >> $GITHUB_OUTPUT
+
+      # Create GitHub Release
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: "${{ steps.parse.outputs.plugin_name }} v${{ steps.parse.outputs.version }}"
+          files: ${{ steps.zip.outputs.zip_path }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
