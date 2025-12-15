@@ -3,7 +3,7 @@ name: Provider Release
 on:
   push:
     tags:
-      - 'provider-*-v*'
+      - "provider-*-v*"
 
 jobs:
   build-and-release:
@@ -40,7 +40,6 @@ jobs:
             echo "❌ Plugin not found: ${{ steps.parse.outputs.plugin_path }}"
             exit 1
           }
-
 
       # Package ZIP
       - name: Package plugin

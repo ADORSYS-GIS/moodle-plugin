@@ -4,14 +4,14 @@ name: Theme Release
 on:
   push:
     tags:
-      - 'theme-*-v*'  
+      - "theme-*-v*"
 
 jobs:
   build-and-release:
     runs-on: ubuntu-latest
     permissions:
-      contents: write  
- 
+      contents: write
+
     steps:
       # Checkout code
       - uses: actions/checkout@v5
@@ -64,7 +64,7 @@ jobs:
           THEME="${{ steps.parse.outputs.theme_name }}"
           VERSION="${{ steps.parse.outputs.version }}"
           ZIP_PATH="${GITHUB_WORKSPACE}/${THEME}-${VERSION}.zip"
-          
+
           cd plugins/gis-theme
           zip -r "$ZIP_PATH" "$THEME" \
             -x "$THEME/node_modules/*" \
