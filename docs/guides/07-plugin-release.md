@@ -5,69 +5,89 @@ This guide explains how to trigger Theme Releases and Provider Plugin Releases u
 Both release pipelines run automatically when a correctly formatted tag is pushed.
 
 ## 📌 1. Tag Naming Conventions
+
 ### Themes
+
 ```
 theme-{theme_name}-v{version}
 ```
 
 **Example:**
+
 ```
 theme-adorsys_theme_v1-v1.2.3
 ```
+
 ### Providers
+
 ```
 provider-{provider_name}-v{version}
 ```
 
 **Example:**
+
 ```
 provider-openai_compatible_v1-v1.0.0
 ```
+
 ## 📌 2. Required Folder Structure
 
 ### Themes:
+
 ```
 plugins/gis-theme/{theme_name}
 ```
 
 **Example:**
+
 ```
 plugins/gis-theme/adorsys_theme_v1
 ```
+
 ### Providers:
+
 ```
 plugins/ai/provider/{provider_name}
 ```
 
 **Example:**
+
 ```
 plugins/ai/provider/openaicompatible
 ```
+
 ## 🚀 3. How to Trigger a Release (Local Git)
 
 **1️⃣ Push your latest code**
+
 ```
 git push
 ```
+
 **2️⃣ Create a tag**
 
 Theme example:
+
 ```
 git tag theme-adorsys_theme_v1-v1.2.3
 ```
 
 Provider example:
+
 ```
 git tag provider-openaicompatible-v1.0.0
 ```
+
 Creating the tag opens your editor, where you can add an optional description.
 
 **3️⃣ Push the tag**
+
 ```
 git push origin <tag-name>
 ```
 
 **Examples:**
+
 ```
 git push origin theme-adorsys_theme_v1-v1.2.3
 git push origin provider-openaicompatible-v1.0.0
