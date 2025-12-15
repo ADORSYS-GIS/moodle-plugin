@@ -1,0 +1,88 @@
+// Basic login page styles
+body[data-templates="login"] {
+    background-color: #f3f4f6;
+    min-height: 100vh;
+}
+
+.login-wrapper {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+}
+
+.login-container {
+    width: 100%;
+    max-width: 450px;
+}
+
+.login-header {
+    .login-title {
+        color: #111827;
+        font-size: 1.5rem;
+    }
+}
+
+.login-card {
+    background-color: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+
+    .card-body {
+        padding: 2rem;
+    }
+}
+
+// Override Moodle Core form styles
+.login-form-area {
+
+    input[type="text"],
+    input[type="password"] {
+        display: block;
+        width: 100%;
+        padding: 0.5rem 0.75rem;
+        font-size: 0.875rem;
+        line-height: 1.5;
+        border: 1px solid #d1d5db;
+        border-radius: 0.375rem;
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+
+        &:focus {
+            border-color: #6366f1; // Indigo-500
+            outline: 0;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+    }
+
+    .btn.btn-primary {
+        display: flex;
+        justify-content: center;
+        width: 100%;
+        padding: 0.5rem 1rem;
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: #fff;
+        background-color: #4f46e5; // Indigo-600
+        border: 1px solid transparent;
+        border-radius: 0.375rem;
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+
+        &:hover {
+            background-color: #4338ca; // Indigo-700
+        }
+    }
+
+    label {
+        color: #374151; // Gray-700
+        font-size: 0.875rem;
+        font-weight: 500;
+        margin-bottom: 0.25rem;
+    }
+
+    .form-group {
+        margin-bottom: 1.25rem;
+    }
+}
