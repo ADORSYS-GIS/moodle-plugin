@@ -31,7 +31,7 @@ In Moodle, go to:
 - Upload the ZIP file downloaded from the **Moodle Plugin Directory**.
 
 - Moodle will automatically detect the plugin type and install it under:
-  **ai/provider/openai_compatible/**
+  **ai/provider/openaicompatible/**
 
 - Click Install plugin and follow Moodle's standard upgrade process.
 
@@ -44,11 +44,9 @@ In Moodle, go to:
 
 
 ### Contributors :
--Nyengka Prosper (https://github.com/Prosper-ador)
-
--Leghadjeu Christian (https://github.com/leghadjeu-christian)
-
--Thondipiong Ange-Fresnelle (https://github.com/freshystar)
+- Nyengka Prosper (https://github.com/Prosper-ador)
+- Leghadjeu Christian (https://github.com/leghadjeu-christian)
+- Thondipiong Ange-Fresnelle (https://github.com/freshystar)
 
 
 

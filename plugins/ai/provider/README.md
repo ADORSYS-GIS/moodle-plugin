@@ -96,5 +96,5 @@ openaicompatible/
 📧 gis-udm@adorsys.com
 
 ## License
-
-GNU GPL v3 or later
+    MIT License  
+    Copyright (c) 2025 adorsys GIS
