@@ -67,15 +67,11 @@ jobs:
           VERSION="${{ steps.parse.outputs.version }}"
           ZIP_PATH="${GITHUB_WORKSPACE}/${THEME}-${VERSION}.zip"
 
-          cd "plugins/gis-theme"
+          BUILD_PATH="outputs/plugins/gis-theme/${THEME}"
 
-          zip -r "$ZIP_PATH" "$THEME" \
-            -x "$THEME/node_modules/*" \
-            -x "$THEME/.git/*" \
-            -x "$THEME/.gitignore" \
-            -x "$THEME/yarn.lock" \
-            -x "$THEME/package-lock.json" \
-            -x "$THEME/**/.DS_Store"
+          cd "$BUILD_PATH"
+
+          zip -r "$ZIP_PATH" .
 
           echo "zip_path=$ZIP_PATH" >> "$GITHUB_OUTPUT"
 
