@@ -114,7 +114,7 @@ final class provider_test extends \advanced_testcase {
         $result = $provider->is_request_allowed($action);
         $this->assertFalse($result['success']);
         $this->assertEquals(
-            'You have reached the maximum number of AI requests you can make in an hour. Try again later.',
+            'User rate limit exceeded',
             $result['errormessage']
         );
 
@@ -137,7 +137,7 @@ final class provider_test extends \advanced_testcase {
         $result = $provider->is_request_allowed($action);
         $this->assertFalse($result['success']);
         $this->assertEquals(
-            expected: 'The AI service has reached the maximum number of site-wide requests per hour. Try again later.',
+            expected: 'Global rate limit exceeded',
             actual: $result['errormessage'],
         );
     }
