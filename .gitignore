@@ -34,4 +34,7 @@ frontend-example
 
 # Ignore generated theme build
 outputs/
-
+event.json
+event-plugin.json
+bin
+.actrc
