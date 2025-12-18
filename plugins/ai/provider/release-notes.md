@@ -44,10 +44,7 @@ In Moodle, go to:
 
 
 ### Contributors :
-- Nyengka Prosper (https://github.com/Prosper-ador)
-- Leghadjeu Christian (https://github.com/leghadjeu-christian)
-- Thondipiong Ange-Fresnelle (https://github.com/freshystar)
-
+- Adorsys GIS
 
 
 ---
