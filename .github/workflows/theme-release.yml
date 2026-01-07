@@ -1,0 +1,85 @@
+name: Theme Release
+
+on:
+  push:
+    tags:
+      - "theme-*-v*"
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Parse theme name & version
+        id: parse
+        shell: bash
+        run: |
+          TAG="${GITHUB_REF_NAME}"
+
+          if [[ "$TAG" =~ ^theme-([a-zA-Z0-9_]+_v[0-9]+)-v([0-9]+\.[0-9]+\.[0-9]+.*)$ ]]; then
+            {
+              echo "theme_name=${BASH_REMATCH[1]}"
+              echo "version=${BASH_REMATCH[2]}"
+              echo "theme_path=plugins/gis-theme/${BASH_REMATCH[1]}"
+            } >> "$GITHUB_OUTPUT"
+          else
+            echo "❌ Invalid tag format: $TAG"
+            exit 1
+          fi
+
+      - name: Validate theme directory
+        shell: bash
+        run: |
+          if [[ ! -d "${{ steps.parse.outputs.theme_path }}" ]]; then
+            echo "❌ Theme not found at ${{ steps.parse.outputs.theme_path }}"
+            exit 1
+          fi
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: yarn
+          cache-dependency-path: "${{ steps.parse.outputs.theme_path }}/yarn.lock"
+
+      - name: Install dependencies
+        working-directory: "${{ steps.parse.outputs.theme_path }}"
+        shell: bash
+        run: yarn install --frozen-lockfile
+
+      - name: Build theme
+        working-directory: "${{ steps.parse.outputs.theme_path }}"
+        shell: bash
+        env:
+          NODE_OPTIONS: "--loader ts-node/esm"
+        run: yarn build
+
+      - name: Package theme
+        id: zip
+        shell: bash
+        run: |
+          THEME="${{ steps.parse.outputs.theme_name }}"
+          VERSION="${{ steps.parse.outputs.version }}"
+          ZIP_PATH="${GITHUB_WORKSPACE}/${THEME}-${VERSION}.zip"
+
+          BUILD_PATH="outputs/plugins/gis-theme/${THEME}"
+
+          cd "$BUILD_PATH"
+
+          zip -r "$ZIP_PATH" .
+
+          echo "zip_path=$ZIP_PATH" >> "$GITHUB_OUTPUT"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: "${{ github.ref_name }}"
+          name: "${{ steps.parse.outputs.theme_name }}"
+          files: "${{ steps.zip.outputs.zip_path }}"
+        env:
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
