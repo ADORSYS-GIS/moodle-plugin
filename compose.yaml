@@ -1,49 +1,54 @@
 services:
-  # https://github.com/bitnami/containers/tree/main/bitnami/moodle
-  moodle-init:
-    image: docker.io/bitnamilegacy/moodle:5.0
+  moodle:
+    build:
+      context: ./.docker/moodle-nginx
+      dockerfile: Dockerfile
+    image: moodle-plugin-moodle-nginx:local
     deploy: &moodle_deploy
       resources:
         limits:
           cpus: "1"
-          memory: 500M
+          memory: 1G
+    ports:
+      - "8080:8080"
     environment: &moodle_environment
-      PHP_DEFAULT_MEMORY_LIMIT: 500m
-      ALLOW_EMPTY_PASSWORD: yes
-      MOODLE_EMAIL: admin@adorsys-gis.local
+      MOODLE_URL: https://download.moodle.org/download.php/direct/stable500/moodle-latest-500.tgz
+      MOODLE_LANGUAGE: en
+      SITE_URL: http://localhost:8080
+      MOODLE_SITENAME: "GIS Tests"
+      MOODLE_SITESUMMARY: "GIS Tests local Moodle"
       MOODLE_USERNAME: adorsys-gis
       MOODLE_PASSWORD: adorsys-gis-password
-      MOODLE_SITE_NAME: "GIS Tests"
-      MOODLE_DATABASE_HOST: mariadb
-      MOODLE_DATABASE_PORT_NUMBER: 3306
-      MOODLE_DATABASE_USER: adorsys-gis
-      MOODLE_DATABASE_NAME: gis-moodle
-      MOODLE_SMTP_HOST: maildev
-      MOODLE_SMTP_PORT: 1025
-      BITNAMI_DEBUG: true
-      EXTRA_LOCALES: "fr_FR.UTF-8 UTF-8, de_DE.UTF-8 UTF-8"
-    entrypoint: /bin/bash
-    command:
-      - -c
-      - |
-        set -ex
-        . /opt/bitnami/scripts/moodle-env.sh
-        . /opt/bitnami/scripts/libbitnami.sh
-        . /opt/bitnami/scripts/liblog.sh
-        . /opt/bitnami/scripts/libwebserver.sh
-        print_welcome_page
-        info "** Starting Moodle setup **"
-        . /opt/bitnami/scripts/"$(web_server_type)"/setup.sh
-        . /opt/bitnami/scripts/php/setup.sh
-        . /opt/bitnami/scripts/mysql-client/setup.sh
-        . /opt/bitnami/scripts/postgresql-client/setup.sh
-        . /opt/bitnami/scripts/moodle/setup.sh
-        . /post-init.sh
-        info "** Moodle setup finished! **"
+      MOODLE_EMAIL: admin@adorsys-gis.local
+      DB_TYPE: mariadb
+      DB_HOST: mariadb
+      DB_HOST_PORT: 3306
+      DB_NAME: gis-moodle
+      DB_USER: adorsys-gis
+      DB_PASS: ""
+      DB_PREFIX: mdl_
+      SMTP_HOST: maildev
+      SMTP_PORT: 1025
+      SMTP_USER: ""
+      SMTP_PASSWORD: ""
+      SMTP_PROTOCOL: ""
+      MOODLE_MAIL_NOREPLY_ADDRESS: admin@adorsys-gis.local
+      MOODLE_MAIL_PREFIX: "[GIS Tests] "
+      REDIS_SESSION_ID_HOST: redis
+      REDIS_SESSION_ID_PORT: 6379
+      REDIS_SESSION_ID_AUTH_STRING: ""
+      REDIS_SESSION_IP_AND_PORT: redis:6379
+      REDIS_SESSION_AUTH_STRING: ""
+      REDIS_APP_IP_AND_PORT: redis:6379
+      REDIS_APP_AUTH_STRING: ""
+      REDIS_LOCK_HOST_AND_PORT: redis:6379
+      REDIS_LOCK_AUTH_STRING: ""
+      ENABLE_FRESHCLAM: "no"
+      ENABLE_MOOSH_BOOTSTRAP: "no"
     volumes:
-      - moodle_data:/bitnami/moodle
-      - moodledata_data:/bitnami/moodledata
-    depends_on: &moodle_depends_on
+      - moodle_data:/moodleroot-instance1/moodle
+      - moodledata_data:/moodleroot-instance1/moodledata
+    depends_on:
       mariadb:
         condition: service_started
       redis:
@@ -52,23 +57,11 @@ services:
         condition: service_healthy
       plugin-downloader:
         condition: service_completed_successfully
-
-  moodle:
-    image: docker.io/bitnamilegacy/moodle:5.0
-    deploy: *moodle_deploy
-    ports:
-      - "8080:8080"
-      - "8443:8443"
-    environment: *moodle_environment
-    volumes:
-      - moodle_data:/bitnami/moodle
-      - moodledata_data:/bitnami/moodledata
-      - ./plugins:/bitnami/moodle/plugins/custom/plugins:ro
-      - plugins_downloads:/bitnami/moodle/plugins/downloaded:ro
-    depends_on:
-      <<: *moodle_depends_on
-      moodle-init:
-        condition: service_completed_successfully
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8080/healthz"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
 
   plugin-downloader:
     image: alpine/git:latest
@@ -117,6 +110,7 @@ services:
           memory: 256M
     environment:
       ALLOW_EMPTY_PASSWORD: yes
+      REDIS_EXTRA_FLAGS: --maxmemory-policy allkeys-lru
     ports:
       - "6379:6379"
     volumes:
@@ -233,8 +227,8 @@ services:
       CORS: true
       HOST: 0.0.0.0
     volumes:
-      - moodle_data:/web/moodle_data
-      - moodledata_data:/web/moodledata_data
+      - moodle_data:/web/moodle
+      - moodledata_data:/web/moodledata
       - plugins_downloads:/web/plugins_downloads
       - mariadb_data:/web/mariadb_data
       - redis_data:/web/redis_data
