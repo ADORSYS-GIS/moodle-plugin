@@ -12,6 +12,7 @@
 ## limitations under the License.
 
 worker_processes 1;
+worker_rlimit_nofile 8192;
 error_log stderr warn;
 pid /run/nginx.pid;
 
