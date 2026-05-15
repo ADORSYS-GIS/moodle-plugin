@@ -47,7 +47,7 @@ services:
     entrypoint:
       - /opt/setup_moodle.sh
     volumes:
-      - moodledata_data:/moodleroot-instance1/moodledata
+      - moodledata_data:/moodleroot/moodledata
     depends_on: &moodle_depends_on
       mariadb:
         condition: service_started
@@ -66,10 +66,10 @@ services:
       - "8080:8080"
     environment: *moodle_environment
     volumes:
-      - moodledata_data:/moodleroot-instance1/moodledata
-      - ./plugins/ai/provider/openaicompatible:/moodleroot-instance1/moodle/ai/provider/openaicompatible:ro
-      - ./plugins/gis-theme/adorsys_theme_v1:/moodleroot-instance1/moodle/theme/adorsys_theme_v1:ro
-      - plugins_downloads:/moodleroot-instance1/moodle/plugins/downloaded:ro
+      - moodledata_data:/moodleroot/moodledata
+      - ./plugins/ai/provider/openaicompatible:/moodleroot/moodle/ai/provider/openaicompatible:ro
+      - ./plugins/gis-theme/adorsys_theme_v1:/moodleroot/moodle/theme/adorsys_theme_v1:ro
+      - plugins_downloads:/moodleroot/moodle/plugins/downloaded:ro
     depends_on:
       <<: *moodle_depends_on
       moodle-init:

@@ -26,9 +26,9 @@ RUN apk add --no-cache aspell graphviz ghostscript python3 poppler-utils clamav
 
 RUN adduser -D -g 'www' www
 
-ARG MOODLE_ROOT_PATH='/moodleroot-instance1' \
-    MOODLE_DATAROOT_PATH='/moodleroot-instance1/moodledata' \
-    MOODLE_PATH='/moodleroot-instance1/moodle' \
+ARG MOODLE_ROOT_PATH='/moodleroot' \
+    MOODLE_DATAROOT_PATH='/moodleroot/moodledata' \
+    MOODLE_PATH='/moodleroot/moodle' \
     MOODLE_BUILD_URL='https://download.moodle.org/download.php/direct/stable500/moodle-latest-500.tgz'
 
 ENV MOODLE_URL='' \
