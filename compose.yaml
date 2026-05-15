@@ -1,18 +1,17 @@
 services:
-  moodle:
-    build:
+  moodle-init:
+    build: &moodle_build
       context: ./.docker/moodle-nginx
       dockerfile: Dockerfile
+      args:
+        MOODLE_BUILD_URL: https://download.moodle.org/download.php/direct/stable500/moodle-latest-500.tgz
     image: moodle-plugin-moodle-nginx:local
     deploy: &moodle_deploy
       resources:
         limits:
           cpus: "1"
           memory: 1G
-    ports:
-      - "8080:8080"
     environment: &moodle_environment
-      MOODLE_URL: https://download.moodle.org/download.php/direct/stable500/moodle-latest-500.tgz
       MOODLE_LANGUAGE: en
       SITE_URL: http://localhost:8080
       MOODLE_SITENAME: "GIS Tests"
@@ -45,10 +44,11 @@ services:
       REDIS_LOCK_AUTH_STRING: ""
       ENABLE_FRESHCLAM: "no"
       ENABLE_MOOSH_BOOTSTRAP: "no"
+    entrypoint:
+      - /opt/setup_moodle.sh
     volumes:
-      - moodle_data:/moodleroot-instance1/moodle
       - moodledata_data:/moodleroot-instance1/moodledata
-    depends_on:
+    depends_on: &moodle_depends_on
       mariadb:
         condition: service_started
       redis:
@@ -56,6 +56,23 @@ services:
       minio:
         condition: service_healthy
       plugin-downloader:
+        condition: service_completed_successfully
+
+  moodle:
+    build: *moodle_build
+    image: moodle-plugin-moodle-nginx:local
+    deploy: *moodle_deploy
+    ports:
+      - "8080:8080"
+    environment: *moodle_environment
+    volumes:
+      - moodledata_data:/moodleroot-instance1/moodledata
+      - ./plugins/ai/provider/openaicompatible:/moodleroot-instance1/moodle/ai/provider/openaicompatible:ro
+      - ./plugins/gis-theme/adorsys_theme_v1:/moodleroot-instance1/moodle/theme/adorsys_theme_v1:ro
+      - plugins_downloads:/moodleroot-instance1/moodle/plugins/downloaded:ro
+    depends_on:
+      <<: *moodle_depends_on
+      moodle-init:
         condition: service_completed_successfully
     healthcheck:
       test: ["CMD", "wget", "-qO-", "http://localhost:8080/healthz"]
@@ -227,15 +244,14 @@ services:
       CORS: true
       HOST: 0.0.0.0
     volumes:
-      - moodle_data:/web/moodle
-      - moodledata_data:/web/moodledata
+      - ./plugins:/web/plugins:ro
+      - moodledata_data:/web/moodledata_data
       - plugins_downloads:/web/plugins_downloads
       - mariadb_data:/web/mariadb_data
       - redis_data:/web/redis_data
       - minio_data:/web/minio_data
 
 volumes:
-  moodle_data:
   moodledata_data:
   plugins_downloads:
   mariadb_data:

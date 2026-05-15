@@ -14,7 +14,7 @@ set -eu
 ## See the License for the specific language governing permissions and
 ## limitations under the License.
 
-function setupPath() {
+setupPath() {
   echo  "Checking if $1 exists ..."
   if [ ! -d $1 ] ; then
     echo "Does not, creating $1 and adjusting owner and permissions ..."
@@ -22,7 +22,7 @@ function setupPath() {
   else
     echo "Yes! All set with $1 ..."
   fi
-  chown -R $2:$3 $1
+  chown $2:$3 $1
   chmod 0775 $1
   echo -e "Done with setting up $1 ...\n"
 }
@@ -64,6 +64,64 @@ setupPath $MOODLE_DATAROOT_PATH www www
 setupPath $MOODLE_DATAROOT_PATH/log www www
 setupPath $MOODLE_DATAROOT_PATH/moosh www www
 
+generate_config_php() {
+  echo "Generating config.php file ..."
+  sudo -u www php82 -d max_input_vars=10000 \
+    $MOODLE_PATH/admin/cli/install.php \
+    --lang=$MOODLE_LANGUAGE \
+    --wwwroot=$SITE_URL \
+    --dataroot=$MOODLE_DATAROOT_PATH \
+    --dbtype=$DB_TYPE \
+    --dbhost=$DB_HOST \
+    --dbport=$DB_HOST_PORT \
+    --dbname=$DB_NAME \
+    --dbuser=$DB_USER \
+    --dbpass=$DB_PASS \
+    --prefix=$DB_PREFIX \
+    --fullname="$MOODLE_SITENAME" \
+    --shortname="$MOODLE_SITENAME" \
+    --summary="$MOODLE_SITESUMMARY" \
+    --adminuser=$MOODLE_USERNAME \
+    --adminpass=$MOODLE_PASSWORD \
+    --adminemail=$MOODLE_EMAIL \
+    --non-interactive \
+    --agree-license \
+    --skip-database \
+    --allow-unstable
+  echo "Done generating config.php file ..."
+}
+
+apply_config_php_customizations() {
+  echo "Adding read replica settings if needed ..."
+  if [ -n "$DB_READ_REPLICA_HOST" ]; then
+    if [ -n "$DB_READ_REPLICA_USER" ] && [ -n "$DB_READ_REPLICA_PASSWORD" ] && [ -n "$DB_READ_REPLICA_PORT" ]; then
+      sed -i "/\$CFG->dboptions/a \ \ "\''readonly'\'" => [ \'instance\' => [ \'dbhost\' => \'$DB_READ_REPLICA_HOST\', \'dbport\' => \'$DB_READ_REPLICA_PORT\', \'dbuser\' => \'$DB_READ_REPLICA_USER\', \'dbpass\' => \'$DB_READ_REPLICA_PASSWORD\' ] ]," $MOODLE_PATH/config.php
+    else
+      sed -i "/\$CFG->dboptions/a \ \ "\''readonly'\'" => [ \'instance\' => [ \'$DB_HOST_REPLICA\' ] ]," $MOODLE_PATH/config.php
+    fi
+  fi
+
+  echo "Setting ssl proxy setting ..."
+  if [ "$SSLPROXY" = 'true' ]; then
+    sed -i '/require_once/i $CFG->sslproxy = true;' $MOODLE_PATH/config.php
+  fi
+
+  echo "Setting no email ever if true ..."
+  if [ "$NOEMAIL_EVER" = 'true' ]; then
+    sed -i '/require_once/i $CFG->noemailever = true;' $MOODLE_PATH/config.php
+  fi
+
+  echo "Forcing clam av executable path in config.php file ..."
+  sed -i '/require_once/i $CFG->forced_plugin_settings = array("antivirus_clamav" => array("pathtoclam" => "/usr/bin/clamscan"));' $MOODLE_PATH/config.php
+
+  echo "Prevent executable paths to be set via Admin GUI ..."
+  sed -i '/require_once/i $CFG->preventexecpath = true;' $MOODLE_PATH/config.php
+
+  sudo -u www cp $MOODLE_PATH/config.php $MOODLE_PATH/config.php.bak
+  envsubst '$REDIS_LOCK_HOST_AND_PORT $REDIS_LOCK_AUTH_STRING $REDIS_SESSION_ID_HOST $REDIS_SESSION_ID_PORT $REDIS_SESSION_ID_AUTH_STRING' < "/root/.templates/config.php.template" \
+    | { head -n 23 $MOODLE_PATH/config.php.bak; cat /dev/stdin; tail -n +24 $MOODLE_PATH/config.php.bak; } > $MOODLE_PATH/config.php
+}
+
 echo  "Syncing NGINX config files into place ..."
 sudo -u root cp -R /root/etc/nginx/* /etc/nginx/
 echo  "Done syncing NGINX config files ..."
@@ -82,52 +140,27 @@ rm -rvf /etc/nginx/nginx.conf-template
 envsubst \$MOODLE_ROOT_PATH < /etc/php82/php.ini-template > /etc/php82/php.ini
 rm -rvf /etc/php82/php.ini-template
 
+if [ ! -f "$MOODLE_PATH/version.php" ] ; then
+  echo "Bundled Moodle core files are missing from $MOODLE_PATH."
+  echo "Rebuild the image so Moodle is included at build time."
+  exit 1
+fi
+
 echo  "Checking if Moodle is already setup ..."
 if [ ! -f "$MOODLE_DATAROOT_PATH/.moodle-installed" ] ; then
 
   if [ ! -f "$MOODLE_PATH/config.php" ] ; then
-    echo -e "Nope, not installed, so, I am setting up Moodle from MOODLE_URL ENV VAR:\n"
-    echo -e "$MOODLE_URL ...\n"
-    echo "Hang tight, this will take a while !"
+    echo "Nope, not installed yet, using the Moodle core bundled in the image ..."
 
-    echo "Downloading and extracting MOODLE files ..."
-    download_and_extract_tarball "$MOODLE_URL" "$MOODLE_PATH"
-    echo -e "Done downloading and extracting MOODLE files ...\n"
+    echo "Setting proper ownership on the Moodle data directory ..."
+    chown -R www:www $MOODLE_DATAROOT_PATH
 
-    echo "Setting proper ownership on moodle root and data directories ..."
-    chown -R www:www $MOODLE_PATH && chown -R www:www $MOODLE_DATAROOT_PATH
-
-    echo "Setting permissions on moodle and moodledata directories ..."
-    find $MOODLE_PATH -type d -exec chmod 0775 {} \;
+    echo "Setting permissions on moodledata directories ..."
     find $MOODLE_DATAROOT_PATH -type d -exec chmod 0775 {} \;
-    echo "Setting permissions on files in moodle and moodledata directories ..."
-    find $MOODLE_PATH -type f -exec chmod 0664 {} \;
+    echo "Setting permissions on files in moodledata ..."
     find $MOODLE_DATAROOT_PATH -type f -exec chmod 0664 {} \;
 
-    echo "Generating config.php file ..."
-    sudo -u www php82 -d max_input_vars=10000 \
-      $MOODLE_PATH/admin/cli/install.php \
-      --lang=$MOODLE_LANGUAGE \
-      --wwwroot=$SITE_URL \
-      --dataroot=$MOODLE_DATAROOT_PATH \
-      --dbtype=$DB_TYPE \
-      --dbhost=$DB_HOST \
-      --dbport=$DB_HOST_PORT \
-      --dbname=$DB_NAME \
-      --dbuser=$DB_USER \
-      --dbpass=$DB_PASS \
-      --prefix=$DB_PREFIX \
-      --fullname="$MOODLE_SITENAME" \
-      --shortname="$MOODLE_SITENAME" \
-      --summary="$MOODLE_SITESUMMARY" \
-      --adminuser=$MOODLE_USERNAME \
-      --adminpass=$MOODLE_PASSWORD \
-      --adminemail=$MOODLE_EMAIL \
-      --non-interactive \
-      --agree-license \
-      --skip-database \
-      --allow-unstable
-    echo "Done generating config.php file ..."
+    generate_config_php
 
     echo "Installing database ..."
     sudo -u www php82 -d max_input_vars=10000 \
@@ -142,27 +175,7 @@ if [ ! -f "$MOODLE_DATAROOT_PATH/.moodle-installed" ] ; then
       --agree-license
     echo "Done installing database ..."
 
-    echo "Adding read replica settings if needed ..."
-    if [ -n "$DB_READ_REPLICA_HOST" ]; then
-      if [ -n "$DB_READ_REPLICA_USER" ] && [ -n "$DB_READ_REPLICA_PASSWORD" ] && [ -n "$DB_READ_REPLICA_PORT" ]; then
-        sed -i "/\$CFG->dboptions/a \ \ "\''readonly'\'" => [ \'instance\' => [ \'dbhost\' => \'$DB_READ_REPLICA_HOST\', \'dbport\' => \'$DB_READ_REPLICA_PORT\', \'dbuser\' => \'$DB_READ_REPLICA_USER\', \'dbpass\' => \'$DB_READ_REPLICA_PASSWORD\' ] ]," $MOODLE_PATH/config.php
-      else
-        sed -i "/\$CFG->dboptions/a \ \ "\''readonly'\'" => [ \'instance\' => [ \'$DB_HOST_REPLICA\' ] ]," $MOODLE_PATH/config.php
-      fi
-    fi
-
-    echo "Setting ssl proxy setting ..."
-    if [ "$SSLPROXY" = 'true' ]; then
-      sed -i '/require_once/i $CFG->sslproxy = true;' $MOODLE_PATH/config.php
-    fi
-
-    echo "Setting no email ever if true ..."
-    if [ "$NOEMAIL_EVER" = 'true' ]; then
-      sed -i '/require_once/i $CFG->noemailever = true;' $MOODLE_PATH/config.php
-    fi
-
-    echo "Forcing clam av executable path in config.php file ..."
-    sed -i '/require_once/i $CFG->forced_plugin_settings = array("antivirus_clamav" => array("pathtoclam" => "/usr/bin/clamscan"));' $MOODLE_PATH/config.php
+    apply_config_php_customizations
 
     echo "Configuring other specific settings ..."
 
@@ -182,10 +195,6 @@ if [ ! -f "$MOODLE_DATAROOT_PATH/.moodle-installed" ] ; then
     sudo -u www php82 -d max_input_vars=10000 $MOODLE_PATH/admin/cli/cfg.php --name=smtpsecure --set="$SMTP_PROTOCOL"
     sudo -u www php82 -d max_input_vars=10000 $MOODLE_PATH/admin/cli/cfg.php --name=noreplyaddress --set="$MOODLE_MAIL_NOREPLY_ADDRESS"
     sudo -u www php82 -d max_input_vars=10000 $MOODLE_PATH/admin/cli/cfg.php --name=emailsubjectprefix --set="$MOODLE_MAIL_PREFIX"
-
-    echo "Prevent executable paths to be set via Admin GUI ..."
-    sed -i '/require_once/i $CFG->preventexecpath = true;' $MOODLE_PATH/config.php
-
     # redis session cookies
     # sudo -u www php81 -d max_input_vars=10000 $MOODLE_PATH/admin/cli/cfg.php --name="session_handler_class" --set='\core\session\redis'
     # sudo -u www php81 -d max_input_vars=10000 $MOODLE_PATH/admin/cli/cfg.php --name="session_redis_database" --set=0
@@ -199,10 +208,6 @@ if [ ! -f "$MOODLE_DATAROOT_PATH/.moodle-installed" ] ; then
     # sudo -u www php81 -d max_input_vars=10000 $MOODLE_PATH/admin/cli/cfg.php --name="session_redis_lock_retry" --set=100
     # sudo -u www php81 -d max_input_vars=10000 $MOODLE_PATH/admin/cli/cfg.php --name="session_redis_serializer_use_igbinary" --set=true
     # sudo -u www php81 -d max_input_vars=10000 $MOODLE_PATH/admin/cli/cfg.php --name="session_redis_compressor" --set='gzip'
-
-    sudo -u www cp $MOODLE_PATH/config.php $MOODLE_PATH/config.php.bak
-    envsubst '$REDIS_LOCK_HOST_AND_PORT $REDIS_LOCK_AUTH_STRING $REDIS_SESSION_ID_HOST $REDIS_SESSION_ID_PORT $REDIS_SESSION_ID_AUTH_STRING' < "/root/.templates/config.php.template" \
-      | { head -n 23 $MOODLE_PATH/config.php.bak; cat /dev/stdin; tail -n +24 $MOODLE_PATH/config.php.bak; } > $MOODLE_PATH/config.php
   fi
 
   # Avoid writing the config file
@@ -233,6 +238,12 @@ if [ ! -f "$MOODLE_DATAROOT_PATH/.moodle-installed" ] ; then
   echo -e "Done with setting up Moodle ...\n"
 
 else
+
+  if [ ! -f "$MOODLE_PATH/config.php" ] ; then
+    echo "Config.php is missing, regenerating it from the existing environment ..."
+    generate_config_php
+    apply_config_php_customizations
+  fi
 
   echo "Yes! All set Moodle setup ..."
 

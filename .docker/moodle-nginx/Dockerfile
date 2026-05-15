@@ -28,7 +28,8 @@ RUN adduser -D -g 'www' www
 
 ARG MOODLE_ROOT_PATH='/moodleroot-instance1' \
     MOODLE_DATAROOT_PATH='/moodleroot-instance1/moodledata' \
-    MOODLE_PATH='/moodleroot-instance1/moodle'
+    MOODLE_PATH='/moodleroot-instance1/moodle' \
+    MOODLE_BUILD_URL='https://download.moodle.org/download.php/direct/stable500/moodle-latest-500.tgz'
 
 ENV MOODLE_URL='' \
     MOOSH_URL='' \
@@ -80,7 +81,14 @@ COPY --chown=root:root ["./base/etc", "/root/etc"]
 COPY --chown=www:www ["./config.php.template", "/root/.templates/"]
 COPY --chown=www:www ["./base/moodle", "/root/.templates/moodle"]
 
-RUN chown -R www:www /var/lib/nginx \
+RUN mkdir -p "$MOODLE_PATH" "$MOODLE_DATAROOT_PATH" \
+    && archive_file="$(mktemp)" \
+    && curl --fail --location --retry 5 --retry-all-errors --output "$archive_file" "$MOODLE_BUILD_URL" \
+    && tar -xzf "$archive_file" --strip-components=1 -C "$MOODLE_PATH" \
+    && rm -f "$archive_file" \
+    && mkdir -p "$MOODLE_PATH/local" \
+    && cp /root/.templates/moodle/local/defaults.php "$MOODLE_PATH/local/defaults.php" \
+    && chown -R www:www "$MOODLE_ROOT_PATH" /var/lib/nginx \
     && chmod 1700 /opt/*.sh \
     && chown -R www:www /opt/*.sh \
     && echo "America/Sao_Paulo" >  /etc/timezone
