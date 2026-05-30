@@ -83,12 +83,12 @@ class process_generate_text extends abstract_processor {
 
         return [
             'success' => true,
-            'id' => $bodyobj->id,
-            'fingerprint' => $bodyobj->system_fingerprint,
-            'generatedcontent' => $bodyobj->choices[0]->message->content,
-            'finishreason' => $bodyobj->choices[0]->finish_reason,
-            'prompttokens' => $bodyobj->usage->prompt_tokens,
-            'completiontokens' => $bodyobj->usage->completion_tokens,
+            'id' => $bodyobj->id ?? '',
+            'fingerprint' => $bodyobj->system_fingerprint ?? '',
+            'generatedcontent' => $bodyobj->choices[0]->message->content ?? '',
+            'finishreason' => $bodyobj->choices[0]->finish_reason ?? '',
+            'prompttokens' => $bodyobj->usage->prompt_tokens ?? 0,
+            'completiontokens' => $bodyobj->usage->completion_tokens ?? 0,
             'model' => $bodyobj->model ?? $this->get_model(), // Fallback to config model.
             'errormessage' => '',
         ];

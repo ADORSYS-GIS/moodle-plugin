@@ -40,12 +40,12 @@ abstract class abstract_processor extends process_base {
      */
     protected function get_endpoint(): UriInterface {
         $endpoint = null;
-        if (method_exists($this->provider, 'get_api_endpoint')) {
-            $endpoint = $this->provider->get_api_endpoint();
+        if (!empty($this->provider->actionconfig[$this->action::class]['settings']['endpoint'])) {
+            $endpoint = $this->provider->actionconfig[$this->action::class]['settings']['endpoint'];
         }
-        
-        if (empty($endpoint)) {
-             $endpoint = $this->provider->actionconfig[$this->action::class]['settings']['endpoint'];
+
+        if (empty($endpoint) && method_exists($this->provider, 'get_api_endpoint')) {
+            $endpoint = $this->provider->get_api_endpoint();
         }
         
         return new Uri($endpoint);
@@ -58,12 +58,12 @@ abstract class abstract_processor extends process_base {
      */
     protected function get_model(): string {
         $model = null;
-        if (method_exists($this->provider, 'get_api_model')) {
-            $model = $this->provider->get_api_model();
-        }
-        
-        if (empty($model)) {
+        if (!empty($this->provider->actionconfig[$this->action::class]['settings']['model'])) {
             $model = $this->provider->actionconfig[$this->action::class]['settings']['model'];
+        }
+
+        if (empty($model) && method_exists($this->provider, 'get_api_model')) {
+            $model = $this->provider->get_api_model();
         }
         
         return $model;

@@ -46,7 +46,7 @@ $string['apikey'] = 'OpenAI API key';
 $string['model'] = 'Model Name';
 $string['model_help'] = 'The ID of the model to use (e.g., gpt-4, claude-3-opus, llama-3).';
 $string['apikey_help'] = 'Get a key from your <a href="https://platform.openai.com/account/api-keys" target="_blank">OpenAI API keys</a>.';
-$string['custom_model_name'] = 'Custom model name';
+$string['custom_model_name'] = 'Model';
 $string['extraparams'] = 'Extra parameters';
 $string['extraparams_help'] = 'Extra parameters can be configured here. We support JSON format. For example:
 <pre>
