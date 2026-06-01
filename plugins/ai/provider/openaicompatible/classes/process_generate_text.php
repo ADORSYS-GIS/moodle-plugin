@@ -65,7 +65,7 @@ class process_generate_text extends abstract_processor {
 
         return new Request(
             'POST',
-            'chat/completions',
+            '',
             ['Content-Type' => 'application/json'],
             json_encode($requestobj)
         );

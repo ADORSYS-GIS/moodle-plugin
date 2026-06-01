@@ -40,8 +40,22 @@ class action_generate_image_form extends action_form {
             get_string("action:{$this->actionname}:endpoint", 'aiprovider_openaicompatible'),
             'maxlength="255" size="30"',
         );
+        // Generate a dynamic endpoint based on the provider's API endpoint.
+        global $DB;
+        $providerendpoint = 'https://api.openai.com/v1'; // Default fallback
+        if (!empty($this->providerid)) {
+            if ($provider = $DB->get_record('ai_providers', ['id' => $this->providerid])) {
+                $config = json_decode($provider->config);
+                if (!empty($config->apiendpoint)) {
+                    $providerendpoint = rtrim($config->apiendpoint, '/');
+                }
+            }
+        }
+        
         $mform->setType('endpoint', PARAM_URL);
-        $mform->setDefault('endpoint', $this->actionconfig['endpoint'] ?? '');
+        $mform->setDefault('endpoint', $this->actionconfig['endpoint'] ?? $providerendpoint . '/images/generations');
+
+
 
         if ($this->returnurl) {
             $mform->addElement('hidden', 'returnurl', $this->returnurl);

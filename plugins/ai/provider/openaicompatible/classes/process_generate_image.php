@@ -16,6 +16,7 @@
 
 namespace aiprovider_openaicompatible;
 
+use aiprovider_openaicompatible\aimodel\openai_image_base;
 use core\http_client;
 use core_ai\ai_image;
 use GuzzleHttp\Psr7\Request;
@@ -30,33 +31,20 @@ use Psr\Http\Message\ResponseInterface;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class process_generate_image extends abstract_processor {
-    /** @var int The number of images to generate dall-e-3 only supports 1. */
+    /** @var int The number of images to generate. */
     private int $numberimages = 1;
 
     #[\Override]
     protected function query_ai_api(): array {
         $response = parent::query_ai_api();
 
-        // If the request was successful, save the URL or b64json to a file.
+        // If the request was successful, save the image data to a Moodle draft file.
         if ($response['success']) {
-            if (!empty($response['b64json'])) {
-                $fileobj = $this->create_file_from_b64json(
-                    $this->action->get_configuration('userid'),
-                    $response
-                );
-            } else if (!empty($response['sourceurl'])) {
-                $fileobj = $this->url_to_file(
-                    $this->action->get_configuration('userid'),
-                    $response['sourceurl']
-                );
-            } else {
-                 return [
-                     'success' => false,
-                     'errorcode' => 500,
-                     'errormessage' => 'No image data returned from API.',
-                 ];
-            }
-            // Add the file to the response, so the calling placement can do whatever they want with it.
+            $fileobj = $this->create_file_from_response(
+                $this->action->get_configuration('userid'),
+                $response
+            );
+            // Add the file to the response so placements can use it.
             $response['draftfile'] = $fileobj;
         }
 
@@ -67,19 +55,17 @@ class process_generate_image extends abstract_processor {
      * Convert the given aspect ratio to an image size compatible with the OpenAI API.
      *
      * Delegates to the model class if one is found for the configured model,
-     * otherwise falls back to a default mapping: 'square' → '1024x1024',
-     * 'landscape' → '1536x1024', 'portrait' → '1024x1536'.
+     * otherwise falls back to a default mapping.
      *
-     * @param string $ratio The aspect ratio of the image ('square', 'landscape', or 'portrait').
-     * @return string The size string to send in the API request (e.g. '1024x1024').
+     * @param string $ratio The aspect ratio ('square', 'landscape', or 'portrait').
+     * @return string The size string for the API request (e.g. '1024x1024').
      */
     private function calculate_size(string $ratio): string {
-        // Get model class.
         $modelclass = helper::get_model_class($this->get_model());
-        if ($modelclass && method_exists($modelclass, 'calculate_size')) {
+        if ($modelclass instanceof openai_image_base) {
             return $modelclass->calculate_size($ratio);
         }
-        // Fallback.
+        // Fallback for unknown/custom models.
         if ($ratio === 'square') {
             $size = '1024x1024';
         } else if ($ratio === 'landscape') {
@@ -96,18 +82,17 @@ class process_generate_image extends abstract_processor {
      * Convert the given quality setting to an API-compatible quality value.
      *
      * Delegates to the model class if one is found for the configured model,
-     * otherwise falls back to a default mapping: 'standard' → 'medium', 'hd' → 'high'.
+     * otherwise falls back to a default mapping.
      *
      * @param string $quality The quality setting from the action ('standard' or 'hd').
-     * @return string The quality value to send in the API request.
+     * @return string The quality value for the API request.
      */
     private function calculate_quality(string $quality): string {
-        // Get model class.
         $modelclass = helper::get_model_class($this->get_model());
-        if ($modelclass && method_exists($modelclass, 'calculate_quality')) {
+        if ($modelclass instanceof openai_image_base) {
             return $modelclass->calculate_quality($quality);
         }
-        // Fallback.
+        // Fallback for unknown/custom models.
         if ($quality === 'standard') {
             $processedquality = 'medium';
         } else if ($quality === 'hd') {
@@ -115,7 +100,6 @@ class process_generate_image extends abstract_processor {
         } else {
             throw new \coding_exception('Invalid quality: ' . $quality);
         }
-
         return $processedquality;
     }
 
@@ -127,13 +111,12 @@ class process_generate_image extends abstract_processor {
         $requestobj->user = $userid;
         $requestobj->prompt = $this->action->get_configuration('prompttext');
         $requestobj->n = $this->numberimages;
-        
         $requestobj->quality = $this->calculate_quality($this->action->get_configuration('quality'));
         $requestobj->size = $this->calculate_size($this->action->get_configuration('aspectratio'));
 
-        // Get model class.
+        // Apply model-specific parameters (response_format and output_format).
         $modelclass = helper::get_model_class($this->get_model());
-        if ($modelclass instanceof \aiprovider_openaicompatible\aimodel\openai_image_base) {
+        if ($modelclass instanceof openai_image_base) {
             $responseformat = $modelclass->response_format();
             if ($responseformat !== null) {
                 $requestobj->response_format = $responseformat;
@@ -142,26 +125,17 @@ class process_generate_image extends abstract_processor {
             if ($outputformat !== null) {
                 $requestobj->output_format = $outputformat;
             }
-        } else {
-            // For unknown models, add the style if provided.
-            // Newer models (dall-e-3, gpt-image) do not support style.
-            $style = $this->action->get_configuration('style');
-            if ($style) {
-                $requestobj->style = $style;
-            }
-            // Request b64_json to avoid needing additional HTTP requests for download, if supported.
-            // Some old or custom endpoints might only support 'url', so we handle both in handle_api_success.
-            $requestobj->response_format = 'b64_json';
         }
 
-        // Append the extra model settings.
+        // Append any extra model settings from admin config.
         $modelsettings = $this->get_model_settings();
         foreach ($modelsettings as $setting => $value) {
             $requestobj->$setting = $value;
         }
+
         return new Request(
             'POST',
-            'images/generations',
+            '',
             ['Content-Type' => 'application/json'],
             json_encode($requestobj)
         );
@@ -172,33 +146,29 @@ class process_generate_image extends abstract_processor {
         $responsebody = $response->getBody();
         $bodyobj = json_decode($responsebody->getContents());
 
-        $b64json = $bodyobj->data[0]->b64_json ?? null;
-        $url = $bodyobj->data[0]->url ?? null;
-
         return [
             'success' => true,
-            'b64json' => $b64json,
-            'sourceurl' => $url,
+            'b64json' => $bodyobj->data[0]->b64_json ?? null,
+            'sourceurl' => $bodyobj->data[0]->url ?? null,
             'output_format' => $bodyobj->output_format ?? 'png',
             'revisedprompt' => $bodyobj->data[0]->revised_prompt ?? '',
-            'model' => $this->get_model(), // There is no model in the response, use config.
+            'model' => $this->get_model(),
             'errormessage' => '',
         ];
     }
 
     /**
-     * Decode the base64-encoded image from the API response, add a watermark,
-     * and store it as a draft file for the given user.
+     * Convert image data from the API response into a Moodle draft file.
      *
-     * Placements can't interact with the provider AI directly,
-     * therefore we need to provide the image file in a format that can
-     * be used by placements. So we use the file API.
+     * Handles both inline base64 (b64_json) and remote URL responses.
+     * Placements can't interact with the provider AI directly, so the image
+     * must be stored via the Moodle File API in the user's draft area.
      *
      * @param int $userid The user id.
-     * @param array $response Response from the AI provider, containing 'b64json' and 'output_format'.
+     * @param array $response Response from the AI provider.
      * @return \stored_file The stored draft file.
      */
-    private function create_file_from_b64json(
+    private function create_file_from_response(
         int $userid,
         array $response,
     ): \stored_file {
@@ -206,64 +176,34 @@ class process_generate_image extends abstract_processor {
 
         require_once("{$CFG->libdir}/filelib.php");
 
-        // Decode the image and store in temp dir.
-        $b64json = $response['b64json'];
-        $imagebytes = base64_decode($b64json);
-        $filename = substr(hash('sha512', $b64json), 0, 16) . '.' . $response['output_format'];
-        $tempdst = make_request_directory() . DIRECTORY_SEPARATOR . $filename;
-        file_put_contents($tempdst, $imagebytes);
+        if (!empty($response['b64json'])) {
+            // Preferred path: inline base64, no secondary HTTP call needed.
+            $b64json = $response['b64json'];
+            $imagebytes = base64_decode($b64json);
+            $outputformat = $response['output_format'] ?? 'png';
+            $filename = substr(hash('sha512', $b64json), 0, 16) . '.' . $outputformat;
+            $tempdst = make_request_directory() . DIRECTORY_SEPARATOR . $filename;
+            file_put_contents($tempdst, $imagebytes);
+        } else if (!empty($response['sourceurl'])) {
+            // Fallback: download from remote URL.
+            $url = $response['sourceurl'];
+            $parsedurl = parse_url($url, PHP_URL_PATH);
+            $filename = basename($parsedurl);
+            $tempdst = make_request_directory() . DIRECTORY_SEPARATOR . $filename;
+            $client = \core\di::get(http_client::class);
+            $client->get($url, [
+                'sink' => $tempdst,
+                'timeout' => $CFG->repositorygetfiletimeout,
+            ]);
+        } else {
+            throw new \moodle_exception('No image data returned from the AI API.');
+        }
 
-        // Add the watermark.
+        // Add the AI watermark.
         $image = new ai_image($tempdst);
         $image->add_watermark()->save();
 
-        // We put the file in the user draft area initially.
-        // Placements (on behalf of the user) can then move it to the correct location.
-        $fileinfo = new \stdClass();
-        $fileinfo->contextid = \context_user::instance($userid)->id;
-        $fileinfo->filearea = 'draft';
-        $fileinfo->component = 'user';
-        $fileinfo->itemid = file_get_unused_draft_itemid();
-        $fileinfo->filepath = '/';
-        $fileinfo->filename = $filename;
-
-        $fs = get_file_storage();
-        return $fs->create_file_from_string($fileinfo, file_get_contents($tempdst));
-    }
-
-    /**
-     * Convert the url for the image to a file.
-     *
-     * Placements can't interact with the provider AI directly,
-     * therefore we need to provide the image file in a format that can
-     * be used by placements. So we use the file API.
-     *
-     * @param int $userid The user id.
-     * @param string $url The URL to the image.
-     * @return \stored_file The file object.
-     */
-    private function url_to_file(int $userid, string $url): \stored_file {
-        global $CFG;
-
-        require_once("{$CFG->libdir}/filelib.php");
-
-        $parsedurl = parse_url($url, PHP_URL_PATH); // Parse the URL to get the path.
-        $filename = basename($parsedurl); // Get the basename of the path.
-
-        $client = \core\di::get(http_client::class);
-
-        // Download the image and add the watermark.
-        $tempdst = make_request_directory() . DIRECTORY_SEPARATOR . $filename;
-        $client->get($url, [
-            'sink' => $tempdst,
-            'timeout' => $CFG->repositorygetfiletimeout,
-        ]);
-
-        $image = new ai_image($tempdst);
-        $image->add_watermark()->save();
-
-        // We put the file in the user draft area initially.
-        // Placements (on behalf of the user) can then move it to the correct location.
+        // Store in the user's draft file area.
         $fileinfo = new \stdClass();
         $fileinfo->contextid = \context_user::instance($userid)->id;
         $fileinfo->filearea = 'draft';

@@ -76,21 +76,34 @@ abstract class abstract_processor extends process_base {
      */
     protected function get_model_settings(): array {
         $settings = $this->provider->actionconfig[$this->action::class]['settings'];
-        if (!empty($settings['modelextraparams'])) {
-            // Custom model settings.
+        $model = $this->get_model();
+        
+        // Extract extra params from the form structure if present.
+        if (!empty($settings['modelsettings'][$model]['modelextraparams'])) {
+            $params = json_decode($settings['modelsettings'][$model]['modelextraparams'], true);
+            if (is_array($params)) {
+                foreach ($params as $key => $param) {
+                    $settings[$key] = $param;
+                }
+            }
+        } else if (!empty($settings['modelextraparams'])) {
+            // Fallback for older data format.
             $params = json_decode($settings['modelextraparams'], true);
-            foreach ($params as $key => $param) {
-                $settings[$key] = $param;
+            if (is_array($params)) {
+                foreach ($params as $key => $param) {
+                    $settings[$key] = $param;
+                }
             }
         }
 
-        // Unset unnecessary settings.
+        // Unset unnecessary settings so they don't get sent to the API.
         unset(
             $settings['model'],
             $settings['endpoint'],
             $settings['systeminstruction'],
             $settings['providerid'],
             $settings['modelextraparams'],
+            $settings['modelsettings'],
         );
         return $settings;
     }
@@ -135,29 +148,10 @@ abstract class abstract_processor extends process_base {
 
         $client = \core\di::get(http_client::class);
         
-        // Construct the full absolute URI manually to avoid Guzzle base_uri merging ambiguities.
-        $endpoint = $this->get_endpoint();
-        $endpointstr = (string) $endpoint;
-        // Ensure trailing slash for base.
-        if (substr($endpointstr, -1) !== '/') {
-            $endpointstr .= '/';
-        }
-        
-        $requestpath = $request->getUri()->getPath();
-        // If the endpoint already contains the request path (e.g. user entered full URL), don't append it again.
-        // We check if the end of the endpoint matches the request path (ignoring the trailing slash we just added).
-        $endpointrtrim = rtrim($endpointstr, '/');
-        if (str_ends_with($endpointrtrim, $requestpath)) {
-             $newuri = new Uri($endpointstr);
-        } else {
-             $newuri = new Uri($endpointstr . $request->getUri());
-        }
-        $request = $request->withUri($newuri);
-
         try {
             // Call the external AI service.
-            // We pass an empty base_uri because we've already set the full URI on the request.
             $response = $client->send($request, [
+                'base_uri' => $this->get_endpoint(),
                 RequestOptions::HTTP_ERRORS => false,
             ]);
         } catch (RequestException $e) {

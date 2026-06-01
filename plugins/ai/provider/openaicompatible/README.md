@@ -5,7 +5,7 @@ This plugin enables Moodle to connect with any AI service that adheres to the Op
 ## Features
 
 - **Universal Compatibility**: Connect to any custom API endpoint (e.g., `https://my-ai.com/api/v1`).
-- **Flexible Model Strategy**: Supports standard models (`gpt-4o`, `dall-e-3`) or any **Custom Model** name required by your backend.
+- **Flexible Model Strategy**: Supports standard models (`gpt-4o`, `gpt-image-1`) or any **Custom Model** name required by your backend.
 - **Full Action Support**: Implements all core Moodle AI actions:
   - **Generate Text**
   - **Generate Image**
