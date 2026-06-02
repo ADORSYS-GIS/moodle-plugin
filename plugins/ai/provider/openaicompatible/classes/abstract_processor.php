@@ -45,7 +45,12 @@ abstract class abstract_processor extends process_base {
         }
 
         if (empty($endpoint) && method_exists($this->provider, 'get_api_endpoint')) {
-            $endpoint = $this->provider->get_api_endpoint();
+            $endpoint = rtrim($this->provider->get_api_endpoint(), '/');
+            if ($this->action instanceof \core_ai\aiactions\generate_image) {
+                $endpoint .= '/images/generations';
+            } else {
+                $endpoint .= '/chat/completions';
+            }
         }
         
         return new Uri($endpoint);

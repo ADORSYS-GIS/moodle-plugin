@@ -42,10 +42,10 @@ $string['action:summarise_text:systeminstruction'] = 'System instruction';
 $string['action:summarise_text:systeminstruction_help'] = 'This instruction is sent to the AI model along with the user\'s prompt. Editing this instruction is not recommended unless absolutely required.';
 $string['apiendpoint'] = 'API Endpoint';
 $string['apiendpoint_help'] = 'The base URL for your OpenAI-compatible API (e.g., https://api.openai.com/v1 or https://ai.kivoyo.com/api/v1).';
-$string['apikey'] = 'OpenAI API key';
+$string['apikey'] = 'OpenAI compatible API key';
 $string['model'] = 'Model Name';
 $string['model_help'] = 'The ID of the model to use (e.g., gpt-4, claude-3-opus, llama-3).';
-$string['apikey_help'] = 'Get a key from your <a href="https://platform.openai.com/account/api-keys" target="_blank">OpenAI API keys</a>.';
+$string['apikey_help'] = 'The API key used to authenticate requests to your OpenAI-compatible API endpoint.';
 $string['custom_model_name'] = 'Model';
 $string['extraparams'] = 'Extra parameters';
 $string['extraparams_help'] = 'Extra parameters can be configured here. We support JSON format. For example:
@@ -56,8 +56,8 @@ $string['extraparams_help'] = 'Extra parameters can be configured here. We suppo
 }
 </pre>';
 $string['invalidjson'] = 'Invalid JSON string';
-$string['orgid'] = 'OpenAI organization ID';
-$string['orgid_help'] = 'Get your OpenAI organization ID from your <a href="https://platform.openai.com/account/org-settings" target="_blank">OpenAI account</a>.';
+$string['orgid'] = 'OpenAI compatible organization ID';
+$string['orgid_help'] = 'The organization ID used to authenticate requests to your OpenAI-compatible API endpoint. Leave blank if not required by your provider.';
 $string['pluginname'] = 'OpenAI Compatible API provider';
 $string['privacy:metadata'] = 'The OpenAI API provider plugin does not store any personal data.';
 $string['privacy:metadata:aiprovider_openaicompatible:externalpurpose'] = 'This information is sent to the OpenAI API in order for a response to be generated. Your OpenAI account settings may change how OpenAI stores and retains this data. No user data is explicitly sent to OpenAI or stored in Moodle LMS by this plugin.';
