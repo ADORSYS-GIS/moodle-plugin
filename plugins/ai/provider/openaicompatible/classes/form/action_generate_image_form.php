@@ -43,9 +43,6 @@ class action_generate_image_form extends action_form {
         $mform->setType('endpoint', PARAM_URL);
         $mform->setDefault('endpoint', $this->actionconfig['endpoint'] ?? '');
 
-
-
-
         if ($this->returnurl) {
             $mform->addElement('hidden', 'returnurl', $this->returnurl);
             $mform->setType('returnurl', PARAM_LOCALURL);

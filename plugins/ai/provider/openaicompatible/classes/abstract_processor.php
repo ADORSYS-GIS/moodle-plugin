@@ -66,10 +66,6 @@ abstract class abstract_processor extends process_base {
         if (!empty($this->provider->actionconfig[$this->action::class]['settings']['model'])) {
             $model = $this->provider->actionconfig[$this->action::class]['settings']['model'];
         }
-
-        if (empty($model) && method_exists($this->provider, 'get_api_model')) {
-            $model = $this->provider->get_api_model();
-        }
         
         return $model;
     }

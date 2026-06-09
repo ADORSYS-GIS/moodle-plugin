@@ -43,9 +43,6 @@ class action_generate_text_form extends action_form {
         $mform->setType('endpoint', PARAM_URL);
         $mform->setDefault('endpoint', $this->actionconfig['endpoint'] ?? '');
 
-
-
-
         // System Instructions.
         $mform->addElement(
             'textarea',

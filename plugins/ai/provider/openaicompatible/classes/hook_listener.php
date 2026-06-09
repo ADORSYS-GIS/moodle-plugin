@@ -52,15 +52,7 @@ class hook_listener {
         $mform->addHelpButton('apiendpoint', 'apiendpoint', 'aiprovider_openaicompatible');
         $mform->addRule('apiendpoint', get_string('required'), 'required', null, 'client');
 
-        // Model setting.
-        $mform->addElement(
-            'text',
-            'model',
-            get_string('model', 'aiprovider_openaicompatible'),
-            ['size' => 30],
-        );
-        $mform->setType('model', PARAM_TEXT);
-        $mform->addHelpButton('model', 'model', 'aiprovider_openaicompatible');
+
 
         // Required setting to store OpenAI API key.
         $mform->addElement(
