@@ -16,3 +16,4 @@
 ### Removed
 
 - The `dalle3` model class has been removed in favor of the new `gpt-image-1` strategy.
+- The global provider-level `model` setting has been removed entirely. All models must now be configured at the action level.

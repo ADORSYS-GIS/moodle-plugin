@@ -54,19 +54,18 @@ Navigate to **Site Administration → AI → AI Providers → OpenAI Compatible*
 
 ### Global Settings
 
-These settings serve as the defaults for all actions unless overridden.
+These settings configure the core authentication and routing for the provider.
 
 -   **API Endpoint**: The base URL of your AI service (e.g., `https://api.openai.com/v1`).
--   **Model**: The default model identifier (e.g., `gpt-4o`, `llama3`).
--   **API Key**: Your service authentication key.
--   **OpenAI organization ID**: (Optional) For services that require an organization context.
+-   **OpenAI compatible API Key**: Your service authentication key.
+-   **OpenAI compatible organization ID**: (Optional) For services that require an organization context.
 
 ### Action-Specific Settings
 
-You can customize behavior for each action type (e.g., use a different model for Summarization).
+Models must be explicitly configured at the action level. You can customize behavior for each action type.
 
 1.  Go to the **Actions** configuration for the provider.
-2.  Override the **Model** or **API Endpoint** if needed.
+2.  Set the **Model** for the action, or override the **API Endpoint** if needed.
 3.  **System Instruction**: Customize the system prompt sent to the LLM (for Text Generation, Summarization, etc.).
 4.  **Extra Parameters**: Pass custom JSON parameters to the model (e.g., `{"temperature": 0.7}`).
 
