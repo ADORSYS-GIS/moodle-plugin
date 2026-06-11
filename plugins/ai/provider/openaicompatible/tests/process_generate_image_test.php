@@ -59,7 +59,7 @@ final class process_generate_image_test extends \advanced_testcase {
         $this->provider = $this->create_provider(
             actionclass: \core_ai\aiactions\generate_image::class,
             actionconfig: [
-                'model' => 'dall-e-3',
+                'model' => 'gpt-image-1',
             ],
         );
         $this->create_action();
@@ -82,7 +82,7 @@ final class process_generate_image_test extends \advanced_testcase {
     }
 
     /**
-     * Test calculate_size.
+     * Test calculate_size with gpt-image-1 size mappings.
      */
     public function test_calculate_size(): void {
         $processor = new process_generate_image($this->provider, $this->action);
@@ -96,15 +96,16 @@ final class process_generate_image_test extends \advanced_testcase {
 
         $ratio = 'portrait';
         $size = $method->invoke($processor, $ratio);
-        $this->assertEquals('1024x1792', $size);
+        $this->assertEquals('1024x1536', $size);
 
         $ratio = 'landscape';
         $size = $method->invoke($processor, $ratio);
-        $this->assertEquals('1792x1024', $size);
+        $this->assertEquals('1536x1024', $size);
     }
 
     /**
-     * Test create_request_object
+     * Test create_request_object with gpt-image-1.
+     * gpt-image-1: no response_format param, quality 'hd' maps to 'high'.
      */
     public function test_create_request_object(): void {
         $processor = new process_generate_image($this->provider, $this->action);
@@ -116,10 +117,12 @@ final class process_generate_image_test extends \advanced_testcase {
         $requestdata = (object) json_decode($request->getBody()->getContents());
 
         $this->assertEquals('This is a test prompt', $requestdata->prompt);
-        $this->assertEquals('dall-e-3', $requestdata->model);
+        $this->assertEquals('gpt-image-1', $requestdata->model);
         $this->assertEquals('1', $requestdata->n);
-        $this->assertEquals('hd', $requestdata->quality);
-        $this->assertEquals('url', $requestdata->response_format);
+        // gpt-image-1 maps 'hd' quality to 'high'.
+        $this->assertEquals('high', $requestdata->quality);
+        // gpt-image-1 does not send response_format.
+        $this->assertObjectNotHasProperty('response_format', $requestdata);
         $this->assertEquals('1024x1024', $requestdata->size);
     }
 
@@ -130,7 +133,7 @@ final class process_generate_image_test extends \advanced_testcase {
         $this->provider = $this->create_provider(
             actionclass: \core_ai\aiactions\generate_image::class,
             actionconfig: [
-                'model' => 'dall-e-3',
+                'model' => 'gpt-image-1',
                 'temperature' => '0.5',
                 'max_completion_tokens' => '100',
             ],
@@ -143,7 +146,7 @@ final class process_generate_image_test extends \advanced_testcase {
 
         $body = (object) json_decode($request->getBody()->getContents());
 
-        $this->assertEquals('dall-e-3', $body->model);
+        $this->assertEquals('gpt-image-1', $body->model);
         $this->assertEquals('0.5', $body->temperature);
         $this->assertEquals('100', $body->max_completion_tokens);
 
@@ -200,6 +203,7 @@ final class process_generate_image_test extends \advanced_testcase {
 
     /**
      * Test the API success response handler method.
+     * Fixture now returns b64_json (gpt-image-1 style response).
      */
     public function test_handle_api_success(): void {
         $response = new Response(
@@ -214,32 +218,25 @@ final class process_generate_image_test extends \advanced_testcase {
 
         $result = $method->invoke($processor, $response);
 
-        $this->stringContains('An image that represents the concept of a \'test\'.', $result['revisedprompt']);
-        $this->stringContains('oaidalleapiprodscus.blob.core.windows.net', $result['sourceurl']);
-        $this->assertEquals('dall-e-3', $result['model']);
+        $this->assertTrue($result['success']);
+        $this->assertNotEmpty($result['b64json']);
+        $this->assertStringContainsString("concept of a 'test'.", $result['revisedprompt']);
+        $this->assertEquals('gpt-image-1', $result['model']);
     }
 
     /**
-     * Test query_ai_api for a successful call.
+     * Test query_ai_api for a successful call with b64_json response.
+     * gpt-image-1 returns b64_json inline — no secondary download needed.
      */
     public function test_query_ai_api_success(): void {
         // Mock the http client to return a successful response.
         ['mock' => $mock] = $this->get_mocked_http_client();
 
-        // The response from OpenAI.
+        // The response from the API (b64_json inline).
         $mock->append(new Response(
             200,
             ['Content-Type' => 'application/json'],
             $this->responsebodyjson,
-        ));
-
-        $mock->append(new Response(
-            200,
-            ['Content-Type' => 'image/jpeg'],
-            \GuzzleHttp\Psr7\Utils::streamFor(fopen(
-                self::get_fixture_path('aiprovider_openaicompatible', 'test.jpg'),
-                'r',
-            )),
         ));
 
         $this->setAdminUser();
@@ -248,9 +245,10 @@ final class process_generate_image_test extends \advanced_testcase {
         $method = new \ReflectionMethod($processor, 'query_ai_api');
         $result = $method->invoke($processor);
 
-        $this->stringContains('An image that represents the concept of a \'test\'.', $result['revisedprompt']);
-        $this->stringContains('oaidalleapiprodscus.blob.core.windows.net', $result['sourceurl']);
-        $this->assertEquals('dall-e-3', $result['model']);
+        $this->assertTrue($result['success']);
+        $this->assertNotEmpty($result['b64json']);
+        $this->assertStringContainsString("concept of a 'test'.", $result['revisedprompt']);
+        $this->assertEquals('gpt-image-1', $result['model']);
     }
 
     /**
@@ -264,9 +262,9 @@ final class process_generate_image_test extends \advanced_testcase {
 
         $response = [
             'success' => true,
-            'revisedprompt' => 'An image that represents the concept of a \'test\'.',
-            'imageurl' => 'oaidalleapiprodscus.blob.core.windows.net',
-            'model' => 'dall-e-3',
+            'revisedprompt' => "An image that represents the concept of a 'test'.",
+            'imageurl' => 'https://example.com/image.png',
+            'model' => 'gpt-image-1',
         ];
 
         $result = $method->invoke($processor, $response);
@@ -305,25 +303,7 @@ final class process_generate_image_test extends \advanced_testcase {
     }
 
     /**
-     * Test url_to_file.
-     */
-    public function test_url_to_file(): void {
-        // Log in user.
-        $this->setUser($this->getDataGenerator()->create_user());
-
-        $processor = new process_generate_image($this->provider, $this->action);
-        // We're working with a private method here, so we need to use reflection.
-        $method = new \ReflectionMethod($processor, 'url_to_file');
-
-        $contextid = 1;
-        $url = $this->getExternalTestFileUrl('/test.jpg', false);
-        $filenobj = $method->invoke($processor, $contextid, $url);
-
-        $this->assertEquals('test.jpg', $filenobj->get_filename());
-    }
-
-    /**
-     * Test process.
+     * Test process with a URL-based response (sourceurl fallback path).
      */
     public function test_process(): void {
         // Log in user.
@@ -334,7 +314,7 @@ final class process_generate_image_test extends \advanced_testcase {
 
         $url = 'https://example.com/test.jpg';
 
-        // The response from OpenAI.
+        // The response from the API (URL-based, tests the sourceurl fallback).
         $mock->append(new Response(
             200,
             ['Content-Type' => 'application/json'],
@@ -342,7 +322,7 @@ final class process_generate_image_test extends \advanced_testcase {
                 'created' => 1719140500,
                 'data' => [
                     (object) [
-                        'revised_prompt' => 'An image that represents the concept of a \'test\'.',
+                        'revised_prompt' => "An image that represents the concept of a 'test'.",
                         'url' => $url,
                     ],
                 ],
@@ -380,7 +360,7 @@ final class process_generate_image_test extends \advanced_testcase {
         $this->assertInstanceOf(\core_ai\aiactions\responses\response_base::class, $result);
         $this->assertTrue($result->get_success());
         $this->assertEquals('generate_image', $result->get_actionname());
-        $this->assertEquals('An image that represents the concept of a \'test\'.', $result->get_response_data()['revisedprompt']);
+        $this->assertStringContainsString("concept of a 'test'.", $result->get_response_data()['revisedprompt']);
         $this->assertEquals($url, $result->get_response_data()['sourceurl']);
     }
 
@@ -436,8 +416,8 @@ final class process_generate_image_test extends \advanced_testcase {
             actionconfig: [
                 \core_ai\aiactions\generate_image::class => [
                     'settings' => [
-                        'model' => 'dall-e-3',
-                        'endpoint' => "https://api.openai.com/v1/chat/completions",
+                        'model' => 'gpt-image-1',
+                        'endpoint' => "https://api.openai.com/v1/images/generations",
                     ],
                 ],
             ],
@@ -457,7 +437,7 @@ final class process_generate_image_test extends \advanced_testcase {
                 'created' => 1719140500,
                 'data' => [
                     (object) [
-                        'revised_prompt' => 'An image that represents the concept of a \'test\'.',
+                        'revised_prompt' => "An image that represents the concept of a 'test'.",
                         'url' => $url,
                     ],
                 ],
@@ -483,7 +463,7 @@ final class process_generate_image_test extends \advanced_testcase {
                 'created' => 1719140500,
                 'data' => [
                     (object) [
-                        'revised_prompt' => 'An image that represents the concept of a \'test\'.',
+                        'revised_prompt' => "An image that represents the concept of a 'test'.",
                         'url' => $url,
                     ],
                 ],
@@ -517,7 +497,7 @@ final class process_generate_image_test extends \advanced_testcase {
                 'created' => 1719140500,
                 'data' => [
                     (object) [
-                        'revised_prompt' => 'An image that represents the concept of a \'test\'.',
+                        'revised_prompt' => "An image that represents the concept of a 'test'.",
                         'url' => $url,
                     ],
                 ],
@@ -545,7 +525,7 @@ final class process_generate_image_test extends \advanced_testcase {
                 'created' => 1719140500,
                 'data' => [
                     (object) [
-                        'revised_prompt' => 'An image that represents the concept of a \'test\'.',
+                        'revised_prompt' => "An image that represents the concept of a 'test'.",
                         'url' => $url,
                     ],
                 ],
@@ -588,8 +568,8 @@ final class process_generate_image_test extends \advanced_testcase {
             actionconfig: [
                 \core_ai\aiactions\generate_image::class => [
                     'settings' => [
-                        'model' => 'dall-e-3',
-                        'endpoint' => "https://api.openai.com/v1/chat/completions",
+                        'model' => 'gpt-image-1',
+                        'endpoint' => "https://api.openai.com/v1/images/generations",
                     ],
                 ],
             ],
@@ -609,7 +589,7 @@ final class process_generate_image_test extends \advanced_testcase {
                 'created' => 1719140500,
                 'data' => [
                     (object) [
-                        'revised_prompt' => 'An image that represents the concept of a \'test\'.',
+                        'revised_prompt' => "An image that represents the concept of a 'test'.",
                         'url' => $url,
                     ],
                 ],
@@ -635,7 +615,7 @@ final class process_generate_image_test extends \advanced_testcase {
                 'created' => 1719140500,
                 'data' => [
                     (object) [
-                        'revised_prompt' => 'An image that represents the concept of a \'test\'.',
+                        'revised_prompt' => "An image that represents the concept of a 'test'.",
                         'url' => $url,
                     ],
                 ],
@@ -671,7 +651,7 @@ final class process_generate_image_test extends \advanced_testcase {
                 'created' => 1719140500,
                 'data' => [
                     (object) [
-                        'revised_prompt' => 'An image that represents the concept of a \'test\'.',
+                        'revised_prompt' => "An image that represents the concept of a 'test'.",
                         'url' => $url,
                     ],
                 ],
@@ -699,7 +679,7 @@ final class process_generate_image_test extends \advanced_testcase {
                 'created' => 1719140500,
                 'data' => [
                     (object) [
-                        'revised_prompt' => 'An image that represents the concept of a \'test\'.',
+                        'revised_prompt' => "An image that represents the concept of a 'test'.",
                         'url' => $url,
                     ],
                 ],

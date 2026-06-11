@@ -106,12 +106,5 @@ class provider extends \core_ai\provider {
         return $this->config['apiendpoint'] ?? null;
     }
 
-    /**
-     * Get the model from the provider configuration.
-     *
-     * @return string|null The model or null if not set.
-     */
-    public function get_api_model(): ?string {
-        return $this->config['model'] ?? null;
-    }
+
 }
