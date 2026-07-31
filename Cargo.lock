@@ -1045,7 +1045,6 @@ checksum = "06d9e5e61dd037cdc51da0d7e2b2be10f497478ea7e120d85dad632adb99882b"
 dependencies = [
  "base64",
  "chrono",
- "schemars",
  "serde",
  "serde_json",
 ]
@@ -1058,6 +1057,7 @@ checksum = "d9c6922f6afe80418dd6019818af5d0d34584c371780ff09b9752370c25b4abb"
 dependencies = [
  "base64",
  "jiff",
+ "schemars",
  "serde",
  "serde_json",
 ]
@@ -1522,7 +1522,7 @@ dependencies = [
  "http-body-util",
  "hyper",
  "hyper-util",
- "k8s-openapi 0.26.1",
+ "k8s-openapi 0.28.0",
  "kube",
  "kube-runtime",
  "mimalloc",
